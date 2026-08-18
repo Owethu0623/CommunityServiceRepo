@@ -1,0 +1,250 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Submit Maintenance Request";
+}
+
+<div class="request-page">
+
+    <div class="request-card">
+
+        <div class="request-title">
+            <span class="request-icon"></span>
+            <h2>SUBMIT MAINTENANCE REQUEST</h2>
+        </div>
+
+        @using (Html.BeginForm(
+            "Create",
+            "Requests",
+            FormMethod.Post,
+            new
+            {
+                enctype = "multipart/form-data",
+                id = "requestForm"
+            }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(
+                true,
+                "",
+                new { @class = "text-danger" }
+            )
+
+            <!-- Request Title -->
+            <div class="request-form-group">
+
+                @Html.LabelFor(model => model.Title)
+
+                @Html.TextBoxFor(model => model.Title, new
+                {
+                    @class = "request-input",
+                    placeholder = "Enter request title"
+                })
+
+                @Html.ValidationMessageFor(
+                    model => model.Title,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- Category -->
+            <div class="request-form-group">
+
+                @Html.LabelFor(
+                    model => model.CategoryID,
+                    "Category"
+                )
+
+                @Html.DropDownList(
+                    "CategoryID",
+                    null,
+                    "Select Category",
+                    new
+                    {
+                        @class = "request-input"
+                    }
+                )
+
+                <div class="category-examples">
+                    <strong>Examples:</strong>
+
+                    <ul>
+                        <li>Pothole</li>
+                        <li>Water Leak</li>
+                        <li>Broken Streetlight</li>
+                        <li>Illegal Dumping</li>
+                    </ul>
+                </div>
+
+                @Html.ValidationMessageFor(
+                    model => model.CategoryID,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- Description -->
+            <div class="request-form-group">
+
+                @Html.LabelFor(model => model.Description)
+
+                @Html.TextAreaFor(model => model.Description, new
+                {
+                    @class = "request-textarea",
+                    rows = "4",
+                    placeholder = "Describe the problem"
+                })
+
+                @Html.ValidationMessageFor(
+                    model => model.Description,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- Location Description -->
+            <div class="request-form-group">
+
+                @Html.LabelFor(
+                    model => model.LocationDescription
+                )
+
+                @Html.TextBoxFor(
+                    model => model.LocationDescription,
+                    new
+                    {
+                        @class = "request-input",
+                        placeholder = "Enter the location of the problem"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.LocationDescription,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- GPS Location -->
+            <div class="request-gps">
+
+                <div class="gps-icon">
+                    
+                </div>
+
+                <div>
+                    <strong>Current Location</strong>
+
+                    <p id="locationStatus">
+                        Detecting your location...
+                    </p>
+                </div>
+
+            </div>
+
+            @Html.HiddenFor(model => model.Latitude)
+            @Html.HiddenFor(model => model.Longitude)
+
+
+            <!-- Upload Photo -->
+            <div class="request-form-group">
+
+                <label for="ImageFile">
+                    Upload Photo
+                </label>
+
+                <input type="file"
+                       name="ImageFile"
+                       id="ImageFile"
+                       class="request-file"
+                       accept="image/*" />
+
+            </div>
+
+
+            <!-- Submit -->
+            <button type="submit"
+                    class="request-submit-button">
+
+                <span>➤</span>
+                Submit
+
+            </button>
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var status =
+                document.getElementById("locationStatus");
+
+            var latitude =
+                document.getElementById("Latitude");
+
+            var longitude =
+                document.getElementById("Longitude");
+
+
+            if (!navigator.geolocation) {
+
+                status.innerHTML =
+                    "Location services are not supported by this browser.";
+
+                return;
+            }
+
+
+            navigator.geolocation.getCurrentPosition(
+
+                function (position) {
+
+                    latitude.value =
+                        position.coords.latitude;
+
+                    longitude.value =
+                        position.coords.longitude;
+
+                    status.innerHTML =
+                        "Location detected successfully.";
+
+                },
+
+                function (error) {
+
+                    status.innerHTML =
+                        "Location not available. You can still submit your request.";
+
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+
+            );
+
+        });
+
+    </script>
+}

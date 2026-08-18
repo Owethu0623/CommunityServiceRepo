@@ -1,0 +1,238 @@
+﻿@model CommunityServiceProject.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="login-page">
+
+    <!-- PAGE HEADING -->
+    <div class="login-header">
+
+        <h1>
+            CITIZEN LOGIN
+        </h1>
+
+        <p>
+            Login to your Community Service Request account
+        </p>
+
+        <hr />
+
+    </div>
+
+
+    <!-- LOGIN CARD -->
+    <div class="login-card">
+
+        @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <!-- Validation -->
+            @Html.ValidationSummary(
+                true,
+                "",
+                new { @class = "login-validation" }
+            )
+
+
+            <!-- EMAIL -->
+            <div class="login-form-group">
+
+                @Html.LabelFor(
+                    m => m.EmailAddress,
+                    "Email Address"
+                )
+
+                <div class="login-input-wrapper">
+
+                    <span class="login-input-icon">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                    </span>
+
+                    @Html.TextBoxFor(
+                        m => m.EmailAddress,
+                        new
+                        {
+                            @class = "form-control login-input",
+                            placeholder = "Enter your email address",
+                            autocomplete = "email"
+                        }
+                    )
+
+                </div>
+
+                @Html.ValidationMessageFor(
+                    m => m.EmailAddress,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- PASSWORD -->
+            <div class="login-form-group">
+
+                @Html.LabelFor(
+                    m => m.Password,
+                    "Password"
+                )
+
+                <div class="login-input-wrapper">
+
+                    <span class="login-input-icon">
+                        <span class="glyphicon glyphicon-lock"></span>
+                    </span>
+
+                    @Html.PasswordFor(
+                        m => m.Password,
+                        new
+                        {
+                            @class = "form-control login-input",
+                            placeholder = "Enter your password",
+                            autocomplete = "current-password"
+                        }
+                    )
+
+                    <button type="button"
+                            class="password-toggle"
+                            onclick="togglePassword()">
+
+                        <span id="passwordEye"
+                              class="glyphicon glyphicon-eye-open">
+                        </span>
+
+                    </button>
+
+                </div>
+
+                @Html.ValidationMessageFor(
+                    m => m.Password,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- FORGOT PASSWORD -->
+            <div class="forgot-password">
+
+                <a href="@Url.Action("Index", "ForgotPassword")">
+                    Forgot Password?
+                </a>
+
+            </div>
+
+
+            <!-- LOGIN BUTTON -->
+
+            <button type="submit"
+                    class="login-submit-button">
+
+
+
+                <span class="glyphicon glyphicon-log-in"></span>
+
+
+
+                <span>
+
+                    Login
+
+                </span>
+
+
+
+            </button>
+
+        }
+
+
+        <!-- OR -->
+        <div class="login-or">
+
+            <span></span>
+
+            <strong>OR</strong>
+
+            <span></span>
+
+        </div>
+
+
+        <!-- REGISTER -->
+        <div class="create-account-box">
+
+            <p>
+                Don't have an account?
+            </p>
+
+            <a href="@Url.Action("Create", "Citizens")"
+               class="create-account-button">
+
+                Create an Account
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- BACK HOME -->
+    <div class="back-home">
+
+        <a href="@Url.Action("Index", "Home")">
+
+            <span class="glyphicon glyphicon-arrow-left"></span>
+
+            Back to Home
+
+        </a>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script>
+
+        function togglePassword() {
+
+            var passwordField =
+                document.getElementById("Password");
+
+            var eye =
+                document.getElementById("passwordEye");
+
+
+            if (passwordField.type === "password") {
+
+                passwordField.type = "text";
+
+                eye.className =
+                    "glyphicon glyphicon-eye-close";
+
+            }
+            else {
+
+                passwordField.type = "password";
+
+                eye.className =
+                    "glyphicon glyphicon-eye-open";
+
+            }
+
+        }
+
+    </script>
+
+}

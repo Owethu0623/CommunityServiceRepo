@@ -1,0 +1,203 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Edit Request";
+}
+
+<div class="request-card">
+
+    <div class="request-header">
+        <h2>EDIT MAINTENANCE REQUEST</h2>
+    </div>
+
+    @using (Html.BeginForm(
+        "Edit",
+        "Requests",
+        FormMethod.Post,
+        new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.RequestID)
+
+        @Html.ValidationSummary(
+            true,
+            "",
+            new { @class = "text-danger" }
+        )
+
+        <!-- Request Title -->
+        <div class="request-form-group">
+
+            @Html.LabelFor(model => model.Title)
+
+            @Html.TextBoxFor(
+                model => model.Title,
+                new
+                {
+                    @class = "request-input",
+                    placeholder = "Enter request title"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.Title,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+
+        <!-- Category -->
+        <div class="request-form-group">
+
+            @Html.LabelFor(
+                model => model.CategoryID,
+                "Category"
+            )
+
+            @Html.DropDownList(
+                "CategoryID",
+                null,
+                "Select Category",
+                new
+                {
+                    @class = "request-input"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.CategoryID,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+
+        <!-- Description -->
+        <div class="request-form-group">
+
+            @Html.LabelFor(model => model.Description)
+
+            @Html.TextAreaFor(
+                model => model.Description,
+                new
+                {
+                    @class = "request-textarea",
+                    rows = "5",
+                    placeholder = "Describe the problem"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.Description,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+
+        <!-- Location Description -->
+        <div class="request-form-group">
+
+            @Html.LabelFor(
+                model => model.LocationDescription
+            )
+
+            @Html.TextBoxFor(
+                model => model.LocationDescription,
+                new
+                {
+                    @class = "request-input",
+                    placeholder = "Enter the location of the problem"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.LocationDescription,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+
+        <!-- Current GPS Location -->
+        <div class="request-form-group">
+
+            <label>Current GPS Location</label>
+
+            <p>
+                @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+                {
+                    <span>
+                         Location already recorded
+                    </span>
+                }
+                else
+                {
+                    <span>
+                         GPS location was not recorded
+                    </span>
+                }
+            </p>
+
+        </div>
+
+
+        <!-- Upload New Photo -->
+        <div class="request-form-group">
+
+            <label for="ImageFile">
+                Replace Photo
+            </label>
+
+            <input type="file"
+                   name="ImageFile"
+                   id="ImageFile"
+                   class="request-input"
+                   accept="image/*" />
+
+        </div>
+
+
+        <!-- Existing Photo -->
+        if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <div class="request-form-group">
+
+                <label>Current Photo</label>
+
+                <div>
+                    <img src="@Url.Content(Model.ImagePath)"
+                         alt="Request Photo"
+                         style="max-width:250px; max-height:200px;" />
+                </div>
+
+            </div>
+        }
+
+
+        <!-- Save Button -->
+        <div class="request-form-group">
+
+            <button type="submit"
+                    class="request-submit-button">
+
+                Save Changes
+
+            </button>
+
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+}

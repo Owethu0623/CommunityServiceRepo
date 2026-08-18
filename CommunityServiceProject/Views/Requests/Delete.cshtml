@@ -1,0 +1,194 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Cancel Request";
+}
+
+
+<div class="delete-request-page">
+
+    <!-- Header -->
+    <div class="delete-request-header">
+
+        <div class="delete-request-icon">
+            ⚠
+        </div>
+
+        <div>
+            <h2>
+                CANCEL REQUEST
+            </h2>
+
+            <p>
+                Please confirm that you want to cancel this maintenance request.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Confirmation Card -->
+    <div class="delete-request-card">
+
+        <div class="delete-card-title">
+
+            <span>
+                📄
+            </span>
+
+            REQUEST DETAILS
+
+        </div>
+
+
+        <div class="delete-info-grid">
+
+
+            <!-- Request ID -->
+
+            <div class="delete-info-item">
+
+                <span class="delete-label">
+                    Request ID
+                </span>
+
+                <strong>
+                    #@Model.RequestID
+                </strong>
+
+            </div>
+
+
+            <!-- Category -->
+
+            <div class="delete-info-item">
+
+                <span class="delete-label">
+                    Category
+                </span>
+
+                <strong>
+
+                    @(Model.Category != null
+                        ? Model.Category.CategoryName
+                        : "Unknown")
+
+                </strong>
+
+            </div>
+
+
+            <!-- Title -->
+
+            <div class="delete-info-item delete-full-width">
+
+                <span class="delete-label">
+                    Title
+                </span>
+
+                <strong>
+                    @Model.Title
+                </strong>
+
+            </div>
+
+
+            <!-- Date -->
+
+            <div class="delete-info-item">
+
+                <span class="delete-label">
+                    Date Submitted
+                </span>
+
+                <strong>
+                    @Model.DateSubmitted.ToString("dd MMM yyyy")
+                </strong>
+
+            </div>
+
+
+            <!-- Status -->
+
+            <div class="delete-info-item">
+
+                <span class="delete-label">
+                    Current Status
+                </span>
+
+                <strong class="delete-status">
+                    @Model.Status
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Warning -->
+
+        <div class="delete-warning">
+
+            <div class="delete-warning-icon">
+                !
+            </div>
+
+            <div>
+
+                <strong>
+                    Are you sure you want to cancel this request?
+                </strong>
+
+                <p>
+                    This action will permanently remove the request from your
+                    submitted requests. You will not be able to edit or track
+                    this request after it has been cancelled.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Actions -->
+
+        <div class="delete-actions">
+
+            @using (Html.BeginForm(
+                "Delete",
+                "Requests",
+                FormMethod.Post))
+            {
+
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(
+                    model => model.RequestID
+                )
+
+
+                <button type="submit"
+                        class="delete-confirm-button">
+
+                    Cancel Request
+
+                </button>
+
+            }
+
+
+            <a href="@Url.Action(
+                        "Index",
+                        "Requests"
+                     )"
+               class="delete-back-button">
+
+                ← Keep Request
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

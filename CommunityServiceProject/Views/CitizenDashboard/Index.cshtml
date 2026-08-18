@@ -1,0 +1,93 @@
+﻿@model CommunityServiceProject.Models.Citizen
+
+@{
+    ViewBag.Title = "Citizen Dashboard";
+}
+
+<div class="dashboard-header">
+    <h2>Welcome, @Model.FirstName</h2>
+</div>
+
+
+<div class="dashboard-menu">
+
+    <!-- Dashboard -->
+    <a href="@Url.Action("Index", "CitizenDashboard")"
+       class="dashboard-button active">
+
+        
+
+        <span>
+            Dashboard
+        </span>
+
+    </a>
+
+
+    <!-- Submit Request -->
+    <a href="@Url.Action("Create", "Requests")"
+       class="dashboard-button">
+
+        
+
+        <span>
+            Submit New Request
+        </span>
+
+    </a>
+
+
+    <!-- My Requests -->
+    <a href="@Url.Action("Index", "Requests")"
+       class="dashboard-button">
+
+        
+
+        <span>
+            View My Requests
+        </span>
+
+    </a>
+
+
+    <!-- Track Request -->
+    <a href="@Url.Action("Index", "Requests")"
+       class="dashboard-button">
+
+        
+
+        <span>
+            Track Request Status
+        </span>
+
+    </a>
+
+
+    <!-- Logout -->
+    <a href="@Url.Action("Logout", "Login")"
+       class="dashboard-button logout">
+
+        
+
+        <span>
+            Logout
+        </span>
+
+    </a>
+
+</div>
+
+
+<!-- Notifications -->
+
+<div class="notifications">
+
+    <h3>
+        Latest Notifications
+    </h3>
+
+    <p>
+        Your requests and updates will appear here.
+    </p>
+
+</div>

@@ -1,0 +1,81 @@
+﻿
+
+@{
+    ViewBag.Title = "Community Service Request System";
+}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-5 col-md-6">
+
+        <div class="page-header">
+            COMMUNITY SERVICE REQUEST SYSTEM
+        </div>
+
+        <div class="system-card">
+
+            <!-- Logo -->
+            <img src="~/Content/Images/logo.png"
+                 class="logo"
+                 alt="Community Service Logo" />
+
+            <br />
+
+            <!-- System Title -->
+            <h1 class="main-title">
+                COMMUNITY SERVICE <br />
+                REQUEST SYSTEM
+            </h1>
+
+            <hr class="blue-line" />
+
+            <!-- Subtitle -->
+            <h3 class="sub-title">
+                Report Municipal Issues Easily
+            </h3>
+
+            <!-- Description -->
+            <p class="description">
+                Report potholes, water leaks,
+                broken streetlights,
+                illegal dumping and
+                track their progress online.
+            </p>
+
+            <br />
+
+            <!-- LOGIN -->
+            <div class="text-center">
+
+                <a href="@Url.Action("Index", "Login")"
+                   class="btn btn-primary-custom">
+
+                    <span class="glyphicon glyphicon-user"></span>
+
+                    Login
+
+                </a>
+
+            </div>
+
+            <br />
+
+            <!-- REGISTER -->
+            <div class="text-center">
+
+                <a href="@Url.Action("Create", "Citizens")"
+                   class="btn btn-secondary-custom">
+
+                    <span class="glyphicon glyphicon-edit"></span>
+
+                    Register
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

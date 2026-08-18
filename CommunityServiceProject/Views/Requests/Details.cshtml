@@ -1,0 +1,247 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Request Details";
+}
+
+<div class="request-details-page">
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+    <div class="request-details-hero">
+
+        <div class="request-details-hero-icon">
+        </div>
+
+        <div class="request-details-hero-text">
+            <h1>REQUEST DETAILS</h1>
+            <p>View information about your maintenance request</p>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SUMMARY
+         ========================= -->
+    <div class="request-summary">
+
+        <div class="summary-item">
+            <span class="summary-label">Request ID</span>
+            <span class="summary-value">
+                #@Model.RequestID
+            </span>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-label">Category</span>
+            <span class="summary-value">
+                @(Model.Category != null
+                    ? Model.Category.CategoryName
+                    : "Unknown")
+            </span>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-label">Status</span>
+            <span class="summary-status status-@Model.Status.ToString().ToLower()">
+                @Model.Status
+            </span>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-label">Date Submitted</span>
+            <span class="summary-value">
+                @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         REQUEST INFORMATION
+         ========================= -->
+    <div class="request-details-section">
+
+        <div class="request-section-heading">
+            <span class="section-icon"></span>
+            <h2>Request Information</h2>
+        </div>
+
+        <div class="detail-field">
+
+            <label>Request Title</label>
+
+            <div class="detail-box">
+                @Model.Title
+            </div>
+
+        </div>
+
+
+        <div class="detail-field">
+
+            <label>Description</label>
+
+            <div class="detail-box detail-description">
+                @Model.Description
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         LOCATION
+         ========================= -->
+    <div class="request-details-section">
+
+        <div class="request-section-heading">
+            <span class="section-icon"></span>
+            <h2>Location</h2>
+        </div>
+
+        <div class="detail-field">
+
+            <label>Location Description</label>
+
+            <div class="detail-box">
+                @Model.LocationDescription
+            </div>
+
+        </div>
+
+
+        <!-- GPS -->
+        <div class="gps-card">
+
+            <div class="gps-card-header">
+                <span class="gps-icon"></span>
+
+                <div>
+                    <h3>GPS Location</h3>
+                    <p>Automatic location captured when the request was submitted</p>
+                </div>
+            </div>
+
+
+            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+            {
+                <div class="gps-coordinates">
+
+                    <div class="gps-coordinate">
+                        <span>Latitude</span>
+                        <strong>@Model.Latitude</strong>
+                    </div>
+
+                    <div class="gps-coordinate">
+                        <span>Longitude</span>
+                        <strong>@Model.Longitude</strong>
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="gps-unavailable">
+                    <span></span>
+                    <span>
+                        GPS location was not available when the request was submitted.
+                    </span>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PHOTO
+         ========================= -->
+    <div class="request-details-section">
+
+        <div class="request-section-heading">
+            <span class="section-icon"></span>
+            <h2>Uploaded Photo</h2>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <div class="request-photo-container">
+
+                <img src="@Url.Content(Model.ImagePath)"
+                     alt="Maintenance request photo"
+                     class="request-photo" />
+
+            </div>
+        }
+        else
+        {
+            <div class="no-photo">
+                <span></span>
+                <p>No photo was uploaded with this request.</p>
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================
+         REQUEST STATUS
+         ========================= -->
+    <div class="request-details-section">
+
+        <div class="request-section-heading">
+            <span class="section-icon"></span>
+            <h2>Request Status</h2>
+        </div>
+
+        <div class="status-information">
+
+            <div class="status-row">
+                <span>Status</span>
+
+                <span class="summary-status status-@Model.Status.ToString().ToLower()">
+                    @Model.Status
+                </span>
+            </div>
+
+
+            <div class="status-row">
+                <span>Date Submitted</span>
+
+                <strong>
+                    @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         ACTIONS
+         ========================= -->
+    <div class="request-details-actions">
+
+        <a href="@Url.Action("Index", "Requests")"
+           class="details-back-button">
+            ← Back to My Requests
+        </a>
+
+        @if (Model.CanEdit())
+        {
+            <a href="@Url.Action("Edit", "Requests", new { id = Model.RequestID })"
+               class="details-edit-button">
+                ✎ Edit Request
+            </a>
+        }
+
+    </div>
+
+</div>

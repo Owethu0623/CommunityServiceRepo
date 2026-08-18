@@ -1,0 +1,266 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+
+@{
+    ViewBag.Title = "My Requests";
+}
+
+<div class="my-requests-header">
+
+    <span class="my-requests-icon">
+        
+    </span>
+
+    <h2>
+        MY REQUESTS
+    </h2>
+
+</div>
+
+
+<table class="requests-table">
+
+    <thead>
+
+        <tr>
+
+            <th>
+                Request ID
+            </th>
+
+            <th>
+                Category
+            </th>
+
+            <th>
+                Status
+            </th>
+
+            <th>
+                Date
+            </th>
+
+            <th>
+                Actions
+            </th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        @if (Model != null && Model.Any())
+        {
+
+            foreach (var item in Model)
+            {
+
+                <tr>
+
+                    <!-- Request ID -->
+
+                    <td>
+                        #@item.RequestID
+                    </td>
+
+
+                    <!-- Category -->
+
+                    <td>
+
+                        @(item.Category != null
+                            ? item.Category.CategoryName
+                            : "Unknown")
+
+                    </td>
+
+
+                    <!-- Status -->
+
+                    <td>
+
+                        <span class="request-status status-@item.Status.ToString().ToLower()">
+
+                            @item.Status
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- Date -->
+
+                    <td>
+
+                        @item.DateSubmitted.ToString("dd MMM yyyy")
+
+                    </td>
+
+
+                    <!-- Actions -->
+
+                    <td class="request-action-links">
+
+
+                        <!-- VIEW -->
+
+                        <a href="@Url.Action(
+                                    "Details",
+                                    "Requests",
+                                    new { id = item.RequestID }
+                                 )"
+                           class="request-view-link">
+
+                            View
+
+                        </a>
+
+
+                        <span class="action-separator">
+                            |
+                        </span>
+
+
+                        <!-- TRACK -->
+
+                        <a href="@Url.Action(
+                                    "Track",
+                                    "Requests",
+                                    new { id = item.RequestID }
+                                 )"
+                           class="request-track-link">
+
+                            Track
+
+                        </a>
+
+
+                        <!-- PENDING ACTIONS -->
+
+                        @if (item.CanEdit())
+                        {
+
+                            <span class="action-separator">
+                                |
+                            </span>
+
+
+                            <!-- EDIT -->
+
+                            <a href="@Url.Action(
+                                        "Edit",
+                                        "Requests",
+                                        new { id = item.RequestID }
+                                     )"
+                               class="request-edit-link">
+
+                                Edit
+
+                            </a>
+
+
+                            <span class="action-separator">
+                                |
+                            </span>
+
+
+                            <!-- CANCEL -->
+
+                            <a href="@Url.Action(
+                                        "Delete",
+                                        "Requests",
+                                        new { id = item.RequestID }
+                                     )"
+                               class="request-delete-link">
+
+                                Cancel
+
+                            </a>
+
+                        }
+
+                    </td>
+
+                </tr>
+
+            }
+
+        }
+        else
+        {
+
+            <tr>
+
+                <td colspan="5"
+                    class="no-requests">
+
+                    You have not submitted any requests yet.
+
+                </td>
+
+            </tr>
+
+        }
+
+    </tbody>
+
+</table>
+
+
+@if (Model != null && Model.Any())
+{
+
+    <div class="request-actions">
+
+        <p>
+            Available actions:
+        </p>
+
+
+        <div>
+
+            <span class="action-check">
+                ✓
+            </span>
+
+            View request details
+
+        </div>
+
+
+        <div>
+
+            <span class="action-check">
+                ✓
+            </span>
+
+            Track request status
+
+        </div>
+
+
+        <div>
+
+            <span class="action-check">
+                ✓
+            </span>
+
+            Edit pending requests
+
+        </div>
+
+
+        <div>
+
+            <span class="action-check cancel-check">
+                ✓
+            </span>
+
+            Cancel pending requests
+
+        </div>
+
+    </div>
+
+}

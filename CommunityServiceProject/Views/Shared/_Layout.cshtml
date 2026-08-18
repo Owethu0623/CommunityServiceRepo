@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewBag.Title - Community Service Request System
+    </title>
+
+    @Styles.Render("~/Content/css")
+
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+<body>
+
+    @{
+        var controller =
+            ViewContext.RouteData.Values["controller"]?.ToString();
+
+        var action =
+            ViewContext.RouteData.Values["action"]?.ToString();
+
+        bool isHomePage =
+            controller == "Home" &&
+            action == "Index";
+    }
+
+
+    @if (!isHomePage)
+    {
+        <!-- =====================================================
+             COMMUNITY SERVICE APPLICATION NAVIGATION
+             ===================================================== -->
+
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+
+            <div class="container">
+
+                <!-- Application Name -->
+
+                <a class="navbar-brand"
+                   href="@Url.Action("Index", "Home")">
+
+                    Community Service Request System
+
+                </a>
+
+
+                <!-- Mobile Menu Button -->
+
+                <button type="button"
+                        class="navbar-toggler"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#citizenNavigation"
+                        aria-controls="citizenNavigation"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+
+                <!-- Navigation -->
+
+                <div class="collapse navbar-collapse"
+                     id="citizenNavigation">
+
+                    <ul class="navbar-nav ms-auto">
+
+
+                        <!-- Dashboard -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               href="@Url.Action("Index", "Requests")">
+
+                                Dashboard
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- Submit Request -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               href="@Url.Action("Create", "Requests")">
+
+                                Submit Request
+
+                            </a>
+
+                        </li>
+
+
+                        <!-- My Requests -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               href="@Url.Action("Index", "Requests")">
+
+                                My Requests
+
+                            </a>
+
+                        </li>
+
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+    }
+
+
+    <!-- =====================================================
+         PAGE CONTENT
+         ===================================================== -->
+
+    <main class="container body-content">
+
+        @RenderBody()
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer class="container">
+
+        <hr />
+
+        <p>
+            &copy; @DateTime.Now.Year -
+            Community Service Request System
+        </p>
+
+    </footer>
+
+
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
+
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+    @RenderSection("scripts", required: false)
+
+</body>
+
+</html>

@@ -1,0 +1,522 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Track Request";
+
+    string currentStatus = Model.Status.ToString();
+
+    bool isPending =
+        currentStatus.Equals(
+            "Pending",
+            StringComparison.OrdinalIgnoreCase
+        );
+
+    bool isInProgress =
+        currentStatus.Equals(
+            "InProgress",
+            StringComparison.OrdinalIgnoreCase
+        );
+
+    bool isCompleted =
+        currentStatus.Equals(
+            "Completed",
+            StringComparison.OrdinalIgnoreCase
+        );
+}
+
+
+<div class="track-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="track-header">
+
+        <div class="track-header-icon">
+           
+        </div>
+
+        <div>
+            <h2>TRACK REQUEST</h2>
+
+            <p>
+                Monitor the current status of your maintenance request
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         REQUEST INFORMATION
+         ===================================================== -->
+
+    <div class="track-card">
+
+        <div class="track-card-title">
+
+            <span></span>
+
+            REQUEST INFORMATION
+
+        </div>
+
+
+        <div class="track-info-grid">
+
+
+            <!-- Request ID -->
+
+            <div class="track-info-item">
+
+                <span class="track-label">
+                    Request ID
+                </span>
+
+                <span class="track-value">
+                    #@Model.RequestID
+                </span>
+
+            </div>
+
+
+            <!-- Category -->
+
+            <div class="track-info-item">
+
+                <span class="track-label">
+                    Category
+                </span>
+
+                <span class="track-value">
+
+                    @(Model.Category != null
+                        ? Model.Category.CategoryName
+                        : "Unknown")
+
+                </span>
+
+            </div>
+
+
+            <!-- Title -->
+
+            <div class="track-info-item">
+
+                <span class="track-label">
+                    Title
+                </span>
+
+                <span class="track-value">
+                    @Model.Title
+                </span>
+
+            </div>
+
+
+            <!-- Date -->
+
+            <div class="track-info-item">
+
+                <span class="track-label">
+                    Date Submitted
+                </span>
+
+                <span class="track-value">
+                    @Model.DateSubmitted.ToString("dd MMM yyyy")
+                </span>
+
+            </div>
+
+
+            <!-- Location -->
+
+            <div class="track-info-item track-full-width">
+
+                <span class="track-label">
+                    Location
+                </span>
+
+                <span class="track-value">
+                    @Model.LocationDescription
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CURRENT STATUS
+         ===================================================== -->
+
+    <div class="track-card">
+
+
+        <div class="track-card-title">
+
+            <span></span>
+
+            CURRENT STATUS
+
+        </div>
+
+
+        <!-- Current Status -->
+
+        <div class="current-status-box">
+
+            <span class="current-status-label">
+                Current status
+            </span>
+
+
+            <span class="current-status status-@currentStatus.ToLower()">
+
+                @Model.Status
+
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STATUS PROGRESS
+             ================================================= -->
+
+        <div class="status-progress">
+
+
+            <!-- SUBMITTED -->
+
+            <div class="status-step active">
+
+                <div class="status-circle">
+                    ✓
+                </div>
+
+
+                <div class="status-step-text">
+
+                    <strong>
+                        Submitted
+                    </strong>
+
+                    <span>
+                        Request received
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LINE -->
+
+            <div class="status-line
+                @(isInProgress || isCompleted
+                    ? "active"
+                    : "")">
+            </div>
+
+
+
+            <!-- IN PROGRESS -->
+
+            <div class="status-step
+                @(isInProgress || isCompleted
+                    ? "active"
+                    : "")">
+
+
+                <div class="status-circle">
+           
+                </div>
+
+
+                <div class="status-step-text">
+
+                    <strong>
+                        In Progress
+                    </strong>
+
+                    <span>
+                        Being attended to
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LINE -->
+
+            <div class="status-line
+                @(isCompleted
+                    ? "active"
+                    : "")">
+            </div>
+
+
+
+            <!-- COMPLETED -->
+
+            <div class="status-step
+                @(isCompleted
+                    ? "active"
+                    : "")">
+
+
+                <div class="status-circle">
+                    ✓
+                </div>
+
+
+                <div class="status-step-text">
+
+                    <strong>
+                        Completed
+                    </strong>
+
+                    <span>
+                        Issue resolved
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         REQUEST ACTIVITY
+         ===================================================== -->
+
+    <div class="track-card">
+
+
+        <div class="track-card-title">
+
+            <span></span>
+
+            REQUEST ACTIVITY
+
+        </div>
+
+
+
+        <!-- Submitted -->
+
+        <div class="activity-row">
+
+
+            <div class="activity-icon">
+                
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Request submitted
+                </strong>
+
+
+                <span>
+                    @Model.DateSubmitted.ToString(
+                        "dd MMMM yyyy, HH:mm"
+                    )
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- Days Open -->
+
+        <div class="activity-row">
+
+
+            <div class="activity-icon">
+                
+            </div>
+
+
+            <div class="activity-content">
+
+                <strong>
+                    Days open
+                </strong>
+
+
+                <span>
+
+                    @Model.DaysOpen() day(s)
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         GPS INFORMATION
+         ===================================================== -->
+
+    @if (Model.Latitude.HasValue &&
+         Model.Longitude.HasValue)
+    {
+
+        <div class="track-card">
+
+
+            <div class="track-card-title">
+
+                <span></span>
+
+                LOCATION INFORMATION
+
+            </div>
+
+
+
+            <div class="gps-box">
+
+
+                <!-- Latitude -->
+
+                <div>
+
+                    <span class="track-label">
+                        Latitude
+                    </span>
+
+
+                    <strong>
+
+                        @Model.Latitude.Value.ToString("F6")
+
+                    </strong>
+
+                </div>
+
+
+
+                <!-- Longitude -->
+
+                <div>
+
+                    <span class="track-label">
+                        Longitude
+                    </span>
+
+
+                    <strong>
+
+                        @Model.Longitude.Value.ToString("F6")
+
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    }
+
+
+
+    <!-- =====================================================
+         PHOTO
+         ===================================================== -->
+
+    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+    {
+
+        <div class="track-card">
+
+
+            <div class="track-card-title">
+
+                <span></span>
+
+                REQUEST PHOTO
+
+            </div>
+
+
+            <div class="track-photo-container">
+
+                <img src="@Url.Content(Model.ImagePath)"
+                     alt="Maintenance request photo"
+                     class="track-request-photo" />
+
+            </div>
+
+
+        </div>
+
+    }
+
+
+
+    <!-- =====================================================
+         ACTION BUTTONS
+         ===================================================== -->
+
+    <div class="track-actions">
+
+
+        <a href="@Url.Action(
+                    "Index",
+                    "Requests"
+                 )"
+           class="track-back-button">
+
+            ← Back to My Requests
+
+        </a>
+
+
+
+        <a href="@Url.Action(
+                    "Details",
+                    "Requests",
+                    new { id = Model.RequestID }
+                 )"
+           class="track-details-button">
+
+            View Request Details
+
+        </a>
+
+
+    </div>
+
+
+</div>

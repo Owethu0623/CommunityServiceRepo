@@ -15,10 +15,23 @@
 
         protected override void Seed(CommunityServiceProject.Models.Community context)
         {
-            //  This method will be called after migrating to the latest version.
+            // Only create the default Administrator if one does not already exist
+            if (!context.Administrators.Any(a =>
+                a.EmailAddress == "admin@municipality.co.za"))
+            {
+                var administrator = new CommunityServiceProject.Models.Administrator
+                {
+                    FirstName = "System",
+                    LastName = "Administrator",
+                    EmailAddress = "owehlongwane07@gmail.com",
+                    PhoneNumber = "0123456789",
+                    Password = "Admin123",
+                    AccountStatus = CommunityServiceProject.Models.AccountStatus.Active
+                };
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method
-            //  to avoid creating duplicate seed data.
+                context.Administrators.Add(administrator);
+                context.SaveChanges();
+            }
         }
     }
 }

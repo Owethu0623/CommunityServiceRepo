@@ -8,6 +8,7 @@ namespace CommunityServiceProject.Controllers
     {
         private Community db = new Community();
 
+
         // =========================================================
         // GET: Login
         // =========================================================
@@ -36,34 +37,67 @@ namespace CommunityServiceProject.Controllers
 
 
                 // =================================================
-                // Login successful
+                // Citizen does not exist / incorrect credentials
                 // =================================================
 
-                if (citizen != null)
+                if (citizen == null)
                 {
-                    // Store logged-in citizen information
-                    Session["CitizenID"] = citizen.CitizenID;
-
-                    Session["CitizenName"] = citizen.FirstName;
-
-                    Session["CitizenEmail"] = citizen.EmailAddress;
-
-
-                    // Send citizen to dashboard
-                    return RedirectToAction(
-                        "Index",
-                        "CitizenDashboard"
+                    ModelState.AddModelError(
+                        "",
+                        "Invalid email or password."
                     );
+
+                    return View(model);
                 }
 
 
                 // =================================================
-                // Login failed
+                // Account suspended
                 // =================================================
 
-                ModelState.AddModelError(
-                    "",
-                    "Invalid email or password."
+                if (citizen.AccountStatus == AccountStatus.Suspended)
+                {
+                    ModelState.AddModelError(
+                        "",
+                        "Your account has been suspended. Please contact the municipality."
+                    );
+
+                    return View(model);
+                }
+
+
+                // =================================================
+                // Account inactive
+                // =================================================
+
+                if (citizen.AccountStatus == AccountStatus.Inactive)
+                {
+                    ModelState.AddModelError(
+                        "",
+                        "Your account is inactive. Please contact the municipality."
+                    );
+
+                    return View(model);
+                }
+
+
+                // =================================================
+                // Login successful
+                // =================================================
+
+                Session["CitizenID"] =
+                    citizen.CitizenID;
+
+                Session["CitizenName"] =
+                    citizen.FirstName;
+
+                Session["CitizenEmail"] =
+                    citizen.EmailAddress;
+
+
+                return RedirectToAction(
+                    "Index",
+                    "CitizenDashboard"
                 );
             }
 
@@ -73,27 +107,26 @@ namespace CommunityServiceProject.Controllers
 
 
         // =========================================================
-        // LOGOUT
+        // GET: Logout
         // =========================================================
 
         public ActionResult Logout()
         {
-            // Clear the logged-in citizen information
-            Session.Clear();
+            // Remove the citizen's login session
+            Session.Remove("CitizenID");
+            Session.Remove("CitizenName");
+            Session.Remove("CitizenEmail");
 
-            Session.Abandon();
-
-
-            // Return to Login
+            // Return to the public Home page
             return RedirectToAction(
                 "Index",
-                "Login"
+                "Home"
             );
         }
 
 
         // =========================================================
-        // Dispose
+        // DISPOSE
         // =========================================================
 
         protected override void Dispose(bool disposing)

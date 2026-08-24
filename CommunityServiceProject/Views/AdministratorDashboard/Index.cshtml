@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Administrator Dashboard";
+}
+
+<div class="dashboard-container administrator-dashboard">
+
+        <div class="dashboard-header">
+    <h2>Administrator Dashboard</h2>
+    <p>Welcome, Administrator</p>
+</div>
+
+    <div class="dashboard-menu">
+
+        <!-- HOME -->
+        <a href="@Url.Action("Index", "Home")"
+           class="dashboard-button">
+            Home
+        </a>
+
+
+        <!-- MANAGE REQUESTS -->
+        <a href="@Url.Action("Index", "AdministratorRequests")"
+           class="dashboard-button">
+            Manage Requests
+        </a>
+
+
+        <!-- MANAGE CITIZENS -->
+        <a href="@Url.Action("Index", "CitizenManagement")"
+           class="dashboard-button">
+            Manage Citizens
+        </a>
+
+
+        <!-- MANAGE TECHNICIANS -->
+        <a href="@Url.Action("Index", "TechnicianManagement")"
+           class="dashboard-button">
+
+            Manage Technicians
+
+        </a>
+
+
+        <!-- MANAGE CATEGORIES -->
+        <a href="@Url.Action("Index", "CategoryManagement")"
+           class="dashboard-button">
+
+            Manage Categories
+
+        </a>
+
+
+        <!-- REPORTS -->
+        <a href="@Url.Action("Index", "AdministratorReports")"
+           class="dashboard-button">
+
+            Reports
+
+        </a>
+
+
+        <!-- STATISTICS -->
+        <a href="@Url.Action("Index", "AdministratorStatistics")"
+           class="dashboard-button">
+
+            Statistics
+
+        </a>
+
+
+        <!-- LOGOUT -->
+        <a href="@Url.Action("Logout", "Administrators")"
+           class="dashboard-button logout">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</div>

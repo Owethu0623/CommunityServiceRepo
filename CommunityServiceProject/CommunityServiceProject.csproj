@@ -147,7 +147,44 @@
     <Compile Include="Migrations\202608181318204_UpdateRequestGPS14.Designer.cs">
       <DependentUpon>202608181318204_UpdateRequestGPS14.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202608201333519_UpdateRequestGPS15.cs" />
+    <Compile Include="Migrations\202608201333519_UpdateRequestGPS15.Designer.cs">
+      <DependentUpon>202608201333519_UpdateRequestGPS15.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608201357574_UpdateRequestGPS16.cs" />
+    <Compile Include="Migrations\202608201357574_UpdateRequestGPS16.Designer.cs">
+      <DependentUpon>202608201357574_UpdateRequestGPS16.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608211833247_UpdateRequestGPS17.cs" />
+    <Compile Include="Migrations\202608211833247_UpdateRequestGPS17.Designer.cs">
+      <DependentUpon>202608211833247_UpdateRequestGPS17.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608211922586_UpdateRequestGPS18.cs" />
+    <Compile Include="Migrations\202608211922586_UpdateRequestGPS18.Designer.cs">
+      <DependentUpon>202608211922586_UpdateRequestGPS18.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608212144594_UpdateRequestGPS19.cs" />
+    <Compile Include="Migrations\202608212144594_UpdateRequestGPS19.Designer.cs">
+      <DependentUpon>202608212144594_UpdateRequestGPS19.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608212345262_AddAdministratorFields.cs" />
+    <Compile Include="Migrations\202608212345262_AddAdministratorFields.Designer.cs">
+      <DependentUpon>202608212345262_AddAdministratorFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202608221730105_AddTechnicianFields.cs" />
+    <Compile Include="Migrations\202608221730105_AddTechnicianFields.Designer.cs">
+      <DependentUpon>202608221730105_AddTechnicianFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AdministratorDashboardController.cs" />
+    <Compile Include="Models\AdministratorForgotPasswordController.cs" />
+    <Compile Include="Models\AdministratorReportsController.cs" />
+    <Compile Include="Models\AdministratorRequestsController.cs" />
+    <Compile Include="Models\AdministratorsController.cs" />
+    <Compile Include="Models\AdministratorStatisticsController.cs" />
+    <Compile Include="Models\CategoryManagementController.cs" />
+    <Compile Include="Models\CitizenManagementController.cs" />
     <Compile Include="Models\LoginController.cs" />
+    <Compile Include="Models\TechnicianManagementController.cs" />
     <Compile Include="Scripts\Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -301,6 +338,27 @@
     <Content Include="Views\Requests\Index.cshtml" />
     <Content Include="Views\Requests\Track.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\Administrators\Create.cshtml" />
+    <Content Include="Views\Administrators\Delete.cshtml" />
+    <Content Include="Views\Administrators\Details.cshtml" />
+    <Content Include="Views\Administrators\Edit.cshtml" />
+    <Content Include="Views\Administrators\Index.cshtml" />
+    <Content Include="Views\Administrators\Login.cshtml" />
+    <Content Include="Views\AdministratorDashboard\Index.cshtml" />
+    <Content Include="Views\AdministratorRequests\Index.cshtml" />
+    <Content Include="Views\AdministratorRequests\Details.cshtml" />
+    <Content Include="Views\CitizenManagement\Index.cshtml" />
+    <Content Include="Views\CitizenManagement\Details.cshtml" />
+    <Content Include="Views\TechnicianManagement\Index.cshtml" />
+    <Content Include="Views\TechnicianManagement\Create.cshtml" />
+    <Content Include="Views\TechnicianManagement\Details.cshtml" />
+    <Content Include="Views\CategoryManagement\Index.cshtml" />
+    <Content Include="Views\CategoryManagement\Create.cshtml" />
+    <Content Include="Views\CategoryManagement\Edit.cshtml" />
+    <Content Include="Views\CategoryManagement\Details.cshtml" />
+    <Content Include="Views\AdministratorReports\Index.cshtml" />
+    <Content Include="Views\AdministratorStatistics\Index.cshtml" />
+    <Content Include="Views\AdministratorForgotPassword\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -363,6 +421,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202608181318204_UpdateRequestGPS14.resx">
       <DependentUpon>202608181318204_UpdateRequestGPS14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608201333519_UpdateRequestGPS15.resx">
+      <DependentUpon>202608201333519_UpdateRequestGPS15.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608201357574_UpdateRequestGPS16.resx">
+      <DependentUpon>202608201357574_UpdateRequestGPS16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608211833247_UpdateRequestGPS17.resx">
+      <DependentUpon>202608211833247_UpdateRequestGPS17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608211922586_UpdateRequestGPS18.resx">
+      <DependentUpon>202608211922586_UpdateRequestGPS18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608212144594_UpdateRequestGPS19.resx">
+      <DependentUpon>202608212144594_UpdateRequestGPS19.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608212345262_AddAdministratorFields.resx">
+      <DependentUpon>202608212345262_AddAdministratorFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202608221730105_AddTechnicianFields.resx">
+      <DependentUpon>202608221730105_AddTechnicianFields.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>

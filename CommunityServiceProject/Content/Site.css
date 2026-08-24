@@ -181,15 +181,20 @@ a {
 .dashboard-container {
     max-width: 420px;
     margin: 40px auto;
-    background: white;
+    background: #FFFFFF;
     border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
     overflow: hidden;
 }
 
+
+/* ===========================================================
+   HEADER
+   =========================================================== */
+
 .dashboard-header {
     background: #0D5CC1;
-    color: white;
+    color: #FFFFFF;
     padding: 20px;
 }
 
@@ -198,39 +203,59 @@ a {
         font-size: 24px;
     }
 
+
+/* ===========================================================
+   DASHBOARD MENU
+   =========================================================== */
+
 .dashboard-menu {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
 }
+
+
+/* ===========================================================
+   DASHBOARD BUTTONS
+   =========================================================== */
 
 .dashboard-button {
     display: flex;
     align-items: center;
-    gap: 15px;
-    width: 100%;
+    justify-content: center;
+    width: 300px;
+    max-width: 100%;
     box-sizing: border-box;
-    padding: 12px 18px;
+    padding: 11px 18px;
     border: 2px solid #0D5CC1;
     border-radius: 8px;
-    background: white;
+    background: #FFFFFF;
     color: #0D5CC1;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
     text-decoration: none;
+    text-align: center;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
     .dashboard-button:hover {
         background: #0D5CC1;
-        color: white;
+        color: #FFFFFF;
         text-decoration: none;
+        transform: translateY(-1px);
     }
 
     .dashboard-button.active {
         background: #0D5CC1;
-        color: white;
+        color: #FFFFFF;
     }
+
+
+    /* ===========================================================
+   LOGOUT
+   =========================================================== */
 
     .dashboard-button.logout {
         color: #D32F2F;
@@ -239,22 +264,126 @@ a {
 
         .dashboard-button.logout:hover {
             background: #D32F2F;
-            color: white;
+            color: #FFFFFF;
         }
 
+
+/* ===========================================================
+   NOTIFICATIONS
+   =========================================================== */
+
 .notifications {
-    padding: 0 20px 20px 20px;
+    margin: 0 20px 20px 20px;
+    padding: 20px;
+    background: #FFFFFF;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+
+    /* ---------- Notifications Heading ---------- */
+
     .notifications h3 {
+        margin: 0 0 15px 0;
         color: #0D5CC1;
         font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #D9E1EA;
     }
 
-    .notifications p {
-        margin: 12px 0;
-        font-size: 16px;
+
+/* ===========================================================
+   INDIVIDUAL NOTIFICATION
+   =========================================================== */
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: #F5F8FC;
+    border-left: 4px solid #0D5CC1;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+    .notification-item:hover {
+        background: #EAF1FA;
     }
+
+
+/* ---------- Notification Icon ---------- */
+
+.notification-icon {
+    flex-shrink: 0;
+    font-size: 17px;
+    line-height: 1.4;
+}
+
+
+/* ---------- Notification Message ---------- */
+
+.notification-message {
+    color: #444444;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* ---------- Last Notification ---------- */
+
+.notification-item:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ===========================================================
+   NO NOTIFICATIONS
+   =========================================================== */
+
+.notifications > p {
+    margin: 0;
+    color: #666666;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+
+/* ===========================================================
+   RESPONSIVE DESIGN
+   =========================================================== */
+
+@media (max-width: 500px) {
+
+    .dashboard-container {
+        margin: 20px 10px;
+    }
+
+
+    .dashboard-button {
+        width: 100%;
+    }
+
+
+    .notifications {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+
+    .notification-item {
+        padding: 10px;
+    }
+
+
+    .notification-message {
+        font-size: 14px;
+    }
+}
+
 /* ===========================================================
    LOGIN & REGISTER PAGES
    =========================================================== */
@@ -399,217 +528,421 @@ a {
     display: block;
     margin-top: 4px;
 }
-/* ===========================================================
-   SUBMIT MAINTENANCE REQUEST
-   =========================================================== */
+/* =========================================================
+   SUBMIT MAINTENANCE REQUEST PAGE
+   ========================================================= */
 
 .request-page {
     min-height: calc(100vh - 120px);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 35px 20px 50px 20px;
+    padding: 40px 20px 60px;
+    background: #f5f7fa;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 
-/* ---------- Request Card ---------- */
+/* =========================================================
+   REQUEST CARD
+   ========================================================= */
 
 .request-card {
     width: 100%;
-    max-width: 520px;
-    background: white;
-    border: 1px solid #D9E1EA;
-    border-radius: 12px;
-    padding: 28px 32px;
-    box-sizing: border-box;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.12);
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 35px 45px 40px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e1e6ec;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
 
-/* ---------- Request Title ---------- */
+/* =========================================================
+   PAGE TITLE
+   ========================================================= */
 
 .request-title {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    color: #0D5CC1;
-    margin-bottom: 28px;
+    gap: 12px;
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e9edf2;
 }
 
     .request-title h2 {
         margin: 0;
-        font-size: 23px;
-        font-weight: bold;
+        color: #0D5CC1;
+        font-size: 26px;
+        font-weight: 700;
+        text-align: center;
     }
 
 .request-icon {
-    font-size: 30px;
+    width: 12px;
+    height: 12px;
+    background: #0D5CC1;
+    border-radius: 50%;
 }
 
 
-/* ---------- Form Groups ---------- */
+/* =========================================================
+   FORM GROUPS
+   ========================================================= */
 
 .request-form-group {
-    margin-bottom: 17px;
+    margin-bottom: 25px;
 }
-
-
-    /* ---------- Labels ---------- */
 
     .request-form-group label {
         display: block;
-        color: #333;
-        font-size: 14px;
+        margin-bottom: 8px;
+        color: #333333;
+        font-size: 16px;
         font-weight: 600;
-        margin-bottom: 6px;
     }
 
 
-/* ---------- Inputs ---------- */
+/* =========================================================
+   TEXT INPUTS
+   ========================================================= */
 
 .request-input {
     width: 100%;
-    height: 38px;
-    padding: 7px 10px;
-    box-sizing: border-box;
-    border: 1px solid #AEB8C4;
-    border-radius: 3px;
-    font-size: 14px;
-    background: white;
+    min-height: 48px;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #cfd6df;
+    border-radius: 8px;
+    color: #333333;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+    .request-input:focus {
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.12);
+    }
 
-/* ---------- Textarea ---------- */
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
 
 .request-textarea {
     width: 100%;
-    min-height: 82px;
-    padding: 8px 10px;
-    box-sizing: border-box;
-    border: 1px solid #AEB8C4;
-    border-radius: 3px;
-    font-size: 14px;
-    resize: vertical;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #cfd6df;
+    border-radius: 8px;
+    color: #333333;
     font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-
-    /* ---------- Input Focus ---------- */
-
-    .request-input:focus,
     .request-textarea:focus {
-        outline: none;
         border-color: #0D5CC1;
-        box-shadow: 0 0 3px rgba(13, 92, 193, 0.3);
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.12);
     }
 
 
-/* ---------- Category Examples ---------- */
+/* =========================================================
+   CATEGORY EXAMPLES
+   ========================================================= */
 
 .category-examples {
-    margin-top: 7px;
-    color: #444;
-    font-size: 13px;
+    margin-top: 10px;
+    padding: 12px 15px;
+    background: #f5f8fc;
+    border-left: 4px solid #0D5CC1;
+    border-radius: 6px;
+    color: #555555;
+    font-size: 14px;
 }
 
     .category-examples strong {
-        font-weight: 600;
+        color: #333333;
     }
 
     .category-examples ul {
-        margin-top: 4px;
-        margin-bottom: 0;
-        padding-left: 25px;
+        margin: 6px 0 0;
+        padding-left: 20px;
     }
 
     .category-examples li {
-        margin-bottom: 2px;
+        margin-bottom: 3px;
     }
 
 
-/* ---------- GPS ---------- */
+/* =========================================================
+   PROBLEM LOCATION SECTION
+   ========================================================= */
 
-.request-gps {
+.request-location-section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #dfe5ec;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   LOCATION HEADING
+   ========================================================= */
+
+.request-location-heading {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #F5F8FC;
-    border: 1px solid #D9E1EA;
-    border-radius: 6px;
-    padding: 9px 12px;
-    margin-bottom: 17px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
-.gps-icon {
-    font-size: 20px;
+    .request-location-heading .gps-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        background: #eaf2ff;
+        border-radius: 50%;
+        font-size: 21px;
+    }
+
+    .request-location-heading strong {
+        display: block;
+        color: #333333;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .request-location-heading p {
+        margin: 3px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+
+/* =========================================================
+   LEAFLET MAP
+   ========================================================= */
+
+#problemMap {
+    width: 100%;
+    height: 380px;
+    margin-bottom: 16px;
+    border: 1px solid #cfd6df;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.request-gps strong {
+
+/* =========================================================
+   LEAFLET MAP CONTROLS
+   ========================================================= */
+
+.leaflet-control-zoom a {
+    color: #333333 !important;
+}
+
+    .leaflet-control-zoom a:hover {
+        color: #0D5CC1 !important;
+    }
+
+
+/* =========================================================
+   CURRENT LOCATION BUTTON
+   ========================================================= */
+
+.location-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 18px;
+    background: #0D5CC1;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+    .location-button:hover {
+        background: #08479A;
+        color: #ffffff;
+    }
+
+    .location-button:active {
+        background: #063A7D;
+        transform: translateY(1px);
+    }
+
+    .location-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.15);
+    }
+
+
+/* =========================================================
+   SELECTED LOCATION INFORMATION
+   ========================================================= */
+
+.selected-location {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: #f5f8fc;
+    border: 1px solid #d9e3f0;
+    border-radius: 8px;
+}
+
+    .selected-location strong {
+        display: block;
+        margin-bottom: 8px;
+        color: #333333;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .selected-location p {
+        margin: 5px 0;
+        color: #555555;
+        font-size: 14px;
+    }
+
+#locationStatus {
     color: #0D5CC1;
-    font-size: 14px;
+    font-weight: 600;
 }
 
-.request-gps p {
-    margin: 2px 0 0 0;
-    color: #555;
-    font-size: 12px;
+#latitudeDisplay,
+#longitudeDisplay {
+    color: #0D5CC1;
+    font-family: Consolas, "Courier New", monospace;
+    font-weight: 600;
 }
 
 
-/* ---------- File Upload ---------- */
+/* =========================================================
+   FILE UPLOAD
+   ========================================================= */
 
 .request-file {
+    display: block;
     width: 100%;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #cfd6df;
+    border-radius: 8px;
+    color: #555555;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+    .request-file:hover {
+        border-color: #0D5CC1;
+    }
+
+
+/* =========================================================
+   VALIDATION
+   ========================================================= */
+
+.request-form-group .text-danger,
+.request-card > .text-danger {
+    display: block;
+    margin-top: 6px;
+    color: #dc3545;
     font-size: 13px;
-    box-sizing: border-box;
+}
+
+.field-validation-error {
+    color: #dc3545;
+}
+
+.input-validation-error {
+    border-color: #dc3545 !important;
 }
 
 
-/* ---------- Submit Button ---------- */
+/* =========================================================
+   SUBMIT BUTTON
+   ========================================================= */
 
 .request-submit-button {
-    display: block;
-    width: 200px;
-    height: 42px;
-    margin: 8px auto 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 220px;
+    height: 50px;
+    margin: 30px auto 0;
     background: #0D5CC1;
-    color: white;
+    color: #ffffff;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 8px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 700;
     cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
     .request-submit-button:hover {
         background: #08479A;
+        color: #ffffff;
+    }
+
+    .request-submit-button:active {
+        background: #063A7D;
+        transform: translateY(1px);
+    }
+
+    .request-submit-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.15);
     }
 
 
-/* ---------- Validation ---------- */
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
 
-.request-card .text-danger {
-    display: block;
-    margin-top: 4px;
-    font-size: 12px;
-}
-
-
-/* ---------- Mobile ---------- */
-
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 
     .request-page {
-        padding: 20px 12px 40px 12px;
+        padding: 25px 12px 40px;
     }
 
     .request-card {
-        padding: 24px 20px;
+        padding: 25px 20px 30px;
     }
 
     .request-title h2 {
-        font-size: 19px;
+        font-size: 21px;
+    }
+
+    .request-location-section {
+        padding: 15px;
+    }
+
+    #problemMap {
+        height: 320px;
+    }
+
+    .location-button {
+        width: 100%;
     }
 
     .request-submit-button {
@@ -617,52 +950,37 @@ a {
     }
 }
 
-/* =========================================
-   REQUEST DETAILS HEADER
-   ========================================= */
 
-.request-details-header {
-    background: #0D5CC1;
-    color: #FFFFFF;
-    padding: 25px 32px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
+@media (max-width: 480px) {
 
+    .request-page {
+        padding: 15px 8px 30px;
+    }
 
-.request-details-icon {
-    font-size: 36px;
-    background: rgba(255, 255, 255, 0.15);
-    width: 58px;
-    height: 58px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
+    .request-card {
+        padding: 20px 15px 25px;
+        border-radius: 10px;
+    }
 
+    .request-title {
+        margin-bottom: 25px;
+    }
 
-/* Main heading */
+        .request-title h2 {
+            font-size: 18px;
+        }
 
-.request-details-header h2 {
-    margin: 0;
-    color: #FFFFFF !important;
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: 0.6px;
-}
+    .request-location-heading strong {
+        font-size: 16px;
+    }
 
+    .request-location-heading p {
+        font-size: 13px;
+    }
 
-/* Supporting text */
-
-.request-details-header p {
-    margin: 6px 0 0;
-    color: #FFFFFF !important;
-    font-size: 15px;
-    font-weight: 500;
-    opacity: 0.95;
+    #problemMap {
+        height: 280px;
+    }
 }
 
 /* ===========================================================
@@ -1535,6 +1853,7 @@ a {
     padding: 0 20px;
 }
 
+
 /* ---------- Header ---------- */
 
 .track-header {
@@ -1805,6 +2124,28 @@ a {
     }
 
 
+/* ---------- Photo ---------- */
+
+.track-photo-container {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.track-request-photo {
+    display: block;
+    width: auto;
+    max-width: 550px;
+    max-height:400px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #D9E1EA;
+}
+
+
 /* ---------- Buttons ---------- */
 
 .track-actions {
@@ -1895,7 +2236,15 @@ a {
     .track-details-button {
         width: 100%;
     }
+
+    /* Smaller photo on mobile */
+
+    .track-request-photo {
+        max-width: 300px;
+        max-height: 220px;
+    }
 }
+
 
 /* ---------- Track Link ---------- */
 
@@ -1917,7 +2266,6 @@ a {
     color: #AEB8C4;
     margin: 0 7px;
 }
-
 /* =========================================================
    CANCEL REQUEST PAGE
    ========================================================= */
@@ -2592,3 +2940,2013 @@ a {
         color: #FFFFFF !important;
         margin-right: 4px;
     }
+/* =========================================================
+   MY REQUESTS - DASHBOARD NAVIGATION
+   ========================================================= */
+
+.my-requests-navigation {
+    width: 100%;
+    margin: 0 auto 25px;
+}
+
+.back-dashboard-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: #0D5CC1;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+    .back-dashboard-button:hover {
+        background: #08479A;
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+
+    .back-dashboard-button:focus {
+        color: #FFFFFF;
+        text-decoration: none;
+        outline: none;
+    }
+
+    .back-dashboard-button .glyphicon {
+        font-size: 14px;
+    }
+.login-error {
+    background-color: #FDECEC;
+    color: #D32F2F;
+    border: 1px solid #F5B5B5;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 18px;
+    text-align: center;
+    font-size: 14px;
+}
+/* =========================================================
+   ADMINISTRATOR REQUEST MANAGEMENT
+   ========================================================= */
+
+.admin-request-page {
+    padding: 40px 20px;
+}
+
+.admin-request-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-request-header {
+    background: #0D5CC1;
+    color: white;
+    padding: 25px 30px;
+}
+
+    .admin-request-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-request-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-request-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-request-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .admin-request-table th {
+        background: #F5F8FC;
+        color: #333;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        border-bottom: 2px solid #D9E1EA;
+    }
+
+    .admin-request-table td {
+        padding: 14px;
+        border-bottom: 1px solid #D9E1EA;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .admin-request-table tbody tr:hover {
+        background: #F8FAFD;
+    }
+
+.admin-view-button {
+    display: inline-block;
+    background: #0D5CC1;
+    color: white;
+    padding: 7px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .admin-view-button:hover {
+        background: #08479A;
+        color: white;
+        text-decoration: none;
+    }
+
+.admin-no-requests {
+    padding: 35px;
+    text-align: center;
+    color: #555;
+}
+
+.admin-request-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #D9E1EA;
+}
+
+.admin-back-button {
+    display: inline-block;
+    background: white;
+    color: #0D5CC1;
+    border: 2px solid #0D5CC1;
+    border-radius: 7px;
+    padding: 9px 18px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .admin-back-button:hover {
+        background: #0D5CC1;
+        color: white;
+        text-decoration: none;
+    }
+/* =========================================================
+   ADMINISTRATOR REQUEST REVIEW
+   ========================================================= */
+
+.admin-review-page {
+    padding: 40px 20px;
+}
+
+.admin-review-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-review-header {
+    background: #0D5CC1;
+    color: white;
+    padding: 25px 30px;
+}
+
+    .admin-review-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-review-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-review-content {
+    padding: 30px;
+}
+
+.admin-review-section {
+    margin-bottom: 30px;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .admin-review-section h3 {
+        margin: 0;
+        padding: 14px 18px;
+        background: #F5F8FC;
+        color: #0D5CC1;
+        font-size: 18px;
+        border-bottom: 1px solid #D9E1EA;
+    }
+
+.admin-review-row {
+    display: flex;
+    gap: 20px;
+    padding: 13px 18px;
+    border-bottom: 1px solid #D9E1EA;
+}
+
+    .admin-review-row:last-child {
+        border-bottom: none;
+    }
+
+.admin-review-label {
+    width: 150px;
+    min-width: 150px;
+    font-weight: 600;
+    color: #333;
+}
+
+.admin-status {
+    font-weight: 600;
+}
+
+.admin-request-image {
+    display: block;
+    max-width: 100%;
+    max-height: 400px;
+    margin: 20px auto;
+    border-radius: 8px;
+    border: 1px solid #D9E1EA;
+}
+
+.admin-review-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.admin-action-form {
+    margin: 0;
+}
+
+.admin-approve-button,
+.admin-reject-button {
+    border: none;
+    border-radius: 7px;
+    padding: 11px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-approve-button {
+    background: #0D5CC1;
+    color: white;
+}
+
+    .admin-approve-button:hover {
+        background: #08479A;
+    }
+
+.admin-reject-button {
+    background: white;
+    color: #D32F2F;
+    border: 2px solid #D32F2F;
+}
+
+    .admin-reject-button:hover {
+        background: #D32F2F;
+        color: white;
+    }
+
+.admin-review-footer {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #D9E1EA;
+    text-align: center;
+}
+.admin-review-footer {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #D9E1EA;
+    text-align: center;
+}
+
+.admin-back-button {
+    display: inline-block;
+    background: white;
+    color: #0D5CC1;
+    border: 2px solid #0D5CC1;
+    border-radius: 7px;
+    padding: 9px 18px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .admin-back-button:hover {
+        background: #0D5CC1;
+        color: white;
+        text-decoration: none;
+    }
+/* =========================================================
+   ADMINISTRATOR CITIZEN MANAGEMENT
+   ========================================================= */
+
+.admin-citizen-page {
+    padding: 40px 20px;
+}
+
+.admin-citizen-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-citizen-header {
+    background: #0D5CC1;
+    color: white;
+    padding: 25px 30px;
+}
+
+    .admin-citizen-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-citizen-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-citizen-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-citizen-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .admin-citizen-table th {
+        background: #F5F8FC;
+        color: #333;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        border-bottom: 2px solid #D9E1EA;
+    }
+
+    .admin-citizen-table td {
+        padding: 14px;
+        border-bottom: 1px solid #D9E1EA;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .admin-citizen-table tbody tr:hover {
+        background: #F8FAFD;
+    }
+
+.admin-no-citizens {
+    padding: 35px;
+    text-align: center;
+    color: #555;
+}
+
+.admin-citizen-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #D9E1EA;
+}
+/* =========================================================
+   ADMINISTRATOR CITIZEN DETAILS / MANAGEMENT
+   ========================================================= */
+
+.admin-citizen-details-page {
+    padding: 40px 20px;
+}
+
+.admin-citizen-details-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-citizen-details-header {
+    background: #0D5CC1;
+    color: white;
+    padding: 25px 30px;
+}
+
+    .admin-citizen-details-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-citizen-details-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-citizen-details-content {
+    padding: 30px;
+}
+
+.admin-citizen-details-section,
+.admin-citizen-management-section {
+    margin-bottom: 30px;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .admin-citizen-details-section h3,
+    .admin-citizen-management-section h3 {
+        margin: 0;
+        padding: 14px 18px;
+        background: #F5F8FC;
+        color: #0D5CC1;
+        font-size: 18px;
+        border-bottom: 1px solid #D9E1EA;
+    }
+
+.admin-citizen-details-row {
+    display: flex;
+    gap: 20px;
+    padding: 13px 18px;
+    border-bottom: 1px solid #D9E1EA;
+}
+
+    .admin-citizen-details-row:last-child {
+        border-bottom: none;
+    }
+
+.admin-citizen-details-label {
+    width: 160px;
+    min-width: 160px;
+    font-weight: 600;
+    color: #333;
+}
+
+.admin-citizen-status {
+    font-weight: 600;
+}
+
+.admin-citizen-management-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 25px;
+    flex-wrap: wrap;
+}
+
+.admin-citizen-action-button,
+.admin-citizen-deactivate-button {
+    border-radius: 7px;
+    padding: 11px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-citizen-action-button {
+    background: #0D5CC1;
+    color: white;
+    border: none;
+}
+
+    .admin-citizen-action-button:hover {
+        background: #08479A;
+    }
+
+.admin-citizen-deactivate-button {
+    background: white;
+    color: #D32F2F;
+    border: 2px solid #D32F2F;
+}
+
+    .admin-citizen-deactivate-button:hover {
+        background: #D32F2F;
+        color: white;
+    }
+
+.admin-citizen-details-footer {
+    padding-top: 20px;
+    border-top: 1px solid #D9E1EA;
+    text-align: center;
+}
+.admin-citizen-action-form {
+    margin: 0;
+}
+/* =========================================================
+   ADMINISTRATOR TECHNICIAN MANAGEMENT
+   ========================================================= */
+
+.admin-technician-page {
+    padding: 40px 20px;
+}
+
+.admin-technician-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-technician-header {
+    background: #0D5CC1;
+    color: white;
+    padding: 25px 30px;
+}
+
+    .admin-technician-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-technician-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-technician-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-technician-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .admin-technician-table th {
+        background: #F5F8FC;
+        color: #333;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        border-bottom: 2px solid #D9E1EA;
+    }
+
+    .admin-technician-table td {
+        padding: 14px;
+        border-bottom: 1px solid #D9E1EA;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .admin-technician-table tbody tr:hover {
+        background: #F8FAFD;
+    }
+
+.admin-no-technicians {
+    padding: 35px;
+    text-align: center;
+    color: #555;
+}
+
+.admin-technician-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #D9E1EA;
+}
+/* =========================================================
+   ADMINISTRATOR ADD TECHNICIAN
+   ========================================================= */
+
+.admin-technician-create-page {
+    padding: 40px 20px;
+}
+
+.admin-technician-create-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-technician-create-header {
+    background: #0D5CC1;
+    color: white;
+    padding: 25px 30px;
+}
+
+    .admin-technician-create-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-technician-create-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-technician-create-content {
+    padding: 30px;
+}
+
+.admin-technician-form-group {
+    margin-bottom: 20px;
+}
+
+    .admin-technician-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+        color: #333;
+    }
+
+.admin-technician-input {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #D9E1EA;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+    .admin-technician-input:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.12);
+    }
+
+.admin-validation-message {
+    display: block;
+    margin-top: 5px;
+    color: #C62828;
+    font-size: 13px;
+}
+
+.admin-validation-summary {
+    margin-bottom: 20px;
+    color: #C62828;
+}
+
+.admin-technician-password-help {
+    display: block;
+    margin-top: 6px;
+    color: #666;
+    font-size: 13px;
+}
+
+.admin-technician-create-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.admin-technician-save-button,
+.admin-technician-cancel-button {
+    display: inline-block;
+    padding: 11px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-technician-save-button {
+    border: none;
+    background: #0D5CC1;
+    color: white;
+}
+
+    .admin-technician-save-button:hover {
+        background: #08479A;
+    }
+
+.admin-technician-cancel-button {
+    background: #F5F8FC;
+    color: #333;
+    border: 1px solid #D9E1EA;
+}
+
+    .admin-technician-cancel-button:hover {
+        background: #E9EEF5;
+    }
+.admin-technician-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin-technician-add-button {
+    display: inline-block;
+    padding: 11px 20px;
+    background: white;
+    color: #0D5CC1;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+    .admin-technician-add-button:hover {
+        background: #F5F8FC;
+        color: #08479A;
+    }
+/* =========================================================
+   ADMINISTRATOR TECHNICIAN DETAILS / MANAGEMENT
+   ========================================================= */
+
+.admin-technician-details-page {
+    padding: 40px 20px;
+}
+
+.admin-technician-details-card {
+    max-width: 850px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-technician-details-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+}
+
+    .admin-technician-details-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-technician-details-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-technician-details-content {
+    padding: 30px;
+}
+
+.admin-technician-details-section h3,
+.admin-technician-management-section h3 {
+    margin: 0 0 20px 0;
+    color: #222;
+    font-size: 20px;
+}
+
+.admin-technician-details-section {
+    margin-bottom: 35px;
+}
+
+.admin-technician-details-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    padding: 15px 0;
+    border-bottom: 1px solid #D9E1EA;
+    color: #444;
+}
+
+.admin-technician-details-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.admin-technician-status {
+    font-weight: 600;
+    color: #0D5CC1;
+}
+
+.admin-technician-management-section {
+    padding-top: 25px;
+    border-top: 1px solid #D9E1EA;
+}
+
+.admin-technician-management-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-technician-action-form {
+    margin: 0;
+}
+
+.admin-technician-action-button,
+.admin-technician-deactivate-button {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 6px;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-technician-action-button {
+    background: #0D5CC1;
+    color: #FFFFFF;
+}
+
+    .admin-technician-action-button:hover {
+        background: #08479A;
+    }
+
+.admin-technician-deactivate-button {
+    background: #F5F8FC;
+    color: #333;
+    border: 1px solid #D9E1EA;
+}
+
+    .admin-technician-deactivate-button:hover {
+        background: #E9EEF5;
+    }
+
+.admin-technician-details-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #D9E1EA;
+}
+
+@media (max-width: 700px) {
+
+    .admin-technician-details-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .admin-technician-management-actions {
+        flex-direction: column;
+    }
+
+    .admin-technician-action-form {
+        width: 100%;
+    }
+
+    .admin-technician-action-button,
+    .admin-technician-deactivate-button {
+        width: 100%;
+    }
+}
+
+
+
+/* =========================================================
+   ADMINISTRATOR REPORTS
+   ========================================================= */
+
+.admin-reports-page {
+    padding: 40px 20px;
+}
+
+.admin-reports-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   REPORT HEADER
+   ========================================================= */
+
+.admin-reports-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+}
+
+    .admin-reports-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-reports-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+
+/* =========================================================
+   REPORT CONTENT
+   ========================================================= */
+
+.admin-reports-content {
+    width: 100%;
+}
+
+
+/* =========================================================
+   FILTER SECTION
+   ========================================================= */
+
+.admin-report-filter-section {
+    padding: 25px 30px;
+    border-bottom: 1px solid #D9E1EA;
+}
+
+    .admin-report-filter-section h3 {
+        margin: 0 0 20px 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+.admin-report-filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.admin-report-filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+    .admin-report-filter-group label {
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+
+/* =========================================================
+   FILTER INPUTS
+   ========================================================= */
+
+.admin-report-select,
+.admin-report-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid #C8D1DC;
+    border-radius: 6px;
+    background: #FFFFFF;
+    color: #333;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+    .admin-report-select:focus,
+    .admin-report-input:focus {
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.12);
+    }
+
+
+/* =========================================================
+   GENERATE BUTTON
+   ========================================================= */
+
+.admin-report-actions {
+    margin-top: 20px;
+}
+
+.admin-report-generate-button {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 6px;
+    background: #0D5CC1;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-report-generate-button:hover {
+        background: #08479A;
+        transform: translateY(-1px);
+    }
+
+    .admin-report-generate-button:active {
+        background: #063A7D;
+        transform: translateY(0);
+    }
+
+
+/* =========================================================
+   RESULTS SECTION
+   ========================================================= */
+
+.admin-report-results-section {
+    padding: 25px 30px;
+}
+
+.admin-report-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .admin-report-results-header h3 {
+        margin: 0 0 5px 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .admin-report-results-header p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+
+/* =========================================================
+   REPORT TABLE
+   ========================================================= */
+
+.admin-report-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .admin-report-table th {
+        background: #F5F8FC;
+        color: #333;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        border-bottom: 2px solid #D9E1EA;
+        white-space: nowrap;
+    }
+
+    .admin-report-table td {
+        padding: 14px;
+        border-bottom: 1px solid #D9E1EA;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .admin-report-table tbody tr:hover {
+        background: #F8FAFD;
+    }
+
+
+/* =========================================================
+   NO RESULTS
+   ========================================================= */
+
+.admin-report-no-results {
+    padding: 35px;
+    text-align: center;
+    background: #F8FAFD;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    color: #555;
+}
+
+    .admin-report-no-results p {
+        margin: 0;
+    }
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.admin-reports-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #D9E1EA;
+}
+
+.admin-back-button {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #F5F8FC;
+    color: #333;
+    border: 1px solid #D9E1EA;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-back-button:hover {
+        background: #E9EFF7;
+        border-color: #C4CFDC;
+        color: #222;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .admin-report-filters {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .admin-reports-page {
+        padding: 20px 10px;
+    }
+
+    .admin-reports-header {
+        padding: 20px;
+    }
+
+        .admin-reports-header h2 {
+            font-size: 22px;
+        }
+
+    .admin-report-filter-section,
+    .admin-report-results-section {
+        padding: 20px;
+    }
+
+    .admin-report-filters {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .admin-reports-footer {
+        padding: 20px;
+    }
+
+    .admin-report-table th,
+    .admin-report-table td {
+        padding: 10px;
+    }
+}
+/* =========================================================
+   ADMINISTRATOR STATISTICS
+   ========================================================= */
+
+.admin-statistics-page {
+    padding: 40px 20px;
+}
+
+.admin-statistics-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   STATISTICS HEADER
+   ========================================================= */
+
+.admin-statistics-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+}
+
+    .admin-statistics-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-statistics-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+
+/* =========================================================
+   STATISTICS CONTENT
+   ========================================================= */
+
+.admin-statistics-content {
+    width: 100%;
+}
+
+
+/* =========================================================
+   STATISTICS SECTION
+   ========================================================= */
+
+.admin-statistics-section {
+    padding: 25px 30px;
+    border-bottom: 1px solid #D9E1EA;
+}
+
+    .admin-statistics-section h3 {
+        margin: 0 0 20px 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+
+/* =========================================================
+   REQUEST SUMMARY CARDS
+   ========================================================= */
+
+.admin-statistics-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.admin-statistics-summary-card {
+    padding: 20px;
+    background: #F5F8FC;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 90px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .admin-statistics-summary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+
+/* =========================================================
+   SUMMARY TEXT
+   ========================================================= */
+
+.admin-statistics-summary-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.admin-statistics-summary-number {
+    display: block;
+    color: #0D5CC1;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   REQUESTS BY CATEGORY
+   ========================================================= */
+
+.admin-statistics-category-list {
+    width: 100%;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.admin-statistics-category-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 18px;
+    border-bottom: 1px solid #D9E1EA;
+    background: #FFFFFF;
+}
+
+    .admin-statistics-category-row:last-child {
+        border-bottom: none;
+    }
+
+    .admin-statistics-category-row:hover {
+        background: #F8FAFD;
+    }
+
+.admin-statistics-category-name {
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.admin-statistics-category-count {
+    min-width: 35px;
+    padding: 5px 10px;
+    background: #0D5CC1;
+    color: #FFFFFF;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CITIZEN OVERVIEW
+   ========================================================= */
+
+.admin-statistics-citizen-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.admin-statistics-citizen-card {
+    padding: 20px;
+    background: #F5F8FC;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    min-height: 90px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .admin-statistics-citizen-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.admin-statistics-footer {
+    padding: 20px 30px;
+}
+
+
+/* =========================================================
+   BACK TO DASHBOARD BUTTON
+   ========================================================= */
+
+.admin-back-button {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #F5F8FC;
+    color: #333;
+    border: 1px solid #D9E1EA;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-back-button:hover {
+        background: #E9EFF7;
+        border-color: #C4CFDC;
+        color: #222;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .admin-statistics-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-statistics-citizen-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .admin-statistics-page {
+        padding: 20px 10px;
+    }
+
+    .admin-statistics-header {
+        padding: 20px;
+    }
+
+        .admin-statistics-header h2 {
+            font-size: 22px;
+        }
+
+    .admin-statistics-section {
+        padding: 20px;
+    }
+
+    .admin-statistics-summary-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .admin-statistics-citizen-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .admin-statistics-footer {
+        padding: 20px;
+    }
+}
+/* =========================================================
+   ADMINISTRATOR CATEGORY MANAGEMENT
+   ========================================================= */
+
+.admin-category-page {
+    padding: 40px 20px;
+}
+
+.admin-category-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   CATEGORY MANAGEMENT HEADER
+   ========================================================= */
+
+.admin-category-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+}
+
+.admin-category-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin-category-header h2 {
+    margin: 0 0 5px 0;
+    font-size: 26px;
+}
+
+.admin-category-header p {
+    margin: 0;
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   ADD CATEGORY BUTTON
+   ========================================================= */
+
+.admin-category-add-button {
+    display: inline-block;
+    padding: 11px 20px;
+    background: #FFFFFF;
+    color: #0D5CC1;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-category-add-button:hover {
+        background: #F5F8FC;
+        color: #08479A;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   CATEGORY TABLE
+   ========================================================= */
+
+.admin-category-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-category-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .admin-category-table th {
+        background: #F5F8FC;
+        color: #333;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        border-bottom: 2px solid #D9E1EA;
+    }
+
+    .admin-category-table td {
+        padding: 14px;
+        border-bottom: 1px solid #D9E1EA;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .admin-category-table tbody tr:hover {
+        background: #F8FAFD;
+    }
+
+
+/* =========================================================
+   MANAGE BUTTON
+   ========================================================= */
+
+.admin-view-button {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #0D5CC1;
+    color: #FFFFFF;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-view-button:hover {
+        background: #08479A;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.admin-delete-button {
+    display: inline-block;
+    padding: 8px 14px;
+    margin-left: 6px;
+    border: none;
+    border-radius: 6px;
+    background: #DC3545;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-delete-button:hover {
+        background: #BB2D3B;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+    .admin-delete-button:active {
+        background: #A52834;
+        transform: translateY(0);
+    }
+
+
+/* =========================================================
+   NO CATEGORIES MESSAGE
+   ========================================================= */
+
+.admin-no-categories {
+    padding: 35px;
+    text-align: center;
+    color: #555;
+}
+
+
+/* =========================================================
+   CATEGORY FOOTER
+   ========================================================= */
+
+.admin-category-footer {
+    padding: 20px 30px;
+    border-top: 1px solid #D9E1EA;
+}
+
+
+/* =========================================================
+   ADMINISTRATOR ADD / EDIT CATEGORY
+   ========================================================= */
+
+.admin-category-create-page {
+    padding: 40px 20px;
+}
+
+.admin-category-create-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.admin-category-create-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+}
+
+    .admin-category-create-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-category-create-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.admin-category-create-content {
+    padding: 30px;
+}
+
+
+/* =========================================================
+   CATEGORY FORM
+   ========================================================= */
+
+.admin-category-form-group {
+    margin-bottom: 20px;
+}
+
+    .admin-category-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+        color: #333;
+    }
+
+.admin-category-input,
+.admin-category-textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #D9E1EA;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+.admin-category-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+    .admin-category-input:focus,
+    .admin-category-textarea:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.12);
+    }
+
+
+/* =========================================================
+   CREATE / EDIT ACTIONS
+   ========================================================= */
+
+.admin-category-create-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.admin-category-save-button {
+    display: inline-block;
+    padding: 11px 22px;
+    border: none;
+    border-radius: 6px;
+    background: #0D5CC1;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-category-save-button:hover {
+        background: #08479A;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+.admin-category-cancel-button {
+    display: inline-block;
+    padding: 11px 22px;
+    background: #F5F8FC;
+    color: #333;
+    border: 1px solid #D9E1EA;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-category-cancel-button:hover {
+        background: #E9EEF5;
+        color: #333;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   VALIDATION
+   ========================================================= */
+
+.admin-validation-summary {
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    background: #FFF3F3;
+    border: 1px solid #F1B0B7;
+    color: #842029;
+}
+
+.admin-validation-message {
+    display: block;
+    margin-top: 5px;
+    color: #DC3545;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   CATEGORY DETAILS
+   ========================================================= */
+
+.admin-category-details-page {
+    padding: 40px 20px;
+}
+
+.admin-category-details-card {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   DETAILS HEADER
+   ========================================================= */
+
+.admin-category-details-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+}
+
+    .admin-category-details-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 26px;
+    }
+
+    .admin-category-details-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+
+/* =========================================================
+   DETAILS CONTENT
+   ========================================================= */
+
+.admin-category-details-content {
+    padding: 30px;
+}
+
+
+/* =========================================================
+   DETAILS ROW
+   ========================================================= */
+
+.admin-category-detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid #D9E1EA;
+}
+
+    .admin-category-detail-row:first-child {
+        padding-top: 0;
+    }
+
+    .admin-category-detail-row:last-child {
+        border-bottom: none;
+    }
+
+
+/* =========================================================
+   DETAILS LABEL
+   ========================================================= */
+
+.admin-category-detail-label {
+    width: 180px;
+    min-width: 180px;
+    font-weight: 600;
+    color: #333;
+}
+
+
+/* =========================================================
+   DETAILS VALUE
+   ========================================================= */
+
+.admin-category-detail-value {
+    flex: 1;
+    color: #555;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   DETAILS ACTIONS
+   ========================================================= */
+
+.admin-category-details-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #D9E1EA;
+}
+
+
+/* =========================================================
+   DETAILS EDIT BUTTON
+   ========================================================= */
+
+.admin-category-edit-button {
+    display: inline-block;
+    padding: 11px 22px;
+    background: #0D5CC1;
+    color: #FFFFFF;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-category-edit-button:hover {
+        background: #08479A;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   DETAILS BACK BUTTON
+   ========================================================= */
+
+.admin-category-details-actions .admin-category-cancel-button {
+    display: inline-block;
+    padding: 11px 22px;
+    background: #F5F8FC;
+    color: #333;
+    border: 1px solid #D9E1EA;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .admin-category-details-actions .admin-category-cancel-button:hover {
+        background: #E9EEF5;
+        color: #333;
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   RESPONSIVE - CATEGORY MANAGEMENT
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .admin-category-page {
+        padding: 25px 15px;
+    }
+
+    .admin-category-header {
+        padding: 20px;
+    }
+
+    .admin-category-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-category-add-button {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .admin-category-table th,
+    .admin-category-table td {
+        padding: 11px;
+    }
+
+    .admin-view-button,
+    .admin-delete-button {
+        margin-bottom: 5px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - ADD / EDIT CATEGORY
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .admin-category-create-page {
+        padding: 25px 15px;
+    }
+
+    .admin-category-create-header {
+        padding: 20px;
+    }
+
+    .admin-category-create-content {
+        padding: 20px;
+    }
+
+    .admin-category-create-actions {
+        flex-direction: column;
+    }
+
+    .admin-category-save-button,
+    .admin-category-cancel-button {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - CATEGORY DETAILS
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .admin-category-details-page {
+        padding: 25px 15px;
+    }
+
+    .admin-category-details-header {
+        padding: 20px;
+    }
+
+    .admin-category-details-content {
+        padding: 20px;
+    }
+
+    .admin-category-detail-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .admin-category-detail-label {
+        width: auto;
+        min-width: 0;
+    }
+
+    .admin-category-details-actions {
+        flex-direction: column;
+    }
+
+        .admin-category-edit-button,
+        .admin-category-details-actions .admin-category-cancel-button {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+}

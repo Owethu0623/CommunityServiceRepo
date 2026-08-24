@@ -1,0 +1,189 @@
+﻿@model CommunityServiceProject.Models.Technician
+
+@{
+    ViewBag.Title = "Manage Technician";
+}
+
+<div class="admin-technician-details-page">
+
+    <div class="admin-technician-details-card">
+
+        <div class="admin-technician-details-header">
+
+            <h2>
+                Manage Technician
+            </h2>
+
+            <p>
+                View and manage this technician's account.
+            </p>
+
+        </div>
+
+
+        <div class="admin-technician-details-content">
+
+            <div class="admin-technician-details-section">
+
+                <h3>
+                    Technician Information
+                </h3>
+
+
+                <div class="admin-technician-details-row">
+
+                    <div class="admin-technician-details-label">
+                        Technician ID
+                    </div>
+
+                    <div>
+                        @Model.TechnicianID
+                    </div>
+
+                </div>
+
+
+                <div class="admin-technician-details-row">
+
+                    <div class="admin-technician-details-label">
+                        Full Name
+                    </div>
+
+                    <div>
+                        @Model.FirstName @Model.LastName
+                    </div>
+
+                </div>
+
+
+                <div class="admin-technician-details-row">
+
+                    <div class="admin-technician-details-label">
+                        Email Address
+                    </div>
+
+                    <div>
+                        @Model.EmailAddress
+                    </div>
+
+                </div>
+
+
+                <div class="admin-technician-details-row">
+
+                    <div class="admin-technician-details-label">
+                        Phone Number
+                    </div>
+
+                    <div>
+                        @Model.PhoneNumber
+                    </div>
+
+                </div>
+
+
+                <div class="admin-technician-details-row">
+
+                    <div class="admin-technician-details-label">
+                        Account Status
+                    </div>
+
+                    <div class="admin-technician-status">
+                        @Model.AccountStatus
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-technician-management-section">
+
+                <h3>
+                    Account Management
+                </h3>
+
+
+                <div class="admin-technician-management-actions">
+
+                    <form action="@Url.Action("Activate", "TechnicianManagement")"
+                          method="post"
+                          class="admin-technician-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.TechnicianID" />
+
+                        <button type="submit"
+                                class="admin-technician-action-button">
+
+                            Activate Account
+
+                        </button>
+
+                    </form>
+
+
+                    <form action="@Url.Action("Suspend", "TechnicianManagement")"
+                          method="post"
+                          class="admin-technician-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.TechnicianID" />
+
+                        <button type="submit"
+                                class="admin-technician-action-button">
+
+                            Suspend Account
+
+                        </button>
+
+                    </form>
+
+
+                    <form action="@Url.Action("Deactivate", "TechnicianManagement")"
+                          method="post"
+                          class="admin-technician-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.TechnicianID" />
+
+                        <button type="submit"
+                                class="admin-technician-deactivate-button">
+
+                            Deactivate Account
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-technician-details-footer">
+
+                <a href="@Url.Action("Index", "TechnicianManagement")"
+                   class="admin-back-button">
+
+                    Back to Technicians
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

@@ -1,0 +1,107 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+
+@{
+    ViewBag.Title = "Manage Requests";
+}
+
+<div class="admin-request-page">
+
+    <div class="admin-request-card">
+
+        <div class="admin-request-header">
+            <h2>Manage Maintenance Requests</h2>
+            <p>Review and manage submitted citizen requests.</p>
+        </div>
+
+
+        @if (!Model.Any())
+        {
+            <div class="admin-no-requests">
+                <p>No maintenance requests have been submitted.</p>
+            </div>
+        }
+        else
+        {
+            <div class="admin-request-table-wrapper">
+
+                <table class="admin-request-table">
+
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Title</th>
+                            <th>Citizen</th>
+                            <th>Category</th>
+                            <th>Date Submitted</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var request in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    #@request.RequestID
+                                </td>
+
+                                <td>
+                                    @request.Title
+                                </td>
+
+                                <td>
+                                    @request.Citizen.FirstName
+                                    @request.Citizen.LastName
+                                </td>
+
+                                <td>
+                                    @request.Category.CategoryName
+                                </td>
+
+                                <td>
+                                    @request.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @request.Status
+                                </td>
+
+                                <td>
+                                    <a href="@Url.Action(
+                                        "Details",
+                                        "AdministratorRequests",
+                                        new { id = request.RequestID }
+                                    )"
+                                       class="admin-view-button">
+                                        Review
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+        <div class="admin-request-footer">
+
+            <a href="@Url.Action(
+                "Index",
+                "AdministratorDashboard"
+            )"
+               class="admin-back-button">
+                Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

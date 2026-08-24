@@ -5,7 +5,7 @@
 }
 
 <div class="dashboard-header">
-    <h2>Welcome, @Model.FirstName</h2>
+    <h2>Welcome, @Session["CitizenName"]</h2>
 </div>
 
 
@@ -15,7 +15,7 @@
     <a href="@Url.Action("Index", "CitizenDashboard")"
        class="dashboard-button active">
 
-        
+
 
         <span>
             Dashboard
@@ -28,7 +28,7 @@
     <a href="@Url.Action("Create", "Requests")"
        class="dashboard-button">
 
-        
+
 
         <span>
             Submit New Request
@@ -41,7 +41,7 @@
     <a href="@Url.Action("Index", "Requests")"
        class="dashboard-button">
 
-        
+
 
         <span>
             View My Requests
@@ -54,7 +54,7 @@
     <a href="@Url.Action("Index", "Requests")"
        class="dashboard-button">
 
-        
+
 
         <span>
             Track Request Status
@@ -67,7 +67,7 @@
     <a href="@Url.Action("Logout", "Login")"
        class="dashboard-button logout">
 
-        
+
 
         <span>
             Logout
@@ -86,8 +86,29 @@
         Latest Notifications
     </h3>
 
-    <p>
-        Your requests and updates will appear here.
-    </p>
+    @if (ViewBag.Notifications != null &&
+         ViewBag.Notifications.Count > 0)
+    {
+        foreach (string notification in ViewBag.Notifications)
+        {
+            <div class="notification-item">
+
+                <span class="notification-icon">
+                    🔔
+                </span>
+
+                <span class="notification-message">
+                    @notification
+                </span>
+
+            </div>
+        }
+    }
+    else
+    {
+        <p>
+            You have no notifications at the moment.
+        </p>
+    }
 
 </div>

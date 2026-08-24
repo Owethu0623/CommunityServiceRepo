@@ -1,0 +1,170 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Review Request";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <div class="admin-review-header">
+            <h2>Review Maintenance Request</h2>
+            <p>Request #@Model.RequestID</p>
+        </div>
+
+
+        <div class="admin-review-content">
+
+            <div class="admin-review-section">
+
+                <h3>Request Information</h3>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Title</span>
+                    <span>@Model.Title</span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Category</span>
+                    <span>@Model.Category.CategoryName</span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Description</span>
+                    <span>@Model.Description</span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Location</span>
+                    <span>@Model.LocationDescription</span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Date Submitted</span>
+                    <span>@Model.DateSubmitted.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Current Status</span>
+                    <span class="admin-status">
+                        @Model.Status
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="admin-review-section">
+
+                <h3>Citizen Information</h3>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Name</span>
+                    <span>
+                        @Model.Citizen.FirstName
+                        @Model.Citizen.LastName
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Email</span>
+                    <span>@Model.Citizen.EmailAddress</span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">Phone</span>
+                    <span>@Model.Citizen.PhoneNumber</span>
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div class="admin-review-section">
+
+                    <h3>Uploaded Photo</h3>
+
+                    <img src="@Url.Content(Model.ImagePath)"
+                         class="admin-request-image"
+                         alt="Request photo" />
+
+                </div>
+            }
+
+
+            <div class="admin-review-actions">
+
+                @if (Model.Status == CommunityServiceProject.Models.RequestStatus.Pending)
+                {
+                    <form action="@Url.Action("StartReview", "AdministratorRequests")"
+                          method="post"
+                          class="admin-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.RequestID" />
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Start Review
+                        </button>
+
+                    </form>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.RequestStatus.UnderReview)
+                {
+                    <form action="@Url.Action("Approve", "AdministratorRequests")"
+                          method="post"
+                          class="admin-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.RequestID" />
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Approve Request
+                        </button>
+
+                    </form>
+
+
+                    <form action="@Url.Action("Reject", "AdministratorRequests")"
+                          method="post"
+                          class="admin-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.RequestID" />
+
+                        <button type="submit"
+                                class="admin-reject-button">
+                            Reject Request
+                        </button>
+
+                    </form>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="admin-review-footer">
+
+        <a href="@Url.Action("Index", "AdministratorRequests")"
+           class="admin-back-button">
+            Back to Requests
+        </a>
+
+    </div>
+</div>

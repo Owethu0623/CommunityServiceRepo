@@ -13,6 +13,7 @@
             <h2>SUBMIT MAINTENANCE REQUEST</h2>
         </div>
 
+
         @using (Html.BeginForm(
             "Create",
             "Requests",
@@ -31,7 +32,11 @@
                 new { @class = "text-danger" }
             )
 
-            <!-- Request Title -->
+
+            <!-- =====================================================
+                 REQUEST TITLE
+                 ===================================================== -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(model => model.Title)
@@ -51,7 +56,10 @@
             </div>
 
 
-            <!-- Category -->
+            <!-- =====================================================
+                 CATEGORY
+                 ===================================================== -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -70,6 +78,7 @@
                 )
 
                 <div class="category-examples">
+
                     <strong>Examples:</strong>
 
                     <ul>
@@ -77,7 +86,9 @@
                         <li>Water Leak</li>
                         <li>Broken Streetlight</li>
                         <li>Illegal Dumping</li>
+                        <li>Other (e.g. sewage pipe problems, dirty/standing water)</li>
                     </ul>
+
                 </div>
 
                 @Html.ValidationMessageFor(
@@ -89,17 +100,23 @@
             </div>
 
 
-            <!-- Description -->
+            <!-- =====================================================
+                 DESCRIPTION
+                 ===================================================== -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(model => model.Description)
 
-                @Html.TextAreaFor(model => model.Description, new
-                {
-                    @class = "request-textarea",
-                    rows = "4",
-                    placeholder = "Describe the problem"
-                })
+                @Html.TextAreaFor(
+                    model => model.Description,
+                    new
+                    {
+                        @class = "request-textarea",
+                        rows = "4",
+                        placeholder = "Describe the problem"
+                    }
+                )
 
                 @Html.ValidationMessageFor(
                     model => model.Description,
@@ -110,7 +127,10 @@
             </div>
 
 
-            <!-- Location Description -->
+            <!-- =====================================================
+                 LOCATION DESCRIPTION
+                 ===================================================== -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -135,32 +155,105 @@
             </div>
 
 
-            <!-- GPS Location -->
-            <div class="request-gps">
+            <!-- =====================================================
+                 PROBLEM LOCATION MAP
+                 ===================================================== -->
 
-                <div class="gps-icon">
-                    
+            <div class="request-location-section">
+
+                <div class="request-location-heading">
+
+                    <div class="gps-icon">
+                        📍
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Problem Location
+                        </strong>
+
+                        <p>
+                            Select the exact location of the problem on the map.
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <div>
-                    <strong>Current Location</strong>
+
+                <!-- MAP -->
+
+                <div id="problemMap"></div>
+
+
+                <!-- USE CURRENT LOCATION -->
+
+                <button type="button"
+                        id="useCurrentLocation"
+                        class="location-button">
+
+                    <span>📍</span>
+
+                    <span>
+                        Use My Current Location
+                    </span>
+
+                </button>
+
+
+                <!-- SELECTED LOCATION -->
+
+                <div class="selected-location">
+
+                    <strong>
+                        Selected Location
+                    </strong>
 
                     <p id="locationStatus">
-                        Detecting your location...
+                        Click on the map to select the problem location.
                     </p>
+
+                    <p>
+                        Latitude:
+                        <span id="latitudeDisplay">
+                            Not selected
+                        </span>
+                    </p>
+
+                    <p>
+                        Longitude:
+                        <span id="longitudeDisplay">
+                            Not selected
+                        </span>
+                    </p>
+
                 </div>
 
             </div>
 
-            @Html.HiddenFor(model => model.Latitude)
-            @Html.HiddenFor(model => model.Longitude)
+
+            <!-- =====================================================
+                 HIDDEN GPS VALUES
+                 ===================================================== -->
+
+            @Html.HiddenFor(
+                model => model.Latitude
+            )
+
+            @Html.HiddenFor(
+                model => model.Longitude
+            )
 
 
-            <!-- Upload Photo -->
+            <!-- =====================================================
+                 UPLOAD PHOTO
+                 ===================================================== -->
+
             <div class="request-form-group">
 
                 <label for="ImageFile">
-                    Upload Photo
+                    Upload Photo (Optional)
                 </label>
 
                 <input type="file"
@@ -172,14 +265,21 @@
             </div>
 
 
-            <!-- Submit -->
+            <!-- =====================================================
+                 SUBMIT
+                 ===================================================== -->
+
             <button type="submit"
                     class="request-submit-button">
 
                 <span>➤</span>
-                Submit
+
+                <span>
+                    Submit
+                </span>
 
             </button>
+
         }
 
     </div>
@@ -191,60 +291,310 @@
 
     @Scripts.Render("~/bundles/jqueryval")
 
+
+    <!-- =========================================================
+         LEAFLET CSS
+         ========================================================= -->
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
+    <!-- =========================================================
+         LEAFLET JAVASCRIPT
+         ========================================================= -->
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
     <script>
 
-        document.addEventListener("DOMContentLoaded", function () {
-
-            var status =
-                document.getElementById("locationStatus");
-
-            var latitude =
-                document.getElementById("Latitude");
-
-            var longitude =
-                document.getElementById("Longitude");
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
 
-            if (!navigator.geolocation) {
+                // =================================================
+                // FORM ELEMENTS
+                // =================================================
 
-                status.innerHTML =
-                    "Location services are not supported by this browser.";
+                var latitudeInput =
+                    document.getElementById("Latitude");
 
-                return;
-            }
+                var longitudeInput =
+                    document.getElementById("Longitude");
+
+                var latitudeDisplay =
+                    document.getElementById("latitudeDisplay");
+
+                var longitudeDisplay =
+                    document.getElementById("longitudeDisplay");
+
+                var locationStatus =
+                    document.getElementById("locationStatus");
 
 
-            navigator.geolocation.getCurrentPosition(
+                // =================================================
+                // CREATE MAP
+                // =================================================
 
-                function (position) {
+                var map =
+                    L.map("problemMap").setView(
+                        [-29.8587, 31.0218],
+                        12
+                    );
 
-                    latitude.value =
-                        position.coords.latitude;
 
-                    longitude.value =
-                        position.coords.longitude;
+                // =================================================
+                // OPENSTREETMAP
+                // =================================================
 
-                    status.innerHTML =
-                        "Location detected successfully.";
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        maxZoom: 19,
 
-                },
+                        attribution:
+                            "&copy; OpenStreetMap contributors"
+                    }
+                ).addTo(map);
 
-                function (error) {
 
-                    status.innerHTML =
-                        "Location not available. You can still submit your request.";
+                // =================================================
+                // MARKER
+                // =================================================
 
-                },
+                var marker = null;
 
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
+
+                // =================================================
+                // SELECT LOCATION
+                // =================================================
+
+                function selectLocation(
+                    latitude,
+                    longitude
+                ) {
+
+
+                    // ---------------------------------------------
+                    // Create marker if one doesn't exist
+                    // ---------------------------------------------
+
+                    if (marker === null) {
+
+                        marker =
+                            L.marker(
+                                [
+                                    latitude,
+                                    longitude
+                                ],
+                                {
+                                    draggable: true
+                                }
+                            ).addTo(map);
+
+
+                        // -----------------------------------------
+                        // Marker drag
+                        // -----------------------------------------
+
+                        marker.on(
+                            "dragend",
+                            function () {
+
+                                var position =
+                                    marker.getLatLng();
+
+                                selectLocation(
+                                    position.lat,
+                                    position.lng
+                                );
+
+                            }
+                        );
+
+                    }
+                    else {
+
+                        marker.setLatLng(
+                            [
+                                latitude,
+                                longitude
+                            ]
+                        );
+
+                    }
+
+
+                    // ---------------------------------------------
+                    // Save latitude
+                    // ---------------------------------------------
+
+                    latitudeInput.value =
+                        latitude.toFixed(6);
+
+
+                    // ---------------------------------------------
+                    // Save longitude
+                    // ---------------------------------------------
+
+                    longitudeInput.value =
+                        longitude.toFixed(6);
+
+
+                    // ---------------------------------------------
+                    // Display latitude
+                    // ---------------------------------------------
+
+                    latitudeDisplay.textContent =
+                        latitude.toFixed(6);
+
+
+                    // ---------------------------------------------
+                    // Display longitude
+                    // ---------------------------------------------
+
+                    longitudeDisplay.textContent =
+                        longitude.toFixed(6);
+
+
+                    // ---------------------------------------------
+                    // Status
+                    // ---------------------------------------------
+
+                    locationStatus.textContent =
+                        "Problem location selected successfully.";
+
+
+                    // ---------------------------------------------
+                    // Move map
+                    // ---------------------------------------------
+
+                    map.setView(
+                        [
+                            latitude,
+                            longitude
+                        ],
+                        16
+                    );
+
                 }
 
-            );
 
-        });
+                // =================================================
+                // CLICK MAP
+                // =================================================
+
+                map.on(
+                    "click",
+                    function (event) {
+
+                        selectLocation(
+                            event.latlng.lat,
+                            event.latlng.lng
+                        );
+
+                    }
+                );
+
+
+                // =================================================
+                // USE CURRENT LOCATION
+                // =================================================
+
+                document
+                    .getElementById("useCurrentLocation")
+                    .addEventListener(
+                        "click",
+                        function () {
+
+
+                            // -------------------------------------
+                            // Browser doesn't support GPS
+                            // -------------------------------------
+
+                            if (!navigator.geolocation) {
+
+                                locationStatus.textContent =
+                                    "Location services are not supported by this browser.";
+
+                                return;
+
+                            }
+
+
+                            // -------------------------------------
+                            // Loading message
+                            // -------------------------------------
+
+                            locationStatus.textContent =
+                                "Detecting your current location...";
+
+
+                            // -------------------------------------
+                            // Get location
+                            // -------------------------------------
+
+                            navigator.geolocation.getCurrentPosition(
+
+                                function (position) {
+
+
+                                    var latitude =
+                                        position.coords.latitude;
+
+
+                                    var longitude =
+                                        position.coords.longitude;
+
+
+                                    selectLocation(
+                                        latitude,
+                                        longitude
+                                    );
+
+                                },
+
+
+                                function () {
+
+                                    locationStatus.textContent =
+                                        "Unable to detect your current location. Please select the problem location on the map.";
+
+                                },
+
+
+                                {
+                                    enableHighAccuracy: true,
+
+                                    timeout: 10000,
+
+                                    maximumAge: 0
+                                }
+
+                            );
+
+                        }
+                    );
+
+
+                // =================================================
+                // FIX MAP DISPLAY
+                // =================================================
+
+                setTimeout(
+                    function () {
+
+                        map.invalidateSize();
+
+                    },
+                    300
+                );
+
+            }
+        );
 
     </script>
+
 }

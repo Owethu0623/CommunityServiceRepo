@@ -1,0 +1,98 @@
+﻿<div class="auth-page">
+
+    <div class="auth-card">
+
+        <h2 class="auth-title">Administrator Login</h2>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="login-error">
+                @ViewBag.Error
+            </div>
+        }
+
+
+        @using (Html.BeginForm(
+            "Login",
+            "Administrators",
+            FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+
+            <!-- ==========================================
+                 EMAIL ADDRESS
+                 ========================================== -->
+
+            <div class="auth-form-group">
+
+                <label for="emailAddress">
+                    Email Address
+                </label>
+
+                <input type="email"
+                       id="emailAddress"
+                       name="emailAddress"
+                       class="auth-input"
+                       placeholder="Enter your email address"
+                       autocomplete="off"
+                       required />
+
+            </div>
+
+
+            <!-- ==========================================
+                 PASSWORD
+                 ========================================== -->
+
+            <div class="auth-form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input type="password"
+                       id="password"
+                       name="password"
+                       class="auth-input"
+                       placeholder="Enter your password"
+                       autocomplete="off"
+                       required />
+
+            </div>
+
+
+            <!-- ==========================================
+                 FORGOT PASSWORD
+                 ========================================== -->
+
+            <div class="admin-forgot-password">
+
+                <a href="@Url.Action(
+                    "Index",
+                    "AdministratorForgotPassword"
+                )">
+
+                    Forgot Password?
+
+                </a>
+
+            </div>
+
+
+            <!-- ==========================================
+                 LOGIN BUTTON
+                 ========================================== -->
+
+            <button type="submit"
+                    class="auth-primary-button">
+
+                Login
+
+            </button>
+
+        }
+
+    </div>
+
+</div>

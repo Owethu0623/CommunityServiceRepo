@@ -1,0 +1,347 @@
+﻿@model CommunityServiceProject.Models.ForgotPasswordViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Administrator Forgot Password";
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <title>
+        Administrator Forgot Password
+    </title>
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/ForgotPassword.css")" />
+
+</head>
+
+
+<body>
+
+    <div class="forgot-page">
+
+
+        <div class="forgot-top-header">
+
+            <span>
+                Administrator Password Recovery
+            </span>
+
+        </div>
+
+
+        <div class="forgot-card">
+
+
+            <div class="forgot-heading">
+
+
+                <div class="lock-icon">
+                </div>
+
+
+                <div>
+
+                    <h1>
+                        ADMINISTRATOR PASSWORD RESET
+                    </h1>
+
+
+                    <p>
+                        Reset your administrator password
+                        securely using a verification code
+                        sent to your email.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            @using (Html.BeginForm(
+                "Index",
+                "AdministratorForgotPassword",
+                FormMethod.Post))
+            {
+
+                @Html.AntiForgeryToken()
+
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new
+                    {
+                        @class = "forgot-validation"
+                    }
+                )
+
+
+                <!-- =========================================
+                     EMAIL
+                     ========================================= -->
+
+                <div class="forgot-form-group">
+
+
+                    @Html.LabelFor(
+                        model => model.EmailAddress,
+                        "Administrator Email Address"
+                    )
+
+
+                    @Html.TextBoxFor(
+                        model => model.EmailAddress,
+                        new
+                        {
+                            @class = "forgot-input",
+                            type = "email",
+                            placeholder =
+                                "Enter your administrator email address",
+                            autocomplete = "off"
+                        }
+                    )
+
+
+                    @Html.ValidationMessageFor(
+                        model => model.EmailAddress,
+                        "",
+                        new
+                        {
+                            @class = "forgot-error"
+                        }
+                    )
+
+                </div>
+
+
+                <!-- =========================================
+                     SEND OTP
+                     ========================================= -->
+
+                if (!Model.OTPsent)
+                {
+
+                    <button type="submit"
+                            name="action"
+                            value="SendOTP"
+                            class="forgot-button">
+
+                        Send Verification Code
+
+                    </button>
+
+                }
+
+
+                <!-- =========================================
+                     VERIFY OTP
+                     ========================================= -->
+
+                if (Model.OTPsent &&
+                    !Model.OTPVerified)
+                {
+
+                    <div class="verified-message">
+
+                        ✓ A verification code has been sent
+                        to your administrator email address.
+
+                    </div>
+
+
+                    <div class="forgot-form-group">
+
+
+                        @Html.LabelFor(
+                            model => model.OTP,
+                            "Verification Code"
+                        )
+
+
+                        @Html.TextBoxFor(
+                            model => model.OTP,
+                            new
+                            {
+                                @class = "forgot-input",
+                                placeholder =
+                                    "Enter your 6-digit code",
+                                maxlength = "6",
+                                autocomplete =
+                                    "one-time-code"
+                            }
+                        )
+
+
+                        @Html.ValidationMessageFor(
+                            model => model.OTP,
+                            "",
+                            new
+                            {
+                                @class = "forgot-error"
+                            }
+                        )
+
+                    </div>
+
+
+                    <button type="submit"
+                            name="action"
+                            value="VerifyOTP"
+                            class="forgot-button">
+
+                        Verify Code
+
+                    </button>
+
+                }
+
+
+                <!-- =========================================
+                     RESET PASSWORD
+                     ========================================= -->
+
+                if (Model.OTPVerified)
+                {
+
+                    <div class="verified-message">
+
+                        ✓ Administrator email successfully verified.
+
+                    </div>
+
+
+                    <div class="forgot-form-group">
+
+
+                        @Html.LabelFor(
+                            model => model.NewPassword,
+                            "New Password"
+                        )
+
+
+                        @Html.PasswordFor(
+                            model => model.NewPassword,
+                            new
+                            {
+                                @class = "forgot-input",
+                                placeholder =
+                                    "Enter your new password",
+                                autocomplete =
+                                    "new-password"
+                            }
+                        )
+
+
+                        @Html.ValidationMessageFor(
+                            model => model.NewPassword,
+                            "",
+                            new
+                            {
+                                @class = "forgot-error"
+                            }
+                        )
+
+                    </div>
+
+
+                    <div class="forgot-form-group">
+
+
+                        @Html.LabelFor(
+                            model => model.ConfirmPassword,
+                            "Confirm Password"
+                        )
+
+
+                        @Html.PasswordFor(
+                            model => model.ConfirmPassword,
+                            new
+                            {
+                                @class = "forgot-input",
+                                placeholder =
+                                    "Confirm your new password",
+                                autocomplete =
+                                    "new-password"
+                            }
+                        )
+
+
+                        @Html.ValidationMessageFor(
+                            model => model.ConfirmPassword,
+                            "",
+                            new
+                            {
+                                @class = "forgot-error"
+                            }
+                        )
+
+                    </div>
+
+
+                    <button type="submit"
+                            name="action"
+                            value="ResetPassword"
+                            class="forgot-button">
+
+                        Reset Administrator Password
+
+                    </button>
+
+                }
+
+            }
+
+
+            <!-- =========================================
+                 BACK TO LOGIN
+                 ========================================= -->
+
+            <div class="login-link">
+
+                Remember your password?
+
+                <a href="@Url.Action(
+                    "Login",
+                    "Administrators"
+                )">
+
+                    Login here
+
+                </a>
+
+            </div>
+
+
+            <!-- =========================================
+                 BACK TO HOME
+                 ========================================= -->
+
+            <div class="login-link">
+
+                <a href="@Url.Action(
+                    "Index",
+                    "Home"
+                )">
+
+                    ← Back to Home
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

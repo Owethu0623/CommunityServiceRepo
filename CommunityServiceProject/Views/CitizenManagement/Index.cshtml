@@ -1,0 +1,100 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Citizen>
+
+@{
+    ViewBag.Title = "Manage Citizens";
+}
+
+<div class="admin-citizen-page">
+
+    <div class="admin-citizen-card">
+
+        <div class="admin-citizen-header">
+            <h2>Manage Citizens</h2>
+            <p>View and manage registered citizens.</p>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="admin-no-citizens">
+                <p>No citizens have registered yet.</p>
+            </div>
+        }
+        else
+        {
+            <div class="admin-citizen-table-wrapper">
+
+                <table class="admin-citizen-table">
+
+                    <thead>
+                        <tr>
+                            <th>Citizen ID</th>
+                            <th>Name</th>
+                            <th>Email Address</th>
+                            <th>Phone Number</th>
+                            <th>Date Registered</th>
+                            <th>Account Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var citizen in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @citizen.CitizenID
+                                </td>
+
+                                <td>
+                                    @citizen.FirstName
+                                    @citizen.LastName
+                                </td>
+
+                                <td>
+                                    @citizen.EmailAddress
+                                </td>
+
+                                <td>
+                                    @citizen.PhoneNumber
+                                </td>
+
+                                <td>
+                                    @citizen.DateRegistered.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @citizen.AccountStatus
+                                </td>
+
+                                <td>
+                                    <a href="@Url.Action("Details", "CitizenManagement", new { id = citizen.CitizenID })"
+                                       class="admin-view-button">
+                                        Manage
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+        <div class="admin-citizen-footer">
+
+            <a href="@Url.Action("Index", "AdministratorDashboard")"
+               class="admin-back-button">
+                Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+

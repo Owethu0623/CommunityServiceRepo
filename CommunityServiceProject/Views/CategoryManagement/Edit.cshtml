@@ -1,0 +1,115 @@
+﻿@model CommunityServiceProject.Models.Category
+
+@{
+    ViewBag.Title = "Edit Category";
+}
+
+<div class="admin-category-create-page">
+
+    <div class="admin-category-create-card">
+
+        <div class="admin-category-create-header">
+
+            <h2>
+                Edit Category
+            </h2>
+
+            <p>
+                Update the maintenance request category details.
+            </p>
+
+        </div>
+
+
+        @using (Html.BeginForm("Edit", "CategoryManagement", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(model => model.CategoryID)
+
+            <div class="admin-category-create-content">
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "admin-validation-summary" }
+                )
+
+
+                <div class="admin-category-form-group">
+
+                    @Html.LabelFor(
+                        model => model.CategoryName,
+                        "Category Name"
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.CategoryName,
+                        new
+                        {
+                            @class = "admin-category-input",
+                            placeholder = "Enter category name"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.CategoryName,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                </div>
+
+
+                <div class="admin-category-form-group">
+
+                    @Html.LabelFor(
+                        model => model.Description,
+                        "Description"
+                    )
+
+                    @Html.TextAreaFor(
+                        model => model.Description,
+                        new
+                        {
+                            @class = "admin-category-textarea",
+                            placeholder = "Enter a description for this category",
+                            rows = "5"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Description,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                </div>
+
+
+                <div class="admin-category-create-actions">
+
+                    <button type="submit"
+                            class="admin-category-save-button">
+
+                        Save Changes
+
+                    </button>
+
+
+                    <a href="@Url.Action("Index", "CategoryManagement")"
+                       class="admin-category-cancel-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+

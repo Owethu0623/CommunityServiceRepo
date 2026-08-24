@@ -1,0 +1,113 @@
+﻿@model CommunityServiceProject.Models.Category
+
+@{
+    ViewBag.Title = "Category Details";
+}
+
+<div class="admin-category-details-page">
+
+    <div class="admin-category-details-card">
+
+        <div class="admin-category-details-header">
+
+            <h2>
+                Category Details
+            </h2>
+
+            <p>
+                View and manage the selected maintenance request category.
+            </p>
+
+        </div>
+
+
+        <div class="admin-category-details-content">
+
+            <div class="admin-category-detail-row">
+
+                <div class="admin-category-detail-label">
+                    Category ID
+                </div>
+
+                <div class="admin-category-detail-value">
+                    @Model.CategoryID
+                </div>
+
+            </div>
+
+
+            <div class="admin-category-detail-row">
+
+                <div class="admin-category-detail-label">
+                    Category Name
+                </div>
+
+                <div class="admin-category-detail-value">
+                    @Model.CategoryName
+                </div>
+
+            </div>
+
+
+            <div class="admin-category-detail-row">
+
+                <div class="admin-category-detail-label">
+                    Description
+                </div>
+
+                <div class="admin-category-detail-value">
+
+                    @if (string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <span>
+                            No description provided.
+                        </span>
+                    }
+                    else
+                    {
+                        @Model.Description
+                    }
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-category-detail-row">
+
+                <div class="admin-category-detail-label">
+                    Total Requests
+                </div>
+
+                <div class="admin-category-detail-value">
+                    @Model.GetTotalRequests()
+                </div>
+
+            </div>
+
+
+            <div class="admin-category-details-actions">
+
+                <a href="@Url.Action("Edit", "CategoryManagement", new { id = Model.CategoryID })"
+                   class="admin-category-edit-button">
+
+                    Edit Category
+
+                </a>
+
+
+                <a href="@Url.Action("Index", "CategoryManagement")"
+                   class="admin-category-cancel-button">
+
+                    Back to Categories
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

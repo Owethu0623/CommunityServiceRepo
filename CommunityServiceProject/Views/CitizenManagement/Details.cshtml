@@ -1,0 +1,165 @@
+﻿@model CommunityServiceProject.Models.Citizen
+
+@{
+    ViewBag.Title = "Manage Citizen";
+}
+
+<div class="admin-citizen-details-page">
+
+    <div class="admin-citizen-details-card">
+
+        <div class="admin-citizen-details-header">
+            <h2>Manage Citizen</h2>
+            <p>View and manage this citizen's account.</p>
+        </div>
+
+        <div class="admin-citizen-details-content">
+
+            <div class="admin-citizen-details-section">
+
+                <h3>Citizen Information</h3>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Citizen ID
+                    </div>
+
+                    <div>
+                        @Model.CitizenID
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Full Name
+                    </div>
+
+                    <div>
+                        @Model.FirstName @Model.LastName
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Email Address
+                    </div>
+
+                    <div>
+                        @Model.EmailAddress
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Phone Number
+                    </div>
+
+                    <div>
+                        @Model.PhoneNumber
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Residential Address
+                    </div>
+
+                    <div>
+                        @Model.ResidentialAddress
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Date Registered
+                    </div>
+
+                    <div>
+                        @Model.DateRegistered.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Account Status
+                    </div>
+
+                    <div class="admin-citizen-status">
+                        @Model.AccountStatus
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="admin-citizen-management-actions">
+
+                <form action="@Url.Action("Activate", "CitizenManagement")"
+                      method="post"
+                      class="admin-citizen-action-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.CitizenID" />
+
+                    <button type="submit"
+                            class="admin-citizen-action-button">
+                        Activate Account
+                    </button>
+
+                </form>
+
+
+                <form action="@Url.Action("Suspend", "CitizenManagement")"
+                      method="post"
+                      class="admin-citizen-action-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.CitizenID" />
+
+                    <button type="submit"
+                            class="admin-citizen-action-button">
+                        Suspend Account
+                    </button>
+
+                </form>
+
+
+                <form action="@Url.Action("Deactivate", "CitizenManagement")"
+                      method="post"
+                      class="admin-citizen-action-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.CitizenID" />
+
+                    <button type="submit"
+                            class="admin-citizen-deactivate-button">
+                        Deactivate Account
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="admin-citizen-details-footer">
+
+                <a href="@Url.Action("Index", "CitizenManagement")"
+                   class="admin-back-button">
+                    Back to Citizens
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

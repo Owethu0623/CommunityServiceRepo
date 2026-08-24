@@ -170,11 +170,18 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Convert Latitude
-            // -----------------------------------------------------
+            // ---------------------------------------------------------
+            // Validate Latitude
+            // ---------------------------------------------------------
 
-            if (!string.IsNullOrWhiteSpace(Latitude))
+            if (string.IsNullOrWhiteSpace(Latitude))
+            {
+                ModelState.AddModelError(
+                    "Latitude",
+                    "Please select the problem location on the map."
+                );
+            }
+            else
             {
                 double latitudeValue;
 
@@ -184,7 +191,18 @@ namespace CommunityServiceProject.Controllers
                     CultureInfo.InvariantCulture,
                     out latitudeValue))
                 {
-                    request.Latitude = latitudeValue;
+                    if (latitudeValue < -90 ||
+                        latitudeValue > 90)
+                    {
+                        ModelState.AddModelError(
+                            "Latitude",
+                            "The selected latitude is not valid."
+                        );
+                    }
+                    else
+                    {
+                        request.Latitude = latitudeValue;
+                    }
                 }
                 else
                 {
@@ -196,11 +214,18 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Convert Longitude
-            // -----------------------------------------------------
+            // ---------------------------------------------------------
+            // Validate Longitude
+            // ---------------------------------------------------------
 
-            if (!string.IsNullOrWhiteSpace(Longitude))
+            if (string.IsNullOrWhiteSpace(Longitude))
+            {
+                ModelState.AddModelError(
+                    "Longitude",
+                    "Please select the problem location on the map."
+                );
+            }
+            else
             {
                 double longitudeValue;
 
@@ -210,7 +235,18 @@ namespace CommunityServiceProject.Controllers
                     CultureInfo.InvariantCulture,
                     out longitudeValue))
                 {
-                    request.Longitude = longitudeValue;
+                    if (longitudeValue < -180 ||
+                        longitudeValue > 180)
+                    {
+                        ModelState.AddModelError(
+                            "Longitude",
+                            "The selected longitude is not valid."
+                        );
+                    }
+                    else
+                    {
+                        request.Longitude = longitudeValue;
+                    }
                 }
                 else
                 {
@@ -222,9 +258,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
+            // ---------------------------------------------------------
             // Save Request
-            // -----------------------------------------------------
+            // ---------------------------------------------------------
 
             if (ModelState.IsValid)
             {
@@ -235,20 +271,20 @@ namespace CommunityServiceProject.Controllers
                     RequestStatus.Pending;
 
 
-                // Use the logged-in citizen
+                // Logged-in citizen
                 request.CitizenID =
                     (int)Session["CitizenID"];
 
 
-                // No administrator or technician assigned yet
+                // No administrator or technician yet
                 request.AdministratorID = null;
 
                 request.TechnicianID = null;
 
 
-                // -------------------------------------------------
+                // -----------------------------------------------------
                 // Handle uploaded image
-                // -------------------------------------------------
+                // -----------------------------------------------------
 
                 if (ImageFile != null &&
                     ImageFile.ContentLength > 0)
@@ -287,9 +323,9 @@ namespace CommunityServiceProject.Controllers
                 }
 
 
-                // -------------------------------------------------
-                // Add request to database
-                // -------------------------------------------------
+                // -----------------------------------------------------
+                // Save to database
+                // -----------------------------------------------------
 
                 db.Requests.Add(request);
 
@@ -300,9 +336,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
+            // ---------------------------------------------------------
             // Validation failed
-            // -----------------------------------------------------
+            // ---------------------------------------------------------
 
             ViewBag.CategoryID = new SelectList(
                 db.Categories,

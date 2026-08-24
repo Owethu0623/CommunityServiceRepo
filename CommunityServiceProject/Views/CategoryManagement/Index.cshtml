@@ -1,0 +1,143 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Category>
+
+@{
+    ViewBag.Title = "Manage Categories";
+}
+
+<div class="admin-category-page">
+
+    <div class="admin-category-card">
+
+        <div class="admin-category-header">
+
+            <div class="admin-category-header-content">
+
+                <div>
+
+                    <h2>
+                        Manage Categories
+                    </h2>
+
+                    <p>
+                        View and manage maintenance request categories.
+                    </p>
+
+                </div>
+
+                <a href="@Url.Action("Create", "CategoryManagement")"
+                   class="admin-category-add-button">
+
+                    Add Category
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        @if (!Model.Any())
+        {
+            <div class="admin-no-categories">
+
+                <p>
+                    No categories have been added yet.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="admin-category-table-wrapper">
+
+                <table class="admin-category-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Category ID</th>
+                            <th>Category Name</th>
+                            <th>Description</th>
+                            <th>Total Requests</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var category in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @category.CategoryID
+                                </td>
+
+                                <td>
+                                    @category.CategoryName
+                                </td>
+
+                                <td>
+                                    @category.Description
+                                </td>
+
+                                <td>
+                                    @category.GetTotalRequests()
+                                </td>
+
+                                <td>
+
+                                    <a href="@Url.Action("Details", "CategoryManagement", new { id = category.CategoryID })"
+                                       class="admin-view-button">
+
+                                        Manage
+
+                                    </a>
+
+                                    @using (Html.BeginForm("Delete", "CategoryManagement",
+                                        new { id = category.CategoryID },
+                                        FormMethod.Post,
+                                        new { style = "display:inline;" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="admin-delete-button"
+                                                onclick="return confirm('Are you sure you want to delete this category?');">
+
+                                            Delete
+
+                                        </button>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+
+        <div class="admin-category-footer">
+
+            <a href="@Url.Action("Index", "AdministratorDashboard")"
+               class="admin-back-button">
+
+                Back to Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

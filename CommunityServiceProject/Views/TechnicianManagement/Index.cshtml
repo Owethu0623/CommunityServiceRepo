@@ -1,0 +1,145 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Technician>
+
+@{
+    ViewBag.Title = "Manage Technicians";
+}
+
+<div class="admin-technician-page">
+
+    <div class="admin-technician-header">
+
+        <div class="admin-technician-header-content">
+
+            <div>
+
+                <h2>
+                    Manage Technicians
+                </h2>
+
+                <p>
+                    View and manage registered technicians.
+                </p>
+
+            </div>
+
+            <a href="@Url.Action("Create", "TechnicianManagement")"
+               class="admin-technician-add-button">
+
+                Add Technician
+
+            </a>
+
+        </div>
+
+    </div>
+
+        @if (!Model.Any())
+        {
+            <div class="admin-no-technicians">
+
+                <p>
+                    No technicians have been added yet.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="admin-technician-table-wrapper">
+
+                <table class="admin-technician-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Technician ID
+                            </th>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Email Address
+                            </th>
+
+                            <th>
+                                Phone Number
+                            </th>
+
+                            <th>
+                                Account Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var technician in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @technician.TechnicianID
+                                </td>
+
+                                <td>
+                                    @technician.FirstName
+                                    @technician.LastName
+                                </td>
+
+                                <td>
+                                    @technician.EmailAddress
+                                </td>
+
+                                <td>
+                                    @technician.PhoneNumber
+                                </td>
+
+                                <td>
+                                    @technician.AccountStatus
+                                </td>
+
+                                <td>
+
+                                    <a href="@Url.Action("Details", "TechnicianManagement", new { id = technician.TechnicianID })"
+                                       class="admin-view-button">
+
+                                        Manage
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+
+        <div class="admin-technician-footer">
+
+            <a href="@Url.Action("Index", "AdministratorDashboard")"
+               class="admin-back-button">
+
+                Back to Dashboard
+
+            </a>
+
+        </div>
+
+</div>

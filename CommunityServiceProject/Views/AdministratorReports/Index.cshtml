@@ -1,0 +1,306 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Reports";
+}
+
+<div class="admin-reports-page">
+
+    <div class="admin-reports-card">
+
+        <!-- Header -->
+        <div class="admin-reports-header">
+
+            <h2>
+                Reports
+            </h2>
+
+            <p>
+                Generate and view reports about community service requests.
+            </p>
+
+        </div>
+
+
+        <div class="admin-reports-content">
+
+            <!-- Report Filters -->
+            @using (Html.BeginForm("Index", "AdministratorReports", FormMethod.Get))
+            {
+                <div class="admin-report-filter-section">
+
+                    <h3>
+                        Report Filters
+                    </h3>
+
+
+                    <div class="admin-report-filters">
+
+                        <!-- Status -->
+                        <div class="admin-report-filter-group">
+
+                            <label for="statusFilter">
+                                Status
+                            </label>
+
+                            <select id="statusFilter"
+                                    name="status"
+                                    class="admin-report-select">
+
+                                <option value=""
+                                        @(String.IsNullOrEmpty(ViewBag.SelectedStatus as string) ? "selected" : "")>
+                                    All
+                                </option>
+
+                                <option value="@((int)RequestStatus.Pending)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Pending).ToString() ? "selected" : "")>
+                                    Pending
+                                </option>
+
+                                <option value="@((int)RequestStatus.UnderReview)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.UnderReview).ToString() ? "selected" : "")>
+                                    Under Review
+                                </option>
+
+                                <option value="@((int)RequestStatus.Approved)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Approved).ToString() ? "selected" : "")>
+                                    Approved
+                                </option>
+
+                                <option value="@((int)RequestStatus.Assigned)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Assigned).ToString() ? "selected" : "")>
+                                    Assigned
+                                </option>
+
+                                <option value="@((int)RequestStatus.InProgress)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.InProgress).ToString() ? "selected" : "")>
+                                    In Progress
+                                </option>
+
+                                <option value="@((int)RequestStatus.Completed)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Completed).ToString() ? "selected" : "")>
+                                    Completed
+                                </option>
+
+                                <option value="@((int)RequestStatus.Rejected)"
+                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Rejected).ToString() ? "selected" : "")>
+                                    Rejected
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Category -->
+                        <div class="admin-report-filter-group">
+
+                            <label for="categoryFilter">
+                                Category
+                            </label>
+
+                            <select id="categoryFilter"
+                                    name="categoryId"
+                                    class="admin-report-select">
+
+                                <option value=""
+                                        @(ViewBag.SelectedCategoryId == null ? "selected" : "")>
+                                    All
+                                </option>
+
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.CategoryID"
+                                            @(ViewBag.SelectedCategoryId == category.CategoryID ? "selected" : "")>
+
+                                        @category.CategoryName
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Date From -->
+                        <div class="admin-report-filter-group">
+
+                            <label for="dateFrom">
+                                Date From
+                            </label>
+
+                            <input type="date"
+                                   id="dateFrom"
+                                   name="dateFrom"
+                                   value="@ViewBag.SelectedDateFrom"
+                                   class="admin-report-input" />
+
+                        </div>
+
+
+                        <!-- Date To -->
+                        <div class="admin-report-filter-group">
+
+                            <label for="dateTo">
+                                Date To
+                            </label>
+
+                            <input type="date"
+                                   id="dateTo"
+                                   name="dateTo"
+                                   value="@ViewBag.SelectedDateTo"
+                                   class="admin-report-input" />
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Generate Button -->
+                    <div class="admin-report-actions">
+
+                        <button type="submit"
+                                class="admin-report-generate-button">
+
+                            Generate Report
+
+                        </button>
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- Report Results -->
+            <div class="admin-report-results-section">
+
+                <div class="admin-report-results-header">
+
+                    <div>
+
+                        <h3>
+                            Report Results
+                        </h3>
+
+                        <p>
+                            @Model.Count() request(s) found.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                @if (!Model.Any())
+                {
+                    <div class="admin-report-no-results">
+
+                        <p>
+                            No requests were found matching the selected filters.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="admin-report-table-wrapper">
+
+                        <table class="admin-report-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Request ID
+                                    </th>
+
+                                    <th>
+                                        Title
+                                    </th>
+
+                                    <th>
+                                        Category
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Citizen
+                                    </th>
+
+                                    <th>
+                                        Date Submitted
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var request in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @request.RequestID
+                                        </td>
+
+                                        <td>
+                                            @request.Title
+                                        </td>
+
+                                        <td>
+                                            @request.Category.CategoryName
+                                        </td>
+
+                                        <td>
+                                            @request.Status
+                                        </td>
+
+                                        <td>
+                                            @request.Citizen.FirstName
+                                        </td>
+
+                                        <td>
+                                            @request.DateSubmitted.ToString("dd MMM yyyy")
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- Footer -->
+            <div class="admin-reports-footer">
+
+                <a href="@Url.Action("Index", "AdministratorDashboard")"
+                   class="admin-back-button">
+
+                    Back to Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

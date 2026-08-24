@@ -8,45 +8,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    
 
-        <meta charset="utf-8" />
+    <meta charset="utf-8" />
 
-        <title>Forgot Password</title>
+    <title>Forgot Password</title>
 
-        <link rel="stylesheet"
-              href="@Url.Content("~/Content/ForgotPassword.css")" />
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/ForgotPassword.css")" />
 
-    
-
-   
 </head>
 
 <body>
 
     <div class="forgot-page">
 
-        <!-- Top Blue Header -->
         <div class="forgot-top-header">
             <span>7. Forgot Password</span>
         </div>
 
-
-        <!-- Main Card -->
         <div class="forgot-card">
 
-            <!-- Heading -->
             <div class="forgot-heading">
 
                 <div class="lock-icon">
-                    
                 </div>
 
                 <div>
                     <h1>FORGOT PASSWORD</h1>
 
                     <p>
-                        Enter your registered email address to reset your password.
+                        Reset your password securely using a
+                        verification code sent to your email.
                     </p>
                 </div>
 
@@ -67,7 +59,10 @@
                 )
 
 
-                <!-- Email -->
+                <!-- ==========================================
+                     EMAIL
+                     ========================================== -->
+
                 <div class="forgot-form-group">
 
                     @Html.LabelFor(
@@ -81,7 +76,9 @@
                         {
                             @class = "forgot-input",
                             type = "email",
-                            placeholder = "Enter your registered email address"
+                            placeholder =
+                                "Enter your registered email address",
+                            autocomplete = "off"
                         }
                     )
 
@@ -94,28 +91,83 @@
                 </div>
 
 
-                if (!Model.EmailVerified)
+                <!-- ==========================================
+                     STEP 1 - SEND OTP
+                     ========================================== -->
+
+                if (!Model.OTPsent)
                 {
-                    <!-- Verify Email -->
                     <button type="submit"
                             name="action"
-                            value="VerifyEmail"
+                            value="SendOTP"
                             class="forgot-button">
 
-                        <span></span>
-                        Verify Email
+                        Send Verification Code
 
                     </button>
                 }
-                else
+
+
+                <!-- ==========================================
+                     STEP 2 - ENTER OTP
+                     ========================================== -->
+
+                if (Model.OTPsent && !Model.OTPVerified)
                 {
-                    <!-- Verified Message -->
                     <div class="verified-message">
-                        ✓ Email verified successfully.
+                        ✓ A verification code has been sent
+                        to your registered email address.
+                    </div>
+
+                    <div class="forgot-form-group">
+
+                        @Html.LabelFor(
+                            model => model.OTP,
+                            "Verification Code"
+                        )
+
+                        @Html.TextBoxFor(
+                            model => model.OTP,
+                            new
+                            {
+                                @class = "forgot-input",
+                                placeholder =
+                                    "Enter your 6-digit code",
+                                maxlength = "6",
+                                autocomplete = "one-time-code"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            model => model.OTP,
+                            "",
+                            new { @class = "forgot-error" }
+                        )
+
+                    </div>
+
+                    <button type="submit"
+                            name="action"
+                            value="VerifyOTP"
+                            class="forgot-button">
+
+                        Verify Code
+
+                    </button>
+                }
+
+
+                <!-- ==========================================
+                     STEP 3 - NEW PASSWORD
+                     ========================================== -->
+
+                if (Model.OTPVerified)
+                {
+                    <div class="verified-message">
+                        ✓ Email successfully verified.
                     </div>
 
 
-                    <!-- New Password -->
                     <div class="forgot-form-group">
 
                         @Html.LabelFor(
@@ -128,7 +180,9 @@
                             new
                             {
                                 @class = "forgot-input",
-                                placeholder = "Enter your new password"
+                                placeholder =
+                                    "Enter your new password",
+                                autocomplete = "new-password"
                             }
                         )
 
@@ -141,7 +195,6 @@
                     </div>
 
 
-                    <!-- Confirm Password -->
                     <div class="forgot-form-group">
 
                         @Html.LabelFor(
@@ -154,7 +207,9 @@
                             new
                             {
                                 @class = "forgot-input",
-                                placeholder = "Confirm your new password"
+                                placeholder =
+                                    "Confirm your new password",
+                                autocomplete = "new-password"
                             }
                         )
 
@@ -167,13 +222,11 @@
                     </div>
 
 
-                    <!-- Reset Button -->
                     <button type="submit"
                             name="action"
                             value="ResetPassword"
                             class="forgot-button">
 
-                        <span></span>
                         Reset Password
 
                     </button>
@@ -182,7 +235,6 @@
             }
 
 
-            <!-- Back to Login -->
             <div class="login-link">
 
                 Remember your password?

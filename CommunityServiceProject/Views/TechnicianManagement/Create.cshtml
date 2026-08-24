@@ -1,0 +1,186 @@
+﻿@model CommunityServiceProject.Models.Technician
+
+@{
+    ViewBag.Title = "Add Technician";
+}
+
+<div class="admin-technician-create-page">
+
+    <div class="admin-technician-create-card">
+
+        <div class="admin-technician-create-header">
+
+            <h2>
+                Add Technician
+            </h2>
+
+            <p>
+                Create a new technician account.
+            </p>
+
+        </div>
+
+
+        @using (Html.BeginForm("Create", "TechnicianManagement", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="admin-technician-create-content">
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "admin-validation-summary" }
+                )
+
+
+                <div class="admin-technician-form-group">
+
+                    @Html.LabelFor(
+                        model => model.FirstName,
+                        "First Name"
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.FirstName,
+                        new
+                        {
+                            @class = "admin-technician-input"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.FirstName,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                </div>
+
+
+                <div class="admin-technician-form-group">
+
+                    @Html.LabelFor(
+                        model => model.LastName,
+                        "Last Name"
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.LastName,
+                        new
+                        {
+                            @class = "admin-technician-input"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.LastName,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                </div>
+
+
+                <div class="admin-technician-form-group">
+
+                    @Html.LabelFor(
+                        model => model.EmailAddress,
+                        "Email Address"
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.EmailAddress,
+                        new
+                        {
+                            @class = "admin-technician-input",
+                            type = "email"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.EmailAddress,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                </div>
+
+
+                <div class="admin-technician-form-group">
+
+                    @Html.LabelFor(
+                        model => model.PhoneNumber,
+                        "Phone Number"
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.PhoneNumber,
+                        new
+                        {
+                            @class = "admin-technician-input"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.PhoneNumber,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                </div>
+
+
+                <div class="admin-technician-form-group">
+
+                    @Html.LabelFor(
+                        model => model.Password,
+                        "Password"
+                    )
+
+                    @Html.PasswordFor(
+                        model => model.Password,
+                        new
+                        {
+                            @class = "admin-technician-input"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Password,
+                        "",
+                        new { @class = "admin-validation-message" }
+                    )
+
+                    <small class="admin-technician-password-help">
+                        Password must be at least 8 characters and contain
+                        an uppercase letter, a lowercase letter, and a number.
+                    </small>
+
+                </div>
+
+
+                <div class="admin-technician-create-actions">
+
+                    <button type="submit"
+                            class="admin-technician-save-button">
+
+                        Add Technician
+
+                    </button>
+
+                    <a href="@Url.Action("Index", "TechnicianManagement")"
+                       class="admin-technician-cancel-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

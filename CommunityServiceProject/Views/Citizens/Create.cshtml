@@ -157,20 +157,31 @@
 
             </div>
 
-
             <!-- PASSWORD -->
             <div class="auth-form-group">
 
                 @Html.LabelFor(model => model.Password)
 
-                @Html.PasswordFor(
-                    model => model.Password,
-                    new
-                    {
-                        @class = "auth-input",
-                        autocomplete = "new-password"
-                    }
-                )
+                <div class="password-wrapper">
+
+                    @Html.PasswordFor(
+                        model => model.Password,
+                        new
+                        {
+                            @class = "auth-input password-input",
+                            autocomplete = "new-password",
+                            id = "Password"
+                        }
+                    )
+
+                    <button type="button"
+                            class="password-toggle"
+                            onclick="togglePassword('Password', this)"
+                            aria-label="Show password">
+                        👁
+                    </button>
+
+                </div>
 
                 @Html.ValidationMessageFor(
                     model => model.Password,
@@ -179,7 +190,6 @@
                 )
 
             </div>
-
 
             <!-- CONFIRM PASSWORD -->
             <div class="auth-form-group">
@@ -240,5 +250,25 @@
 @section Scripts {
 
     @Scripts.Render("~/bundles/jqueryval")
+
+        <script>
+            function togglePassword(inputId, button) {
+                var input = document.getElementById(inputId);
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    button.innerHTML = "👁";
+                    button.setAttribute("aria-label", "Hide password");
+                } else {
+                    input.type = "password";
+                    button.innerHTML = "👁";
+                    button.setAttribute("aria-label", "Show password");
+                }
+            }
+        </script>
+
+    }
+
+}
 
 }

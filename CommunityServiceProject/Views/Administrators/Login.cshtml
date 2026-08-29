@@ -1,4 +1,5 @@
-﻿<div class="auth-page">
+﻿@model CommunityServiceProject.Models.Administrator
+<div class="auth-page">
 
     <div class="auth-card">
 
@@ -11,7 +12,6 @@
             </div>
         }
 
-
         @using (Html.BeginForm(
             "Login",
             "Administrators",
@@ -19,10 +19,7 @@
         {
             @Html.AntiForgeryToken()
 
-
-            <!-- ==========================================
-                 EMAIL ADDRESS
-                 ========================================== -->
+            <!-- EMAIL ADDRESS -->
 
             <div class="auth-form-group">
 
@@ -41,48 +38,39 @@
             </div>
 
 
-            <!-- ==========================================
-                 PASSWORD
-                 ========================================== -->
+            <!-- PASSWORD -->
 
             <div class="auth-form-group">
 
-                <label for="password">
+                <label for="adminPassword">
                     Password
                 </label>
 
-                <input type="password"
-                       id="password"
-                       name="password"
-                       class="auth-input"
-                       placeholder="Enter your password"
-                       autocomplete="off"
-                       required />
+                <div class="admin-password-wrapper">
+
+                    <input type="password"
+                           id="adminPassword"
+                           name="password"
+                           class="auth-input admin-password-input"
+                           placeholder="Enter your password"
+                           autocomplete="off"
+                           required />
+
+                    <button type="button"
+                            class="admin-password-toggle"
+                            id="adminPasswordToggle"
+                            aria-label="Show password">
+
+                        👁
+
+                    </button>
+
+                </div>
 
             </div>
 
 
-            <!-- ==========================================
-                 FORGOT PASSWORD
-                 ========================================== -->
-
-            <div class="admin-forgot-password">
-
-                <a href="@Url.Action(
-                    "Index",
-                    "AdministratorForgotPassword"
-                )">
-
-                    Forgot Password?
-
-                </a>
-
-            </div>
-
-
-            <!-- ==========================================
-                 LOGIN BUTTON
-                 ========================================== -->
+            <!-- LOGIN BUTTON -->
 
             <button type="submit"
                     class="auth-primary-button">
@@ -96,3 +84,40 @@
     </div>
 
 </div>
+
+
+@section Scripts {
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var toggleButton = document.getElementById("adminPasswordToggle");
+            var passwordInput = document.getElementById("adminPassword");
+
+            toggleButton.addEventListener("click", function () {
+
+                if (passwordInput.type === "password") {
+
+                    passwordInput.type = "text";
+
+                    toggleButton.innerHTML = "👁";
+                    toggleButton.setAttribute("aria-label", "Hide password");
+
+                }
+                else {
+
+                    passwordInput.type = "password";
+
+                    toggleButton.innerHTML = "👁";
+                    toggleButton.setAttribute("aria-label", "Show password");
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+}

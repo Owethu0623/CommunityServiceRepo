@@ -290,6 +290,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\ForgotPassword.css" />
     <Content Include="Content\Images\logo.png" />
+    <Content Include="Content\login.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />

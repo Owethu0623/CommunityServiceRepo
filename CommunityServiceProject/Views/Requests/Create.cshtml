@@ -39,12 +39,15 @@
 
             <div class="request-form-group">
 
-                @Html.LabelFor(model => model.Title)
+                @Html.LabelFor(
+                    model => model.Title,
+                    "Request Title"
+                )
 
                 @Html.TextBoxFor(model => model.Title, new
                 {
                     @class = "request-input",
-                    placeholder = "Enter request title"
+                    placeholder = "e.g. Broken streetlight"
                 })
 
                 @Html.ValidationMessageFor(

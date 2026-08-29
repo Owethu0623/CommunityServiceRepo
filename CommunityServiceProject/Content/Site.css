@@ -456,6 +456,52 @@ a {
         box-shadow: 0 0 3px rgba(13, 92, 193, 0.3);
     }
 
+
+/* ===========================================================
+   PASSWORD FIELD + SHOW/HIDE EYE
+   =========================================================== */
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+    .password-wrapper .password-input {
+        width: 100%;
+        height: 36px;
+        padding: 7px 42px 7px 10px;
+        box-sizing: border-box;
+    }
+
+.password-toggle {
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    line-height: 1;
+    z-index: 5;
+}
+
+    .password-toggle:hover {
+        opacity: 0.7;
+    }
+
+
+/* ===========================================================
+   REMEMBER ME
+   =========================================================== */
+
 .remember-me {
     display: flex;
     align-items: center;
@@ -471,6 +517,11 @@ a {
         height: 16px;
     }
 
+
+/* ===========================================================
+   FORGOT PASSWORD
+   =========================================================== */
+
 .forgot-password {
     margin-bottom: 18px;
 }
@@ -480,6 +531,11 @@ a {
         color: #0D5CC1;
         font-weight: bold;
     }
+
+
+/* ===========================================================
+   LOGIN / REGISTER BUTTON
+   =========================================================== */
 
 .auth-primary-button {
     display: block;
@@ -502,10 +558,20 @@ a {
     margin-top: 8px;
 }
 
+
+/* ===========================================================
+   DIVIDER
+   =========================================================== */
+
 .auth-divider {
     border-top: 1px solid #D9D9D9;
     margin: 20px 0;
 }
+
+
+/* ===========================================================
+   REGISTER / LOGIN LINK
+   =========================================================== */
 
 .auth-register-text {
     text-align: center;
@@ -523,11 +589,17 @@ a {
             text-decoration: underline;
         }
 
+
+/* ===========================================================
+   VALIDATION MESSAGES
+   =========================================================== */
+
 .auth-card .text-danger {
     font-size: 12px;
     display: block;
     margin-top: 4px;
 }
+
 /* =========================================================
    SUBMIT MAINTENANCE REQUEST PAGE
    ========================================================= */
@@ -2592,14 +2664,18 @@ a {
 
 
 /* =========================================================
-   INPUT
+   INPUT WRAPPER
    ========================================================= */
 
 .login-input-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
+    width: 100%;
 }
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
 
 .login-input {
     width: 100% !important;
@@ -2612,7 +2688,7 @@ a {
     color: #172033 !important;
     font-size: 20px !important;
     box-shadow: none !important;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
 }
 
     .login-input:focus {
@@ -2638,28 +2714,50 @@ a {
     color: #64748b;
     font-size: 23px;
     z-index: 2;
+    pointer-events: none;
 }
 
 
 /* =========================================================
-   PASSWORD EYE
+   PASSWORD INPUT
+   ========================================================= */
+
+.password-input {
+    padding-right: 65px !important;
+}
+
+
+/* =========================================================
+   PASSWORD EYE TOGGLE
    ========================================================= */
 
 .password-toggle {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    background: transparent;
-    color: #64748b;
-    font-size: 22px;
-    cursor: pointer;
-    z-index: 3;
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    color: #64748b !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 21px !important;
+    cursor: pointer !important;
+    z-index: 5 !important;
 }
 
     .password-toggle:hover {
-        color: #2166f3;
+        color: #2166f3 !important;
+    }
+
+    .password-toggle:focus {
+        outline: none !important;
+        box-shadow: none !important;
     }
 
 
@@ -2690,34 +2788,40 @@ a {
    ========================================================= */
 
 .login-submit-button {
-    display: block;
-    width: 220px;
-    height: 50px;
-    margin: 25px auto 25px auto;
-    background-color: #0D5CC1;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 220px !important;
+    height: 50px !important;
+    margin: 25px auto !important;
+    background-color: #0D5CC1 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-family: "Segoe UI", Arial, sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    box-shadow: none !important;
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
     .login-submit-button:hover {
-        background-color: #08479A;
-        color: #FFFFFF;
+        background-color: #08479A !important;
+        color: #FFFFFF !important;
     }
 
     .login-submit-button:active {
-        background-color: #063A7D;
-        color: #FFFFFF;
+        background-color: #063A7D !important;
+        color: #FFFFFF !important;
         transform: translateY(1px);
     }
 
     .login-submit-button .glyphicon {
-        margin-right: 8px;
+        color: #FFFFFF !important;
+        margin-right: 4px;
     }
 
 
@@ -2849,6 +2953,7 @@ a {
         height: 60px !important;
         font-size: 17px !important;
         padding-left: 70px !important;
+        padding-right: 55px !important;
     }
 
     .login-input-icon {
@@ -2856,11 +2961,20 @@ a {
         height: 60px;
     }
 
+    .password-input {
+        padding-right: 60px !important;
+    }
+
+    .password-toggle {
+        right: 8px !important;
+    }
+
     .login-submit-button {
         width: 100%;
         max-width: 300px;
     }
 }
+
 
 @media (max-width: 480px) {
 
@@ -2880,7 +2994,7 @@ a {
     .login-input {
         height: 55px !important;
         padding-left: 62px !important;
-        padding-right: 50px !important;
+        padding-right: 55px !important;
     }
 
     .login-input-icon {
@@ -2889,9 +3003,15 @@ a {
         font-size: 20px;
     }
 
+    .password-input {
+        padding-right: 55px !important;
+    }
+
     .password-toggle {
-        right: 10px;
-        font-size: 19px;
+        right: 7px !important;
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 19px !important;
     }
 
     .forgot-password a {
@@ -2902,44 +3022,6 @@ a {
         font-size: 18px;
     }
 }
-/* =========================================================
-   CITIZEN LOGIN - SUBMIT BUTTON
-   ========================================================= */
-
-.login-submit-button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    width: 220px !important;
-    height: 50px !important;
-    margin: 25px auto !important;
-    background-color: #0D5CC1 !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-family: "Segoe UI", Arial, sans-serif !important;
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    cursor: pointer !important;
-    text-align: center !important;
-    box-shadow: none !important;
-}
-
-    .login-submit-button:hover {
-        background-color: #08479A !important;
-        color: #FFFFFF !important;
-    }
-
-    .login-submit-button:active {
-        background-color: #063A7D !important;
-        color: #FFFFFF !important;
-    }
-
-    .login-submit-button .glyphicon {
-        color: #FFFFFF !important;
-        margin-right: 4px;
-    }
 /* =========================================================
    MY REQUESTS - DASHBOARD NAVIGATION
    ========================================================= */
@@ -4950,3 +5032,82 @@ a {
             box-sizing: border-box;
         }
 }
+/* =========================================================
+   PASSWORD EYE - NORMAL SHAPE
+   ========================================================= */
+
+.password-eye {
+    position: relative !important;
+    display: block !important;
+    width: 22px !important;
+    height: 14px !important;
+    border: 2px solid #64748b !important;
+    border-radius: 50% / 65% !important;
+    box-sizing: border-box !important;
+}
+
+
+    /* Eye pupil */
+
+    .password-eye::after {
+        content: "" !important;
+        position: absolute !important;
+        width: 6px !important;
+        height: 6px !important;
+        background: #64748b !important;
+        border-radius: 50% !important;
+        top: 2px !important;
+        left: 6px !important;
+    }
+
+
+/* Hover */
+
+.password-toggle:hover .password-eye {
+    border-color: #2166f3 !important;
+}
+
+    .password-toggle:hover .password-eye::after {
+        background: #2166f3 !important;
+    }
+/* =========================================================
+   ADMINISTRATOR PASSWORD EYE TOGGLE
+========================================================= */
+.admin-password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.admin-password-input {
+    width: 100% !important;
+    padding-right: 55px !important;
+}
+
+.admin-password-toggle {
+    position: absolute !important;
+    right: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 20px !important;
+    line-height: 40px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+}
+
+    .admin-password-toggle:hover {
+        opacity: 0.7;
+    }
+
+    .admin-password-toggle:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }

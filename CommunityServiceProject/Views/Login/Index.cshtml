@@ -4,7 +4,9 @@
     ViewBag.Title = "Login";
 }
 
-<div class="login-page" >
+
+
+<div class="login-page">
 
     <!-- PAGE HEADING -->
     <div class="login-header">
@@ -29,7 +31,7 @@
         {
             @Html.AntiForgeryToken()
 
-            <!-- Validation -->
+            <!-- VALIDATION -->
             @Html.ValidationSummary(
                 true,
                 "",
@@ -90,19 +92,19 @@
                         m => m.Password,
                         new
                         {
-                            @class = "form-control login-input",
+                            @class = "form-control login-input password-input",
                             placeholder = "Enter your password",
-                            autocomplete = "off"
+                            autocomplete = "off",
+                            id = "Password"
                         }
                     )
 
                     <button type="button"
                             class="password-toggle"
-                            onclick="togglePassword()">
+                            id="passwordToggle"
+                            aria-label="Show password">
 
-                        <span id="passwordEye"
-                              class="glyphicon glyphicon-eye-open">
-                        </span>
+                        <span class="password-eye"></span>
 
                     </button>
 
@@ -115,8 +117,6 @@
                 )
 
             </div>
-
-
             <!-- FORGOT PASSWORD -->
             <div class="forgot-password">
 
@@ -128,30 +128,21 @@
 
 
             <!-- LOGIN BUTTON -->
-
             <button type="submit"
                     class="login-submit-button">
 
-
-
                 <span class="glyphicon glyphicon-log-in"></span>
 
-
-
                 <span>
-
                     Login
-
                 </span>
-
-
 
             </button>
 
         }
 
 
-        <!-- OR -->
+        <!-- OR DIVIDER -->
         <div class="login-or">
 
             <span></span>
@@ -163,7 +154,7 @@
         </div>
 
 
-        <!-- REGISTER -->
+        <!-- CREATE ACCOUNT -->
         <div class="create-account-box">
 
             <p>
@@ -202,37 +193,24 @@
 
     @Scripts.Render("~/bundles/jqueryval")
 
-
     <script>
+        document.getElementById("passwordToggle").addEventListener("click", function () {
 
-        function togglePassword() {
+            var password = document.getElementById("Password");
+            var eye = this.querySelector(".password-eye");
 
-            var passwordField =
-                document.getElementById("Password");
-
-            var eye =
-                document.getElementById("passwordEye");
-
-
-            if (passwordField.type === "password") {
-
-                passwordField.type = "text";
-
-                eye.className =
-                    "glyphicon glyphicon-eye-close";
-
+            if (password.type === "password") {
+                password.type = "text";
+                eye.classList.add("password-eye-visible");
+                this.setAttribute("aria-label", "Hide password");
             }
             else {
-
-                passwordField.type = "password";
-
-                eye.className =
-                    "glyphicon glyphicon-eye-open";
-
+                password.type = "password";
+                eye.classList.remove("password-eye-visible");
+                this.setAttribute("aria-label", "Show password");
             }
 
-        }
-
+        });
     </script>
 
 }

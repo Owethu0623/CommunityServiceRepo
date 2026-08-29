@@ -11,10 +11,16 @@
 
     <meta charset="utf-8" />
 
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
     <title>Forgot Password</title>
 
     <link rel="stylesheet"
           href="@Url.Content("~/Content/ForgotPassword.css")" />
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
 
 </head>
 
@@ -22,24 +28,45 @@
 
     <div class="forgot-page">
 
+        <!-- ==========================================
+             TOP HEADER
+             ========================================== -->
+
         <div class="forgot-top-header">
-            <span>7. Forgot Password</span>
+
+            <span>Forgot Password</span>
+
         </div>
 
+
+        <!-- ==========================================
+             MAIN CARD
+             ========================================== -->
+
         <div class="forgot-card">
+
+
+            <!-- ==========================================
+                 HEADING
+                 ========================================== -->
 
             <div class="forgot-heading">
 
                 <div class="lock-icon">
+                    <span class="glyphicon glyphicon-lock"></span>
                 </div>
 
                 <div>
-                    <h1>FORGOT PASSWORD</h1>
+
+                    <h1>
+                        FORGOT PASSWORD
+                    </h1>
 
                     <p>
                         Reset your password securely using a
                         verification code sent to your email.
                     </p>
+
                 </div>
 
             </div>
@@ -51,6 +78,11 @@
                 FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
+
+
+                <!-- ==========================================
+                     VALIDATION
+                     ========================================== -->
 
                 @Html.ValidationSummary(
                     true,
@@ -115,9 +147,12 @@
                 if (Model.OTPsent && !Model.OTPVerified)
                 {
                     <div class="verified-message">
+
                         ✓ A verification code has been sent
                         to your registered email address.
+
                     </div>
+
 
                     <div class="forgot-form-group">
 
@@ -146,6 +181,7 @@
 
                     </div>
 
+
                     <button type="submit"
                             name="action"
                             value="VerifyOTP"
@@ -164,9 +200,13 @@
                 if (Model.OTPVerified)
                 {
                     <div class="verified-message">
+
                         ✓ Email successfully verified.
+
                     </div>
 
+
+                    <!-- NEW PASSWORD -->
 
                     <div class="forgot-form-group">
 
@@ -175,16 +215,36 @@
                             "New Password"
                         )
 
-                        @Html.PasswordFor(
-                            model => model.NewPassword,
-                            new
-                            {
-                                @class = "forgot-input",
-                                placeholder =
-                                    "Enter your new password",
-                                autocomplete = "new-password"
-                            }
-                        )
+                        <div class="forgot-input-wrapper">
+
+                            @Html.PasswordFor(
+                                model => model.NewPassword,
+                                new
+                                {
+                                    @class =
+                                        "forgot-input forgot-password-input",
+                                    placeholder =
+                                        "Enter your new password",
+                                    autocomplete =
+                                        "new-password",
+                                    id = "NewPassword"
+                                }
+                            )
+
+
+                            <!-- EYE -->
+
+                            <button type="button"
+                                    class="forgot-password-toggle"
+                                    id="newPasswordToggle"
+                                    aria-label="Show password">
+
+                                <span class="glyphicon glyphicon-eye-open"></span>
+
+                            </button>
+
+                        </div>
+
 
                         @Html.ValidationMessageFor(
                             model => model.NewPassword,
@@ -194,6 +254,8 @@
 
                     </div>
 
+
+                    <!-- CONFIRM PASSWORD -->
 
                     <div class="forgot-form-group">
 
@@ -209,7 +271,8 @@
                                 @class = "forgot-input",
                                 placeholder =
                                     "Confirm your new password",
-                                autocomplete = "new-password"
+                                autocomplete =
+                                    "new-password"
                             }
                         )
 
@@ -221,6 +284,8 @@
 
                     </div>
 
+
+                    <!-- RESET BUTTON -->
 
                     <button type="submit"
                             name="action"
@@ -234,6 +299,10 @@
 
             }
 
+
+            <!-- ==========================================
+                 LOGIN LINK
+                 ========================================== -->
 
             <div class="login-link">
 
@@ -250,6 +319,63 @@
         </div>
 
     </div>
+
+
+    <!-- ==========================================
+         PASSWORD EYE SCRIPT
+         ========================================== -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var toggle = document.getElementById("newPasswordToggle");
+
+            if (toggle) {
+
+                toggle.addEventListener("click", function () {
+
+                    var password =
+                        document.getElementById("NewPassword");
+
+                    var icon =
+                        this.querySelector(".glyphicon");
+
+
+                    if (password.type === "password") {
+
+                        password.type = "text";
+
+                        icon.classList.remove(
+                            "glyphicon-eye-open"
+                        );
+
+                        icon.classList.add(
+                            "glyphicon-eye-close"
+                        );
+
+                    }
+                    else {
+
+                        password.type = "password";
+
+                        icon.classList.remove(
+                            "glyphicon-eye-close"
+                        );
+
+                        icon.classList.add(
+                            "glyphicon-eye-open"
+                        );
+
+                    }
+
+                });
+
+            }
+
+        });
+
+    </script>
 
 </body>
 </html>

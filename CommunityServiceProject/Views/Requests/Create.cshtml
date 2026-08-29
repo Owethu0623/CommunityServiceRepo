@@ -34,8 +34,8 @@
 
 
             <!-- =====================================================
-                 REQUEST TITLE
-                 ===================================================== -->
+             REQUEST TITLE
+             ===================================================== -->
 
             <div class="request-form-group">
 
@@ -60,52 +60,52 @@
 
 
             <!-- =====================================================
-                 CATEGORY
-                 ===================================================== -->
+             CATEGORY
+             =====================================================
 
-            <div class="request-form-group">
+        <div class="request-form-group">
 
-                @Html.LabelFor(
-                    model => model.CategoryID,
-                    "Category"
-                )
+            @Html.LabelFor(
+                model => model.CategoryID,
+                "Category"
+            )
 
-                @Html.DropDownList(
-                    "CategoryID",
-                    null,
-                    "Select Category",
-                    new
-                    {
-                        @class = "request-input"
-                    }
-                )
+            @Html.DropDownList(
+                "CategoryID",
+                null,
+                "Select Category",
+                new
+                {
+                    @class = "request-input"
+                }
+            )
 
-                <div class="category-examples">
+            <div class="category-examples">
 
-                    <strong>Examples:</strong>
+                <strong>Examples:</strong>
 
-                    <ul>
-                        <li>Pothole</li>
-                        <li>Water Leak</li>
-                        <li>Broken Streetlight</li>
-                        <li>Illegal Dumping</li>
-                        <li>Other (e.g. sewage pipe problems, dirty/standing water)</li>
-                    </ul>
-
-                </div>
-
-                @Html.ValidationMessageFor(
-                    model => model.CategoryID,
-                    "",
-                    new { @class = "text-danger" }
-                )
+                <ul>
+                    <li>Pothole</li>
+                    <li>Water Leak</li>
+                    <li>Broken Streetlight</li>
+                    <li>Illegal Dumping</li>
+                    <li>Other (e.g. sewage pipe problems, dirty/standing water)</li>
+                </ul>
 
             </div>
 
+            @Html.ValidationMessageFor(
+                model => model.CategoryID,
+                "",
+                new { @class = "text-danger" }
+            )
 
-            <!-- =====================================================
-                 DESCRIPTION
-                 ===================================================== -->
+        </div>
+
+
+        <!-- =====================================================
+             DESCRIPTION
+             ===================================================== -->
 
             <div class="request-form-group">
 
@@ -131,8 +131,8 @@
 
 
             <!-- =====================================================
-                 LOCATION DESCRIPTION
-                 ===================================================== -->
+             LOCATION DESCRIPTION
+             ===================================================== -->
 
             <div class="request-form-group">
 
@@ -159,8 +159,8 @@
 
 
             <!-- =====================================================
-                 PROBLEM LOCATION MAP
-                 ===================================================== -->
+             PROBLEM LOCATION MAP
+             ===================================================== -->
 
             <div class="request-location-section">
 
@@ -177,7 +177,7 @@
                         </strong>
 
                         <p>
-                            Select the exact location of the problem on the map.
+                            Select the exact location of the problem on the map
                         </p>
 
                     </div>
@@ -214,7 +214,7 @@
                     </strong>
 
                     <p id="locationStatus">
-                        Click on the map to select the problem location.
+                        Click on the map to select the problem location
                     </p>
 
                     <p>
@@ -237,8 +237,8 @@
 
 
             <!-- =====================================================
-                 HIDDEN GPS VALUES
-                 ===================================================== -->
+             HIDDEN GPS VALUES
+             ===================================================== -->
 
             @Html.HiddenFor(
                 model => model.Latitude
@@ -250,8 +250,8 @@
 
 
             <!-- =====================================================
-                 UPLOAD PHOTO
-                 ===================================================== -->
+             UPLOAD PHOTO
+             ===================================================== -->
 
             <div class="request-form-group">
 
@@ -269,8 +269,8 @@
 
 
             <!-- =====================================================
-                 SUBMIT
-                 ===================================================== -->
+             SUBMIT
+             ===================================================== -->
 
             <button type="submit"
                     class="request-submit-button">

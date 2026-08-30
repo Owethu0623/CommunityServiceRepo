@@ -10,7 +10,10 @@
 
     <div class="admin-reports-card">
 
-        <!-- Header -->
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
         <div class="admin-reports-header">
 
             <h2>
@@ -26,7 +29,10 @@
 
         <div class="admin-reports-content">
 
-            <!-- Report Filters -->
+            <!-- =====================================================
+                 REPORT FILTERS
+                 ===================================================== -->
+
             @using (Html.BeginForm("Index", "AdministratorReports", FormMethod.Get))
             {
                 <div class="admin-report-filter-section">
@@ -159,7 +165,6 @@
                     </div>
 
 
-                    <!-- Generate Button -->
                     <div class="admin-report-actions">
 
                         <button type="submit"
@@ -175,7 +180,97 @@
             }
 
 
-            <!-- Report Results -->
+            <!-- =====================================================
+                 REPORT SUMMARY
+                 ===================================================== -->
+
+            <div class="admin-report-summary-section">
+
+                <h3>
+                    Report Summary
+                </h3>
+
+
+                <div class="admin-report-summary-grid">
+
+                    <!-- Total -->
+                    <div class="admin-report-summary-card">
+
+                        <span class="admin-report-summary-label">
+                            Matching Requests
+                        </span>
+
+                        <span class="admin-report-summary-number">
+                            @ViewBag.ReportTotal
+                        </span>
+
+                    </div>
+
+
+                    <!-- Pending -->
+                    <div class="admin-report-summary-card">
+
+                        <span class="admin-report-summary-label">
+                            Pending
+                        </span>
+
+                        <span class="admin-report-summary-number">
+                            @ViewBag.ReportPending
+                        </span>
+
+                    </div>
+
+
+                    <!-- Completed -->
+                    <div class="admin-report-summary-card">
+
+                        <span class="admin-report-summary-label">
+                            Completed
+                        </span>
+
+                        <span class="admin-report-summary-number">
+                            @ViewBag.ReportCompleted
+                        </span>
+
+                    </div>
+
+
+                    <!-- Rejected -->
+                    <div class="admin-report-summary-card">
+
+                        <span class="admin-report-summary-label">
+                            Rejected
+                        </span>
+
+                        <span class="admin-report-summary-number">
+                            @ViewBag.ReportRejected
+                        </span>
+
+                    </div>
+
+
+                    <!-- Categories -->
+                    <div class="admin-report-summary-card">
+
+                        <span class="admin-report-summary-label">
+                            Categories
+                        </span>
+
+                        <span class="admin-report-summary-number">
+                            @ViewBag.ReportCategories
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 REPORT RESULTS
+                 ===================================================== -->
+
             <div class="admin-report-results-section">
 
                 <div class="admin-report-results-header">
@@ -287,7 +382,10 @@
             </div>
 
 
-            <!-- Footer -->
+            <!-- =====================================================
+                 FOOTER
+                 ===================================================== -->
+
             <div class="admin-reports-footer">
 
                 <a href="@Url.Action("Index", "AdministratorDashboard")"

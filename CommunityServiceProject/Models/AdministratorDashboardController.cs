@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace CommunityServiceProject.Models
+namespace CommunityServiceProject.Controllers
 {
     public class AdministratorDashboardController : Controller
     {
         // GET: AdministratorDashboard
         public ActionResult Index()
         {
+            // Make sure an administrator is logged in
+            if (Session["AdministratorID"] == null)
+            {
+                return RedirectToAction("Login", "Administrators");
+            }
+
             return View();
         }
     }

@@ -13,7 +13,6 @@
             <h2>SUBMIT MAINTENANCE REQUEST</h2>
         </div>
 
-
         @using (Html.BeginForm(
             "Create",
             "Requests",
@@ -32,11 +31,7 @@
                 new { @class = "text-danger" }
             )
 
-
-            <!-- =====================================================
-             REQUEST TITLE
-             ===================================================== -->
-
+            <!-- REQUEST TITLE -->
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -44,11 +39,14 @@
                     "Request Title"
                 )
 
-                @Html.TextBoxFor(model => model.Title, new
-                {
-                    @class = "request-input",
-                    placeholder = "e.g. Broken streetlight"
-                })
+                @Html.TextBoxFor(
+                    model => model.Title,
+                    new
+                    {
+                        @class = "request-input",
+                        placeholder = "e.g. Broken streetlight"
+                    }
+                )
 
                 @Html.ValidationMessageFor(
                     model => model.Title,
@@ -59,57 +57,59 @@
             </div>
 
 
-            <!-- =====================================================
-             CATEGORY
-             =====================================================
+            <!-- CATEGORY -->
+            <div class="request-form-group">
 
-        <div class="request-form-group">
+                @Html.LabelFor(
+                    model => model.CategoryID,
+                    "Category"
+                )
 
-            @Html.LabelFor(
-                model => model.CategoryID,
-                "Category"
-            )
+                @Html.DropDownList(
+                    "CategoryID",
+                    ViewBag.CategoryID as SelectList,
+                    "Select Category",
+                    new
+                    {
+                        @class = "request-input",
+                        id = "CategoryID"
+                    }
+                )
 
-            @Html.DropDownList(
-                "CategoryID",
-                null,
-                "Select Category",
-                new
-                {
-                    @class = "request-input"
-                }
-            )
+                <div class="category-examples">
 
-            <div class="category-examples">
+                    <strong>Examples:</strong>
 
-                <strong>Examples:</strong>
+                    <ul>
+                        <li>Pothole</li>
+                        <li>Water Leak</li>
+                        <li>Broken Streetlight</li>
+                        <li>Illegal Dumping</li>
+                        <li>Exposed OR Damaged Electrical Wires</li>
+                        <li>Damaged Sidewalk</li>
+                        <li>Sewer Overflow</li>
+                        <li>Damaged Traffic Sign</li>
+                        <li>Overflowing Municipal Bin</li>
+                        <li>Other</li>
+                    </ul>
 
-                <ul>
-                    <li>Pothole</li>
-                    <li>Water Leak</li>
-                    <li>Broken Streetlight</li>
-                    <li>Illegal Dumping</li>
-                    <li>Other (e.g. sewage pipe problems, dirty/standing water)</li>
-                </ul>
+                </div>
+
+                @Html.ValidationMessageFor(
+                    model => model.CategoryID,
+                    "",
+                    new { @class = "text-danger" }
+                )
 
             </div>
 
-            @Html.ValidationMessageFor(
-                model => model.CategoryID,
-                "",
-                new { @class = "text-danger" }
-            )
 
-        </div>
-
-
-        <!-- =====================================================
-             DESCRIPTION
-             ===================================================== -->
-
+            <!-- DESCRIPTION -->
             <div class="request-form-group">
 
-                @Html.LabelFor(model => model.Description)
+                @Html.LabelFor(
+                    model => model.Description
+                )
 
                 @Html.TextAreaFor(
                     model => model.Description,
@@ -130,10 +130,7 @@
             </div>
 
 
-            <!-- =====================================================
-             LOCATION DESCRIPTION
-             ===================================================== -->
-
+            <!-- LOCATION DESCRIPTION -->
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -158,10 +155,7 @@
             </div>
 
 
-            <!-- =====================================================
-             PROBLEM LOCATION MAP
-             ===================================================== -->
-
+            <!-- PROBLEM LOCATION MAP -->
             <div class="request-location-section">
 
                 <div class="request-location-heading">
@@ -177,7 +171,7 @@
                         </strong>
 
                         <p>
-                            Select the exact location of the problem on the map
+                            Search for an address or select the exact location on the map
                         </p>
 
                     </div>
@@ -185,13 +179,34 @@
                 </div>
 
 
-                <!-- MAP -->
+                <!-- ADDRESS SEARCH -->
+                <div class="map-search-container">
 
+                    <input type="text"
+                           id="addressSearch"
+                           class="request-input"
+                           placeholder="Enter an address, e.g. 293 Cedar Street, Durban" />
+
+                    <button type="button"
+                            id="searchAddress"
+                            class="location-button">
+
+                        🔍 Search Address
+
+                    </button>
+
+                </div>
+
+
+                <!-- ADDRESS SEARCH STATUS -->
+                <div id="addressSearchStatus"></div>
+
+
+                <!-- MAP -->
                 <div id="problemMap"></div>
 
 
                 <!-- USE CURRENT LOCATION -->
-
                 <button type="button"
                         id="useCurrentLocation"
                         class="location-button">
@@ -206,7 +221,6 @@
 
 
                 <!-- SELECTED LOCATION -->
-
                 <div class="selected-location">
 
                     <strong>
@@ -236,10 +250,7 @@
             </div>
 
 
-            <!-- =====================================================
-             HIDDEN GPS VALUES
-             ===================================================== -->
-
+            <!-- HIDDEN GPS VALUES -->
             @Html.HiddenFor(
                 model => model.Latitude
             )
@@ -249,10 +260,7 @@
             )
 
 
-            <!-- =====================================================
-             UPLOAD PHOTO
-             ===================================================== -->
-
+            <!-- UPLOAD PHOTO -->
             <div class="request-form-group">
 
                 <label for="ImageFile">
@@ -268,10 +276,7 @@
             </div>
 
 
-            <!-- =====================================================
-             SUBMIT
-             ===================================================== -->
-
+            <!-- SUBMIT -->
             <button type="submit"
                     class="request-submit-button">
 
@@ -294,19 +299,11 @@
 
     @Scripts.Render("~/bundles/jqueryval")
 
-
-    <!-- =========================================================
-         LEAFLET CSS
-         ========================================================= -->
-
+    <!-- LEAFLET CSS -->
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-
-    <!-- =========================================================
-         LEAFLET JAVASCRIPT
-         ========================================================= -->
-
+    <!-- LEAFLET JAVASCRIPT -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
@@ -316,10 +313,9 @@
             "DOMContentLoaded",
             function () {
 
-
-                // =================================================
+                // =====================================================
                 // FORM ELEMENTS
-                // =================================================
+                // =====================================================
 
                 var latitudeInput =
                     document.getElementById("Latitude");
@@ -336,10 +332,21 @@
                 var locationStatus =
                     document.getElementById("locationStatus");
 
+                var addressSearch =
+                    document.getElementById("addressSearch");
 
-                // =================================================
+                var searchAddressButton =
+                    document.getElementById("searchAddress");
+
+                var addressSearchStatus =
+                    document.getElementById(
+                        "addressSearchStatus"
+                    );
+
+
+                // =====================================================
                 // CREATE MAP
-                // =================================================
+                // =====================================================
 
                 var map =
                     L.map("problemMap").setView(
@@ -348,9 +355,9 @@
                     );
 
 
-                // =================================================
+                // =====================================================
                 // OPENSTREETMAP
-                // =================================================
+                // =====================================================
 
                 L.tileLayer(
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -363,26 +370,21 @@
                 ).addTo(map);
 
 
-                // =================================================
+                // =====================================================
                 // MARKER
-                // =================================================
+                // =====================================================
 
                 var marker = null;
 
 
-                // =================================================
+                // =====================================================
                 // SELECT LOCATION
-                // =================================================
+                // =====================================================
 
                 function selectLocation(
                     latitude,
                     longitude
                 ) {
-
-
-                    // ---------------------------------------------
-                    // Create marker if one doesn't exist
-                    // ---------------------------------------------
 
                     if (marker === null) {
 
@@ -397,10 +399,6 @@
                                 }
                             ).addTo(map);
 
-
-                        // -----------------------------------------
-                        // Marker drag
-                        // -----------------------------------------
 
                         marker.on(
                             "dragend",
@@ -430,50 +428,32 @@
                     }
 
 
-                    // ---------------------------------------------
-                    // Save latitude
-                    // ---------------------------------------------
-
+                    // SAVE LATITUDE
                     latitudeInput.value =
                         latitude.toFixed(6);
 
 
-                    // ---------------------------------------------
-                    // Save longitude
-                    // ---------------------------------------------
-
+                    // SAVE LONGITUDE
                     longitudeInput.value =
                         longitude.toFixed(6);
 
 
-                    // ---------------------------------------------
-                    // Display latitude
-                    // ---------------------------------------------
-
+                    // DISPLAY LATITUDE
                     latitudeDisplay.textContent =
                         latitude.toFixed(6);
 
 
-                    // ---------------------------------------------
-                    // Display longitude
-                    // ---------------------------------------------
-
+                    // DISPLAY LONGITUDE
                     longitudeDisplay.textContent =
                         longitude.toFixed(6);
 
 
-                    // ---------------------------------------------
-                    // Status
-                    // ---------------------------------------------
-
+                    // STATUS
                     locationStatus.textContent =
                         "Problem location selected successfully.";
 
 
-                    // ---------------------------------------------
-                    // Move map
-                    // ---------------------------------------------
-
+                    // MOVE MAP
                     map.setView(
                         [
                             latitude,
@@ -485,9 +465,9 @@
                 }
 
 
-                // =================================================
+                // =====================================================
                 // CLICK MAP
-                // =================================================
+                // =====================================================
 
                 map.on(
                     "click",
@@ -502,20 +482,142 @@
                 );
 
 
-                // =================================================
+                // =====================================================
+                // ADDRESS SEARCH
+                // =====================================================
+
+                searchAddressButton.addEventListener(
+                    "click",
+                    function () {
+
+                        var address =
+                            addressSearch.value.trim();
+
+
+                        if (address === "") {
+
+                            addressSearchStatus.textContent =
+                                "Please enter an address to search.";
+
+                            return;
+                        }
+
+
+                        addressSearchStatus.textContent =
+                            "Searching for address...";
+
+
+                        searchAddressButton.disabled =
+                            true;
+
+
+                        fetch(
+                            "https://nominatim.openstreetmap.org/search?format=json&limit=1&q="
+                            + encodeURIComponent(address)
+                        )
+                            .then(
+                                function (response) {
+
+                                    if (!response.ok) {
+
+                                        throw new Error(
+                                            "Search request failed."
+                                        );
+
+                                    }
+
+                                    return response.json();
+
+                                }
+                            )
+                            .then(
+                                function (data) {
+
+                                    if (
+                                        !data ||
+                                        data.length === 0
+                                    ) {
+
+                                        addressSearchStatus.textContent =
+                                            "Address could not be found. Please try a more specific address.";
+
+                                        return;
+                                    }
+
+
+                                    var latitude =
+                                        parseFloat(
+                                            data[0].lat
+                                        );
+
+                                    var longitude =
+                                        parseFloat(
+                                            data[0].lon
+                                        );
+
+
+                                    // Use existing location function
+                                    selectLocation(
+                                        latitude,
+                                        longitude
+                                    );
+
+
+                                    addressSearchStatus.textContent =
+                                        "Address found. Please confirm the pin is at the correct location.";
+
+                                }
+                            )
+                            .catch(
+                                function () {
+
+                                    addressSearchStatus.textContent =
+                                        "Unable to search for the address. Please try again or select the location manually.";
+
+                                }
+                            )
+                            .finally(
+                                function () {
+
+                                    searchAddressButton.disabled =
+                                        false;
+
+                                }
+                            );
+
+                    }
+                );
+
+
+                // =====================================================
+                // SEARCH USING ENTER KEY
+                // =====================================================
+
+                addressSearch.addEventListener(
+                    "keypress",
+                    function (event) {
+
+                        if (event.key === "Enter") {
+
+                            event.preventDefault();
+
+                            searchAddressButton.click();
+
+                        }
+
+                    }
+                );
+
+
+                // =====================================================
                 // USE CURRENT LOCATION
-                // =================================================
+                // =====================================================
 
                 document
                     .getElementById("useCurrentLocation")
                     .addEventListener(
                         "click",
                         function () {
-
-
-                            // -------------------------------------
-                            // Browser doesn't support GPS
-                            // -------------------------------------
 
                             if (!navigator.geolocation) {
 
@@ -527,26 +629,16 @@
                             }
 
 
-                            // -------------------------------------
-                            // Loading message
-                            // -------------------------------------
-
                             locationStatus.textContent =
                                 "Detecting your current location...";
 
-
-                            // -------------------------------------
-                            // Get location
-                            // -------------------------------------
 
                             navigator.geolocation.getCurrentPosition(
 
                                 function (position) {
 
-
                                     var latitude =
                                         position.coords.latitude;
-
 
                                     var longitude =
                                         position.coords.longitude;
@@ -559,7 +651,6 @@
 
                                 },
 
-
                                 function () {
 
                                     locationStatus.textContent =
@@ -567,12 +658,9 @@
 
                                 },
 
-
                                 {
                                     enableHighAccuracy: true,
-
                                     timeout: 10000,
-
                                     maximumAge: 0
                                 }
 
@@ -582,9 +670,9 @@
                     );
 
 
-                // =================================================
+                // =====================================================
                 // FIX MAP DISPLAY
-                // =================================================
+                // =====================================================
 
                 setTimeout(
                     function () {

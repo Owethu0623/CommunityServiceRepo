@@ -11,8 +11,11 @@ namespace CommunityServiceProject.Controllers
     {
         private Community db = new Community();
 
-        // GET: AdministratorRequests
-        public ActionResult Index()
+        public ActionResult Index(
+     string search,
+     RequestStatus? status,
+     int? categoryId,
+     string sortOrder)
         {
             // Make sure an administrator is logged in
             if (Session["AdministratorID"] == null)
@@ -23,11 +26,56 @@ namespace CommunityServiceProject.Controllers
             var requests = db.Requests
                 .Include("Citizen")
                 .Include("Category")
-                .OrderByDescending(r => r.DateSubmitted)
-                .ToList();
+                .AsQueryable();
 
-            return View(requests);
+            // Search by request title
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                requests = requests.Where(r =>
+                    r.Title.Contains(search));
+            }
+
+            // Filter by status
+            if (status.HasValue)
+            {
+                requests = requests.Where(r =>
+                    r.Status == status.Value);
+            }
+
+            // Filter by category
+            if (categoryId.HasValue)
+            {
+                requests = requests.Where(r =>
+                    r.CategoryID == categoryId.Value);
+            }
+
+            // Sorting
+            switch (sortOrder)
+            {
+                case "oldest":
+                    requests = requests.OrderBy(r => r.DateSubmitted);
+                    break;
+
+                default:
+                    requests = requests.OrderByDescending(r => r.DateSubmitted);
+                    break;
+            }
+
+            // Send filter options to the view
+            ViewBag.Categories = new SelectList(
+                db.Categories.OrderBy(c => c.CategoryName),
+                "CategoryID",
+                "CategoryName",
+                categoryId
+            );
+
+            ViewBag.Search = search;
+            ViewBag.Status = status;
+            ViewBag.SortOrder = sortOrder;
+
+            return View(requests.ToList());
         }
+
 
         // GET: AdministratorRequests/Details/5
         public ActionResult Details(int? id)

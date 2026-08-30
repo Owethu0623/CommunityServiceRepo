@@ -23,7 +23,7 @@
                 {
                     FirstName = "System",
                     LastName = "Administrator",
-                    EmailAddress = "owehlongwane07@gmail.com",
+                    EmailAddress = "admin@municipality.co.za",
                     PhoneNumber = "0123456789",
                     Password = "Admin123",
                     AccountStatus = CommunityServiceProject.Models.AccountStatus.Active

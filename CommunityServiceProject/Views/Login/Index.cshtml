@@ -169,48 +169,42 @@
             </a>
 
         </div>
-
+        </div>
     </div>
 
 
     <!-- BACK HOME -->
-    <div class
+    <div class="login-home-link">
 
         <a href="@Url.Action("Index", "Home")">
-
             <span class="glyphicon glyphicon-arrow-left"></span>
-
-         
-
+            Back to Home
         </a>
 
     </div>
 
-</div>
+    @section Scripts {
 
+        @Scripts.Render("~/bundles/jqueryval")
 
-@section Scripts {
+        <script>
+            document.getElementById("passwordToggle").addEventListener("click", function () {
 
-    @Scripts.Render("~/bundles/jqueryval")
+                var password = document.getElementById("Password");
+                var eye = this.querySelector(".password-eye");
 
-    <script>
-        document.getElementById("passwordToggle").addEventListener("click", function () {
+                if (password.type === "password") {
+                    password.type = "text";
+                    eye.classList.add("password-eye-visible");
+                    this.setAttribute("aria-label", "Hide password");
+                }
+                else {
+                    password.type = "password";
+                    eye.classList.remove("password-eye-visible");
+                    this.setAttribute("aria-label", "Show password");
+                }
 
-            var password = document.getElementById("Password");
-            var eye = this.querySelector(".password-eye");
+            });
+        </script>
 
-            if (password.type === "password") {
-                password.type = "text";
-                eye.classList.add("password-eye-visible");
-                this.setAttribute("aria-label", "Hide password");
-            }
-            else {
-                password.type = "password";
-                eye.classList.remove("password-eye-visible");
-                this.setAttribute("aria-label", "Show password");
-            }
-
-        });
-    </script>
-
-}
+    }

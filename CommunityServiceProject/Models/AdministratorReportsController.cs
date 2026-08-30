@@ -21,9 +21,16 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Login", "Administrators");
             }
 
-            var requests = db.Requests.AsQueryable();
+            var requests = db.Requests
+                .Include("Citizen")
+                .Include("Category")
+                .AsQueryable();
 
-            // Filter by Status
+
+            // =========================================================
+            // FILTER BY STATUS
+            // =========================================================
+
             if (!string.IsNullOrEmpty(status))
             {
                 RequestStatus selectedStatus;
@@ -35,14 +42,22 @@ namespace CommunityServiceProject.Controllers
                 }
             }
 
-            // Filter by Category
+
+            // =========================================================
+            // FILTER BY CATEGORY
+            // =========================================================
+
             if (categoryId.HasValue)
             {
                 requests = requests.Where(r =>
                     r.CategoryID == categoryId.Value);
             }
 
-            // Filter by Date From
+
+            // =========================================================
+            // FILTER BY DATE FROM
+            // =========================================================
+
             if (dateFrom.HasValue)
             {
                 DateTime startDate = dateFrom.Value.Date;
@@ -51,7 +66,11 @@ namespace CommunityServiceProject.Controllers
                     r.DateSubmitted >= startDate);
             }
 
-            // Filter by Date To
+
+            // =========================================================
+            // FILTER BY DATE TO
+            // =========================================================
+
             if (dateTo.HasValue)
             {
                 DateTime endDate = dateTo.Value.Date.AddDays(1);
@@ -60,17 +79,54 @@ namespace CommunityServiceProject.Controllers
                     r.DateSubmitted < endDate);
             }
 
+
+            // =========================================================
+            // FINAL REPORT RESULTS
+            // =========================================================
+
             var requestList = requests
                 .OrderByDescending(r => r.DateSubmitted)
                 .ToList();
+
+
+            // =========================================================
+            // REPORT SUMMARY
+            // =========================================================
+
+            ViewBag.ReportTotal = requestList.Count;
+
+            ViewBag.ReportPending = requestList
+                .Count(r => r.Status == RequestStatus.Pending);
+
+            ViewBag.ReportCompleted = requestList
+                .Count(r => r.Status == RequestStatus.Completed);
+
+            ViewBag.ReportRejected = requestList
+                .Count(r => r.Status == RequestStatus.Rejected);
+
+            ViewBag.ReportCategories = requestList
+                .Select(r => r.CategoryID)
+                .Distinct()
+                .Count();
+
+
+            // =========================================================
+            // CATEGORY FILTER OPTIONS
+            // =========================================================
 
             ViewBag.Categories = db.Categories
                 .OrderBy(c => c.CategoryName)
                 .ToList();
 
-            // Keep selected filters
+
+            // =========================================================
+            // KEEP SELECTED FILTERS
+            // =========================================================
+
             ViewBag.SelectedStatus = status;
+
             ViewBag.SelectedCategoryId = categoryId;
+
             ViewBag.SelectedDateFrom =
                 dateFrom.HasValue
                     ? dateFrom.Value.ToString("yyyy-MM-dd")
@@ -81,8 +137,14 @@ namespace CommunityServiceProject.Controllers
                     ? dateTo.Value.ToString("yyyy-MM-dd")
                     : "";
 
+
             return View(requestList);
         }
+
+
+        // =========================================================
+        // DISPOSE
+        // =========================================================
 
         protected override void Dispose(bool disposing)
         {

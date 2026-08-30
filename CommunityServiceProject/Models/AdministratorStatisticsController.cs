@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
@@ -88,6 +89,46 @@ namespace CommunityServiceProject.Controllers
                     .Any(r => r.CitizenID == c.CitizenID));
 
 
+            // =========================================================
+            // CHART DATA - REQUEST STATUS
+            // =========================================================
+
+            ViewBag.StatusLabels = new[]
+            {
+                "Pending",
+                "Under Review",
+                "Approved",
+                "Assigned",
+                "In Progress",
+                "Completed",
+                "Rejected"
+            };
+
+            ViewBag.StatusValues = new[]
+            {
+                ViewBag.PendingRequests,
+                ViewBag.UnderReviewRequests,
+                ViewBag.ApprovedRequests,
+                ViewBag.AssignedRequests,
+                ViewBag.InProgressRequests,
+                ViewBag.CompletedRequests,
+                ViewBag.RejectedRequests
+            };
+
+
+            // =========================================================
+            // CHART DATA - REQUEST CATEGORY
+            // =========================================================
+
+            ViewBag.CategoryLabels = categoryStatistics
+                .Select(c => c.CategoryName)
+                .ToArray();
+
+            ViewBag.CategoryValues = categoryStatistics
+                .Select(c => c.RequestCount)
+                .ToArray();
+
+
             return View();
         }
 
@@ -107,3 +148,4 @@ namespace CommunityServiceProject.Controllers
         }
     }
 }
+

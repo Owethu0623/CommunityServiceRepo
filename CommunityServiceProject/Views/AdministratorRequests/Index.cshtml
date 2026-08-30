@@ -13,11 +13,97 @@
             <p>Review and manage submitted citizen requests.</p>
         </div>
 
+        <!-- Request Filters -->
+        <div class="admin-request-filters">
+
+            @using (Html.BeginForm("Index", "AdministratorRequests", FormMethod.Get))
+            {
+                <div class="admin-filter-row">
+
+                    <div class="admin-filter-group">
+                        <label for="search">Search</label>
+
+                        <input type="text"
+                               id="search"
+                               name="search"
+                               value="@ViewBag.Search"
+                               placeholder="Search request title..." />
+                    </div>
+
+
+                    <div class="admin-filter-group">
+                        <label for="status">Status</label>
+
+                        <select id="status" name="status">
+                            <option value="">All Statuses</option>
+
+                            @foreach (var item in Enum.GetValues(
+                                typeof(CommunityServiceProject.Models.RequestStatus)))
+                            {
+                                <option value="@item"
+                                        @(ViewBag.Status != null && ViewBag.Status.ToString() == item.ToString() ? "selected" : "")>
+                                    @item
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+
+                    <div class="admin-filter-group">
+                        <label for="categoryId">Category</label>
+
+                        @Html.DropDownList(
+                            "categoryId",
+                            (SelectList)ViewBag.Categories,
+                            "All Categories"
+                        )
+                    </div>
+
+
+                    <div class="admin-filter-group">
+                        <label for="sortOrder">Sort By</label>
+
+                        <select id="sortOrder" name="sortOrder">
+
+                            <option value=""
+                                    @(ViewBag.SortOrder == null ? "selected" : "")>
+                                Newest First
+                            </option>
+
+                            <option value="oldest"
+                                    @(ViewBag.SortOrder == "oldest" ? "selected" : "")>
+                                Oldest First
+                            </option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="admin-filter-actions">
+
+                    <button type="submit"
+                            class="admin-filter-button">
+                        Apply Filters
+                    </button>
+
+                    <a href="@Url.Action("Index", "AdministratorRequests")"
+                       class="admin-clear-filter-button">
+                        Clear Filters
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
 
         @if (!Model.Any())
         {
             <div class="admin-no-requests">
-                <p>No maintenance requests have been submitted.</p>
+                <p>No maintenance requests match your search or filters.</p>
             </div>
         }
         else
@@ -89,6 +175,7 @@
 
             </div>
         }
+
 
         <div class="admin-request-footer">
 

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -47,10 +47,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -175,16 +175,89 @@
     <Compile Include="Migrations\202608221730105_AddTechnicianFields.Designer.cs">
       <DependentUpon>202608221730105_AddTechnicianFields.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202609011038170_AddWardToRequests.cs" />
+    <Compile Include="Migrations\202609011038170_AddWardToRequests.Designer.cs">
+      <DependentUpon>202609011038170_AddWardToRequests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609011103086_RemoveLocationDescription.cs" />
+    <Compile Include="Migrations\202609011103086_RemoveLocationDescription.Designer.cs">
+      <DependentUpon>202609011103086_RemoveLocationDescription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609020041475_AddTechnicianSprint2.cs" />
+    <Compile Include="Migrations\202609020041475_AddTechnicianSprint2.Designer.cs">
+      <DependentUpon>202609020041475_AddTechnicianSprint2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609022115332_AddPriorityReason.cs" />
+    <Compile Include="Migrations\202609022115332_AddPriorityReason.Designer.cs">
+      <DependentUpon>202609022115332_AddPriorityReason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609040124496_ChangeMaintenanceMaterialQuantityToWholeNumber.cs" />
+    <Compile Include="Migrations\202609040124496_ChangeMaintenanceMaterialQuantityToWholeNumber.Designer.cs">
+      <DependentUpon>202609040124496_ChangeMaintenanceMaterialQuantityToWholeNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609041344487_AddKnowledgeBaseFields.cs" />
+    <Compile Include="Migrations\202609041344487_AddKnowledgeBaseFields.Designer.cs">
+      <DependentUpon>202609041344487_AddKnowledgeBaseFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609051435453_AddCitizenCompliance.cs" />
+    <Compile Include="Migrations\202609051435453_AddCitizenCompliance.Designer.cs">
+      <DependentUpon>202609051435453_AddCitizenCompliance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609051644382_AddRequestReferenceNumber.cs" />
+    <Compile Include="Migrations\202609051644382_AddRequestReferenceNumber.Designer.cs">
+      <DependentUpon>202609051644382_AddRequestReferenceNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609051653133_MakeRequestReferenceRequiredUnique.cs" />
+    <Compile Include="Migrations\202609051653133_MakeRequestReferenceRequiredUnique.Designer.cs">
+      <DependentUpon>202609051653133_MakeRequestReferenceRequiredUnique.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountRestriction.cs" />
+    <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
     <Compile Include="Models\AdministratorForgotPasswordController.cs" />
     <Compile Include="Models\AdministratorReportsController.cs" />
     <Compile Include="Models\AdministratorRequestsController.cs" />
     <Compile Include="Models\AdministratorsController.cs" />
     <Compile Include="Models\AdministratorStatisticsController.cs" />
+    <Compile Include="Models\AssignmentIssue.cs" />
+    <Compile Include="Models\AssignmentIssueStatus.cs" />
+    <Compile Include="Models\AssignmentIssueType.cs" />
+    <Compile Include="Models\AssignmentIssueViewModel.cs" />
+    <Compile Include="Models\AssignmentStatus.cs" />
     <Compile Include="Models\CategoryManagementController.cs" />
+    <Compile Include="Models\CitizenComplianceController.cs" />
     <Compile Include="Models\CitizenManagementController.cs" />
+    <Compile Include="Models\CitizenProfileViewModel.cs" />
+    <Compile Include="Models\CompletionVerificationStatus.cs" />
+    <Compile Include="Models\ComplianceRecord.cs" />
+    <Compile Include="Models\ComplianceStatus.cs" />
+    <Compile Include="Models\EvidenceType.cs" />
     <Compile Include="Models\LoginController.cs" />
+    <Compile Include="Models\MaintenanceCompletion.cs" />
+    <Compile Include="Models\MaintenanceEvidence.cs" />
+    <Compile Include="Models\MaintenanceKnowledgeBase.cs" />
+    <Compile Include="Models\MaintenanceMaterial.cs" />
+    <Compile Include="Models\MaintenanceProgress.cs" />
+    <Compile Include="Models\MaintenanceWork.cs" />
+    <Compile Include="Models\MaintenanceWorkStatus.cs" />
+    <Compile Include="Models\Priority.cs" />
+    <Compile Include="Models\ReassignmentApprovalViewModel.cs" />
+    <Compile Include="Models\ReassignmentRequest.cs" />
+    <Compile Include="Models\ReassignmentRequestViewModel.cs" />
+    <Compile Include="Models\ReassignmentStatus.cs" />
+    <Compile Include="Models\RequestClassificationViewModel.cs" />
+    <Compile Include="Models\RequestSkill.cs" />
+    <Compile Include="Models\Skill.cs" />
+    <Compile Include="Models\TechnicianAssignment.cs" />
+    <Compile Include="Models\TechnicianAssignmentViewModel.cs" />
+    <Compile Include="Models\TechnicianDashboardViewModel.cs" />
     <Compile Include="Models\TechnicianManagementController.cs" />
+    <Compile Include="Models\TechniciansController.cs" />
+    <Compile Include="Models\TechnicianSkill.cs" />
+    <Compile Include="Models\Violation.cs" />
+    <Compile Include="Models\Ward.cs" />
+    <Compile Include="Models\Warning.cs" />
+    <Compile Include="Models\WorkNote.cs" />
     <Compile Include="Scripts\Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -291,6 +364,7 @@
     <Content Include="Content\ForgotPassword.css" />
     <Content Include="Content\Images\logo.png" />
     <Content Include="Content\login.css" />
+    <Content Include="Content\TechnicianDashboard.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -360,6 +434,33 @@
     <Content Include="Views\AdministratorReports\Index.cshtml" />
     <Content Include="Views\AdministratorStatistics\Index.cshtml" />
     <Content Include="Views\AdministratorForgotPassword\Index.cshtml" />
+    <Content Include="Views\Citizens\updateProfile.cshtml" />
+    <Content Include="Views\Technicians\Login.cshtml" />
+    <Content Include="Views\Technicians\ForgotPassword.cshtml" />
+    <Content Include="Views\Technicians\ResetPassword.cshtml" />
+    <Content Include="Views\AdministratorRequests\Classify.cshtml" />
+    <Content Include="Views\AdministratorAssignments\Create.cshtml" />
+    <Content Include="Views\Technicians\Dashboard.cshtml" />
+    <Content Include="Views\Technicians\Details.cshtml" />
+    <Content Include="Views\Technicians\ReportIssue.cshtml" />
+    <Content Include="Views\Technicians\RequestReAssignment.cshtml" />
+    <Content Include="Views\Technicians\updateProgress.cshtml" />
+    <Content Include="Views\Technicians\AddWorkNote.cshtml" />
+    <Content Include="Views\Technicians\AddMaterial.cshtml" />
+    <Content Include="Views\Technicians\UploadEvidence.cshtml" />
+    <Content Include="Views\Technicians\UploadProgressEvidence.cshtml" />
+    <Content Include="Views\Technicians\UploadCompletionEvidence.cshtml" />
+    <Content Include="Views\Technicians\SubmitCompletion.cshtml" />
+    <Content Include="Views\AdministratorRequests\VerifyCompletion.cshtml" />
+    <Content Include="Views\Technicians\CompletedWork.cshtml" />
+    <Content Include="Views\Technicians\PreviousResolutions.cshtml" />
+    <Content Include="Views\Technicians\KnowledgeBase.cshtml" />
+    <Content Include="Views\Technicians\AssignedRequests.cshtml" />
+    <Content Include="Views\AdministratorAssignments\ReassignmentRequests.cshtml" />
+    <Content Include="Views\AdministratorAssignments\ReviewReassignment.cshtml" />
+    <Content Include="Views\AdministratorAssignments\ApproveReassignment.cshtml" />
+    <Content Include="Views\CitizenCompliance\Index.cshtml" />
+    <Content Include="Views\CitizenCompliance\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -445,6 +546,33 @@
     <EmbeddedResource Include="Migrations\202608221730105_AddTechnicianFields.resx">
       <DependentUpon>202608221730105_AddTechnicianFields.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609011038170_AddWardToRequests.resx">
+      <DependentUpon>202609011038170_AddWardToRequests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609011103086_RemoveLocationDescription.resx">
+      <DependentUpon>202609011103086_RemoveLocationDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609020041475_AddTechnicianSprint2.resx">
+      <DependentUpon>202609020041475_AddTechnicianSprint2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609022115332_AddPriorityReason.resx">
+      <DependentUpon>202609022115332_AddPriorityReason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609040124496_ChangeMaintenanceMaterialQuantityToWholeNumber.resx">
+      <DependentUpon>202609040124496_ChangeMaintenanceMaterialQuantityToWholeNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609041344487_AddKnowledgeBaseFields.resx">
+      <DependentUpon>202609041344487_AddKnowledgeBaseFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609051435453_AddCitizenCompliance.resx">
+      <DependentUpon>202609051435453_AddCitizenCompliance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609051644382_AddRequestReferenceNumber.resx">
+      <DependentUpon>202609051644382_AddRequestReferenceNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609051653133_MakeRequestReferenceRequiredUnique.resx">
+      <DependentUpon>202609051653133_MakeRequestReferenceRequiredUnique.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
@@ -518,8 +646,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.2\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.2\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
   </Target>
-  <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" />
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
 </Project>

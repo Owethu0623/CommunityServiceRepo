@@ -1,0 +1,121 @@
+﻿@model CommunityServiceProject.Models.MaintenanceWork
+
+@{
+    ViewBag.Title = "Submit Maintenance Completion";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <div class="admin-review-header">
+            <h2>Submit Maintenance Completion</h2>
+            <p>Request #@Model.RequestID</p>
+        </div>
+
+        <div class="admin-review-content">
+
+            @if (Model.Request != null)
+            {
+                <div class="admin-review-section">
+                    <h3>Request Information</h3>
+
+                    <div class="admin-review-row">
+                        <span class="admin-review-label">
+                            Request Title
+                        </span>
+
+                        <span>
+                            @Model.Request.Title
+                        </span>
+                    </div>
+                </div>
+            }
+
+            <div class="admin-review-section">
+
+                <h3>Completion Details</h3>
+
+                @using (Html.BeginForm(
+                    "SubmitCompletion",
+                    "Technicians",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.Hidden(
+                        "id",
+                        Model.MaintenanceWorkID)
+
+                    <div class="mb-3">
+
+                        <label for="maintenanceSummary"
+                               class="form-label">
+                            Maintenance Summary
+                        </label>
+
+                        <textarea id="maintenanceSummary"
+                                  name="maintenanceSummary"
+                                  class="form-control"
+                                  maxlength="2000"
+                                  rows="6"
+                                  required
+                                  placeholder="Describe the maintenance work that was completed..."></textarea>
+
+                        @Html.ValidationMessage(
+                            "maintenanceSummary",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="resolutionAction"
+                               class="form-label">
+                            Resolution Action
+                        </label>
+
+                        <textarea id="resolutionAction"
+                                  name="resolutionAction"
+                                  class="form-control"
+                                  maxlength="2000"
+                                  rows="6"
+                                  required
+                                  placeholder="Describe the action taken to resolve the issue..."></textarea>
+
+                        @Html.ValidationMessage(
+                            "resolutionAction",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Submit Completion
+                        </button>
+
+                        <a href="@Url.Action(
+                            "Details",
+                            "Technicians",
+                            new
+                            {
+                                id = Model.RequestID
+                            })"
+                           class="admin-back-button">
+                            Cancel
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

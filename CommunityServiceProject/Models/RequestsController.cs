@@ -21,7 +21,6 @@ namespace CommunityServiceProject.Controllers
 
         public ActionResult Index()
         {
-            // Get the currently logged-in citizen
             if (Session["CitizenID"] == null)
             {
                 return RedirectToAction("Index", "Login");
@@ -29,10 +28,10 @@ namespace CommunityServiceProject.Controllers
 
             int citizenId = (int)Session["CitizenID"];
 
-
             var requests = db.Requests
                 .Include(r => r.Category)
                 .Include(r => r.Citizen)
+                .Include(r => r.Ward)
                 .Where(r => r.CitizenID == citizenId)
                 .OrderByDescending(r => r.DateSubmitted)
                 .ToList();
@@ -41,11 +40,12 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-        // =========================================================
-        // GET: Requests/Details/5
-        // =========================================================
+     
+// =========================================================
+// GET: Requests/Details/5
+// =========================================================
 
-        public ActionResult Details(int? id)
+public ActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -54,41 +54,38 @@ namespace CommunityServiceProject.Controllers
                 );
             }
 
-
             if (Session["CitizenID"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
 
-
             int citizenId = (int)Session["CitizenID"];
-
 
             Request request = db.Requests
                 .Include(r => r.Category)
                 .Include(r => r.Citizen)
+                .Include(r => r.Ward)
+                .Include(r => r.Technician)
                 .FirstOrDefault(
                     r =>
                         r.RequestID == id &&
                         r.CitizenID == citizenId
                 );
 
-
             if (request == null)
             {
                 return HttpNotFound();
             }
 
-
             return View(request);
         }
 
 
-        // =========================================================
-        // GET: Requests/Track/5
-        // =========================================================
+// =========================================================
+// GET: Requests/Track/5
+// =========================================================
 
-        public ActionResult Track(int? id)
+public ActionResult Track(int? id)
         {
             if (id == null)
             {
@@ -97,34 +94,45 @@ namespace CommunityServiceProject.Controllers
                 );
             }
 
-
             if (Session["CitizenID"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
 
-
             int citizenId = (int)Session["CitizenID"];
-
 
             Request request = db.Requests
                 .Include(r => r.Category)
                 .Include(r => r.Citizen)
+                .Include(r => r.Ward)
+                .Include(r => r.Technician)
+
+                // Assignment information
+                .Include(r => r.TechnicianAssignments)
+                .Include("TechnicianAssignments.Technician")
+
+                // Maintenance work
+                .Include(r => r.MaintenanceWorks)
+                .Include("MaintenanceWorks.ProgressRecords")
+                .Include("MaintenanceWorks.Evidence")
+                .Include("MaintenanceWorks.Completions")
+                .Include("MaintenanceWorks.Completions.VerifiedByAdministrator")
+
                 .FirstOrDefault(
                     r =>
                         r.RequestID == id &&
                         r.CitizenID == citizenId
                 );
 
-
             if (request == null)
             {
                 return HttpNotFound();
             }
 
-
             return View(request);
         }
+
+
 
 
         // =========================================================
@@ -138,13 +146,17 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-
             ViewBag.CategoryID = new SelectList(
                 db.Categories,
                 "CategoryID",
                 "CategoryName"
             );
 
+            ViewBag.WardID = new SelectList(
+                db.Wards.OrderBy(w => w.WardNumber),
+                "WardID",
+                "WardName"
+            );
 
             return View();
         }
@@ -158,7 +170,7 @@ namespace CommunityServiceProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(
             [Bind(Include =
-                "Title,Description,LocationDescription,CategoryID")]
+                "Title,Description,CategoryID,WardID,ProblemLocation")]
             Request request,
             string Latitude,
             string Longitude,
@@ -170,9 +182,20 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // ---------------------------------------------------------
-            // Validate Latitude
-            // ---------------------------------------------------------
+            // =====================================================
+            // REMOVE AUTOMATIC MVC VALIDATION FOR GPS FIELDS
+            // =====================================================
+            // Latitude and Longitude are received as strings above.
+            // They are validated manually below and then converted
+            // to double values before being saved.
+
+            ModelState.Remove("Latitude");
+            ModelState.Remove("Longitude");
+
+
+            // =====================================================
+            // VALIDATE LATITUDE
+            // =====================================================
 
             if (string.IsNullOrWhiteSpace(Latitude))
             {
@@ -214,9 +237,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // ---------------------------------------------------------
-            // Validate Longitude
-            // ---------------------------------------------------------
+            // =====================================================
+            // VALIDATE LONGITUDE
+            // =====================================================
 
             if (string.IsNullOrWhiteSpace(Longitude))
             {
@@ -258,9 +281,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // ---------------------------------------------------------
-            // Save Request
-            // ---------------------------------------------------------
+            // =====================================================
+            // SAVE REQUEST
+            // =====================================================
 
             if (ModelState.IsValid)
             {
@@ -282,16 +305,23 @@ namespace CommunityServiceProject.Controllers
                 request.TechnicianID = null;
 
 
-                // -----------------------------------------------------
-                // Handle uploaded image
-                // -----------------------------------------------------
+                // =================================================
+                // DEFAULT PRIORITY
+                // =================================================
+
+                request.Priority =
+                    Priority.Medium;
+
+
+                // =================================================
+                // HANDLE IMAGE UPLOAD
+                // =================================================
 
                 if (ImageFile != null &&
                     ImageFile.ContentLength > 0)
                 {
                     string uploadFolder =
                         Server.MapPath("~/Uploads/");
-
 
                     if (!System.IO.Directory.Exists(
                         uploadFolder))
@@ -323,28 +353,59 @@ namespace CommunityServiceProject.Controllers
                 }
 
 
-                // -----------------------------------------------------
-                // Save to database
-                // -----------------------------------------------------
+                // =================================================
+                // SAVE TO DATABASE
+                // =================================================
 
                 db.Requests.Add(request);
 
                 db.SaveChanges();
 
 
-                return RedirectToAction("Index");
+                // =================================================
+                // GENERATE REQUEST REFERENCE
+                // =================================================
+
+                // RequestID is now available after the first save.
+                request.ReferenceNumber =
+                    "REQ-" +
+                    DateTime.Now.Year +
+                    "-" +
+                    request.RequestID.ToString("D6");
+
+
+                // Save the generated reference number.
+                db.SaveChanges();
+
+
+                // =================================================
+                // SHOW REQUEST DETAILS AFTER SUBMISSION
+                // =================================================
+
+                return RedirectToAction(
+                    "Details",
+                    new { id = request.RequestID }
+                );
             }
 
 
-            // ---------------------------------------------------------
-            // Validation failed
-            // ---------------------------------------------------------
+            // =====================================================
+            // VALIDATION FAILED
+            // =====================================================
 
             ViewBag.CategoryID = new SelectList(
                 db.Categories,
                 "CategoryID",
                 "CategoryName",
                 request.CategoryID
+            );
+
+
+            ViewBag.WardID = new SelectList(
+                db.Wards.OrderBy(w => w.WardNumber),
+                "WardID",
+                "WardName",
+                request.WardID
             );
 
 
@@ -365,18 +426,15 @@ namespace CommunityServiceProject.Controllers
                 );
             }
 
-
             if (Session["CitizenID"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
 
-
             int citizenId =
                 (int)Session["CitizenID"];
 
 
-            // Only find requests belonging to this citizen
             Request request = db.Requests
                 .FirstOrDefault(
                     r =>
@@ -391,10 +449,7 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
             // Only Pending requests can be edited
-            // -----------------------------------------------------
-
             if (!request.CanEdit())
             {
                 return new HttpStatusCodeResult(
@@ -404,15 +459,19 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Category dropdown
-            // -----------------------------------------------------
-
             ViewBag.CategoryID = new SelectList(
                 db.Categories,
                 "CategoryID",
                 "CategoryName",
                 request.CategoryID
+            );
+
+
+            ViewBag.WardID = new SelectList(
+                db.Wards.OrderBy(w => w.WardNumber),
+                "WardID",
+                "WardName",
+                request.WardID
             );
 
 
@@ -428,7 +487,7 @@ namespace CommunityServiceProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include =
-                "RequestID,Title,Description,LocationDescription,CategoryID")]
+                "RequestID,Title,Description,CategoryID,WardID,ProblemLocation")]
             Request updatedRequest,
             HttpPostedFileBase ImageFile)
         {
@@ -437,14 +496,16 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-
             int citizenId =
                 (int)Session["CitizenID"];
 
+            ModelState.Remove("Latitude");
+            ModelState.Remove("Longitude");
 
-            // -----------------------------------------------------
-            // Validation
-            // -----------------------------------------------------
+
+            // =====================================================
+            // VALIDATION
+            // =====================================================
 
             if (!ModelState.IsValid)
             {
@@ -456,13 +517,21 @@ namespace CommunityServiceProject.Controllers
                 );
 
 
+                ViewBag.WardID = new SelectList(
+                    db.Wards.OrderBy(w => w.WardNumber),
+                    "WardID",
+                    "WardName",
+                    updatedRequest.WardID
+                );
+
+
                 return View(updatedRequest);
             }
 
 
-            // -----------------------------------------------------
-            // Find original request
-            // -----------------------------------------------------
+            // =====================================================
+            // FIND ORIGINAL REQUEST
+            // =====================================================
 
             Request request = db.Requests
                 .FirstOrDefault(
@@ -481,9 +550,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Make sure request is still editable
-            // -----------------------------------------------------
+            // =====================================================
+            // CHECK IF STILL EDITABLE
+            // =====================================================
 
             if (!request.CanEdit())
             {
@@ -494,9 +563,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Update ONLY citizen-editable fields
-            // -----------------------------------------------------
+            // =====================================================
+            // UPDATE CITIZEN-EDITABLE FIELDS
+            // =====================================================
 
             request.Title =
                 updatedRequest.Title;
@@ -504,16 +573,19 @@ namespace CommunityServiceProject.Controllers
             request.Description =
                 updatedRequest.Description;
 
-            request.LocationDescription =
-                updatedRequest.LocationDescription;
-
             request.CategoryID =
                 updatedRequest.CategoryID;
 
+            request.WardID =
+                updatedRequest.WardID;
 
-            // -----------------------------------------------------
-            // Replace uploaded image
-            // -----------------------------------------------------
+            request.ProblemLocation =
+                updatedRequest.ProblemLocation;
+
+
+            // =====================================================
+            // REPLACE IMAGE
+            // =====================================================
 
             if (ImageFile != null &&
                 ImageFile.ContentLength > 0)
@@ -552,9 +624,9 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Save changes
-            // -----------------------------------------------------
+            // =====================================================
+            // SAVE CHANGES
+            // =====================================================
 
             db.SaveChanges();
 
@@ -576,18 +648,15 @@ namespace CommunityServiceProject.Controllers
                 );
             }
 
-
             if (Session["CitizenID"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
 
-
             int citizenId =
                 (int)Session["CitizenID"];
 
 
-            // Only find requests belonging to this citizen
             Request request = db.Requests
                 .FirstOrDefault(
                     r =>
@@ -602,10 +671,7 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
             // Only Pending requests can be cancelled
-            // -----------------------------------------------------
-
             if (!request.CanEdit())
             {
                 return new HttpStatusCodeResult(
@@ -630,7 +696,7 @@ namespace CommunityServiceProject.Controllers
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Requests");
+                return RedirectToAction("Index", "Login");
             }
 
 
@@ -638,7 +704,6 @@ namespace CommunityServiceProject.Controllers
                 (int)Session["CitizenID"];
 
 
-            // Only find requests belonging to this citizen
             Request request = db.Requests
                 .FirstOrDefault(
                     r =>
@@ -653,10 +718,7 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
             // Only Pending requests can be cancelled
-            // -----------------------------------------------------
-
             if (!request.CanEdit())
             {
                 return new HttpStatusCodeResult(
@@ -666,10 +728,7 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -----------------------------------------------------
-            // Delete / cancel request
-            // -----------------------------------------------------
-
+            // Delete request
             db.Requests.Remove(request);
 
             db.SaveChanges();
@@ -680,7 +739,7 @@ namespace CommunityServiceProject.Controllers
 
 
         // =========================================================
-        // Dispose
+        // DISPOSE
         // =========================================================
 
         protected override void Dispose(bool disposing)

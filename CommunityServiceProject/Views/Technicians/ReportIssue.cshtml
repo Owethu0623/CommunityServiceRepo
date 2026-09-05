@@ -1,0 +1,87 @@
+﻿@model CommunityServiceProject.ViewModels.AssignmentIssueViewModel
+
+@{
+    ViewBag.Title = "Report Assignment Issue";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <h3>Report Assignment Issue</h3>
+        </div>
+
+        <div class="card-body">
+
+            <p>
+                <strong>Request:</strong>
+                @Model.RequestTitle
+            </p>
+
+            @using (Html.BeginForm("ReportIssue", "Technicians", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.AssignmentID)
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.IssueType, new { @class = "form-label" })
+
+                    @Html.EnumDropDownListFor(
+                        m => m.IssueType,
+                        "-- Select Issue Type --",
+                        new { @class = "form-control" }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.IssueType,
+                        "",
+                        new { @class = "text-danger" }
+                    )
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Reason, new { @class = "form-label" })
+
+                    @Html.TextAreaFor(
+                        m => m.Reason,
+                        5,
+                        60,
+                        new
+                        {
+                            @class = "form-control",
+                            placeholder = "Explain the issue with this assignment..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Reason,
+                        "",
+                        new { @class = "text-danger" }
+                    )
+                </div>
+
+                <button type="submit" class="btn btn-danger">
+                    Submit Issue
+                </button>
+
+                <a href="@Url.Action(
+                            "Details",
+                            "Technicians",
+                            new { id = Model.RequestID }
+                         )"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

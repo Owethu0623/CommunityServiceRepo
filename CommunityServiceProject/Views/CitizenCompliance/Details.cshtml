@@ -1,0 +1,215 @@
+﻿@model CommunityServiceProject.Models.Violation
+
+@{
+    ViewBag.Title = "Violation Details";
+}
+
+<div class="violation-details-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="violation-details-header">
+
+        <h2>
+            Violation Details
+        </h2>
+
+        <p>
+            View the details of the compliance violation associated
+            with your account.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         VIOLATION INFORMATION
+         ===================================================== -->
+
+    <div class="compliance-card">
+
+        <h3>
+            Violation Information
+        </h3>
+
+        <div class="compliance-information">
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Violation Type
+                </span>
+
+                <span class="information-value">
+                    @Model.ViolationType
+                </span>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Description
+                </span>
+
+                <span class="information-value">
+                    @Model.Description
+                </span>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Date Confirmed
+                </span>
+
+                <span class="information-value">
+                    @Model.DateConfirmed.ToString("dd MMMM yyyy")
+                </span>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Status
+                </span>
+
+                <span class="information-value">
+                    @Model.Status
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RELATED REQUEST
+         ===================================================== -->
+
+    <div class="compliance-card">
+
+        <h3>Related Request</h3>
+
+        @if (Model.Request != null)
+        {
+            <div class="compliance-information">
+
+                <div class="information-row">
+
+                    <span class="information-label">
+                        Request ID
+                    </span>
+
+                    <span class="information-value">
+                        @Model.Request.RequestID
+                    </span>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <p class="no-compliance-record">
+                No related request is associated with this violation.
+            </p>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         ADMINISTRATIVE ACTION
+         ===================================================== -->
+
+    <div class="compliance-card">
+
+        <h3>
+            Administrative Action
+        </h3>
+
+        @if (Model.Warnings != null &&
+             Model.Warnings.Any())
+        {
+            foreach (var warning in Model.Warnings
+                .OrderByDescending(w => w.DateIssued))
+            {
+                <div class="compliance-information">
+
+                    <div class="information-row">
+
+                        <span class="information-label">
+                            Action
+                        </span>
+
+                        <span class="information-value">
+                            WARNING
+                        </span>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <span class="information-label">
+                            Reason
+                        </span>
+
+                        <span class="information-value">
+                            @warning.WarningReason
+                        </span>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <span class="information-label">
+                            Date Issued
+                        </span>
+
+                        <span class="information-value">
+                            @warning.DateIssued.ToString("dd MMMM yyyy")
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <p class="no-compliance-record">
+                No administrative warning has been recorded.
+            </p>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         NAVIGATION
+         ===================================================== -->
+
+    <div class="compliance-navigation">
+
+        <a href="@Url.Action("Index", "CitizenCompliance")"
+           class="back-button">
+
+            ← Back to Compliance
+
+        </a>
+
+    </div>
+
+</div>

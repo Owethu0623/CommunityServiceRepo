@@ -1,0 +1,520 @@
+﻿@model CommunityServiceProject.Models.MaintenanceWork
+
+@{
+    ViewBag.Title = "Verify Maintenance Completion";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <!-- HEADER -->
+        <div class="admin-review-header">
+            <h2>Verify Maintenance Completion</h2>
+
+            <p>
+                Request #@Model.RequestID
+            </p>
+        </div>
+
+
+        <div class="admin-review-content">
+
+            <!-- REQUEST INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Request Information</h3>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Title
+                    </span>
+
+                    <span>
+                        @(Model.Request != null
+                            ? Model.Request.Title
+                            : "Unknown")
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Category
+                    </span>
+
+                    <span>
+                        @(Model.Request != null &&
+                          Model.Request.Category != null
+                            ? Model.Request.Category.CategoryName
+                            : "Unknown")
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Location
+                    </span>
+
+                    <span>
+                        @(Model.Request != null &&
+                          !string.IsNullOrWhiteSpace(Model.Request.ProblemLocation)
+                            ? Model.Request.ProblemLocation
+                            : "Not provided")
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Priority
+                    </span>
+
+                    <span>
+                        @(Model.Request != null
+                            ? Model.Request.Priority.ToString()
+                            : "Unknown")
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- TECHNICIAN INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Technician Information</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Technician
+                    </span>
+
+                    <span>
+                        @(Model.Technician != null
+                            ? Model.Technician.FirstName + " " +
+                              Model.Technician.LastName
+                            : "Unknown")
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAINTENANCE INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Maintenance Information</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Started Date
+                    </span>
+
+                    <span>
+                        @(Model.StartedDate.HasValue
+                            ? Model.StartedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                            : "Not recorded")
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Progress
+                    </span>
+
+                    <span>
+                        @Model.ProgressPercentage%
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Current Activity
+                    </span>
+
+                    <span>
+                        @(string.IsNullOrWhiteSpace(Model.CurrentActivity)
+                            ? "No activity recorded."
+                            : Model.CurrentActivity)
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Maintenance Status
+                    </span>
+
+                    <span class="admin-status">
+                        @Model.Status
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMPLETION SUBMISSION -->
+            <div class="admin-review-section">
+
+                <h3>Completion Submission</h3>
+
+                @{
+                    var completion = Model.Completions
+                        .OrderByDescending(c => c.SubmittedDate)
+                        .FirstOrDefault();
+                }
+
+                @if (completion != null)
+                {
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Submitted Date
+                        </span>
+
+                        <span>
+                            @completion.SubmittedDate.ToString(
+                                "dd/MM/yyyy HH:mm")
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Verification Status
+                        </span>
+
+                        <span class="admin-status">
+                            @completion.VerificationStatus
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Maintenance Summary
+                        </span>
+
+                        <span>
+                            @completion.MaintenanceSummary
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Resolution Action
+                        </span>
+
+                        <span>
+                            @completion.ResolutionAction
+                        </span>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="admin-review-row">
+
+                        <span>
+                            No completion submission was found.
+                        </span>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- WORK NOTES -->
+            <div class="admin-review-section">
+
+                <h3>Work Notes</h3>
+
+                @if (Model.WorkNotes != null &&
+                     Model.WorkNotes.Any())
+                {
+                    foreach (var note in Model.WorkNotes
+                        .OrderByDescending(n => n.CreatedDate))
+                    {
+                        <div class="admin-review-row">
+
+                            <span class="admin-review-label">
+                                @note.CreatedDate.ToString(
+                                    "dd/MM/yyyy HH:mm")
+                            </span>
+
+                            <span>
+                                @note.NoteText
+                            </span>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="admin-review-row">
+                        <span>
+                            No work notes were recorded.
+                        </span>
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- MATERIALS -->
+            <div class="admin-review-section">
+
+                <h3>Materials &amp; Resources</h3>
+
+                @if (Model.Materials != null &&
+                     Model.Materials.Any())
+                {
+                    foreach (var material in Model.Materials
+                        .OrderByDescending(m => m.RecordedDate))
+                    {
+                        <div class="admin-review-row">
+
+                            <span class="admin-review-label">
+                                Material
+                            </span>
+
+                            <span>
+                                @material.MaterialName
+                                —
+                                @material.Quantity
+                                @material.Unit
+                            </span>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="admin-review-row">
+                        <span>
+                            No materials were recorded.
+                        </span>
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- EVIDENCE -->
+            <div class="admin-review-section">
+
+                <h3>Maintenance Evidence</h3>
+
+                @if (Model.Evidence != null &&
+                     Model.Evidence.Any())
+                {
+                    foreach (var evidence in Model.Evidence
+                        .OrderBy(e => e.EvidenceType)
+                        .ThenBy(e => e.UploadedDate))
+                    {
+                        <div class="admin-evidence-item">
+
+                            <div class="admin-review-row">
+
+                                <span class="admin-review-label">
+                                    Evidence Type
+                                </span>
+
+                                <span>
+                                    @evidence.EvidenceType
+                                </span>
+
+                            </div>
+
+
+                            <div class="admin-review-row">
+
+                                <span class="admin-review-label">
+                                    Uploaded
+                                </span>
+
+                                <span>
+                                    @evidence.UploadedDate.ToString(
+                                        "dd/MM/yyyy HH:mm")
+                                </span>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                evidence.Description))
+                            {
+                                <div class="admin-review-row">
+
+                                    <span class="admin-review-label">
+                                        Description
+                                    </span>
+
+                                    <span>
+                                        @evidence.Description
+                                    </span>
+
+                                </div>
+                            }
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                evidence.FilePath))
+                            {
+                                <div class="admin-evidence-preview">
+
+                                    <img src="@Url.Content(
+                                        evidence.FilePath)"
+                                         class="admin-request-image"
+                                         alt="Maintenance evidence" />
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="admin-review-row">
+
+                        <span>
+                            No maintenance evidence was uploaded.
+                        </span>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="admin-review-section">
+
+                <h3>Administrator Decision</h3>
+
+                <p>
+                    Review the maintenance completion details before making
+                    a verification decision.
+                </p>
+
+                <div class="mb-3">
+
+                    <label for="administratorComments"
+                           class="form-label">
+                        Administrator Comments
+                    </label>
+
+                    <textarea id="administratorComments"
+                              name="administratorComments"
+                              class="form-control"
+                              maxlength="1000"
+                              rows="5"
+                              placeholder="Provide comments if the completion needs to be rejected..."></textarea>
+
+                </div>
+
+                <div class="admin-review-actions">
+
+                    @using (Html.BeginForm(
+                        "VerifyCompletion",
+                        "AdministratorRequests",
+                        FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.Hidden(
+                            "id",
+                            Model.MaintenanceWorkID)
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Verify Completion
+                        </button>
+                    }
+
+                    @using (Html.BeginForm(
+                        "RejectCompletion",
+                        "AdministratorRequests",
+                        FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.Hidden(
+                            "id",
+                            Model.MaintenanceWorkID)
+
+                        <input type="hidden"
+                               name="administratorComments"
+                               id="rejectComments" />
+
+                        <button type="submit"
+                                class="admin-reject-button"
+                                onclick="return prepareRejectComments();">
+                            Reject Completion
+                        </button>
+                    }
+
+                </div>
+
+            </div>
+            
+
+                </div>
+
+            </div>
+
+            </div>
+
+
+            <!-- BACK -->
+            <div class="admin-review-footer">
+
+                <a href="@Url.Action(
+                    "Details",
+                    "AdministratorRequests",
+                    new { id = Model.RequestID })"
+                   class="admin-back-button">
+
+                    Back to Request
+
+                </a>
+
+            </div>
+
+     
+<script>
+    function prepareRejectComments() {
+
+        var comments =
+            document.getElementById("administratorComments").value;
+
+        if (!comments.trim()) {
+            alert("Please provide a reason for rejecting the completion.");
+            return false;
+        }
+
+        document.getElementById("rejectComments").value =
+            comments;
+
+        return true;
+    }
+</script>
+

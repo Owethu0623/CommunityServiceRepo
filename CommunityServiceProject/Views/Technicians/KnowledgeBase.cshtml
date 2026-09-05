@@ -1,0 +1,498 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.MaintenanceKnowledgeBase>
+
+@{
+    ViewBag.Title = "Maintenance Knowledge Base";
+}
+
+<div class="knowledge-base-page">
+
+    <div class="knowledge-base-card">
+
+        <div class="knowledge-base-content">
+
+            <h2 class="knowledge-base-title">
+                MAINTENANCE KNOWLEDGE BASE
+            </h2>
+
+            <p class="knowledge-base-description">
+                Search previous maintenance solutions and useful repair knowledge.
+            </p>
+
+            <div class="knowledge-base-filters">
+
+                @using (Html.BeginForm("KnowledgeBase", "Technicians", FormMethod.Get))
+                {
+                    <div class="filter-group">
+
+                        <div class="filter-item">
+                            <label for="search">Search</label>
+
+                            <input type="text"
+                                   id="search"
+                                   name="search"
+                                   value="@ViewBag.Search"
+                                   placeholder="Search solutions, keywords..."
+                                   class="filter-input" />
+                        </div>
+
+                        <div class="filter-item">
+                            <label for="categoryId">Category</label>
+
+                            <select id="categoryId" name="categoryId" class="filter-input">
+
+                                <option value="">
+                                    All Categories
+                                </option>
+
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    if (ViewBag.CategoryID != null &&
+                                        (int)ViewBag.CategoryID == category.CategoryID)
+                                    {
+                                        <option value="@category.CategoryID"
+                                                selected="selected">
+                                            @category.CategoryName
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.CategoryID">
+                                            @category.CategoryName
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="filter-item filter-button-container">
+                            <button type="submit" class="search-button">
+                                SEARCH
+                            </button>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <div class="knowledge-section">
+
+                <h3>
+                    MAINTENANCE SOLUTIONS
+                </h3>
+
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var knowledge in Model)
+                    {
+                        var completion = knowledge.MaintenanceCompletion;
+                        var work = completion != null
+                            ? completion.MaintenanceWork
+                            : null;
+
+                        var request = work != null
+                            ? work.Request
+                            : null;
+
+                        <div class="knowledge-record">
+
+                            <div class="knowledge-record-header">
+
+                                <div>
+                                    <span class="knowledge-category">
+                                        @knowledge.Category.CategoryName
+                                    </span>
+
+                                    <h4>
+                                        @knowledge.Title
+                                    </h4>
+                                </div>
+
+                                <span class="approved-badge">
+                                    APPROVED
+                                </span>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(knowledge.Keywords))
+                            {
+                                <div class="knowledge-field">
+
+                                    <span class="knowledge-label">
+                                        Keywords
+                                    </span>
+
+                                    <p>
+                                        @knowledge.Keywords
+                                    </p>
+
+                                </div>
+                            }
+
+
+                            <div class="knowledge-field">
+
+                                <span class="knowledge-label">
+                                    Problem
+                                </span>
+
+                                <p>
+                                    @knowledge.ProblemDescription
+                                </p>
+
+                            </div>
+
+                            <div class="knowledge-field">
+
+                                <span class="knowledge-label">
+                                    Recommended Solution
+                                </span>
+
+                                <p>
+                                    @knowledge.RecommendedSolution
+                                </p>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(knowledge.LessonsLearned))
+                            {
+                                <div class="knowledge-field">
+
+                                    <span class="knowledge-label">
+                                        Lessons Learned
+                                    </span>
+
+                                    <p>
+                                        @knowledge.LessonsLearned
+                                    </p>
+
+                                </div>
+                            }
+
+
+                            @if (request != null)
+                            {
+                                <div class="knowledge-meta">
+
+                                    <span>
+                                        Request #@request.RequestID
+                                    </span>
+
+                                    @if (knowledge.CreatedByTechnician != null)
+                                    {
+                                        <span>
+                                            Created by:
+                                            @knowledge.CreatedByTechnician.FirstName
+                                            @knowledge.CreatedByTechnician.LastName
+                                        </span>
+                                    }
+
+                                    <span>
+                                        Created:
+                                        @knowledge.CreatedDate.ToString("dd/MM/yyyy")
+                                    </span>
+
+                                </div>
+
+                                <div class="knowledge-actions">
+
+                                    @Html.ActionLink(
+                                        "VIEW SOURCE RESOLUTION",
+                                        "Details",
+                                        "Technicians",
+                                        new
+                                        {
+                                            id = request.RequestID,
+                                            returnTo = "KnowledgeBase"
+                                        },
+                                        new
+                                        {
+                                            @class = "view-resolution-button"
+                                        }
+                                    )
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-knowledge">
+
+                        <h4>
+                            No knowledge found
+                        </h4>
+
+                        <p>
+                            No approved maintenance knowledge matches your search.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+        <div class="knowledge-base-back">
+            <a href="@Url.Action("Dashboard", "Technicians")"
+               class="knowledge-base-back-button">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+</div>
+
+
+<style>
+
+    .knowledge-base-page {
+        background: #F5F8FC;
+        min-height: 100vh;
+        padding: 35px 20px;
+    }
+
+    .knowledge-base-card {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .knowledge-base-content {
+        padding: 35px;
+    }
+
+    .knowledge-base-title {
+        color: #0D5CC1;
+        font-size: 32px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .knowledge-base-description {
+        text-align: center;
+        color: #444;
+        font-size: 17px;
+        margin-bottom: 30px;
+    }
+
+    .knowledge-base-filters {
+        background: #F5F8FC;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 20px;
+        align-items: end;
+        flex-wrap: wrap;
+    }
+
+    .filter-item {
+        flex: 1;
+        min-width: 220px;
+    }
+
+        .filter-item label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: #333;
+        }
+
+    .filter-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .filter-button-container {
+        flex: 0 0 auto;
+        min-width: auto;
+    }
+
+    .search-button {
+        padding: 11px 25px;
+        background: #0D5CC1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .search-button:hover {
+            background: #094A9D;
+        }
+
+    .knowledge-section h3 {
+        color: #0D5CC1;
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .knowledge-record {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        background: #fff;
+    }
+
+    .knowledge-record-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .knowledge-category {
+        color: #0D5CC1;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .knowledge-record h4 {
+        margin: 5px 0 0;
+        font-size: 21px;
+        color: #222;
+    }
+
+    .approved-badge {
+        background: #0D5CC1;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .knowledge-field {
+        margin-bottom: 15px;
+    }
+
+    .knowledge-label {
+        display: block;
+        color: #0D5CC1;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .knowledge-field p {
+        margin: 0;
+        color: #444;
+        line-height: 1.6;
+    }
+
+    .knowledge-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding-top: 15px;
+        margin-top: 15px;
+        border-top: 1px solid #eee;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .knowledge-actions {
+        margin-top: 20px;
+    }
+
+    .view-resolution-button {
+        display: inline-block;
+        padding: 10px 18px;
+        background: #0D5CC1;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+        .view-resolution-button:hover {
+            background: #094A9D;
+            color: white;
+            text-decoration: none;
+        }
+
+    .no-knowledge {
+        text-align: center;
+        padding: 40px 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+        .no-knowledge h4 {
+            color: #0D5CC1;
+            margin-bottom: 10px;
+        }
+
+        .no-knowledge p {
+            color: #666;
+        }
+
+    @@media (max-width: 768px) {
+
+        .knowledge-base-page {
+            padding: 20px 10px;
+        }
+
+        .knowledge-base-content {
+            padding: 20px 15px;
+        }
+
+        .knowledge-record-header {
+            flex-direction: column;
+        }
+
+        .filter-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-item {
+            min-width: 100%;
+        }
+    }
+    .knowledge-base-back {
+        margin-top: 25px;
+        padding-left: 0;
+    }
+
+    .knowledge-base-back-button {
+        display: inline-block;
+        background: #0D5CC1;
+        color: white !important;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: background 0.2s ease;
+    }
+
+        .knowledge-base-back-button:hover {
+            background: #08479A;
+            color: white !important;
+            text-decoration: none !important;
+        }
+</style>

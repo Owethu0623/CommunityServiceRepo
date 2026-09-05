@@ -23,9 +23,16 @@
 
 
     <!-- =========================
-         SUMMARY
-         ========================= -->
+     SUMMARY
+     ========================= -->
     <div class="request-summary">
+
+        <div class="summary-item">
+            <span class="summary-label">Request Reference</span>
+            <span class="summary-value">
+                @Model.ReferenceNumber
+            </span>
+        </div>
 
         <div class="summary-item">
             <span class="summary-label">Request ID</span>
@@ -38,8 +45,8 @@
             <span class="summary-label">Category</span>
             <span class="summary-value">
                 @(Model.Category != null
-                    ? Model.Category.CategoryName
-                    : "Unknown")
+                ? Model.Category.CategoryName
+                : "Unknown")
             </span>
         </div>
 
@@ -47,6 +54,13 @@
             <span class="summary-label">Status</span>
             <span class="summary-status status-@Model.Status.ToString().ToLower()">
                 @Model.Status
+            </span>
+        </div>
+
+        <div class="summary-item">
+            <span class="summary-label">Priority</span>
+            <span class="summary-status status-@Model.Priority.ToString().ToLower()">
+                @Model.Priority
             </span>
         </div>
 
@@ -104,12 +118,32 @@
             <h2>Location</h2>
         </div>
 
+
+        <!-- WARD -->
         <div class="detail-field">
 
-            <label>Location Description</label>
+            <label>Ward</label>
 
             <div class="detail-box">
-                @Model.LocationDescription
+
+                @(Model.Ward != null
+                    ? Model.Ward.WardName
+                    : "Unknown")
+
+            </div>
+
+        </div>
+
+
+        <!-- PROBLEM LOCATION -->
+        <div class="detail-field">
+
+            <label>Problem Location</label>
+
+            <div class="detail-box">
+                @(!string.IsNullOrWhiteSpace(Model.ProblemLocation)
+                    ? Model.ProblemLocation
+                    : "No problem location description provided.")
             </div>
 
         </div>
@@ -119,27 +153,46 @@
         <div class="gps-card">
 
             <div class="gps-card-header">
+
                 <span class="gps-icon"></span>
 
                 <div>
+
                     <h3>GPS Location</h3>
-                    <p>Automatic location captured when the request was submitted</p>
+
+                    <p>
+                        Location captured when the request was submitted
+                    </p>
+
                 </div>
+
             </div>
 
 
-            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+            @if (Model.Latitude.HasValue &&
+                 Model.Longitude.HasValue)
             {
                 <div class="gps-coordinates">
 
                     <div class="gps-coordinate">
+
                         <span>Latitude</span>
-                        <strong>@Model.Latitude</strong>
+
+                        <strong>
+                            @Model.Latitude.Value.ToString("F6")
+                        </strong>
+
                     </div>
 
+
                     <div class="gps-coordinate">
+
                         <span>Longitude</span>
-                        <strong>@Model.Longitude</strong>
+
+                        <strong>
+                            @Model.Longitude.Value.ToString("F6")
+                        </strong>
+
                     </div>
 
                 </div>
@@ -147,16 +200,75 @@
             else
             {
                 <div class="gps-unavailable">
+
                     <span></span>
+
                     <span>
                         GPS location was not available when the request was submitted.
                     </span>
+
                 </div>
             }
 
         </div>
 
     </div>
+
+
+    <!-- =========================
+         PRIORITY
+         ========================= -->
+    <div class="request-details-section">
+
+        <div class="request-section-heading">
+            <span class="section-icon"></span>
+            <h2>Priority</h2>
+        </div>
+
+        <div class="status-information">
+
+            <div class="status-row">
+                <span>Current Priority</span>
+
+                <span class="summary-status status-@Model.Priority.ToString().ToLower()">
+                    @Model.Priority
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         ASSIGNMENT
+         ========================= -->
+    @if (Model.Technician != null)
+    {
+        <div class="request-details-section">
+
+            <div class="request-section-heading">
+                <span class="section-icon"></span>
+                <h2>Assigned Technician</h2>
+            </div>
+
+            <div class="status-information">
+
+                <div class="status-row">
+
+                    <span>Technician</span>
+
+                    <strong>
+                        @Model.Technician.FirstName
+                        @Model.Technician.LastName
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
 
 
     <!-- =========================
@@ -245,3 +357,4 @@
     </div>
 
 </div>
+

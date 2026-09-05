@@ -38,8 +38,29 @@ namespace CommunityServiceProject.Controllers
             // GET CITIZEN'S REQUESTS
             // =====================================================
 
+            var allRequests = db.Requests
+                .Where(r => r.CitizenID == citizenId)
+                .ToList();
+  
+
             var requests = db.Requests
                 .Where(r => r.CitizenID == citizenId)
+                .ToList();
+
+            ViewBag.TotalRequests = requests.Count;
+
+            ViewBag.AssignedRequests = requests
+                .Count(r => r.Status == RequestStatus.Assigned);
+
+            ViewBag.CompletedRequests = requests
+                .Count(r => r.Status == RequestStatus.Completed);
+
+
+            // =====================================================
+            // GET LATEST REQUESTS FOR NOTIFICATIONS
+            // =====================================================
+
+                  allRequests
                 .OrderByDescending(r => r.DateSubmitted)
                 .Take(5)
                 .ToList();
@@ -67,7 +88,6 @@ namespace CommunityServiceProject.Controllers
 
                         break;
 
-
                     case RequestStatus.UnderReview:
 
                         notification =
@@ -76,7 +96,6 @@ namespace CommunityServiceProject.Controllers
                             "\" is currently under review.";
 
                         break;
-
 
                     case RequestStatus.Approved:
 
@@ -87,7 +106,6 @@ namespace CommunityServiceProject.Controllers
 
                         break;
 
-
                     case RequestStatus.Rejected:
 
                         notification =
@@ -96,7 +114,6 @@ namespace CommunityServiceProject.Controllers
                             "\" has been rejected.";
 
                         break;
-
 
                     default:
 
@@ -136,3 +153,4 @@ namespace CommunityServiceProject.Controllers
         }
     }
 }
+

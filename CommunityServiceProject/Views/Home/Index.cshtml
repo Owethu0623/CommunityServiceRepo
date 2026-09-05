@@ -77,15 +77,24 @@
 
             <hr />
 
-            <!-- ADMINISTRATOR LOGIN -->
-            <div class="text-center">
+            <!-- ADMINISTRATOR + TECHNICIAN LOGIN -->
+            <div class="home-staff-login-container">
 
                 <a href="@Url.Action("Login", "Administrators")"
-                   class="btn btn-secondary-custom">
+                   class="btn btn-secondary-custom home-staff-login-button">
 
                     <span class="glyphicon glyphicon-lock"></span>
 
                     Administrator Login
+
+                </a>
+
+                <a href="@Url.Action("Login", "Technicians")"
+                   class="btn btn-secondary-custom home-staff-login-button">
+
+                    <span class="glyphicon glyphicon-wrench"></span>
+
+                    Technician Login
 
                 </a>
 

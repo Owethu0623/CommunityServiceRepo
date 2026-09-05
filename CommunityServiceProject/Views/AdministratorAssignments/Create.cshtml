@@ -1,0 +1,489 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianAssignmentViewModel
+
+@{
+    ViewBag.Title = "Assign Technician";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <!-- HEADER -->
+        <div class="admin-review-header">
+
+            <h2>Assign Technician</h2>
+
+            <p>
+                Request #@Model.RequestID
+            </p>
+
+        </div>
+
+
+        <div class="admin-review-content">
+
+            <!-- REQUEST INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Request Information</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Title
+                    </span>
+
+                    <span>
+                        @Model.Title
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Category
+                    </span>
+
+                    <span>
+                        @Model.CategoryName
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Ward
+                    </span>
+
+                    <span>
+                        @Model.WardName
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Priority
+                    </span>
+
+                    <span>
+                        @Model.Priority
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Priority Reason
+                    </span>
+
+                    <span>
+                        @Model.PriorityReason
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOCATION -->
+            <div class="admin-review-section">
+
+                <h3>Location</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Problem Location
+                    </span>
+
+                    <span>
+                        @Model.ProblemLocation
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TECHNICIAN ASSIGNMENT -->
+            <div class="admin-review-section">
+
+                <h3>Technician Assignment</h3>
+
+                @using (Html.BeginForm(
+                    "Create",
+                    "AdministratorAssignments",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(
+                        model => model.RequestID
+                    )
+
+
+                    <!-- TECHNICIAN -->
+                    <div class="admin-filter-group">
+
+                        @Html.LabelFor(
+                            model => model.TechnicianID,
+                            "Technician"
+                        )
+
+                        @Html.DropDownListFor(
+                            model => model.TechnicianID,
+                            Model.Technicians,
+                            "Select Technician",
+                            new
+                            {
+                                @class = "form-control"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            model => model.TechnicianID,
+                            "",
+                            new
+                            {
+                                @class = "text-danger"
+                            }
+                        )
+
+                    </div>
+
+
+                    <!-- REQUIRED SKILLS -->
+                    <div class="admin-filter-group">
+
+                        <label class="form-label">
+                            Required Skills
+                        </label>
+
+                        <div class="skills-dropdown"
+                             id="skillsDropdown">
+
+                            <button type="button"
+                                    class="skills-dropdown-button"
+                                    id="skillsDropdownButton">
+
+                                <span id="skillsDropdownText">
+                                    Select required skills
+                                </span>
+
+                                <span class="skills-dropdown-arrow">
+                                    &#9662;
+                                </span>
+
+                            </button>
+
+
+                            <div class="skills-dropdown-menu"
+                                 id="skillsDropdownMenu">
+
+                                @if (Model.Skills != null &&
+                                     Model.Skills.Any())
+                                {
+                                    foreach (var skill in Model.Skills)
+                                    {
+                                        bool isSelected =
+                                            Model.SelectedSkillIDs != null &&
+                                            Model.SelectedSkillIDs.Contains(
+                                                Convert.ToInt32(skill.Value)
+                                            );
+
+                                        <label class="skill-option">
+
+                                            <input type="checkbox"
+                                                   name="SelectedSkillIDs"
+                                                   value="@skill.Value"
+                                                   @(isSelected ? "checked" : "") />
+
+                                            <span class="skill-checkmark"></span>
+
+                                            <span class="skill-name">
+                                                @skill.Text
+                                            </span>
+
+                                        </label>
+                                    }
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <small class="form-text text-muted">
+                            Select all skills required for this maintenance request.
+                        </small>
+
+
+                        @Html.ValidationMessage(
+                            "SelectedSkillIDs",
+                            "",
+                            new
+                            {
+                                @class = "text-danger"
+                            }
+                        )
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+
+                            Assign Technician
+
+                        </button>
+
+
+                        <a href="@Url.Action(
+                        "Details",
+                        "AdministratorRequests",
+                        new { id = Model.RequestID }
+                     )"
+                           class="admin-back-button">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+                }
+
+                 </div>
+           </div>
+      </div>
+</div>
+
+<style>
+
+    .skills-dropdown {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+    }
+
+
+    .skills-dropdown-button {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 14px;
+        background: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        cursor: pointer;
+        font-size: 14px;
+        color: #495057;
+    }
+
+
+        .skills-dropdown-button:hover {
+            border-color: #adb5bd;
+        }
+
+
+    .skills-dropdown-arrow {
+        margin-left: 10px;
+        font-size: 12px;
+    }
+
+
+    .skills-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        width: 100%;
+        max-height: 220px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        z-index: 1000;
+        padding: 6px 0;
+    }
+
+
+    .skills-dropdown.open .skills-dropdown-menu {
+        display: block;
+    }
+
+
+    .skill-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 9px 12px;
+        margin: 0;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+
+        .skill-option:hover {
+            background: #f5f5f5;
+        }
+
+
+        .skill-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+
+    .skill-name {
+        flex: 1;
+    }
+
+
+    .skills-dropdown-menu::-webkit-scrollbar {
+        width: 6px;
+    }
+
+
+    .skills-dropdown-menu::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+    }
+
+
+    .text-danger {
+        display: block;
+        margin-top: 6px;
+    }
+</style>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var dropdown =
+            document.getElementById("skillsDropdown");
+
+        var button =
+            document.getElementById("skillsDropdownButton");
+
+        var menu =
+            document.getElementById("skillsDropdownMenu");
+
+        var text =
+            document.getElementById("skillsDropdownText");
+
+
+        if (!dropdown || !button || !menu || !text) {
+            return;
+        }
+
+
+        function updateSelectedText() {
+
+            var selected =
+                menu.querySelectorAll(
+                    'input[name="SelectedSkillIDs"]:checked'
+                );
+
+
+            if (selected.length === 0) {
+
+                text.textContent =
+                    "Select required skills";
+
+            }
+            else if (selected.length === 1) {
+
+                var label =
+                    selected[0].closest(".skill-option");
+
+                text.textContent =
+                    label.querySelector(
+                        ".skill-name"
+                    ).textContent.trim();
+
+            }
+            else {
+
+                text.textContent =
+                    selected.length +
+                    " skills selected";
+
+            }
+        }
+
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+                dropdown.classList.toggle("open");
+
+            }
+        );
+
+
+        menu.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+            }
+        );
+
+
+        document.addEventListener(
+            "click",
+            function () {
+
+                dropdown.classList.remove("open");
+
+            }
+        );
+
+
+        var checkboxes =
+            menu.querySelectorAll(
+                'input[name="SelectedSkillIDs"]'
+            );
+
+
+        checkboxes.forEach(
+            function (checkbox) {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateSelectedText
+                );
+
+            }
+        );
+
+
+        updateSelectedText();
+
+    });
+
+</script>

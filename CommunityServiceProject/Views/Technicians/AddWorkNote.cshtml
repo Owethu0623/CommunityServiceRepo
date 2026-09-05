@@ -1,0 +1,424 @@
+﻿@model CommunityServiceProject.Models.MaintenanceWork
+
+@{
+    ViewBag.Title = "Add Work Note";
+}
+
+<style>
+        /* ==========================================================
+           ADD WORK NOTE PAGE
+           Community Service Request & Maintenance Management System
+           ========================================================== */
+
+        .work-note-page {
+            background-color: #F5F8FC;
+            min-height: 100vh;
+            padding: 40px 20px 60px;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        /* ---------- Main Container ---------- */
+
+        .work-note-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ---------- Page Header ---------- */
+
+        .work-note-header {
+            background: #0D5CC1;
+            color: white;
+            text-align: center;
+            padding: 22px 25px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .work-note-header h2 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .work-note-header p {
+            margin: 7px 0 0;
+            font-size: 15px;
+            opacity: 0.92;
+        }
+
+        /* ---------- Main Card ---------- */
+
+        .work-note-card {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            padding: 35px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ---------- Request Information ---------- */
+
+        .request-information {
+            background: #F5F8FC;
+            border-left: 5px solid #0D5CC1;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 30px;
+        }
+
+        .request-information-title {
+            color: #0D5CC1;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .request-information p {
+            margin: 6px 0;
+            color: #444;
+            font-size: 16px;
+        }
+
+        .request-number {
+            font-weight: 700;
+            color: #0D5CC1;
+        }
+
+        /* ---------- Section Heading ---------- */
+
+        .work-note-section-title {
+            color: #0D5CC1;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .work-note-description {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* ---------- Form ---------- */
+
+        .work-note-form-group {
+            margin-bottom: 25px;
+        }
+
+        .work-note-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .work-note-textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 14px 16px;
+            border: 1px solid #D1D9E2;
+            border-radius: 8px;
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 16px;
+            color: #333;
+            background: white;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .work-note-textarea:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.12);
+        }
+
+        .work-note-textarea::placeholder {
+            color: #999;
+        }
+
+        /* ---------- Character Guidance ---------- */
+
+        .work-note-help {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 7px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* ---------- Validation ---------- */
+
+        .work-note-validation {
+            display: block;
+            margin-top: 7px;
+            color: #D32F2F;
+            font-size: 14px;
+        }
+
+        /* ---------- Buttons ---------- */
+
+        .work-note-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #E5E9EF;
+        }
+
+        .work-note-primary-button,
+        .work-note-secondary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 190px;
+            height: 48px;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Primary Button */
+
+        .work-note-primary-button {
+            background: #0D5CC1;
+            color: white;
+            border: 2px solid #0D5CC1;
+        }
+
+        .work-note-primary-button:hover {
+            background: #08479A;
+            border-color: #08479A;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Secondary Button */
+
+        .work-note-secondary-button {
+            background: white;
+            color: #0D5CC1;
+            border: 2px solid #0D5CC1;
+        }
+
+        .work-note-secondary-button:hover {
+            background: #0D5CC1;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* ---------- Footer Hint ---------- */
+
+        .work-note-footer {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        /* ---------- Responsive Design ---------- */
+
+        @@media (max-width: 700px) {
+
+        .work-note-page {
+            padding: 20px 12px 40px;
+        }
+
+        .work-note-header h2 {
+            font-size: 25px;
+        }
+
+        .work-note-card {
+            padding: 25px 20px;
+        }
+
+        .work-note-actions {
+            flex-direction: column;
+        }
+
+        .work-note-primary-button,
+        .work-note-secondary-button {
+            width: 100%;
+        }
+
+        .work-note-help {
+            flex-direction: column;
+            gap: 3px;
+        }
+    }
+</style>
+
+
+<div class="work-note-page">
+
+    <div class="work-note-container">
+
+        <!-- =========================
+             PAGE HEADER
+             ========================= -->
+
+        <div class="work-note-header">
+
+            <h2>Add Work Note</h2>
+
+            <p>
+                Record observations, work performed, or important maintenance information.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             MAIN CONTENT CARD
+             ========================= -->
+
+        <div class="work-note-card">
+
+            <!-- =========================
+                 REQUEST INFORMATION
+                 ========================= -->
+
+            <div class="request-information">
+
+                <div class="request-information-title">
+                    Request Information
+                </div>
+
+                <p>
+                    <strong>Request ID:</strong>
+                    <span class="request-number">
+                        #@Model.RequestID
+                    </span>
+                </p>
+
+                @if (Model.Request != null)
+                {
+                    <p>
+                        <strong>Request Title:</strong>
+                        @Model.Request.Title
+                    </p>
+                }
+
+            </div>
+
+
+            <!-- =========================
+                 WORK NOTE SECTION
+                 ========================= -->
+
+            <div class="work-note-section-title">
+                Maintenance Work Note
+            </div>
+
+            <p class="work-note-description">
+                Add a detailed note about the maintenance work performed,
+                observations made, problems encountered, or other information
+                that may be useful for this request.
+            </p>
+
+
+            @using (Html.BeginForm(
+                "AddWorkNote",
+                "Technicians",
+                FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.Hidden(
+                    "id",
+                    Model.MaintenanceWorkID
+                )
+
+
+                <div class="work-note-form-group">
+
+                    <label for="noteText"
+                           class="work-note-label">
+
+                        Work Note
+
+                    </label>
+
+
+                    <textarea name="noteText"
+                              id="noteText"
+                              class="work-note-textarea"
+                              rows="7"
+                              maxlength="1000"
+                              placeholder="Describe the work performed, observations, issues encountered, materials used, or other relevant information..."></textarea>
+
+
+                    <div class="work-note-help">
+
+                        <span>
+                            Maximum 1000 characters
+                        </span>
+
+                        <span>
+                            Please provide clear and useful information.
+                        </span>
+
+                    </div>
+
+
+                    @Html.ValidationMessage(
+                        "noteText",
+                        "",
+                        new
+                        {
+                            @class = "work-note-validation"
+                        })
+
+                </div>
+
+
+                <!-- =========================
+                     ACTION BUTTONS
+                     ========================= -->
+
+                <div class="work-note-actions">
+
+                    <button type="submit"
+                            class="work-note-primary-button">
+
+                        Save Work Note
+
+                    </button>
+
+
+                    <a href="@Url.Action(
+                            "Details",
+                            "Technicians",
+                            new { id = Model.RequestID }
+                        )"
+                       class="work-note-secondary-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            }
+
+
+            <div class="work-note-footer">
+
+                Work notes are recorded as part of the maintenance history
+                for this service request.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

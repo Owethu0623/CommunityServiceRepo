@@ -1,0 +1,191 @@
+﻿@model CommunityServiceProject.Models.CitizenProfileViewModel
+@{
+    ViewBag.Title = "Update Profile";
+}
+
+<div class="auth-page">
+
+
+    <div class="auth-card register-card">
+
+        <div class="auth-icon">
+            👤
+        </div>
+
+        <h2 class="auth-title">UPDATE PROFILE</h2>
+
+        @using (Html.BeginForm(
+            "UpdateProfile",
+            "Citizens",
+            FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(
+                true,
+                "",
+                new { @class = "text-danger" }
+            )
+
+
+            <!-- FIRST NAME -->
+            <div class="auth-form-group">
+
+                @Html.LabelFor(
+                    model => model.FirstName
+                )
+
+                @Html.TextBoxFor(
+                    model => model.FirstName,
+                    new
+                    {
+                        @class = "auth-input"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.FirstName,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- LAST NAME -->
+            <div class="auth-form-group">
+
+                @Html.LabelFor(
+                    model => model.LastName
+                )
+
+                @Html.TextBoxFor(
+                    model => model.LastName,
+                    new
+                    {
+                        @class = "auth-input"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.LastName,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- EMAIL -->
+            <div class="auth-form-group">
+
+                @Html.LabelFor(
+                    model => model.EmailAddress
+                )
+
+                @Html.TextBoxFor(
+                    model => model.EmailAddress,
+                    new
+                    {
+                        @class = "auth-input",
+                        type = "email"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.EmailAddress,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- PHONE NUMBER -->
+            <div class="auth-form-group">
+
+                @Html.LabelFor(
+                    model => model.PhoneNumber
+                )
+
+                @Html.TextBoxFor(
+                    model => model.PhoneNumber,
+                    new
+                    {
+                        @class = "auth-input"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.PhoneNumber,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- RESIDENTIAL ADDRESS -->
+            <div class="auth-form-group">
+
+                @Html.LabelFor(
+                    model => model.ResidentialAddress
+                )
+
+                @Html.TextBoxFor(
+                    model => model.ResidentialAddress,
+                    new
+                    {
+                        @class = "auth-input"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.ResidentialAddress,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- SAVE -->
+            <button type="submit"
+                    class="auth-primary-button register-button">
+
+                Save Changes
+
+            </button>
+
+
+            <!-- DIVIDER -->
+            <div class="auth-divider"></div>
+
+
+            <!-- BACK -->
+            <div class="auth-register-text">
+
+                @Html.ActionLink(
+                    "Back to Dashboard",
+                    "Index",
+                    "CitizenDashboard"
+                )
+
+            </div>
+
+        }
+
+    </div>
+
+
+</div>
+
+@section Scripts {
+
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+}
+
+

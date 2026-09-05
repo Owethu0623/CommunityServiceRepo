@@ -12,7 +12,8 @@
     </title>
 
     @Styles.Render("~/Content/css")
-
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
@@ -161,7 +162,7 @@
     @Scripts.Render("~/bundles/jquery")
 
     @Scripts.Render("~/bundles/bootstrap")
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     @RenderSection("scripts", required: false)
 
 </body>

@@ -9,9 +9,13 @@
     <div class="request-card">
 
         <div class="request-title">
+
             <span class="request-icon"></span>
+
             <h2>SUBMIT MAINTENANCE REQUEST</h2>
+
         </div>
+
 
         @using (Html.BeginForm(
             "Create",
@@ -25,13 +29,18 @@
         {
             @Html.AntiForgeryToken()
 
+
             @Html.ValidationSummary(
                 true,
                 "",
                 new { @class = "text-danger" }
             )
 
+
+            <!-- ================================================= -->
             <!-- REQUEST TITLE -->
+            <!-- ================================================= -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -57,7 +66,10 @@
             </div>
 
 
+            <!-- ================================================= -->
             <!-- CATEGORY -->
+            <!-- ================================================= -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -81,16 +93,27 @@
                     <strong>Examples:</strong>
 
                     <ul>
+
                         <li>Pothole</li>
+
                         <li>Water Leak</li>
+
                         <li>Broken Streetlight</li>
+
                         <li>Illegal Dumping</li>
+
                         <li>Exposed OR Damaged Electrical Wires</li>
+
                         <li>Damaged Sidewalk</li>
+
                         <li>Sewer Overflow</li>
+
                         <li>Damaged Traffic Sign</li>
+
                         <li>Overflowing Municipal Bin</li>
+
                         <li>Other</li>
+
                     </ul>
 
                 </div>
@@ -104,7 +127,41 @@
             </div>
 
 
+            <!-- ================================================= -->
+            <!-- WARD -->
+            <!-- ================================================= -->
+
+            <div class="request-form-group">
+
+                @Html.LabelFor(
+                    model => model.WardID,
+                    "Ward"
+                )
+
+                @Html.DropDownList(
+                    "WardID",
+                    ViewBag.WardID as SelectList,
+                    "Select Ward",
+                    new
+                    {
+                        @class = "request-input",
+                        id = "WardID"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.WardID,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+
+            <!-- ================================================= -->
             <!-- DESCRIPTION -->
+            <!-- ================================================= -->
+
             <div class="request-form-group">
 
                 @Html.LabelFor(
@@ -130,127 +187,171 @@
             </div>
 
 
-            <!-- LOCATION DESCRIPTION -->
-            <div class="request-form-group">
+            <!-- ================================================= -->
+            <!-- PROBLEM LOCATION -->
+            <!-- ================================================= -->
 
-                @Html.LabelFor(
-                    model => model.LocationDescription
-                )
+    <div class="request-location-section">
 
-                @Html.TextBoxFor(
-                    model => model.LocationDescription,
-                    new
-                    {
-                        @class = "request-input",
-                        placeholder = "Enter the location of the problem"
-                    }
-                )
+        <div class="request-location-heading">
 
-                @Html.ValidationMessageFor(
-                    model => model.LocationDescription,
-                    "",
-                    new { @class = "text-danger" }
-                )
+            <div class="gps-icon">
+                📍
+            </div>
+
+            <div>
+
+                <strong>
+                    Problem Location
+                </strong>
+
+                <p>
+                    Search for an address or select the exact
+                    problem location on the map.
+                </p>
 
             </div>
 
-
-            <!-- PROBLEM LOCATION MAP -->
-            <div class="request-location-section">
-
-                <div class="request-location-heading">
-
-                    <div class="gps-icon">
-                        📍
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Problem Location
-                        </strong>
-
-                        <p>
-                            Search for an address or select the exact location on the map
-                        </p>
-
-                    </div>
-
-                </div>
+        </div>
 
 
-                <!-- ADDRESS SEARCH -->
-                <div class="map-search-container">
+        <!-- ADDRESS SEARCH -->
 
-                    <input type="text"
-                           id="addressSearch"
-                           class="request-input"
-                           placeholder="Enter an address, e.g. 293 Cedar Street, Durban" />
+        <div class="map-search-container">
 
-                    <button type="button"
-                            id="searchAddress"
-                            class="location-button">
-
-                        🔍 Search Address
-
-                    </button>
-
-                </div>
+            <input type="text"
+                   id="addressSearch"
+                   class="request-input"
+                   placeholder="Enter an address, e.g. 293 Cedar Street, Durban" />
 
 
-                <!-- ADDRESS SEARCH STATUS -->
-                <div id="addressSearchStatus"></div>
+            <button type="button"
+                    id="searchAddress"
+                    class="location-button">
+
+                🔍 Search Address
+
+            </button>
+
+        </div>
 
 
-                <!-- MAP -->
-                <div id="problemMap"></div>
+        <!-- SEARCH STATUS -->
+
+        <div id="addressSearchStatus"
+             class="map-search-status">
+        </div>
 
 
-                <!-- USE CURRENT LOCATION -->
-                <button type="button"
-                        id="useCurrentLocation"
-                        class="location-button">
+        <!-- MAP -->
 
-                    <span>📍</span>
-
-                    <span>
-                        Use My Current Location
-                    </span>
-
-                </button>
+        <div id="problemMap"></div>
 
 
-                <!-- SELECTED LOCATION -->
-                <div class="selected-location">
+        <!-- CURRENT LOCATION -->
 
-                    <strong>
-                        Selected Location
-                    </strong>
+        <button type="button"
+                id="useCurrentLocation"
+                class="location-button">
 
-                    <p id="locationStatus">
-                        Click on the map to select the problem location
-                    </p>
+            <span>📍</span>
 
-                    <p>
-                        Latitude:
-                        <span id="latitudeDisplay">
-                            Not selected
-                        </span>
-                    </p>
+            <span>
+                Use My Current Location
+            </span>
 
-                    <p>
-                        Longitude:
-                        <span id="longitudeDisplay">
-                            Not selected
-                        </span>
-                    </p>
-
-                </div>
-
-            </div>
+        </button>
 
 
+        <div class="request-form-group">
+
+            @Html.LabelFor(
+                model => model.ProblemLocation,
+                "Describe the Problem Location"
+            )
+
+            @Html.TextAreaFor(
+                model => model.ProblemLocation,
+                new
+                {
+                    @class = "request-textarea",
+                    rows = "3",
+                    placeholder = "e.g. Outside the school on the right-hand side, near the main entrance."
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.ProblemLocation,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+        <!-- SELECTED LOCATION -->
+
+        <div class="selected-location">
+
+            <strong>
+                Selected Location
+            </strong>
+
+            <p id="locationStatus">
+
+                Please select the problem location
+                on the map.
+
+            </p>
+
+            <p>
+
+                Latitude:
+
+                <span id="latitudeDisplay">
+                    Not selected
+                </span>
+
+            </p>
+
+            <p>
+
+                Longitude:
+
+                <span id="longitudeDisplay">
+                    Not selected
+                </span>
+
+            </p>
+
+        </div>
+
+
+        <!-- MAP VALIDATION -->
+
+        <div id="mapValidation"
+             class="map-validation-message">
+
+            @Html.ValidationMessageFor(
+                model => model.Latitude,
+                "",
+                new { @class = "text-danger" }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.Longitude,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+    </div>
+
+
+            <!-- ================================================= -->
             <!-- HIDDEN GPS VALUES -->
+            <!-- ================================================= -->
+
             @Html.HiddenFor(
                 model => model.Latitude
             )
@@ -260,7 +361,10 @@
             )
 
 
-            <!-- UPLOAD PHOTO -->
+            <!-- ================================================= -->
+            <!-- PHOTO -->
+            <!-- ================================================= -->
+
             <div class="request-form-group">
 
                 <label for="ImageFile">
@@ -276,9 +380,13 @@
             </div>
 
 
+            <!-- ================================================= -->
             <!-- SUBMIT -->
+            <!-- ================================================= -->
+
             <button type="submit"
-                    class="request-submit-button">
+                    class="request-submit-button"
+                    id="submitRequestButton">
 
                 <span>➤</span>
 
@@ -287,6 +395,21 @@
                 </span>
 
             </button>
+
+
+            <!-- ================================================= -->
+            <!-- BACK TO DASHBOARD -->
+            <!-- ================================================= -->
+
+            <div class="request-back-dashboard">
+
+                @Html.ActionLink(
+                    "Back to Dashboard",
+                    "Index",
+                    "CitizenDashboard"
+                )
+
+            </div>
 
         }
 
@@ -299,11 +422,19 @@
 
     @Scripts.Render("~/bundles/jqueryval")
 
+
+    <!-- ========================================================= -->
     <!-- LEAFLET CSS -->
+    <!-- ========================================================= -->
+
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+
+    <!-- ========================================================= -->
     <!-- LEAFLET JAVASCRIPT -->
+    <!-- ========================================================= -->
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
@@ -313,30 +444,58 @@
             "DOMContentLoaded",
             function () {
 
-                // =====================================================
+
+                // =================================================
                 // FORM ELEMENTS
-                // =====================================================
+                // =================================================
+
+                var requestForm =
+                    document.getElementById(
+                        "requestForm"
+                    );
+
 
                 var latitudeInput =
-                    document.getElementById("Latitude");
+                    document.getElementById(
+                        "Latitude"
+                    );
+
 
                 var longitudeInput =
-                    document.getElementById("Longitude");
+                    document.getElementById(
+                        "Longitude"
+                    );
+
 
                 var latitudeDisplay =
-                    document.getElementById("latitudeDisplay");
+                    document.getElementById(
+                        "latitudeDisplay"
+                    );
+
 
                 var longitudeDisplay =
-                    document.getElementById("longitudeDisplay");
+                    document.getElementById(
+                        "longitudeDisplay"
+                    );
+
 
                 var locationStatus =
-                    document.getElementById("locationStatus");
+                    document.getElementById(
+                        "locationStatus"
+                    );
+
 
                 var addressSearch =
-                    document.getElementById("addressSearch");
+                    document.getElementById(
+                        "addressSearch"
+                    );
+
 
                 var searchAddressButton =
-                    document.getElementById("searchAddress");
+                    document.getElementById(
+                        "searchAddress"
+                    );
+
 
                 var addressSearchStatus =
                     document.getElementById(
@@ -344,20 +503,31 @@
                     );
 
 
-                // =====================================================
+                var mapValidation =
+                    document.getElementById(
+                        "mapValidation"
+                    );
+
+
+                // =================================================
                 // CREATE MAP
-                // =====================================================
+                // =================================================
 
                 var map =
-                    L.map("problemMap").setView(
-                        [-29.8587, 31.0218],
+                    L.map(
+                        "problemMap"
+                    ).setView(
+                        [
+                            -29.8587,
+                            31.0218
+                        ],
                         12
                     );
 
 
-                // =====================================================
+                // =================================================
                 // OPENSTREETMAP
-                // =====================================================
+                // =================================================
 
                 L.tileLayer(
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -370,21 +540,25 @@
                 ).addTo(map);
 
 
-                // =====================================================
+                // =================================================
                 // MARKER
-                // =====================================================
+                // =================================================
 
                 var marker = null;
 
 
-                // =====================================================
+                // =================================================
                 // SELECT LOCATION
-                // =====================================================
+                // =================================================
 
                 function selectLocation(
                     latitude,
                     longitude
                 ) {
+
+                    // ---------------------------------------------
+                    // CREATE MARKER
+                    // ---------------------------------------------
 
                     if (marker === null) {
 
@@ -400,12 +574,17 @@
                             ).addTo(map);
 
 
+                        // -----------------------------------------
+                        // DRAG MARKER
+                        // -----------------------------------------
+
                         marker.on(
                             "dragend",
                             function () {
 
                                 var position =
                                     marker.getLatLng();
+
 
                                 selectLocation(
                                     position.lat,
@@ -428,32 +607,65 @@
                     }
 
 
+                    // ---------------------------------------------
                     // SAVE LATITUDE
+                    // ---------------------------------------------
+
                     latitudeInput.value =
                         latitude.toFixed(6);
 
 
+                    // ---------------------------------------------
                     // SAVE LONGITUDE
+                    // ---------------------------------------------
+
                     longitudeInput.value =
                         longitude.toFixed(6);
 
 
+                    // ---------------------------------------------
                     // DISPLAY LATITUDE
+                    // ---------------------------------------------
+
                     latitudeDisplay.textContent =
                         latitude.toFixed(6);
 
 
+                    // ---------------------------------------------
                     // DISPLAY LONGITUDE
+                    // ---------------------------------------------
+
                     longitudeDisplay.textContent =
                         longitude.toFixed(6);
 
 
-                    // STATUS
+                    // ---------------------------------------------
+                    // LOCATION STATUS
+                    // ---------------------------------------------
+
                     locationStatus.textContent =
                         "Problem location selected successfully.";
 
 
+                    locationStatus.style.color =
+                        "";
+
+
+                    locationStatus.style.fontWeight =
+                        "";
+
+
+                    // ---------------------------------------------
+                    // REMOVE VALIDATION MESSAGE
+                    // ---------------------------------------------
+
+                    mapValidation.innerHTML = "";
+
+
+                    // ---------------------------------------------
                     // MOVE MAP
+                    // ---------------------------------------------
+
                     map.setView(
                         [
                             latitude,
@@ -465,9 +677,9 @@
                 }
 
 
-                // =====================================================
-                // CLICK MAP
-                // =====================================================
+                // =================================================
+                // MAP CLICK
+                // =================================================
 
                 map.on(
                     "click",
@@ -482,9 +694,9 @@
                 );
 
 
-                // =====================================================
+                // =================================================
                 // ADDRESS SEARCH
-                // =====================================================
+                // =================================================
 
                 searchAddressButton.addEventListener(
                     "click",
@@ -499,6 +711,9 @@
                             addressSearchStatus.textContent =
                                 "Please enter an address to search.";
 
+                            addressSearchStatus.style.color =
+                                "#dc3545";
+
                             return;
                         }
 
@@ -507,13 +722,18 @@
                             "Searching for address...";
 
 
+                        addressSearchStatus.style.color =
+                            "";
+
+
                         searchAddressButton.disabled =
                             true;
 
 
                         fetch(
                             "https://nominatim.openstreetmap.org/search?format=json&limit=1&q="
-                            + encodeURIComponent(address)
+                            +
+                            encodeURIComponent(address)
                         )
                             .then(
                                 function (response) {
@@ -541,6 +761,9 @@
                                         addressSearchStatus.textContent =
                                             "Address could not be found. Please try a more specific address.";
 
+                                        addressSearchStatus.style.color =
+                                            "#dc3545";
+
                                         return;
                                     }
 
@@ -550,13 +773,13 @@
                                             data[0].lat
                                         );
 
+
                                     var longitude =
                                         parseFloat(
                                             data[0].lon
                                         );
 
 
-                                    // Use existing location function
                                     selectLocation(
                                         latitude,
                                         longitude
@@ -566,6 +789,9 @@
                                     addressSearchStatus.textContent =
                                         "Address found. Please confirm the pin is at the correct location.";
 
+                                    addressSearchStatus.style.color =
+                                        "";
+
                                 }
                             )
                             .catch(
@@ -573,6 +799,9 @@
 
                                     addressSearchStatus.textContent =
                                         "Unable to search for the address. Please try again or select the location manually.";
+
+                                    addressSearchStatus.style.color =
+                                        "#dc3545";
 
                                 }
                             )
@@ -589,9 +818,9 @@
                 );
 
 
-                // =====================================================
-                // SEARCH USING ENTER KEY
-                // =====================================================
+                // =================================================
+                // ENTER KEY ADDRESS SEARCH
+                // =================================================
 
                 addressSearch.addEventListener(
                     "keypress",
@@ -609,12 +838,14 @@
                 );
 
 
-                // =====================================================
+                // =================================================
                 // USE CURRENT LOCATION
-                // =====================================================
+                // =================================================
 
                 document
-                    .getElementById("useCurrentLocation")
+                    .getElementById(
+                        "useCurrentLocation"
+                    )
                     .addEventListener(
                         "click",
                         function () {
@@ -624,13 +855,19 @@
                                 locationStatus.textContent =
                                     "Location services are not supported by this browser.";
 
-                                return;
+                                locationStatus.style.color =
+                                    "#dc3545";
 
+                                return;
                             }
 
 
                             locationStatus.textContent =
                                 "Detecting your current location...";
+
+
+                            locationStatus.style.color =
+                                "";
 
 
                             navigator.geolocation.getCurrentPosition(
@@ -639,6 +876,7 @@
 
                                     var latitude =
                                         position.coords.latitude;
+
 
                                     var longitude =
                                         position.coords.longitude;
@@ -651,12 +889,17 @@
 
                                 },
 
+
                                 function () {
 
                                     locationStatus.textContent =
                                         "Unable to detect your current location. Please select the problem location on the map.";
 
+                                    locationStatus.style.color =
+                                        "#dc3545";
+
                                 },
+
 
                                 {
                                     enableHighAccuracy: true,
@@ -670,9 +913,67 @@
                     );
 
 
-                // =====================================================
+                // =================================================
+                // REQUIRE MAP LOCATION BEFORE SUBMISSION
+                // =================================================
+
+                requestForm.addEventListener(
+                    "submit",
+                    function (event) {
+
+                        var latitude =
+                            latitudeInput.value.trim();
+
+
+                        var longitude =
+                            longitudeInput.value.trim();
+
+
+                        if (
+                            latitude === "" ||
+                            longitude === ""
+                        ) {
+
+                            event.preventDefault();
+
+
+                            locationStatus.textContent =
+                                "Please select the problem location on the map before submitting.";
+
+                            locationStatus.style.color =
+                                "#dc3545";
+
+                            locationStatus.style.fontWeight =
+                                "600";
+
+
+                            mapValidation.innerHTML =
+                                '<span class="text-danger">' +
+                                'Please select the problem location on the map.' +
+                                '</span>';
+
+
+                            document
+                                .getElementById(
+                                    "problemMap"
+                                )
+                                .scrollIntoView(
+                                    {
+                                        behavior: "smooth",
+                                        block: "center"
+                                    }
+                                );
+
+                            return false;
+                        }
+
+                    }
+                );
+
+
+                // =================================================
                 // FIX MAP DISPLAY
-                // =====================================================
+                // =================================================
 
                 setTimeout(
                     function () {
@@ -687,5 +988,52 @@
         );
 
     </script>
+
+
+    <style>
+
+        /* =====================================================
+           MAP VALIDATION
+           ===================================================== */
+
+        .map-validation-message {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+
+            .map-validation-message .text-danger {
+                color: #dc3545;
+                display: block;
+            }
+
+
+        /* =====================================================
+           SEARCH STATUS
+           ===================================================== */
+
+        .map-search-status {
+            margin-top: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           BACK TO DASHBOARD
+           ===================================================== */
+
+        .request-back-dashboard {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+
+            .request-back-dashboard a {
+                text-decoration: none;
+                font-weight: 600;
+            }
+    </style>
 
 }

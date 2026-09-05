@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     ViewBag.Title = "Administrator Dashboard";
 }
 
@@ -10,11 +10,6 @@
     </div>
 
     <div class="dashboard-menu">
-
-        <a href="@Url.Action("Index", "Home")"
-           class="dashboard-button">
-            Home
-        </a>
 
         <a href="@Url.Action("Index", "AdministratorRequests")"
            class="dashboard-button">
@@ -46,7 +41,7 @@
             Statistics
         </a>
 
-        <a href="@Url.Action("Logout", "Administrators")"
+        <a href="@Url.Action("Index", "Home")"
            class="dashboard-button logout">
             Logout
         </a>

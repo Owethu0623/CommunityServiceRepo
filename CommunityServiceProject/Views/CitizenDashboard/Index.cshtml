@@ -4,111 +4,259 @@
     ViewBag.Title = "Citizen Dashboard";
 }
 
-<div class="dashboard-header">
-    <h2>Welcome, @Session["CitizenName"]</h2>
-</div>
+<div class="citizen-dashboard">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="dashboard-header">
+
+        <h2>
+            COMMUNITY SERVICE PLATFORM
+        </h2>
+
+        <p>
+            Citizen Dashboard
+        </p>
+
+    </div>
 
 
-<div class="dashboard-menu">
+    <!-- =====================================================
+         WELCOME
+         ===================================================== -->
 
-    <!-- Dashboard -->
-    <a href="@Url.Action("Index", "CitizenDashboard")"
-       class="dashboard-button active">
+    <div class="dashboard-welcome">
 
+        <h2>
+            Welcome back, @Session["CitizenName"]
+        </h2>
 
+        <p>
+            Manage your service requests and account information.
+        </p>
 
-        <span>
-            Dashboard
-        </span>
-
-    </a>
-
-
-    <!-- Submit Request -->
-    <a href="@Url.Action("Create", "Requests")"
-       class="dashboard-button">
+    </div>
 
 
+    <!-- =====================================================
+         REQUEST STATISTICS
+         ===================================================== -->
 
-        <span>
-            Submit New Request
-        </span>
+    <div class="dashboard-stats">
 
-    </a>
+        <!-- Total Requests -->
 
+        <div class="dashboard-stat-card">
 
-    <!-- My Requests -->
-    <a href="@Url.Action("Index", "Requests")"
-       class="dashboard-button">
+            <h3>
+                Total Requests
+            </h3>
 
+            <p class="dashboard-stat-value">
+                @ViewBag.TotalRequests
+            </p>
 
-
-        <span>
-            View My Requests
-        </span>
-
-    </a>
-
-
-    <!-- Track Request -->
-    <a href="@Url.Action("Index", "Requests")"
-       class="dashboard-button">
+        </div>
 
 
+        <!-- Assigned Requests -->
 
-        <span>
-            Track Request Status
-        </span>
+        <div class="dashboard-stat-card">
 
-    </a>
+            <h3>
+                Assigned Requests
+            </h3>
 
+            <p class="dashboard-stat-value">
+                @ViewBag.AssignedRequests
+            </p>
 
-    <!-- Logout -->
-    <a href="@Url.Action("Logout", "Login")"
-       class="dashboard-button logout">
-
-
-
-        <span>
-            Logout
-        </span>
-
-    </a>
-
-</div>
+        </div>
 
 
-<!-- Notifications -->
+        <!-- Completed Requests -->
 
-<div class="notifications">
+        <div class="dashboard-stat-card">
 
-    <h3>
-        Latest Notifications
-    </h3>
+            <h3>
+                Completed Requests
+            </h3>
 
-    @if (ViewBag.Notifications != null &&
-         ViewBag.Notifications.Count > 0)
-    {
-        foreach (string notification in ViewBag.Notifications)
-        {
-            <div class="notification-item">
+            <p class="dashboard-stat-value">
+                @ViewBag.CompletedRequests
+            </p>
 
-                <span class="notification-icon">
-                    🔔
-                </span>
+        </div>
 
-                <span class="notification-message">
-                    @notification
-                </span>
+    </div>
+
+
+    <!-- =====================================================
+         DASHBOARD CONTENT
+         ===================================================== -->
+
+    <div class="dashboard-content">
+
+
+        <!-- =================================================
+             NOTIFICATIONS
+             ================================================= -->
+
+        <div class="notifications">
+
+            <h3>
+                Latest Notifications
+            </h3>
+
+            @if (ViewBag.Notifications != null &&
+                 ViewBag.Notifications.Count > 0)
+            {
+                foreach (string notification in ViewBag.Notifications)
+                {
+                    <div class="notification-item">
+
+                        <span class="notification-icon">
+                            🔔
+                        </span>
+
+                        <span class="notification-message">
+                            @notification
+                        </span>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <p>
+                    You have no notifications at the moment.
+                </p>
+            }
+
+        </div>
+
+
+        <!-- =================================================
+             SUBMIT REQUEST
+             ================================================= -->
+
+        <div class="submit-request-section">
+
+            <h3>
+                Submit a Maintenance Request
+            </h3>
+
+            <a href="@Url.Action("Create", "Requests")"
+               class="dashboard-button">
+
+                Submit New Request
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             QUICK ACCESS
+             ================================================= -->
+
+        <div class="quick-access">
+
+            <h3>
+                Quick Access
+            </h3>
+
+
+            <!-- Dashboard -->
+
+            <div class="dashboard-menu">
+
+                <a href="@Url.Action("Index", "CitizenDashboard")"
+                   class="dashboard-button active">
+
+                    Dashboard
+
+                </a>
+
+
+                <!-- My Requests -->
+
+                <a href="@Url.Action("Index", "Requests")"
+                   class="dashboard-button">
+
+                    View My Requests
+
+                </a>
+
+
+                <!-- Track Request -->
+
+                <a href="@Url.Action("Index", "Requests")"
+                   class="dashboard-button">
+
+                    Track Request Status
+
+                </a>
+
+
+                <!-- Update Profile -->
+
+                <a href="@Url.Action("UpdateProfile", "Citizens")"
+                   class="dashboard-button">
+
+                    Update Profile
+
+                </a>
+
+
+                <!-- Account Compliance -->
+
+                <a href="@Url.Action("Index", "CitizenCompliance")"
+                   class="dashboard-button compliance">
+
+                    Account Compliance
+
+                </a>
 
             </div>
-        }
-    }
-    else
-    {
-        <p>
-            You have no notifications at the moment.
-        </p>
-    }
+
+        </div>
+
+
+        <!-- =================================================
+             ACCOUNT STATUS
+             ================================================= -->
+
+        <div class="account-status">
+
+            <h3>
+                Account Status
+            </h3>
+
+            <p>
+                @Model.AccountStatus
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             LOGOUT
+             ================================================= -->
+
+        <div class="dashboard-menu">
+
+            <a href="@Url.Action("Logout", "Login")"
+               class="dashboard-button logout">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
 
 </div>

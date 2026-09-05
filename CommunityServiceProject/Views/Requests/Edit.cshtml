@@ -76,6 +76,33 @@
         </div>
 
 
+        <!-- Ward -->
+        <div class="request-form-group">
+
+            @Html.LabelFor(
+                model => model.WardID,
+                "Ward"
+            )
+
+            @Html.DropDownList(
+                "WardID",
+                null,
+                "Select Ward",
+                new
+                {
+                    @class = "request-input"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.WardID,
+                "",
+                new { @class = "text-danger" }
+            )
+
+        </div>
+
+
         <!-- Description -->
         <div class="request-form-group">
 
@@ -100,24 +127,26 @@
         </div>
 
 
-        <!-- Location Description -->
+        <!-- Problem Location -->
         <div class="request-form-group">
 
             @Html.LabelFor(
-                model => model.LocationDescription
+                model => model.ProblemLocation,
+                "Problem Location"
             )
 
-            @Html.TextBoxFor(
-                model => model.LocationDescription,
+            @Html.TextAreaFor(
+                model => model.ProblemLocation,
                 new
                 {
-                    @class = "request-input",
-                    placeholder = "Enter the location of the problem"
+                    @class = "request-textarea",
+                    rows = "3",
+                    placeholder = "e.g. Outside the school on the right-hand side, near the main entrance."
                 }
             )
 
             @Html.ValidationMessageFor(
-                model => model.LocationDescription,
+                model => model.ProblemLocation,
                 "",
                 new { @class = "text-danger" }
             )
@@ -131,18 +160,21 @@
             <label>Current GPS Location</label>
 
             <p>
-                @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+
+                @if (Model.Latitude.HasValue &&
+                     Model.Longitude.HasValue)
                 {
                     <span>
-                         Location already recorded
+                        Location already recorded
                     </span>
                 }
                 else
                 {
                     <span>
-                         GPS location was not recorded
+                        GPS location was not recorded
                     </span>
                 }
+
             </p>
 
         </div>
@@ -172,9 +204,11 @@
                 <label>Current Photo</label>
 
                 <div>
+
                     <img src="@Url.Content(Model.ImagePath)"
                          alt="Request Photo"
                          style="max-width:250px; max-height:200px;" />
+
                 </div>
 
             </div>
@@ -192,6 +226,7 @@
             </button>
 
         </div>
+
     }
 
 </div>

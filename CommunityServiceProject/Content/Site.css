@@ -7,7 +7,7 @@
 
 body {
     background-color: #F5F8FC;
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: "Segoe UI", Arial, sans-serif; 
     margin: 0;
     padding: 0;
 }
@@ -172,36 +172,242 @@ a {
 .welcome-card {
     width: 100%;
     max-width: 550px;
+    /* ===========================================================
+   HOME PAGE - ADMINISTRATOR + TECHNICIAN LOGIN
+   =========================================================== */
+
+    .home-staff-login-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .home-staff-login-button {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 500px) {
+
+        .home-staff-login-container {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .home-staff-login-button {
+            width: 100%;
+        }
+    }
 }
 
 /* ===========================================================
    CITIZEN DASHBOARD
    =========================================================== */
 
-.dashboard-container {
-    max-width: 420px;
+.citizen-dashboard {
+    max-width: 1100px;
     margin: 40px auto;
-    background: #FFFFFF;
-    border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
+    padding: 0 20px;
 }
 
 
 /* ===========================================================
-   HEADER
+   DASHBOARD HEADER
    =========================================================== */
 
 .dashboard-header {
     background: #0D5CC1;
     color: #FFFFFF;
-    padding: 20px;
+    padding: 25px 30px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.12);
 }
 
     .dashboard-header h2 {
         margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .dashboard-header p {
+        margin: 8px 0 0 0;
+        font-size: 15px;
+        opacity: 0.95;
+    }
+
+
+/* ===========================================================
+   WELCOME SECTION
+   =========================================================== */
+
+.dashboard-welcome {
+    background: #FFFFFF;
+    padding: 25px 30px;
+    border-left: 1px solid #D9E1EA;
+    border-right: 1px solid #D9E1EA;
+}
+
+    .dashboard-welcome h2 {
+        margin: 0 0 8px 0;
+        color: #222222;
         font-size: 24px;
     }
+
+    .dashboard-welcome p {
+        margin: 0;
+        color: #666666;
+        font-size: 15px;
+    }
+
+
+/* ===========================================================
+   STATISTICS
+   =========================================================== */
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 0 30px 25px 30px;
+    background: #FFFFFF;
+    border-left: 1px solid #D9E1EA;
+    border-right: 1px solid #D9E1EA;
+}
+
+.dashboard-stat-card {
+    background: #F5F8FC;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+    .dashboard-stat-card h3 {
+        margin: 0 0 10px 0;
+        color: #555555;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+.dashboard-stat-value {
+    margin: 0;
+    color: #0D5CC1;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+
+/* ===========================================================
+   CITIZEN DASHBOARD
+   =========================================================== */
+
+.citizen-dashboard {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+
+/* ===========================================================
+   DASHBOARD HEADER
+   =========================================================== */
+
+.dashboard-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+    .dashboard-header h2 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .dashboard-header p {
+        margin: 8px 0 0 0;
+        font-size: 15px;
+        opacity: 0.95;
+    }
+
+
+/* ===========================================================
+   WELCOME SECTION
+   =========================================================== */
+
+.dashboard-welcome {
+    background: #FFFFFF;
+    padding: 25px 30px;
+    border-left: 1px solid #D9E1EA;
+    border-right: 1px solid #D9E1EA;
+}
+
+    .dashboard-welcome h2 {
+        margin: 0 0 8px 0;
+        color: #222222;
+        font-size: 24px;
+    }
+
+    .dashboard-welcome p {
+        margin: 0;
+        color: #666666;
+        font-size: 15px;
+    }
+
+
+/* ===========================================================
+   STATISTICS
+   =========================================================== */
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 0 30px 25px 30px;
+    background: #FFFFFF;
+    border-left: 1px solid #D9E1EA;
+    border-right: 1px solid #D9E1EA;
+}
+
+.dashboard-stat-card {
+    background: #F5F8FC;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+    .dashboard-stat-card h3 {
+        margin: 0 0 10px 0;
+        color: #555555;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+.dashboard-stat-value {
+    margin: 0;
+    color: #0D5CC1;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+
+/* ===========================================================
+   DASHBOARD CONTENT
+   =========================================================== */
+
+.dashboard-content {
+    background: #FFFFFF;
+    padding: 0 30px 30px 30px;
+    border: 1px solid #D9E1EA;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+}
 
 
 /* ===========================================================
@@ -209,11 +415,11 @@ a {
    =========================================================== */
 
 .dashboard-menu {
-    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    padding: 10px 0 25px 0;
 }
 
 
@@ -225,10 +431,10 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 300px;
+    width: 320px;
     max-width: 100%;
     box-sizing: border-box;
-    padding: 11px 18px;
+    padding: 12px 18px;
     border: 2px solid #0D5CC1;
     border-radius: 8px;
     background: #FFFFFF;
@@ -254,7 +460,22 @@ a {
 
 
     /* ===========================================================
-   LOGOUT
+   ACCOUNT COMPLIANCE BUTTON
+   =========================================================== */
+
+    .dashboard-button.compliance {
+        border-color: #555555;
+        color: #555555;
+    }
+
+        .dashboard-button.compliance:hover {
+            background: #555555;
+            color: #FFFFFF;
+        }
+
+
+    /* ===========================================================
+   LOGOUT BUTTON
    =========================================================== */
 
     .dashboard-button.logout {
@@ -269,11 +490,38 @@ a {
 
 
 /* ===========================================================
+   ACCOUNT STATUS
+   =========================================================== */
+
+.account-status {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: #F5F8FC;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+    text-align: center;
+}
+
+    .account-status h3 {
+        margin: 0 0 8px 0;
+        color: #555555;
+        font-size: 17px;
+    }
+
+    .account-status p {
+        margin: 0;
+        color: #0D5CC1;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+
+/* ===========================================================
    NOTIFICATIONS
    =========================================================== */
 
 .notifications {
-    margin: 0 20px 20px 20px;
+    margin: 0 0 25px 0;
     padding: 20px;
     background: #FFFFFF;
     border: 1px solid #D9E1EA;
@@ -281,15 +529,12 @@ a {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-
-    /* ---------- Notifications Heading ---------- */
-
     .notifications h3 {
         margin: 0 0 15px 0;
+        padding-bottom: 10px;
         color: #0D5CC1;
         font-size: 18px;
         font-weight: 600;
-        padding-bottom: 10px;
         border-bottom: 1px solid #D9E1EA;
     }
 
@@ -315,7 +560,9 @@ a {
     }
 
 
-/* ---------- Notification Icon ---------- */
+/* ===========================================================
+   NOTIFICATION ICON
+   =========================================================== */
 
 .notification-icon {
     flex-shrink: 0;
@@ -324,7 +571,9 @@ a {
 }
 
 
-/* ---------- Notification Message ---------- */
+/* ===========================================================
+   NOTIFICATION MESSAGE
+   =========================================================== */
 
 .notification-message {
     color: #444444;
@@ -333,7 +582,9 @@ a {
 }
 
 
-/* ---------- Last Notification ---------- */
+/* ===========================================================
+   LAST NOTIFICATION
+   =========================================================== */
 
 .notification-item:last-child {
     margin-bottom: 0;
@@ -353,37 +604,402 @@ a {
 
 
 /* ===========================================================
+   QUICK ACCESS
+   =========================================================== */
+
+.quick-access {
+    margin-top: 25px;
+    padding: 20px;
+    background: #FFFFFF;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+}
+
+    .quick-access h3 {
+        margin: 0 0 15px 0;
+        color: #0D5CC1;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+
+/* ===========================================================
+   SUBMIT REQUEST SECTION
+   =========================================================== */
+
+.submit-request-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: #FFFFFF;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+    text-align: center;
+}
+
+    .submit-request-section h3 {
+        margin: 0 0 15px 0;
+        color: #0D5CC1;
+        font-size: 18px;
+    }
+
+
+/* ===========================================================
    RESPONSIVE DESIGN
    =========================================================== */
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
 
-    .dashboard-container {
-        margin: 20px 10px;
+    .citizen-dashboard {
+        margin: 20px auto;
+        padding: 0 10px;
     }
 
+    .dashboard-header {
+        padding: 20px;
+    }
+
+        .dashboard-header h2 {
+            font-size: 22px;
+        }
+
+    .dashboard-welcome {
+        padding: 20px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+        padding: 0 20px 20px 20px;
+    }
+
+    .dashboard-content {
+        padding: 0 20px 25px 20px;
+    }
 
     .dashboard-button {
         width: 100%;
     }
 
-
     .notifications {
-        margin-left: 15px;
-        margin-right: 15px;
+        margin-bottom: 20px;
+    }
+}
+
+
+/* ===========================================================
+   SMALL MOBILE DEVICES
+   =========================================================== */
+
+@media (max-width: 500px) {
+
+    .citizen-dashboard {
+        margin: 15px auto;
+        padding: 0 8px;
     }
 
+    .dashboard-header {
+        padding: 18px;
+    }
+
+        .dashboard-header h2 {
+            font-size: 20px;
+        }
+
+    .dashboard-welcome h2 {
+        font-size: 20px;
+    }
+
+    .dashboard-stat-card {
+        padding: 16px;
+    }
+
+    .dashboard-stat-value {
+        font-size: 26px;
+    }
+
+    .dashboard-content {
+        padding: 0 15px 20px 15px;
+    }
 
     .notification-item {
         padding: 10px;
     }
 
-
     .notification-message {
         font-size: 14px;
     }
 }
+/* ===========================================================
+    ACCOUNT COMPLIANCE
+    =========================================================== */
 
+.compliance-page,
+.violation-details-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+
+/* ===========================================================
+   PAGE HEADER
+   =========================================================== */
+
+.compliance-header,
+.violation-details-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 25px 30px;
+    border-radius: 12px 12px 0 0;
+}
+
+    .compliance-header h2,
+    .violation-details-header h2 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .compliance-header p,
+    .violation-details-header p {
+        margin: 8px 0 0 0;
+        font-size: 15px;
+    }
+
+
+/* ===========================================================
+   COMPLIANCE CARDS
+   =========================================================== */
+
+.compliance-card {
+    margin-top: 20px;
+    padding: 25px;
+    background: #FFFFFF;
+    border: 1px solid #D9E1EA;
+    border-radius: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+    .compliance-card h3 {
+        margin: 0 0 18px 0;
+        color: #0D5CC1;
+        font-size: 19px;
+        font-weight: 600;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #D9E1EA;
+    }
+
+
+/* ===========================================================
+   INFORMATION
+   =========================================================== */
+
+.compliance-information {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.information-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #F5F8FC;
+    border-radius: 6px;
+}
+
+.information-label {
+    color: #555555;
+    font-weight: 600;
+}
+
+.information-value {
+    color: #222222;
+    text-align: right;
+}
+
+
+/* ===========================================================
+   COMPLIANCE HISTORY TABLE
+   =========================================================== */
+
+.compliance-history {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.compliance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .compliance-table th {
+        padding: 13px 12px;
+        background: #0D5CC1;
+        color: #FFFFFF;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .compliance-table td {
+        padding: 13px 12px;
+        border-bottom: 1px solid #D9E1EA;
+        color: #444444;
+        font-size: 14px;
+    }
+
+    .compliance-table tbody tr:hover {
+        background: #F5F8FC;
+    }
+
+
+/* ===========================================================
+   VIEW DETAILS BUTTON
+   =========================================================== */
+
+.compliance-action {
+    display: inline-block;
+    padding: 7px 12px;
+    background: #FFFFFF;
+    color: #0D5CC1;
+    border: 1px solid #0D5CC1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    .compliance-action:hover {
+        background: #0D5CC1;
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+
+
+/* ===========================================================
+   NO COMPLIANCE RECORD
+   =========================================================== */
+
+.no-compliance-record {
+    margin: 0;
+    padding: 15px;
+    background: #F5F8FC;
+    border-radius: 6px;
+    color: #666666;
+    font-size: 14px;
+}
+
+
+/* ===========================================================
+   NAVIGATION
+   =========================================================== */
+
+.compliance-navigation {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 11px 20px;
+    background: #FFFFFF;
+    color: #0D5CC1;
+    border: 2px solid #0D5CC1;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    .back-button:hover {
+        background: #0D5CC1;
+        color: #FFFFFF;
+        text-decoration: none;
+    }
+
+
+/* ===========================================================
+   VIOLATION DETAILS
+   =========================================================== */
+
+.violation-details-page .compliance-card {
+    margin-top: 20px;
+}
+
+
+/* ===========================================================
+   RESPONSIVE DESIGN
+   =========================================================== */
+
+@media (max-width: 768px) {
+
+    .compliance-page,
+    .violation-details-page {
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+
+    .compliance-header,
+    .violation-details-header {
+        padding: 20px;
+    }
+
+        .compliance-header h2,
+        .violation-details-header h2 {
+            font-size: 22px;
+        }
+
+    .compliance-card {
+        padding: 20px;
+    }
+
+    .information-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .information-value {
+        text-align: left;
+    }
+
+    .compliance-table {
+        min-width: 650px;
+    }
+}
+
+
+/* ===========================================================
+   SMALL MOBILE DEVICES
+   =========================================================== */
+
+@media (max-width: 500px) {
+
+    .compliance-page,
+    .violation-details-page {
+        margin: 15px auto;
+        padding: 0 8px;
+    }
+
+    .compliance-card {
+        padding: 15px;
+    }
+
+        .compliance-card h3 {
+            font-size: 17px;
+        }
+
+    .information-row {
+        padding: 10px 12px;
+    }
+
+    .back-button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
 /* ===========================================================
    LOGIN & REGISTER PAGES
    =========================================================== */
@@ -1966,11 +2582,11 @@ a {
 /* ===========================================================
    TRACK REQUEST
    =========================================================== */
-
 .track-page {
     max-width: 950px;
     margin: 35px auto 60px auto;
     padding: 0 20px;
+    color: #222;
 }
 
 
@@ -1985,14 +2601,15 @@ a {
     padding: 24px 30px;
     border-radius: 12px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .track-header-icon {
     width: 55px;
     height: 55px;
+    min-width: 55px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.16);
+    background: rgba(255, 255, 255, 0.16);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2009,7 +2626,7 @@ a {
 
 .track-header p {
     margin: 5px 0 0 0;
-    color: rgba(255,255,255,0.9);
+    color: rgba(255, 255, 255, 0.9);
     font-size: 14px;
 }
 
@@ -2022,7 +2639,7 @@ a {
     border-radius: 12px;
     margin-bottom: 22px;
     overflow: hidden;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
 }
 
 .track-card-title {
@@ -2057,6 +2674,10 @@ a {
         border-right: 1px solid #E3E8EF;
     }
 
+    .track-info-item:last-child {
+        border-bottom: none;
+    }
+
 .track-full-width {
     grid-column: 1 / -1;
     border-right: none !important;
@@ -2083,6 +2704,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 15px;
     padding: 20px 24px;
     border-bottom: 1px solid #E3E8EF;
 }
@@ -2106,6 +2728,21 @@ a {
     color: #0D5CC1;
 }
 
+.status-underreview {
+    background: #E8F1FF;
+    color: #0D5CC1;
+}
+
+.status-approved {
+    background: #E8F1FF;
+    color: #0D5CC1;
+}
+
+.status-assigned {
+    background: #E8F1FF;
+    color: #0D5CC1;
+}
+
 .status-inprogress {
     background: #FFF4D6;
     color: #B77700;
@@ -2116,117 +2753,38 @@ a {
     color: #218838;
 }
 
-
-/* ---------- Progress ---------- */
-
-.status-progress {
-    display: flex;
-    align-items: flex-start;
-    padding: 30px 35px;
+.status-rejected {
+    background: #FDECEC;
+    color: #C62828;
 }
 
-.status-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    min-width: 125px;
-}
 
-.status-circle {
-    width: 43px;
-    height: 43px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #E1E6EC;
-    color: #7A8491;
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+/* ---------- Description ---------- */
 
-.status-step.active .status-circle {
-    background: #0D5CC1;
-    color: white;
-}
-
-.status-step-text strong {
-    display: block;
+.track-description {
+    padding: 22px;
     color: #333;
-    font-size: 14px;
+    font-size: 15px;
+    line-height: 1.7;
 }
 
-.status-step-text span {
-    display: block;
-    margin-top: 4px;
-    color: #8A94A1;
-    font-size: 11px;
+
+/* ---------- Location ---------- */
+
+.track-location-details {
+    padding: 22px;
 }
 
-.status-line {
-    flex: 1;
-    height: 4px;
-    margin: 20px 8px 0 8px;
-    background: #E1E6EC;
-    border-radius: 4px;
-}
-
-    .status-line.active {
-        background: #0D5CC1;
-    }
-
-
-/* ---------- Activity ---------- */
-
-.activity-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 18px 22px;
-    border-bottom: 1px solid #E3E8EF;
-}
-
-    .activity-row:last-child {
-        border-bottom: none;
-    }
-
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #E8F1FF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.activity-content {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-    .activity-content strong {
+    .track-location-details p {
+        margin: 0 0 18px 0;
         color: #333;
-        font-size: 14px;
+        line-height: 1.6;
     }
-
-    .activity-content span {
-        color: #7A8491;
-        font-size: 13px;
-    }
-
-
-/* ---------- GPS ---------- */
 
 .gps-box {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    padding: 22px;
 }
 
     .gps-box > div {
@@ -2244,10 +2802,331 @@ a {
     }
 
 
-/* ---------- Photo ---------- */
+/* ---------- Assigned Technician ---------- */
+
+.technician-information {
+    padding: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+    .technician-information > div {
+        background: #F5F8FC;
+        border: 1px solid #D9E1EA;
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+    .technician-information strong {
+        display: block;
+        margin-top: 5px;
+        color: #222;
+        font-size: 15px;
+    }
+
+
+/* ---------- Request Timeline ---------- */
+
+.request-timeline {
+    padding: 25px 28px 28px 28px;
+}
+
+.timeline-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 25px;
+}
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+.timeline-marker {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    background: #E1E6EC;
+    color: #7A8491;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    z-index: 2;
+}
+
+.timeline-item.completed .timeline-marker,
+.timeline-item.active .timeline-marker {
+    background: #0D5CC1;
+    color: white;
+}
+
+.timeline-item.completed .timeline-marker {
+    background: #218838;
+}
+
+.timeline-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: 34px;
+    width: 2px;
+    height: calc(100% - 25px);
+    background: #D9E1EA;
+}
+
+.timeline-item.completed:not(:last-child)::before {
+    background: #218838;
+}
+
+.timeline-content {
+    flex: 1;
+    padding-top: 2px;
+}
+
+    .timeline-content strong {
+        display: block;
+        color: #222;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .timeline-content span {
+        display: block;
+        margin-top: 5px;
+        color: #718096;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+/* ---------- Maintenance Progress ---------- */
+
+.progress-summary {
+    padding: 25px 28px;
+    border-bottom: 1px solid #E3E8EF;
+}
+
+.progress-percentage {
+    color: #0D5CC1;
+    font-size: 34px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.progress-details {
+    color: #333;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #E5E9EF;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #0D5CC1;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.progress-history {
+    padding: 0;
+}
+
+    .progress-history h4 {
+        margin: 0;
+        padding: 18px 22px;
+        color: #222;
+        font-size: 15px;
+        border-bottom: 1px solid #E3E8EF;
+    }
+
+.progress-history-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 22px;
+    border-bottom: 1px solid #E3E8EF;
+}
+
+    .progress-history-row:last-child {
+        border-bottom: none;
+    }
+
+    .progress-history-row strong {
+        color: #0D5CC1;
+        font-size: 14px;
+    }
+
+    .progress-history-row span {
+        color: #718096;
+        font-size: 13px;
+    }
+
+
+/* ---------- Final Outcome ---------- */
+
+.completion-summary {
+    padding: 24px 28px;
+}
+
+.completion-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #E4F6EA;
+    color: #218838;
+    padding: 9px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.completion-dates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.completion-field {
+    background: #F5F8FC;
+    border: 1px solid #D9E1EA;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+    .completion-field strong {
+        display: block;
+        margin-top: 5px;
+        color: #222;
+        font-size: 15px;
+    }
+
+.completion-summary h4 {
+    margin: 20px 0 7px 0;
+    color: #222;
+    font-size: 14px;
+}
+
+.completion-summary p {
+    margin: 0;
+    color: #444;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+
+/* ---------- Evidence ---------- */
+
+.evidence-list {
+    padding: 0;
+}
+
+.evidence-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 22px;
+    border-bottom: 1px solid #E3E8EF;
+}
+
+    .evidence-item:last-child {
+        border-bottom: none;
+    }
+
+.evidence-information {
+    flex: 1;
+}
+
+    .evidence-information strong {
+        display: block;
+        color: #222;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .evidence-information span {
+        display: block;
+        color: #718096;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+.evidence-view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: white;
+    color: #0D5CC1 !important;
+    border: 1px solid #0D5CC1;
+    border-radius: 6px;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+    .evidence-view-button:hover {
+        background: #0D5CC1;
+        color: white !important;
+    }
+
+
+/* ---------- Administrator Verification ---------- */
+
+.verification-information {
+    padding: 22px 28px;
+}
+
+.verification-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #E4F6EA;
+    color: #218838;
+    padding: 9px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+.verification-information strong {
+    color: #222;
+}
+
+.verification-comments {
+    margin-top: 15px;
+    padding: 15px;
+    background: #F5F8FC;
+    border-left: 4px solid #0D5CC1;
+    color: #444;
+    line-height: 1.6;
+}
+
+
+/* ---------- Request Photo ---------- */
 
 .track-photo-container {
-    padding: 15px;
+    padding: 22px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2258,7 +3137,7 @@ a {
     display: block;
     width: auto;
     max-width: 550px;
-    max-height:400px;
+    max-height: 400px;
     height: auto;
     object-fit: contain;
     border-radius: 8px;
@@ -2312,57 +3191,29 @@ a {
     }
 
 
-/* ---------- Responsive ---------- */
+/* ---------- Secondary / Future Actions ---------- */
 
-@media (max-width: 700px) {
+.track-secondary-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
 
-    .track-header {
-        padding: 20px;
-    }
-
-        .track-header h2 {
-            font-size: 24px;
-        }
-
-    .track-info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .track-info-item:nth-child(odd) {
-        border-right: none;
-    }
-
-    .status-progress {
-        padding: 25px 15px;
-    }
-
-    .status-step {
-        min-width: 80px;
-    }
-
-    .status-step-text span {
-        display: none;
-    }
-
-    .gps-box {
-        grid-template-columns: 1fr;
-    }
-
-    .track-actions {
-        flex-direction: column;
-    }
-
-    .track-back-button,
-    .track-details-button {
-        width: 100%;
-    }
-
-    /* Smaller photo on mobile */
-
-    .track-request-photo {
-        max-width: 300px;
-        max-height: 220px;
-    }
+.track-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid #C8D0DA;
+    border-radius: 7px;
+    background: #F5F7FA;
+    color: #7A8491 !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    cursor: not-allowed;
+    opacity: 0.75;
 }
 
 
@@ -2386,10 +3237,99 @@ a {
     color: #AEB8C4;
     margin: 0 7px;
 }
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 700px) {
+
+    .track-page {
+        margin-top: 20px;
+        padding: 0 12px;
+    }
+
+    .track-header {
+        padding: 20px;
+    }
+
+        .track-header h2 {
+            font-size: 24px;
+        }
+
+    .track-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .track-info-item:nth-child(odd) {
+        border-right: none;
+    }
+
+    .current-status-box {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .gps-box {
+        grid-template-columns: 1fr;
+    }
+
+    .technician-information {
+        grid-template-columns: 1fr;
+    }
+
+    .request-timeline {
+        padding: 22px 18px;
+    }
+
+    .timeline-item {
+        gap: 12px;
+    }
+
+    .completion-dates {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-history-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .evidence-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .evidence-view-button {
+        width: 100%;
+    }
+
+    .track-actions {
+        flex-direction: column;
+    }
+
+    .track-back-button,
+    .track-details-button {
+        width: 100%;
+    }
+
+    .track-secondary-actions {
+        flex-direction: column;
+    }
+
+    .track-secondary-button {
+        width: 100%;
+    }
+
+    .track-request-photo {
+        max-width: 300px;
+        max-height: 220px;
+    }
+}
+
 /* =========================================================
    CANCEL REQUEST PAGE
    ========================================================= */
-
 .delete-request-page {
     max-width: 900px;
     margin: 30px auto 50px auto;
@@ -4144,6 +5084,27 @@ a {
     .admin-technician-deactivate-button {
         width: 100%;
     }
+
+    /* ===========================================================
+   TECHNICIAN PASSWORD SHOW / HIDE
+   =========================================================== */
+
+    .admin-technician-password-toggle {
+        margin-top: -10px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+        .admin-technician-password-toggle label {
+            color: #555555;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .admin-technician-password-toggle input {
+            margin-right: 5px;
+            cursor: pointer;
+        }
 }
 
 
@@ -5566,4 +6527,531 @@ MOBILE
     font-weight: 600;
     text-align: center;
     line-height: 1.4;
+}
+/* ===========================================================
+   TECHNICIAN LOGIN
+   =========================================================== */
+
+.technician-login-container {
+    max-width: 420px;
+    margin: 40px auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+
+/* ===========================================================
+   HEADER
+   =========================================================== */
+
+.technician-login-header {
+    background: #0D5CC1;
+    color: #FFFFFF;
+    padding: 20px;
+}
+
+    .technician-login-header h2 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .technician-login-header p {
+        margin: 8px 0 0 0;
+        font-size: 14px;
+    }
+
+
+/* ===========================================================
+   LOGIN CONTENT
+   =========================================================== */
+
+.technician-login-content {
+    padding: 25px;
+}
+
+
+/* ===========================================================
+   FORM GROUP
+   =========================================================== */
+
+.technician-login-form-group {
+    margin-bottom: 20px;
+}
+
+    .technician-login-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #333333;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+
+/* ===========================================================
+   INPUTS
+   =========================================================== */
+
+.technician-login-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #C9D3DF;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #333333;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .technician-login-input:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0px 0px 0px 2px rgba(13, 92, 193, 0.12);
+    }
+
+
+/* ===========================================================
+   ERROR MESSAGE
+   =========================================================== */
+
+.technician-login-error {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #FDECEC;
+    border: 1px solid #F1B5B5;
+    border-left: 4px solid #D32F2F;
+    border-radius: 6px;
+    color: #D32F2F;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* ===========================================================
+   LOGIN BUTTON
+   =========================================================== */
+
+.technician-login-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.technician-login-button {
+    width: 100%;
+    padding: 11px 18px;
+    border: 2px solid #0D5CC1;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #0D5CC1;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+    .technician-login-button:hover {
+        background: #0D5CC1;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+
+/* ===========================================================
+   FORGOT PASSWORD
+   =========================================================== */
+
+.technician-login-forgot {
+    margin-top: 18px;
+    text-align: center;
+}
+
+    .technician-login-forgot a {
+        color: #0D5CC1;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+        .technician-login-forgot a:hover {
+            text-decoration: underline;
+        }
+
+
+/* ===========================================================
+   RESPONSIVE DESIGN
+   =========================================================== */
+
+@media (max-width: 500px) {
+
+    .technician-login-container {
+        margin: 20px 10px;
+    }
+
+    .technician-login-content {
+        padding: 20px;
+    }
+}
+
+/* =========================================
+   ADMIN REASSIGNMENT REQUESTS PAGE
+   ========================================= */
+.admin-reassignment-page {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.admin-reassignment-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.admin-reassignment-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 20px;
+}
+
+    .admin-reassignment-header h2 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .admin-reassignment-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+/* Reassignment list */
+
+.admin-reassignment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.admin-reassignment-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 22px;
+    background: #fafafa;
+}
+
+.admin-reassignment-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+    .admin-reassignment-item-header h4 {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 600;
+    }
+
+/* Status */
+
+.admin-reassignment-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #fff3cd;
+    color: #856404;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Details */
+
+.admin-reassignment-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.admin-reassignment-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #374151;
+    font-size: 14px;
+}
+
+.admin-reassignment-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: 0.4px;
+}
+
+/* Actions */
+
+.admin-reassignment-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Empty state */
+
+.admin-reassignment-empty {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+    .admin-reassignment-empty h4 {
+        margin-bottom: 10px;
+        font-size: 20px;
+    }
+
+    .admin-reassignment-empty p {
+        margin-bottom: 25px;
+        color: #6b7280;
+    }
+
+/* Footer */
+
+.admin-reassignment-footer {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .admin-reassignment-page {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+
+    .admin-reassignment-card {
+        padding: 20px;
+    }
+
+    .admin-reassignment-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-reassignment-details {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-reassignment-actions {
+        justify-content: stretch;
+    }
+
+        .admin-reassignment-actions .admin-approve-button {
+            width: 100%;
+            text-align: center;
+        }
+}
+/* =========================================
+   ADMIN REVIEW REASSIGNMENT PAGE
+   ========================================= */
+.admin-review-page {
+    max-width: 950px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background: #ffffff;
+}
+
+.admin-review-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================
+   PAGE HEADER
+   ========================================= */
+
+
+
+
+/* =========================================
+   REVIEW SECTIONS
+   ========================================= */
+
+.admin-review-section {
+    margin-bottom: 25px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 10px;
+}
+
+    .admin-review-section h3 {
+        margin: 0 0 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #dfe3e8;
+        color: #111111;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+
+/* =========================================
+   INFORMATION ROWS
+   ========================================= */
+
+.admin-review-row {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 20px;
+    padding: 13px 0;
+    border-bottom: 1px solid #eeeeee;
+    color: #222222;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+    .admin-review-row:last-child {
+        border-bottom: none;
+    }
+
+.admin-review-label {
+    color: #374151;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   REASSIGNMENT STATUS
+   ========================================= */
+
+.admin-reassignment-status {
+    display: inline-block;
+    width: fit-content;
+    padding: 6px 13px;
+    border-radius: 20px;
+    background: #e8f1ff;
+    color: #0056b3;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   REJECTION FORM
+   ========================================= */
+
+.admin-rejection-form {
+    margin-bottom: 15px;
+}
+
+    .admin-rejection-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: #111111;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .admin-rejection-form textarea {
+        width: 100%;
+        min-height: 110px;
+        padding: 12px;
+        border: 1px solid #cfd4da;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #222222;
+        font-family: inherit;
+        font-size: 14px;
+        box-sizing: border-box;
+        resize: vertical;
+    }
+
+        .admin-rejection-form textarea::placeholder {
+            color: #6b7280;
+        }
+
+        .admin-rejection-form textarea:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.12);
+        }
+
+
+/* =========================================
+   ACTION AREA
+   ========================================= */
+
+.admin-review-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e5e7eb;
+}
+
+
+    /* =========================================
+   BUTTONS
+   ========================================= */
+
+    .admin-review-actions .admin-approve-button,
+    .admin-review-actions .admin-reject-button,
+    .admin-review-actions .admin-back-button {
+        display: block;
+        width: 100%;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .admin-review-actions .admin-reject-button {
+        border: none;
+    }
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .admin-review-page {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+
+    .admin-review-card {
+        padding: 20px;
+    }
+
+    .admin-review-header h2 {
+        font-size: 24px;
+    }
+
+    .admin-review-section {
+        padding: 18px;
+    }
+
+    .admin-review-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
 }

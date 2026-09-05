@@ -1,0 +1,108 @@
+﻿@model CommunityServiceProject.Models.MaintenanceWork
+
+@{
+    ViewBag.Title = "Update Maintenance Progress";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <div class="admin-review-header">
+            <h2>Update Maintenance Progress</h2>
+
+            <p>
+                Request #@Model.RequestID
+            </p>
+        </div>
+
+        <div class="admin-review-content">
+
+            @using (Html.BeginForm(
+                "UpdateProgress",
+                "Technicians",
+                new { id = Model.MaintenanceWorkID },
+                FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="admin-review-section">
+
+                    <h3>Maintenance Progress</h3>
+
+                    <div class="form-group">
+
+                        <label for="progressPercentage">
+                            Progress Percentage
+                        </label>
+
+                        <input type="number"
+                               id="progressPercentage"
+                               name="progressPercentage"
+                               class="form-control"
+                               min="0"
+                               max="100"
+                               value="@Model.ProgressPercentage"
+                               required />
+
+                        @Html.ValidationMessage(
+                            "progressPercentage",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="currentActivity">
+                            Current Maintenance Activity
+                        </label>
+
+                        <textarea id="currentActivity"
+                                  name="currentActivity"
+                                  class="form-control"
+                                  rows="5"
+                                  maxlength="500"
+                                  required>@Model.CurrentActivity</textarea>
+
+                        @Html.ValidationMessage(
+                            "currentActivity",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-review-actions">
+
+                    <button type="submit"
+                            class="admin-approve-button">
+
+                        Update Progress
+
+                    </button>
+
+                    <a href="@Url.Action(
+                                "Details",
+                                "Technicians",
+                                new
+                                {
+                                    id = Model.RequestID
+                                })"
+                       class="admin-back-button">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,154 @@
+﻿@model CommunityServiceProject.Models.MaintenanceWork
+
+@{
+    ViewBag.Title = "Record Material";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <div class="admin-review-header">
+            <h2>Record Material</h2>
+
+            <p>
+                Request #@Model.RequestID
+            </p>
+        </div>
+
+        <div class="admin-review-content">
+
+            @if (Model.Request != null)
+            {
+                <div class="admin-review-section">
+
+                    <h3>Request Information</h3>
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Request Title
+                        </span>
+
+                        <span>
+                            @Model.Request.Title
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+
+
+            <div class="admin-review-section">
+
+                <h3>Material / Resource</h3>
+
+                @using (Html.BeginForm(
+                    "AddMaterial",
+                    "Technicians",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.Hidden(
+                        "id",
+                        Model.MaintenanceWorkID)
+
+                    <div class="mb-3">
+
+                        <label for="materialName"
+                               class="form-label">
+                            Material Name
+                        </label>
+
+                        <input type="text"
+                               id="materialName"
+                               name="materialName"
+                               class="form-control"
+                               maxlength="100"
+                               required
+                               placeholder="e.g. Cement" />
+
+                        @Html.ValidationMessage(
+                            "materialName",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="quantity"
+                               class="form-label">
+                            Quantity
+                        </label>
+
+                        <input type="number"
+                               id="quantity"
+                               name="quantity"
+                               class="form-control"
+                               min="1"
+                               step="1"
+                               required />
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="unit"
+                               class="form-label">
+                            Unit
+                        </label>
+
+                        <input type="text"
+                               id="unit"
+                               name="unit"
+                               class="form-control"
+                               maxlength="30"
+                               required
+                               placeholder="e.g. bags, litres, metres" />
+
+                        @Html.ValidationMessage(
+                            "unit",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+
+                            Save Material
+
+                        </button>
+
+                        <a href="@Url.Action(
+                            "Details",
+                            "Technicians",
+                            new
+                            {
+                                id = Model.RequestID
+                            })"
+                           class="admin-back-button">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

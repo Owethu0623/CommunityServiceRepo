@@ -30,7 +30,6 @@
                                placeholder="Search request title..." />
                     </div>
 
-
                     <div class="admin-filter-group">
                         <label for="status">Status</label>
 
@@ -49,7 +48,6 @@
                         </select>
                     </div>
 
-
                     <div class="admin-filter-group">
                         <label for="categoryId">Category</label>
 
@@ -59,7 +57,6 @@
                             "All Categories"
                         )
                     </div>
-
 
                     <div class="admin-filter-group">
                         <label for="sortOrder">Sort By</label>
@@ -81,7 +78,6 @@
 
                 </div>
 
-
                 <div class="admin-filter-actions">
 
                     <button type="submit"
@@ -98,7 +94,6 @@
             }
 
         </div>
-
 
         @if (!Model.Any())
         {
@@ -130,9 +125,9 @@
                         {
                             <tr>
 
-                                <td>
-                                    #@request.RequestID
-                                </td>
+                               <td>
+                                   @request.ReferenceNumber
+                               </td>
 
                                 <td>
                                     @request.Title
@@ -156,14 +151,52 @@
                                 </td>
 
                                 <td>
-                                    <a href="@Url.Action(
-                                        "Details",
-                                        "AdministratorRequests",
-                                        new { id = request.RequestID }
-                                    )"
-                                       class="admin-view-button">
-                                        Review
-                                    </a>
+                                    @{
+                                        var pendingReassignment = request.TechnicianAssignments
+                                            .SelectMany(a => a.ReassignmentRequests)
+                                            .FirstOrDefault(r =>
+                                                r.Status ==
+                                                CommunityServiceProject.Models.ReassignmentStatus.Pending);
+
+                                        var submittedMaintenance = request.MaintenanceWorks
+                                            .FirstOrDefault(m =>
+                                                m.Status ==
+                                                CommunityServiceProject.Models.MaintenanceWorkStatus
+                                                    .SubmittedForVerification);
+                                    }
+
+                                    @if (pendingReassignment != null)
+                                    {
+                                        <a href="@Url.Action(
+    "ReassignmentRequests",
+    "AdministratorAssignments"
+)"
+                                           class="admin-view-button">
+                                            Review Reassignment
+                                        </a>
+                                    }
+                                    else if (submittedMaintenance != null)
+                                    {
+                                        <a href="@Url.Action(
+            "VerifyCompletion",
+            "AdministratorRequests",
+            new { id = submittedMaintenance.MaintenanceWorkID }
+        )"
+                                           class="admin-view-button">
+                                            Verify Completion
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action(
+            "Details",
+            "AdministratorRequests",
+            new { id = request.RequestID }
+        )"
+                                           class="admin-view-button">
+                                            Review
+                                        </a>
+                                    }
                                 </td>
 
                             </tr>
@@ -175,7 +208,6 @@
 
             </div>
         }
-
 
         <div class="admin-request-footer">
 

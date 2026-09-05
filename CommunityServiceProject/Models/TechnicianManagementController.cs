@@ -8,6 +8,11 @@ namespace CommunityServiceProject.Controllers
     {
         private Community db = new Community();
 
+
+        // ===========================================================
+        // INDEX
+        // ===========================================================
+
         // GET: TechnicianManagement
         public ActionResult Index()
         {
@@ -23,6 +28,11 @@ namespace CommunityServiceProject.Controllers
 
             return View(technicians);
         }
+
+
+        // ===========================================================
+        // DETAILS
+        // ===========================================================
 
         // GET: TechnicianManagement/Details/5
         public ActionResult Details(int? id)
@@ -48,6 +58,11 @@ namespace CommunityServiceProject.Controllers
             return View(technician);
         }
 
+
+        // ===========================================================
+        // CREATE - GET
+        // ===========================================================
+
         // GET: TechnicianManagement/Create
         public ActionResult Create()
         {
@@ -60,6 +75,10 @@ namespace CommunityServiceProject.Controllers
         }
 
 
+        // ===========================================================
+        // CREATE - POST
+        // ===========================================================
+
         // POST: TechnicianManagement/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -70,18 +89,47 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Login", "Administrators");
             }
 
+
+            // -------------------------------------------------------
+            // Check whether the email already exists
+            // -------------------------------------------------------
+
+            if (db.Technicians.Any(t =>
+                t.EmailAddress == technician.EmailAddress))
+            {
+                ModelState.AddModelError(
+                    "EmailAddress",
+                    "A technician with this email address already exists."
+                );
+            }
+
+
+            // -------------------------------------------------------
+            // Validate the complete form
+            // -------------------------------------------------------
+
             if (ModelState.IsValid)
             {
+                // New technicians are active by default
                 technician.AccountStatus = AccountStatus.Active;
 
                 db.Technicians.Add(technician);
+
                 db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
 
+
+            // If validation fails, return the form with the
+            // validation messages.
             return View(technician);
         }
+
+
+        // ===========================================================
+        // ACTIVATE
+        // ===========================================================
 
         // POST: TechnicianManagement/Activate
         [HttpPost]
@@ -108,6 +156,10 @@ namespace CommunityServiceProject.Controllers
         }
 
 
+        // ===========================================================
+        // SUSPEND
+        // ===========================================================
+
         // POST: TechnicianManagement/Suspend
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -133,6 +185,10 @@ namespace CommunityServiceProject.Controllers
         }
 
 
+        // ===========================================================
+        // DEACTIVATE
+        // ===========================================================
+
         // POST: TechnicianManagement/Deactivate
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -157,6 +213,10 @@ namespace CommunityServiceProject.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
+
+        // ===========================================================
+        // DISPOSE
+        // ===========================================================
 
         protected override void Dispose(bool disposing)
         {

@@ -1,0 +1,123 @@
+﻿
+@model CommunityServiceProject.ViewModels.ReassignmentRequestViewModel
+
+@{
+    ViewBag.Title = "Request Reassignment";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <!-- HEADER -->
+        <div class="admin-review-header">
+            <h2>Request Reassignment</h2>
+            <p>Request #@Model.RequestID</p>
+        </div>
+
+        <div class="admin-review-content">
+
+            <!-- REQUEST INFORMATION -->
+            <div class="admin-review-section">
+                <h3>Request Information</h3>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Request Title
+                    </span>
+
+                    <span>
+                        @Model.RequestTitle
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Assignment ID
+                    </span>
+
+                    <span>
+                        @Model.AssignmentID
+                    </span>
+                </div>
+            </div>
+
+            <!-- REASSIGNMENT FORM -->
+            <div class="admin-review-section">
+
+                <h3>Reassignment Request</h3>
+
+                <p>
+                    Please provide a reason explaining why this assignment
+                    should be reassigned to another technician.
+                </p>
+
+                @using (Html.BeginForm(
+                    "RequestReassignment",
+                    "Technicians",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(m => m.AssignmentID)
+                    @Html.HiddenFor(m => m.RequestID)
+                    @Html.HiddenFor(m => m.RequestTitle)
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.Reason,
+                            new
+                            {
+                                @class = "admin-review-label"
+                            })
+
+                        @Html.TextAreaFor(
+                            m => m.Reason,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = 6,
+                                placeholder =
+                                    "Explain why you are requesting reassignment..."
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Reason,
+                            "",
+                            new
+                            {
+                                @class = "text-danger"
+                            })
+
+                    </div>
+
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Submit Reassignment Request
+                        </button>
+
+                        <a href="@Url.Action(
+                                    "Details",
+                                    "Technicians",
+                                    new
+                                    {
+                                        id = Model.RequestID
+                                    })"
+                           class="admin-back-button">
+                            Cancel
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+

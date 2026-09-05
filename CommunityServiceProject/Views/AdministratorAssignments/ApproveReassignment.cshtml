@@ -1,0 +1,122 @@
+﻿@model CommunityServiceProject.ViewModels.ReassignmentApprovalViewModel
+
+@{
+    ViewBag.Title = "Approve Reassignment";
+}
+
+<h2>Approve Reassignment</h2>
+
+<div class="admin-review-section">
+
+    <h3>Request Information</h3>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Request Title</span>
+        <span>@Model.RequestTitle</span>
+    </div>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Category</span>
+        <span>@Model.CategoryName</span>
+    </div>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Ward</span>
+        <span>@Model.WardName</span>
+    </div>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Priority</span>
+        <span>@Model.Priority</span>
+    </div>
+
+</div>
+
+<div class="admin-review-section">
+
+    <h3>Current Assignment</h3>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Current Technician</span>
+        <span>@Model.CurrentTechnicianName</span>
+    </div>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Reassignment Reason</span>
+        <span>@Model.Reason</span>
+    </div>
+
+    <div class="admin-review-row">
+        <span class="admin-review-label">Requested Date</span>
+        <span>
+            @Model.RequestedDate.ToString("dd MMM yyyy HH:mm")
+        </span>
+    </div>
+
+</div>
+
+<div class="admin-review-section">
+
+    <h3>Reassignment Decision</h3>
+
+    @using (Html.BeginForm(
+        "ApproveReassignment",
+        "AdministratorAssignments",
+        FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.ReassignmentRequestID)
+
+        <div style="margin-bottom: 15px;">
+
+            @Html.LabelFor(
+                m => m.ReplacementTechnicianID,
+                new { @class = "admin-review-label" })
+
+            @Html.DropDownListFor(
+                m => m.ReplacementTechnicianID,
+                Model.AvailableTechnicians,
+                "-- Select Replacement Technician --",
+                new { @class = "form-control" })
+
+            @Html.ValidationMessageFor(
+                m => m.ReplacementTechnicianID,
+                "",
+                new { @class = "text-danger" })
+
+        </div>
+
+        <div style="margin-bottom: 15px;">
+
+            @Html.LabelFor(
+                m => m.AdministratorResponse,
+                new { @class = "admin-review-label" })
+
+            @Html.TextAreaFor(
+                m => m.AdministratorResponse,
+                new
+                {
+                    @class = "form-control",
+                    rows = "4",
+                    maxlength = "1000",
+                    placeholder = "Enter an optional response..."
+                })
+
+        </div>
+
+        <button type="submit"
+                class="admin-approve-button">
+            Approve Reassignment
+        </button>
+    }
+
+    <a href="@Url.Action(
+        "ReassignmentRequests",
+        "AdministratorAssignments")"
+       class="admin-back-button">
+        Back to Reassignment Requests
+    </a>
+
+</div>
+

@@ -1,0 +1,336 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianDashboardViewModel
+
+@{
+    ViewBag.Title = "Technician Dashboard";
+}
+
+<style>
+
+    .technician-dashboard-page {
+        background: #f4f7fb;
+        min-height: 80vh;
+        padding: 25px 20px;
+    }
+
+    .technician-dashboard-card {
+        width: 90%;
+        max-width: 1100px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .technician-dashboard-header {
+        background: #0D5CC1;
+        color: white;
+        text-align: center;
+        padding: 25px 20px;
+    }
+
+        .technician-dashboard-header h2 {
+            margin: 0 0 8px 0;
+            font-size: 21px;
+            font-weight: 600;
+        }
+
+        .technician-dashboard-header p {
+            margin: 0;
+            font-size: 15px;
+        }
+
+    .technician-dashboard-content {
+        padding: 20px;
+    }
+
+    .technician-dashboard-section-title {
+        color: #0D5CC1;
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+    .technician-dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .technician-dashboard-secondary-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .technician-stat-card {
+        background: #ffffff;
+        border: 1px solid #e1e6ed;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        transition: 0.2s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+        .technician-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 11px rgba(0, 0, 0, 0.09);
+            text-decoration: none;
+        }
+
+    .technician-stat-title {
+        color: #333;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .technician-stat-number {
+        color: #0D5CC1;
+        font-size: 34px;
+        font-weight: 500;
+    }
+
+    .technician-dashboard-links {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .technician-dashboard-link {
+        background: #ffffff;
+        border: 2px solid #0D5CC1;
+        border-radius: 8px;
+        padding: 13px;
+        text-align: center;
+        color: #0D5CC1;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .technician-dashboard-link:hover {
+            background: #0D5CC1;
+            color: white;
+            text-decoration: none;
+        }
+
+    .technician-dashboard-logout {
+        display: block;
+        width: 190px;
+        margin: 35px auto 0;
+        padding: 13px;
+        text-align: center;
+        background: #0D5CC1;
+        color: white;
+        border-radius: 5px;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .technician-dashboard-logout:hover {
+            background: #08479A;
+            color: white;
+            text-decoration: none;
+        }
+
+    @@media (max-width: 500px) {
+
+        .technician-dashboard-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .technician-dashboard-links {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 500px) {
+
+        .technician-dashboard-page {
+            padding: 20px 10px;
+        }
+
+        .technician-dashboard-content {
+            padding: 20px 15px;
+        }
+
+        .technician-dashboard-secondary-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+    .dashboard-card {
+        padding: 20px;
+    }
+
+        .dashboard-card h3 {
+            font-size: 16px;
+        }
+
+        .dashboard-card .count {
+            font-size: 28px;
+        }
+    .dashboard-button {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+</style>
+
+
+<div class="technician-dashboard-page">
+
+    <div class="technician-dashboard-card">
+
+        <!-- HEADER -->
+
+        <div class="technician-dashboard-header">
+
+            <h2>Technician Dashboard</h2>
+
+            <p>
+                Welcome, @Session["TechnicianName"]
+            </p>
+
+        </div>
+
+
+        <div class="technician-dashboard-content">
+
+            <h3 class="technician-dashboard-section-title">
+                Maintenance Overview
+            </h3>
+
+
+            <!-- PRIMARY STATISTICS -->
+
+            <div class="technician-dashboard-stats">
+
+                <a href="@Url.Action("AssignedRequests", "Technicians")"
+                   class="technician-stat-card">
+
+                    <div class="technician-stat-title">
+                        Assigned
+                    </div>
+
+                    <div class="technician-stat-number">
+                        @Model.AssignedCount
+                    </div>
+
+                </a>
+
+
+                <a href="@Url.Action("AssignedRequests", "Technicians")"
+                   class="technician-stat-card">
+
+                    <div class="technician-stat-title">
+                        In Progress
+                    </div>
+
+                    <div class="technician-stat-number">
+                        @Model.InProgressCount
+                    </div>
+
+                </a>
+
+
+                <a href="@Url.Action("CompletedWork", "Technicians")"
+                   class="technician-stat-card">
+
+                    <div class="technician-stat-title">
+                        Completed
+                    </div>
+
+                    <div class="technician-stat-number">
+                        @Model.CompletedCount
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- SECONDARY STATISTICS -->
+
+            <div class="technician-dashboard-secondary-stats">
+
+                <a href="@Url.Action("AssignedRequests", "Technicians")"
+                   class="technician-stat-card">
+
+                    <div class="technician-stat-title">
+                        Awaiting Acknowledgement
+                    </div>
+
+                    <div class="technician-stat-number">
+                        @Model.AwaitingAcknowledgementCount
+                    </div>
+
+                </a>
+
+
+                <a href="@Url.Action("RequestReassignment", "Technicians")"
+                   class="technician-stat-card">
+
+                    <div class="technician-stat-title">
+                        Reassignment Requests
+                    </div>
+
+                    <div class="technician-stat-number">
+                        @Model.ReassignmentRequestCount
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- TECHNICIAN TOOLS -->
+
+            <h3 class="technician-dashboard-section-title">
+                Technician Tools
+            </h3>
+
+
+            <div class="technician-dashboard-links">
+
+                <a href="@Url.Action("AssignedRequests", "Technicians")"
+                   class="technician-dashboard-link">
+                    Assigned Requests
+                </a>
+
+                <a href="@Url.Action("CompletedWork", "Technicians")"
+                   class="technician-dashboard-link">
+                    Completed Work History
+                </a>
+
+                <a href="@Url.Action("PreviousResolutions", "Technicians")"
+                   class="technician-dashboard-link">
+                    Previous Resolutions
+                </a>
+
+                <a href="@Url.Action("KnowledgeBase", "Technicians")"
+                   class="technician-dashboard-link">
+                    Maintenance Knowledge Base
+                </a>
+
+            </div>
+
+
+            <!-- LOGOUT -->
+
+            <a href="@Url.Action("Logout", "Technicians")"
+               class="technician-dashboard-logout">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

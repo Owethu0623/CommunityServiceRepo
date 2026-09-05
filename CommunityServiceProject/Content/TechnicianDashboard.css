@@ -1,0 +1,256 @@
+﻿/* =========================================================
+   TECHNICIAN DASHBOARD
+   ========================================================= */
+
+.technician-dashboard-page {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 15px 40px;
+    box-sizing: border-box;
+}
+
+.technician-dashboard-card {
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.technician-dashboard-header {
+    width: 100%;
+    padding: 30px 40px;
+    box-sizing: border-box;
+}
+
+    .technician-dashboard-header h2 {
+        margin: 0 0 8px 0;
+        font-size: 29px;
+    }
+
+    .technician-dashboard-header p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.technician-dashboard-content {
+    width: 100%;
+    padding: 30px 40px 40px;
+    box-sizing: border-box;
+}
+
+.technician-dashboard-section {
+    width: 100%;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.technician-section-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+    .technician-section-header h3 {
+        margin: 0 0 6px 0;
+        font-size: 21px;
+    }
+
+    .technician-section-header p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+
+/* =========================================================
+   REQUEST COUNT
+   ========================================================= */
+
+.technician-request-count {
+    padding: 7px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.technician-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.technician-request-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+
+    /* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+    .technician-request-table th {
+        padding: 14px 18px;
+        text-align: left;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+    .technician-request-table td {
+        padding: 16px 18px;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+
+/* =========================================================
+   REQUEST ID
+   ========================================================= */
+
+.technician-request-id {
+    width: 80px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.technician-request-title {
+    min-width: 280px;
+}
+
+
+/* =========================================================
+   PRIORITY
+   ========================================================= */
+
+.technician-priority {
+    display: inline-block;
+    padding: 4px 9px;
+    font-size: 11px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   VIEW DETAILS BUTTON
+   ========================================================= */
+
+.technician-view-button {
+    display: inline-block;
+    padding: 3px 7px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    border-radius: 3px !important;
+    white-space: nowrap;
+    text-decoration: none;
+    min-width: 0;
+}
+
+
+/* =========================================================
+   HOME BUTTON
+   ========================================================= */
+
+.technician-home-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 5px 10px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    border-radius: 3px !important;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.technician-empty-state {
+    width: 100%;
+    padding: 45px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LARGE SCREENS
+   ========================================================= */
+
+@media (min-width: 1500px) {
+
+    .technician-dashboard-page {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .technician-dashboard-card {
+        max-width: 1900px;
+    }
+
+    .technician-dashboard-header {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+
+    .technician-dashboard-content {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}
+
+
+/* =========================================================
+   TABLET / SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .technician-dashboard-page {
+        padding: 15px 8px 30px;
+    }
+
+    .technician-dashboard-header {
+        padding: 25px;
+    }
+
+    .technician-dashboard-content {
+        padding: 25px;
+    }
+
+    .technician-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}

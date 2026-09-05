@@ -1,173 +1,163 @@
-﻿@model CommunityServiceProject.Models.Request
+﻿
+@model CommunityServiceProject.Models.Request
 
 @{
     ViewBag.Title = "Track Request";
 
+    var maintenanceWork = Model.MaintenanceWorks
+        .OrderByDescending(m => m.StartedDate ?? DateTime.MinValue)
+        .FirstOrDefault();
+
+    var latestCompletion = maintenanceWork != null
+        ? maintenanceWork.Completions
+            .OrderByDescending(c => c.SubmittedDate)
+            .FirstOrDefault()
+        : null;
+
+    var latestAssignment = Model.TechnicianAssignments
+        .OrderByDescending(a => a.AssignedDate)
+        .FirstOrDefault();
+
+    var progressRecords = maintenanceWork != null
+        ? maintenanceWork.ProgressRecords
+            .OrderBy(p => p.RecordedDate)
+            .ToList()
+        : new List<CommunityServiceProject.Models.MaintenanceProgress>();
+
+    var evidenceRecords = maintenanceWork != null
+        ? maintenanceWork.Evidence
+            .OrderBy(e => e.UploadedDate)
+            .ToList()
+        : new List<CommunityServiceProject.Models.MaintenanceEvidence>();
+
     string currentStatus = Model.Status.ToString();
 
-    bool isPending =
-        currentStatus.Equals(
-            "Pending",
-            StringComparison.OrdinalIgnoreCase
-        );
+    bool isAssigned =
+        Model.Status == CommunityServiceProject.Models.RequestStatus.Assigned ||
+        Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+        Model.Status == CommunityServiceProject.Models.RequestStatus.Completed;
 
     bool isInProgress =
-        currentStatus.Equals(
-            "InProgress",
-            StringComparison.OrdinalIgnoreCase
-        );
+        Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress;
 
     bool isCompleted =
-        currentStatus.Equals(
-            "Completed",
-            StringComparison.OrdinalIgnoreCase
-        );
-}
+        Model.Status == CommunityServiceProject.Models.RequestStatus.Completed;
 
+    bool completionSubmitted =
+        latestCompletion != null;
+
+    bool verificationComplete =
+        latestCompletion != null &&
+        latestCompletion.VerificationStatus ==
+            CommunityServiceProject.Models.CompletionVerificationStatus.Verified;
+
+    int currentProgress = maintenanceWork != null
+        ? maintenanceWork.ProgressPercentage
+        : 0;
+
+    string currentActivity = maintenanceWork != null
+        ? maintenanceWork.CurrentActivity
+        : null;
+
+    int resolutionDays = 0;
+
+    if (isCompleted && maintenanceWork != null && maintenanceWork.CompletedDate.HasValue)
+    {
+        resolutionDays =
+            (maintenanceWork.CompletedDate.Value - Model.DateSubmitted).Days;
+    }
+}
 
 <div class="track-page">
 
-    <!-- =====================================================
+    <!-- =========================
          HEADER
-         ===================================================== -->
-
+         ========================= -->
     <div class="track-header">
 
         <div class="track-header-icon">
-           
         </div>
 
         <div>
             <h2>TRACK REQUEST</h2>
-
-            <p>
-                Monitor the current status of your maintenance request
-            </p>
+            <p>Monitor the progress of your maintenance request</p>
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         REQUEST INFORMATION
-         ===================================================== -->
-
+    <!-- =========================
+         REQUEST SUMMARY
+         ========================= -->
     <div class="track-card">
 
         <div class="track-card-title">
-
             <span></span>
-
             REQUEST INFORMATION
-
         </div>
-
 
         <div class="track-info-grid">
 
-
-            <!-- Request ID -->
-
             <div class="track-info-item">
-
-                <span class="track-label">
-                    Request ID
-                </span>
-
+                <span class="track-label">Request Reference</span>
                 <span class="track-value">
-                    #@Model.RequestID
+                    @Model.ReferenceNumber
                 </span>
-
             </div>
 
-
-            <!-- Category -->
-
             <div class="track-info-item">
-
-                <span class="track-label">
-                    Category
-                </span>
-
-                <span class="track-value">
-
-                    @(Model.Category != null
-                        ? Model.Category.CategoryName
-                        : "Unknown")
-
-                </span>
-
-            </div>
-
-
-            <!-- Title -->
-
-            <div class="track-info-item">
-
-                <span class="track-label">
-                    Title
-                </span>
-
+                <span class="track-label">Title</span>
                 <span class="track-value">
                     @Model.Title
                 </span>
-
             </div>
-
-
-            <!-- Date -->
 
             <div class="track-info-item">
-
-                <span class="track-label">
-                    Date Submitted
-                </span>
-
+                <span class="track-label">Category</span>
                 <span class="track-value">
-                    @Model.DateSubmitted.ToString("dd MMM yyyy")
+                    @(Model.Category != null
+                        ? Model.Category.CategoryName
+                        : "Unknown")
                 </span>
-
             </div>
 
-
-            <!-- Location -->
-
-            <div class="track-info-item track-full-width">
-
-                <span class="track-label">
-                    Location
-                </span>
-
+            <div class="track-info-item">
+                <span class="track-label">Ward</span>
                 <span class="track-value">
-                    @Model.LocationDescription
+                    @(Model.Ward != null
+                        ? Model.Ward.WardName
+                        : "Unknown")
                 </span>
-
             </div>
 
+            <div class="track-info-item">
+                <span class="track-label">Priority</span>
+                <span class="summary-status status-@Model.Priority.ToString().ToLower()">
+                    @Model.Priority
+                </span>
+            </div>
+
+            <div class="track-info-item">
+                <span class="track-label">Date Submitted</span>
+                <span class="track-value">
+                    @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                </span>
+            </div>
 
         </div>
 
     </div>
 
 
-
-    <!-- =====================================================
+    <!-- =========================
          CURRENT STATUS
-         ===================================================== -->
-
+         ========================= -->
     <div class="track-card">
 
-
         <div class="track-card-title">
-
             <span></span>
-
             CURRENT STATUS
-
         </div>
-
-
-        <!-- Current Status -->
 
         <div class="current-status-box">
 
@@ -175,80 +165,294 @@
                 Current status
             </span>
 
-
             <span class="current-status status-@currentStatus.ToLower()">
-
                 @Model.Status
-
             </span>
 
         </div>
 
+    </div>
 
 
-        <!-- =================================================
-             STATUS PROGRESS
-             ================================================= -->
+    <!-- =========================
+         REQUEST DESCRIPTION
+         ========================= -->
+    <div class="track-card">
 
-        <div class="status-progress">
+        <div class="track-card-title">
+            <span></span>
+            DESCRIPTION
+        </div>
+
+        <div class="track-description">
+            @Model.Description
+        </div>
+
+    </div>
 
 
-            <!-- SUBMITTED -->
+    <!-- =========================
+         LOCATION
+         ========================= -->
+    <div class="track-card">
 
-            <div class="status-step active">
+        <div class="track-card-title">
+            <span></span>
+            LOCATION
+        </div>
 
-                <div class="status-circle">
-                    ✓
+        <div class="track-location-details">
+
+            <div class="track-info-item">
+
+                <span class="track-label">
+                    Problem Location
+                </span>
+
+                <span class="track-value">
+                    @(!string.IsNullOrWhiteSpace(Model.ProblemLocation)
+                        ? Model.ProblemLocation
+                        : "No location description provided.")
+                </span>
+
+            </div>
+
+            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+            {
+                <div class="gps-box">
+
+                    <div>
+                        <span class="track-label">Latitude</span>
+                        <strong>
+                            @Model.Latitude.Value.ToString("F6")
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="track-label">Longitude</span>
+                        <strong>
+                            @Model.Longitude.Value.ToString("F6")
+                        </strong>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         ASSIGNED TECHNICIAN
+         ========================= -->
+    @if (isAssigned && Model.Technician != null)
+    {
+        <div class="track-card">
+
+            <div class="track-card-title">
+                <span></span>
+                ASSIGNED TECHNICIAN
+            </div>
+
+            <div class="technician-information">
+
+                <div class="track-info-item">
+
+                    <span class="track-label">
+                        Technician
+                    </span>
+
+                    <span class="track-value">
+                        @Model.Technician.FirstName
+                        @Model.Technician.LastName
+                    </span>
+
                 </div>
 
+                @if (latestAssignment != null)
+                {
+                    <div class="track-info-item">
 
-                <div class="status-step-text">
+                        <span class="track-label">
+                            Assigned Date
+                        </span>
 
-                    <strong>
-                        Submitted
-                    </strong>
+                        <span class="track-value">
+                            @latestAssignment.AssignedDate.ToString("dd MMM yyyy HH:mm")
+                        </span>
+
+                    </div>
+
+                    if (latestAssignment.AcknowledgedDate.HasValue)
+                    {
+                        <div class="track-info-item">
+
+                            <span class="track-label">
+                                Assignment Acknowledged
+                            </span>
+
+                            <span class="track-value">
+                                @latestAssignment.AcknowledgedDate.Value.ToString("dd MMM yyyy HH:mm")
+                            </span>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- =========================
+         REQUEST TIMELINE
+         ========================= -->
+    <div class="track-card">
+
+        <div class="track-card-title">
+            <span></span>
+            REQUEST TIMELINE
+        </div>
+
+        <div class="request-timeline">
+
+            <!-- SUBMITTED -->
+            <div class="timeline-item active">
+
+                <div class="timeline-marker">✓</div>
+
+                <div class="timeline-content">
+                    <strong>Submitted</strong>
+                    <span>
+                        @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- UNDER REVIEW -->
+            <div class="timeline-item
+                 @(Model.Status != CommunityServiceProject.Models.RequestStatus.Pending
+                    ? "active"
+                    : "")">
+
+                <div class="timeline-marker">
+                    @(Model.Status != CommunityServiceProject.Models.RequestStatus.Pending ? "✓" : "")
+                </div>
+
+                <div class="timeline-content">
+                    <strong>Under Review</strong>
 
                     <span>
-                        Request received
+                        @(Model.Status == CommunityServiceProject.Models.RequestStatus.Pending
+                            ? "Pending"
+                            : "Request reviewed")
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- APPROVED -->
+            <div class="timeline-item
+                 @((Model.Status == CommunityServiceProject.Models.RequestStatus.Approved ||
+                    Model.Status == CommunityServiceProject.Models.RequestStatus.Assigned ||
+                    Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                    Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
+                    ? "active"
+                    : "")">
+
+                <div class="timeline-marker">
+                    @((Model.Status == CommunityServiceProject.Models.RequestStatus.Approved ||
+                       Model.Status == CommunityServiceProject.Models.RequestStatus.Assigned ||
+                       Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                       Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
+                       ? "✓"
+                       : "")
+                </div>
+
+                <div class="timeline-content">
+                    <strong>Approved</strong>
+
+                    <span>
+                        @((Model.Status == CommunityServiceProject.Models.RequestStatus.Approved ||
+                           Model.Status == CommunityServiceProject.Models.RequestStatus.Assigned ||
+                           Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                           Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
+                           ? "Request approved"
+                           : "Pending")
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNED -->
+            <div class="timeline-item
+                 @((Model.Status == CommunityServiceProject.Models.RequestStatus.Assigned ||
+                    Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                    Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
+                    ? "active"
+                    : "")">
+
+                <div class="timeline-marker">
+                    @((Model.Status == CommunityServiceProject.Models.RequestStatus.Assigned ||
+                       Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                       Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
+                       ? "✓"
+                       : "")
+                </div>
+
+                <div class="timeline-content">
+
+                    <strong>Assigned</strong>
+
+                    <span>
+                        @if (latestAssignment != null)
+                        {
+                            @latestAssignment.AssignedDate.ToString("dd MMM yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @:Pending
+                        }
                     </span>
 
                 </div>
 
             </div>
-
-
-
-            <!-- LINE -->
-
-            <div class="status-line
-                @(isInProgress || isCompleted
-                    ? "active"
-                    : "")">
-            </div>
-
 
 
             <!-- IN PROGRESS -->
-
-            <div class="status-step
-                @(isInProgress || isCompleted
+            <div class="timeline-item
+                 @((Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                    Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
                     ? "active"
                     : "")">
 
-
-                <div class="status-circle">
-           
+                <div class="timeline-marker">
+                    @((Model.Status == CommunityServiceProject.Models.RequestStatus.InProgress ||
+                       Model.Status == CommunityServiceProject.Models.RequestStatus.Completed)
+                       ? "✓"
+                       : "")
                 </div>
 
+                <div class="timeline-content">
 
-                <div class="status-step-text">
-
-                    <strong>
-                        In Progress
-                    </strong>
+                    <strong>In Progress</strong>
 
                     <span>
-                        Being attended to
+                        @if (maintenanceWork != null && maintenanceWork.StartedDate.HasValue)
+                        {
+                            @maintenanceWork.StartedDate.Value.ToString("dd MMM yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @:Pending
+                        }
                     </span>
 
                 </div>
@@ -256,267 +460,414 @@
             </div>
 
 
+            <!-- COMPLETION -->
+            <div class="timeline-item
+                 @(completionSubmitted ? "active" : "")">
 
-            <!-- LINE -->
-
-            <div class="status-line
-                @(isCompleted
-                    ? "active"
-                    : "")">
-            </div>
-
-
-
-            <!-- COMPLETED -->
-
-            <div class="status-step
-                @(isCompleted
-                    ? "active"
-                    : "")">
-
-
-                <div class="status-circle">
-                    ✓
+                <div class="timeline-marker">
+                    @(completionSubmitted ? "✓" : "")
                 </div>
 
+                <div class="timeline-content">
 
-                <div class="status-step-text">
-
-                    <strong>
-                        Completed
-                    </strong>
+                    <strong>Completion</strong>
 
                     <span>
-                        Issue resolved
+                        @if (latestCompletion != null)
+                        {
+                            @latestCompletion.SubmittedDate.ToString("dd MMM yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @:Pending
+                        }
                     </span>
 
                 </div>
 
             </div>
 
+
+            <!-- VERIFICATION -->
+            <div class="timeline-item
+                 @(verificationComplete ? "active" : "")">
+
+                <div class="timeline-marker">
+                    @(verificationComplete ? "✓" : "")
+                </div>
+
+                <div class="timeline-content">
+
+                    <strong>Verification</strong>
+
+                    <span>
+                        @if (verificationComplete && latestCompletion.VerifiedDate.HasValue)
+                        {
+                            @latestCompletion.VerifiedDate.Value.ToString("dd MMM yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @:Pending
+                        }
+                    </span>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
 
-
-    <!-- =====================================================
-         REQUEST ACTIVITY
-         ===================================================== -->
-
-    <div class="track-card">
-
-
-        <div class="track-card-title">
-
-            <span></span>
-
-            REQUEST ACTIVITY
-
-        </div>
-
-
-
-        <!-- Submitted -->
-
-        <div class="activity-row">
-
-
-            <div class="activity-icon">
-                
-            </div>
-
-
-            <div class="activity-content">
-
-                <strong>
-                    Request submitted
-                </strong>
-
-
-                <span>
-                    @Model.DateSubmitted.ToString(
-                        "dd MMMM yyyy, HH:mm"
-                    )
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- Days Open -->
-
-        <div class="activity-row">
-
-
-            <div class="activity-icon">
-                
-            </div>
-
-
-            <div class="activity-content">
-
-                <strong>
-                    Days open
-                </strong>
-
-
-                <span>
-
-                    @Model.DaysOpen() day(s)
-
-                </span>
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =====================================================
-         GPS INFORMATION
-         ===================================================== -->
-
-    @if (Model.Latitude.HasValue &&
-         Model.Longitude.HasValue)
+    <!-- =========================
+         MAINTENANCE PROGRESS
+         ========================= -->
+    @if (maintenanceWork != null)
     {
-
         <div class="track-card">
 
-
             <div class="track-card-title">
-
                 <span></span>
-
-                LOCATION INFORMATION
-
+                MAINTENANCE PROGRESS
             </div>
 
+            <div class="progress-summary">
 
+                <div class="progress-percentage">
+                    @currentProgress%
+                </div>
 
-            <div class="gps-box">
-
-
-                <!-- Latitude -->
-
-                <div>
-
-                    <span class="track-label">
-                        Latitude
-                    </span>
-
+                <div class="progress-details">
 
                     <strong>
-
-                        @Model.Latitude.Value.ToString("F6")
-
+                        Current Progress
                     </strong>
+
+                    @if (!string.IsNullOrWhiteSpace(currentActivity))
+                    {
+                        <span>
+                            @currentActivity
+                        </span>
+                    }
+                    else
+                    {
+                        <span>
+                            No current activity recorded.
+                        </span>
+                    }
 
                 </div>
 
+            </div>
 
 
-                <!-- Longitude -->
+            @if (progressRecords.Any())
+            {
+                <div class="progress-history">
 
-                <div>
+                    <h3>Progress Updates</h3>
 
-                    <span class="track-label">
-                        Longitude
-                    </span>
+                    @foreach (var progress in progressRecords)
+                    {
+                        <div class="progress-history-row">
 
+                            <div>
+                                <strong>
+                                    @progress.ProgressPercentage%
+                                </strong>
 
-                    <strong>
+                                <span>
+                                    @progress.CurrentActivity
+                                </span>
+                            </div>
 
-                        @Model.Longitude.Value.ToString("F6")
+                            <span>
+                                @progress.RecordedDate.ToString("dd MMM yyyy HH:mm")
+                            </span>
 
-                    </strong>
+                        </div>
+                    }
 
                 </div>
-
-
-            </div>
-
+            }
 
         </div>
-
     }
 
 
-
-    <!-- =====================================================
-         PHOTO
-         ===================================================== -->
-
-    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+    <!-- =========================
+         COMPLETION INFORMATION
+         ========================= -->
+    @if (latestCompletion != null)
     {
-
         <div class="track-card">
 
-
             <div class="track-card-title">
-
                 <span></span>
+                FINAL OUTCOME
+            </div>
 
-                REQUEST PHOTO
+            @if (isCompleted && maintenanceWork != null && maintenanceWork.CompletedDate.HasValue)
+            {
+                <div class="completion-summary">
+
+                    <div class="completion-status">
+                        <span class="summary-status status-completed">
+                            ✓ COMPLETED
+                        </span>
+                    </div>
+
+                    <div class="completion-dates">
+
+                        <div>
+                            <span>Submitted</span>
+                            <strong>
+                                @Model.DateSubmitted.ToString("dd MMM yyyy")
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Completed</span>
+                            <strong>
+                                @maintenanceWork.CompletedDate.Value.ToString("dd MMM yyyy")
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Resolution Time</span>
+                            <strong>
+                                @resolutionDays day(s)
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+            <div class="completion-field">
+
+                <span class="track-label">
+                    Maintenance Summary
+                </span>
+
+                <p>
+                    @latestCompletion.MaintenanceSummary
+                </p>
 
             </div>
 
+            <div class="completion-field">
 
-            <div class="track-photo-container">
+                <span class="track-label">
+                    Resolution Action
+                </span>
 
-                <img src="@Url.Content(Model.ImagePath)"
-                     alt="Maintenance request photo"
-                     class="track-request-photo" />
+                <p>
+                    @latestCompletion.ResolutionAction
+                </p>
 
             </div>
 
+            @if (Model.Technician != null)
+            {
+                <div class="completion-field">
+
+                    <span class="track-label">
+                        Technician
+                    </span>
+
+                    <p>
+                        @Model.Technician.FirstName
+                        @Model.Technician.LastName
+                    </p>
+
+                </div>
+            }
 
         </div>
-
     }
 
 
+    <!-- =========================
+         COMPLETION EVIDENCE
+         ========================= -->
+    @if (evidenceRecords.Any())
+    {
+        <div class="track-card">
 
-    <!-- =====================================================
-         ACTION BUTTONS
-         ===================================================== -->
+            <div class="track-card-title">
+                <span></span>
+                COMPLETION EVIDENCE
+            </div>
 
+            <div class="evidence-list">
+
+                @foreach (var evidence in evidenceRecords)
+                {
+                    <div class="evidence-item">
+
+                        <div class="evidence-information">
+
+                            <strong>
+                                @evidence.EvidenceType
+                            </strong>
+
+                            @if (!string.IsNullOrWhiteSpace(evidence.Description))
+                            {
+                                <span>
+                                    @evidence.Description
+                                </span>
+                            }
+
+                            <small>
+                                Uploaded:
+                                @evidence.UploadedDate.ToString("dd MMM yyyy HH:mm")
+                            </small>
+
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(evidence.FilePath))
+                        {
+                            <a href="@Url.Content(evidence.FilePath)"
+                               target="_blank"
+                               class="evidence-view-button">
+                                VIEW
+                            </a>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- =========================
+         ADMINISTRATOR VERIFICATION
+         ========================= -->
+    @if (latestCompletion != null)
+    {
+        <div class="track-card">
+
+            <div class="track-card-title">
+                <span></span>
+                ADMINISTRATOR VERIFICATION
+            </div>
+
+            <div class="verification-information">
+
+                @if (verificationComplete)
+                {
+                    <div class="verification-status verified">
+                        ✓ Verified
+                    </div>
+
+                    if (latestCompletion.VerifiedDate.HasValue)
+                    {
+                        <div class="status-row">
+
+                            <span>Verified Date</span>
+
+                            <strong>
+                                @latestCompletion.VerifiedDate.Value.ToString("dd MMM yyyy HH:mm")
+                            </strong>
+
+                        </div>
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(latestCompletion.AdministratorComments))
+                    {
+                        <div class="verification-comments">
+
+                            <span class="track-label">
+                                Administrator Comments
+                            </span>
+
+                            <p>
+                                @latestCompletion.AdministratorComments
+                            </p>
+
+                        </div>
+                    }
+                }
+                else if (latestCompletion.VerificationStatus ==
+                    CommunityServiceProject.Models.CompletionVerificationStatus.Rejected)
+                {
+                    <div class="verification-status rejected">
+                        Completion Requires Further Attention
+                    </div>
+
+                    if (!string.IsNullOrWhiteSpace(latestCompletion.AdministratorComments))
+                    {
+                        <div class="verification-comments">
+
+                            <span class="track-label">
+                                Administrator Comments
+                            </span>
+
+                            <p>
+                                @latestCompletion.AdministratorComments
+                            </p>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="verification-status pending">
+                        Completion submitted for administrator verification.
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- =========================
+         ACTIONS
+         ========================= -->
     <div class="track-actions">
 
-
-        <a href="@Url.Action(
-                    "Index",
-                    "Requests"
-                 )"
+        <a href="@Url.Action("Index", "Requests")"
            class="track-back-button">
-
             ← Back to My Requests
-
         </a>
 
-
-
-        <a href="@Url.Action(
-                    "Details",
-                    "Requests",
-                    new { id = Model.RequestID }
-                 )"
+        <a href="@Url.Action("Details", "Requests", new { id = Model.RequestID })"
            class="track-details-button">
-
             View Request Details
-
         </a>
-
 
     </div>
 
 
+    <!-- =========================
+         FUTURE CITIZEN ACTIONS
+         ========================= -->
+    <div class="track-secondary-actions">
+
+        <button type="button"
+                class="track-secondary-button"
+                disabled>
+            View Notifications
+        </button>
+
+        @if (isCompleted && verificationComplete)
+        {
+            <button type="button"
+                    class="track-secondary-button"
+                    disabled>
+                Provide Feedback
+            </button>
+        }
+
+    </div>
+
 </div>
+

@@ -1,0 +1,126 @@
+﻿@model CommunityServiceProject.Models.MaintenanceWork
+
+@{
+    ViewBag.Title = "Upload Completion Evidence";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <div class="admin-review-header">
+            <h2>Upload Completion Evidence</h2>
+            <p>Request #@Model.RequestID</p>
+        </div>
+
+        <div class="admin-review-content">
+
+            @if (Model.Request != null)
+            {
+                <div class="admin-review-section">
+                    <h3>Request Information</h3>
+
+                    <div class="admin-review-row">
+                        <span class="admin-review-label">
+                            Request Title
+                        </span>
+
+                        <span>
+                            @Model.Request.Title
+                        </span>
+                    </div>
+                </div>
+            }
+
+            <div class="admin-review-section">
+
+                <h3>Completion Evidence</h3>
+
+                @using (Html.BeginForm(
+                    "UploadCompletionEvidence",
+                    "Technicians",
+                    FormMethod.Post,
+                    new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.Hidden(
+                        "id",
+                        Model.MaintenanceWorkID)
+
+                    <div class="mb-3">
+
+                        <label for="evidenceFile"
+                               class="form-label">
+                            Completion Evidence
+                        </label>
+
+                        <input type="file"
+                               id="evidenceFile"
+                               name="evidenceFile"
+                               class="form-control"
+                               accept="image/*"
+                               required />
+
+                        @Html.ValidationMessage(
+                            "evidenceFile",
+                            "",
+                            new { @class = "text-danger" })
+
+                        <small class="text-muted">
+                            Upload a photograph showing the completed
+                            maintenance work.
+                        </small>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="description"
+                               class="form-label">
+                            Description
+                        </label>
+
+                        <textarea id="description"
+                                  name="description"
+                                  class="form-control"
+                                  maxlength="500"
+                                  rows="4"
+                                  placeholder="Describe the completed work shown in the photo..."></textarea>
+
+                        @Html.ValidationMessage(
+                            "description",
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Upload Evidence
+                        </button>
+
+                        <a href="@Url.Action(
+                            "Details",
+                            "Technicians",
+                            new
+                            {
+                                id = Model.RequestID
+                            })"
+                           class="admin-back-button">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

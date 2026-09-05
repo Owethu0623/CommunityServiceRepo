@@ -1,0 +1,1947 @@
+﻿@model CommunityServiceProject.Models.Request
+
+    @{
+        ViewBag.Title = "Request Details";
+    }
+
+    @{
+        var technicianID = (int)Session["TechnicianID"];
+
+        var maintenanceWork = Model.MaintenanceWorks
+            .OrderByDescending(m => m.StartedDate)
+            .FirstOrDefault(m =>
+                m.TechnicianID == technicianID &&
+                (m.Status == CommunityServiceProject.Models.MaintenanceWorkStatus.InProgress ||
+                 m.Status == CommunityServiceProject.Models.MaintenanceWorkStatus.SubmittedForVerification ||
+                 m.Status == CommunityServiceProject.Models.MaintenanceWorkStatus.Verified ||
+                 m.Status == CommunityServiceProject.Models.MaintenanceWorkStatus.Rejected));
+
+        var assignment = Model.TechnicianAssignments
+            .OrderByDescending(a => a.AssignedDate)
+            .FirstOrDefault(a =>
+                a.TechnicianID == technicianID);
+
+        // ===========================================================
+        // ASSIGNMENT STATES
+        // ===========================================================
+
+        var assignmentPending =
+            assignment != null &&
+            assignment.Status ==
+            CommunityServiceProject.Models.AssignmentStatus.PendingAcknowledgement;
+
+        var assignmentAcknowledged =
+            assignment != null &&
+            assignment.Status ==
+            CommunityServiceProject.Models.AssignmentStatus.Acknowledged;
+
+        var issueReported =
+    assignment != null &&
+    assignment.Status == CommunityServiceProject.Models.AssignmentStatus.IssueReported;
+
+        var reassignmentRequested =
+        assignment != null &&
+        assignment.Status ==
+        CommunityServiceProject.Models.AssignmentStatus.ReassignmentRequested;
+
+        // ===========================================================
+        // MAINTENANCE STATES
+        // ===========================================================
+
+        var hasMaintenanceWork =
+            maintenanceWork != null;
+
+        var maintenanceInProgress =
+            maintenanceWork != null &&
+            maintenanceWork.Status ==
+            CommunityServiceProject.Models.MaintenanceWorkStatus.InProgress;
+
+        var completionSubmitted =
+            maintenanceWork != null &&
+            maintenanceWork.Status ==
+            CommunityServiceProject.Models.MaintenanceWorkStatus.SubmittedForVerification;
+
+        var maintenanceVerified =
+            maintenanceWork != null &&
+            maintenanceWork.Status ==
+            CommunityServiceProject.Models.MaintenanceWorkStatus.Verified;
+
+        var maintenanceRejected =
+            maintenanceWork != null &&
+            maintenanceWork.Status ==
+            CommunityServiceProject.Models.MaintenanceWorkStatus.Rejected;
+
+        var hasBeforeEvidence =
+    maintenanceWork != null &&
+    maintenanceWork.Evidence != null &&
+    maintenanceWork.Evidence.Any(e =>
+        e.EvidenceType == CommunityServiceProject.Models.EvidenceType.BeforeMaintenance);
+
+        var hasProgressEvidence =
+            maintenanceWork != null &&
+            maintenanceWork.Evidence != null &&
+            maintenanceWork.Evidence.Any(e =>
+                e.EvidenceType == CommunityServiceProject.Models.EvidenceType.Progress);
+
+        var hasCompletionEvidence =
+            maintenanceWork != null &&
+            maintenanceWork.Evidence != null &&
+            maintenanceWork.Evidence.Any(e =>
+                e.EvidenceType == CommunityServiceProject.Models.EvidenceType.Completion);
+
+        var progressStarted =
+            maintenanceWork != null &&
+            maintenanceWork.ProgressPercentage > 0;
+
+        var maintenanceComplete =
+            maintenanceWork != null &&
+            maintenanceWork.ProgressPercentage >= 100;
+    }
+<div>
+    <div class="admin-review-page">
+
+        <div class="admin-review-card">
+
+            <!-- HEADER -->
+            <div class="admin-review-header">
+
+                <h2>Request Details</h2>
+
+                <p>
+                    Reference Number @Model.ReferenceNumber
+                </p>
+
+            </div>
+
+
+            <div class="admin-review-content">
+
+                <!-- REQUEST INFORMATION -->
+                <div class="admin-review-section">
+
+                    <h3>Request Information</h3>
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Request Title
+                        </span>
+
+                        <span>
+                            @Model.Title
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Description
+                        </span>
+
+                        <span>
+                            @Model.Description
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Category
+                        </span>
+
+                        <span>
+                            @(Model.Category != null
+                            ? Model.Category.CategoryName
+                            : "Unknown")
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Status
+                        </span>
+
+                        <span>
+                            @Model.Status
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Priority
+                        </span>
+
+                        <span>
+                            @Model.Priority
+                        </span>
+
+                    </div>
+
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PriorityReason))
+                    {
+                        <div class="admin-review-row">
+
+                            <span class="admin-review-label">
+                                Priority Reason
+                            </span>
+
+                            <span>
+                                @Model.PriorityReason
+                            </span>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <!-- LOCATION -->
+            <div class="admin-review-section">
+
+                <h3>Location</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Problem Location
+                    </span>
+
+                    <span>
+                        @(!string.IsNullOrWhiteSpace(Model.ProblemLocation)
+                ? Model.ProblemLocation
+                : "No problem location description provided.")
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Latitude
+                    </span>
+
+                    <span>
+                        @Model.Latitude
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Longitude
+                    </span>
+
+                    <span>
+                        @Model.Longitude
+                    </span>
+
+                </div>
+
+
+                @if (Model.Latitude != null &&
+                     Model.Longitude != null)
+                {
+                    <div style="
+            width: 100%;
+            margin-top: 20px;
+        ">
+
+                        <div id="map"
+                             data-latitude="@(Model.Latitude.Value.ToString(
+                     System.Globalization.CultureInfo.InvariantCulture))"
+                             data-longitude="@(Model.Longitude.Value.ToString(
+                     System.Globalization.CultureInfo.InvariantCulture))"
+                             style="
+                     width: 100%;
+                     height: 450px;
+                     border-radius: 10px;
+                     overflow: hidden;
+                 ">
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-review-actions">
+
+                        <a href="@Url.Action(
+                        "Directions",
+                        "Technicians",
+                        new
+                        {
+                            id = Model.RequestID
+                        })"
+                           class="admin-approve-button"
+                           target="_blank">
+
+                            Get Directions
+
+                        </a>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="admin-review-row">
+
+                        <span>
+                            GPS location was not available.
+                        </span>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- CITIZEN INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Citizen Information</h3>
+
+                @if (Model.Citizen != null)
+                {
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            First Name
+                        </span>
+
+                        <span>
+                            @Model.Citizen.FirstName
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Last Name
+                        </span>
+
+                        <span>
+                            @Model.Citizen.LastName
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Email Address
+                        </span>
+
+                        <span>
+                            @Model.Citizen.EmailAddress
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Phone Number
+                        </span>
+
+                        <span>
+                            @Model.Citizen.PhoneNumber
+                        </span>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="admin-review-row">
+
+                        <span>
+                            Citizen information unavailable.
+                        </span>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- SUPPORTING PHOTOGRAPH -->
+            <div class="admin-review-section">
+
+                <h3>Supporting Photograph</h3>
+
+                @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+                {
+                    <div style="
+                        margin-top: 15px;
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                    ">
+
+                        <img src="@Url.Content(Model.ImagePath)"
+                             alt="Supporting Photograph"
+                             style="
+                                 max-width: 100%;
+                                 max-height: 400px;
+                                 border-radius: 8px;
+                             " />
+
+                    </div>
+                }
+                else
+                {
+                    <div class="admin-review-row">
+
+                        <span>
+                            No supporting photograph was provided.
+                        </span>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- ASSIGNMENT -->
+            <div class="admin-review-section">
+
+                <h3>Assignment</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Assigned Technician
+                    </span>
+
+                    <span>
+                        @Session["TechnicianName"]
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Assignment Status
+                    </span>
+
+                    <span>
+                        @(assignment != null
+                            ? assignment.Status.ToString()
+                            : "No assignment found.")
+                    </span>
+
+                </div>
+
+
+                @if (assignment != null)
+                {
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Assigned Date
+                        </span>
+
+                        <span>
+                            @assignment.AssignedDate.ToString(
+                                "dd MMM yyyy HH:mm")
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <span class="admin-review-label">
+                            Acknowledged Date
+                        </span>
+
+                        <span>
+                            @(assignment.AcknowledgedDate.HasValue
+            ? assignment.AcknowledgedDate.Value.ToString("dd MMM yyyy HH:mm")
+            : "Not acknowledged yet")
+                        </span>
+
+                    </div>
+                }
+
+                <!-- REQUIRED SKILLS -->
+                <div class="admin-review-section">
+
+                    <h3>Required Skills</h3>
+
+                    @if (Model.RequiredSkills != null &&
+                         Model.RequiredSkills.Any())
+                    {
+                        foreach (var requiredSkill in Model.RequiredSkills)
+                        {
+                            <div class="admin-review-row">
+
+                                <span class="admin-review-label">
+                                    Skill
+                                </span>
+
+                                <span>
+                                    @(requiredSkill.Skill != null
+                        ? requiredSkill.Skill.SkillName
+                        : "Skill unavailable")
+                                </span>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="admin-review-row">
+                            <span>
+                                No specific skills have been identified for this request.
+                            </span>
+                        </div>
+                    }
+
+                </div>
+
+                <!-- PENDING ASSIGNMENT ACTIONS -->
+                <div class="admin-review-actions"
+                     style="@(assignmentPending ? "" : "display:none;")">
+
+                    @using (Html.BeginForm(
+                        "Acknowledge",
+                        "Technicians",
+                        new
+                        {
+                            id = assignment != null
+                                ? assignment.AssignmentID
+                                : 0
+                        },
+                        FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="admin-approve-button">
+
+                            Acknowledge Assignment
+
+                        </button>
+                    }
+
+
+                    <a href="@Url.Action(
+                                "ReportIssue",
+                                "Technicians",
+                                new
+                                {
+                                    id = assignment != null
+                                        ? assignment.AssignmentID
+                                        : 0
+                                })"
+                       class="admin-back-button">
+
+                        Report Assignment Issue
+
+                    </a>
+
+                </div>
+
+
+                @if (assignmentAcknowledged && !hasMaintenanceWork)
+                {
+                    using (Html.BeginForm(
+                        "StartMaintenance",
+                        "Technicians",
+                        FormMethod.Post,
+                        new { style = "display:inline;" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@assignment.AssignmentID" />
+
+                        <button type="submit" class="btn btn-primary">
+                            Start Maintenance
+                        </button>
+                    }
+                }
+
+                @if (issueReported)
+                {
+                    <div class="admin-review-actions">
+                        <span>
+                            An assignment issue has been reported. You can now request reassignment if you are unable to complete this request.
+                        </span>
+
+                        <a href="@Url.Action(
+            "RequestReassignment",
+            "Technicians",
+            new { id = assignment.AssignmentID })"
+                           class="admin-approve-button">
+                            Request Reassignment
+                        </a>
+                    </div>
+                }
+
+                <!-- MAINTENANCE HAS STARTED -->
+                <div class="admin-review-actions"
+                     style="@(assignmentAcknowledged && hasMaintenanceWork
+                ? ""
+                : "display:none;")">
+
+                    <span>
+                        Assignment acknowledged and maintenance is currently in progress.
+                    </span>
+
+                </div>
+
+
+                <!-- REASSIGNMENT REQUESTED -->
+                <div class="admin-review-actions"
+                     style="@(reassignmentRequested
+                                ? ""
+                                : "display:none;")">
+
+                    <span>
+                        Reassignment request submitted and awaiting administrator review.
+                    </span>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MAINTENANCE -->
+        @if (maintenanceWork != null)
+        {
+            <div class="admin-review-section">
+
+                <h3>Maintenance</h3>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Maintenance Status
+                    </span>
+
+                    <span>
+                        @maintenanceWork.Status
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Progress
+                    </span>
+
+                    <span>
+                        @maintenanceWork.ProgressPercentage%
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Current Activity
+                    </span>
+
+                    <span>
+                        @(string.IsNullOrWhiteSpace(
+                                maintenanceWork.CurrentActivity)
+                                ? "No activity recorded."
+                                : maintenanceWork.CurrentActivity)
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Started Date
+                    </span>
+
+                    <span>
+                        @(maintenanceWork.StartedDate.HasValue
+                                ? maintenanceWork.StartedDate.Value.ToString(
+                                    "dd MMM yyyy HH:mm")
+                                : "Not available")
+                    </span>
+
+                </div>
+
+
+                @if (maintenanceInProgress)
+                {
+                    <div style="margin-top: 20px;">
+
+                        <!-- ===================================================
+                    STAGE 1 - MAINTENANCE STARTED
+                    =================================================== -->
+
+                        @if (!progressStarted)
+                        {
+                            <div class="admin-review-actions">
+
+                                @if (!hasBeforeEvidence)
+                                {
+                                    <a href="@Url.Action(
+                        "UploadEvidence",
+                        "Technicians",
+                        new
+                        {
+                            id = maintenanceWork.MaintenanceWorkID
+                        })"
+                                       class="btn btn-primary">
+
+                                        Upload Before-Maintenance Evidence
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action(
+                        "UpdateProgress",
+                        "Technicians",
+                        new
+                        {
+                            id = maintenanceWork.MaintenanceWorkID
+                        })"
+                                       class="admin-approve-button">
+
+                                        Update Maintenance Progress
+
+                                    </a>
+                                }
+
+                            </div>
+
+                            <div style="margin-top: 15px;">
+
+                                @if (!hasBeforeEvidence)
+                                {
+                                    <p class="text-muted">
+                                        Maintenance has started. Upload before-maintenance evidence
+                                        before recording maintenance progress.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">
+                                        Before-maintenance evidence has been uploaded.
+                                        You can now record the maintenance progress.
+                                    </p>
+                                }
+
+                            </div>
+                        }
+
+
+                        <!-- ===================================================
+                    STAGE 2 - PROGRESS HAS BEEN RECORDED
+                    =================================================== -->
+
+                        @if (progressStarted && !maintenanceComplete)
+                        {
+                            <div class="admin-review-actions">
+
+                                @if (hasProgressEvidence)
+                                {
+                                    <a href="@Url.Action(
+                        "UpdateProgress",
+                        "Technicians",
+                        new
+                        {
+                            id = maintenanceWork.MaintenanceWorkID
+                        })"
+                                       class="admin-approve-button">
+
+                                        Update Maintenance Progress
+
+                                    </a>
+                                }
+
+                                <a href="@Url.Action(
+                    "AddWorkNote",
+                    "Technicians",
+                    new
+                    {
+                        id = maintenanceWork.MaintenanceWorkID
+                    })"
+                                   class="btn btn-primary">
+
+                                    Add Work Note
+
+                                </a>
+
+
+                                <a href="@Url.Action(
+                    "AddMaterial",
+                    "Technicians",
+                    new
+                    {
+                        id = maintenanceWork.MaintenanceWorkID
+                    })"
+                                   class="btn btn-primary">
+
+                                    Record Materials Used
+
+                                </a>
+
+
+                                @if (!hasProgressEvidence)
+                                {
+                                    <a href="@Url.Action(
+                        "UploadProgressEvidence",
+                        "Technicians",
+                        new
+                        {
+                            id = maintenanceWork.MaintenanceWorkID
+                        })"
+                                       class="btn btn-primary">
+
+                                        Upload Progress Evidence
+
+                                    </a>
+                                }
+
+                            </div>
+
+
+                            <div style="margin-top: 15px;">
+
+                                @if (!hasProgressEvidence)
+                                {
+                                    <p class="text-muted">
+                                        Upload progress evidence before recording another
+                                        maintenance progress update.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">
+                                        Progress evidence has been uploaded.
+                                        You can continue updating the maintenance progress.
+                                    </p>
+                                }
+
+                            </div>
+                        }
+
+
+                        <!-- ===================================================
+                    STAGE 3 - READY FOR COMPLETION
+                    =================================================== -->
+
+                        @if (maintenanceComplete)
+                        {
+                            <div class="admin-review-actions"
+                                 style="margin-top: 15px;">
+
+                                @if (!hasCompletionEvidence)
+                                {
+                                    <a href="@Url.Action(
+                        "UploadCompletionEvidence",
+                        "Technicians",
+                        new
+                        {
+                            id = maintenanceWork.MaintenanceWorkID
+                        })"
+                                       class="btn btn-primary">
+
+                                        Upload Completion Evidence
+
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action(
+                        "SubmitCompletion",
+                        "Technicians",
+                        new
+                        {
+                            id = maintenanceWork.MaintenanceWorkID
+                        })"
+                                       class="btn btn-primary">
+
+                                        Submit for Completion Verification
+
+                                    </a>
+                                }
+
+                            </div>
+
+
+                            <div style="margin-top: 15px;">
+
+                                @if (!hasCompletionEvidence)
+                                {
+                                    <p class="text-muted">
+                                        Maintenance progress has reached 100%.
+                                        Upload completion evidence before submitting the
+                                        maintenance for administrator verification.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">
+                                        Completion evidence has been uploaded.
+                                        You can now submit the maintenance for administrator verification.
+                                    </p>
+                                }
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+                <!-- SUBMITTED FOR VERIFICATION -->
+                <div class="admin-review-actions"
+                     style="@(completionSubmitted ? "" : "display:none;")">
+
+                    <span>
+                        Maintenance completion has been submitted and is awaiting administrator verification.
+                    </span>
+
+                </div>
+
+
+                <!-- VERIFIED -->
+                <div class="admin-review-actions"
+                     style="@(maintenanceVerified ? "" : "display:none;")">
+
+                    <span>
+                        Maintenance has been verified by the administrator.
+                    </span>
+
+                </div>
+
+
+                <!-- REJECTED -->
+                <div class="admin-review-actions"
+                     style="@(maintenanceRejected ? "" : "display:none;")">
+
+                    <span>
+                        Maintenance completion was rejected by the administrator.
+                    </span>
+
+                </div>
+
+
+                <!-- WORK NOTES -->
+                <div style="margin-top: 25px;">
+
+                    <h4>Work Notes</h4>
+
+                    @if (maintenanceWork.WorkNotes != null &&
+                         maintenanceWork.WorkNotes.Any())
+                    {
+                        foreach (var note in maintenanceWork.WorkNotes
+                            .OrderByDescending(n => n.CreatedDate))
+                        {
+                            <div class="card mb-2">
+
+                                <div class="card-body">
+
+                                    <p class="mb-1">
+                                        @note.NoteText
+                                    </p>
+
+                                    <small class="text-muted">
+                                        Added:
+                                        @note.CreatedDate.ToString(
+                                            "dd MMM yyyy HH:mm")
+                                    </small>
+
+                                </div>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            No work notes have been added yet.
+                        </p>
+                    }
+
+                </div>
+
+
+                <!-- MATERIALS AND RESOURCES -->
+                <div style="margin-top: 25px;">
+
+                    <h4>Materials & Resources</h4>
+
+                    @if (maintenanceWork.Materials != null &&
+                         maintenanceWork.Materials.Any())
+                    {
+                        foreach (var material in maintenanceWork.Materials
+                            .OrderByDescending(m => m.RecordedDate))
+                        {
+                            <div class="card mb-2">
+
+                                <div class="card-body">
+
+                                    <p class="mb-1">
+
+                                        <strong>
+                                            @material.MaterialName
+                                        </strong>
+
+                                    </p>
+
+
+                                    <p class="mb-1">
+
+                                        Quantity:
+                                        @material.Quantity
+                                        @material.Unit
+
+                                    </p>
+
+
+                                    <small class="text-muted">
+
+                                        Recorded:
+                                        @material.RecordedDate.ToString(
+                                            "dd MMM yyyy HH:mm")
+
+                                    </small>
+
+                                </div>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            No materials or resources have been recorded yet.
+                        </p>
+                    }
+
+                </div>
+
+
+                <!-- BEFORE-MAINTENANCE EVIDENCE -->
+                <div style="margin-top: 25px;">
+
+                    <h4>Before-Maintenance Evidence</h4>
+
+                    @if (maintenanceWork.Evidence != null)
+                    {
+                        var beforeEvidence = maintenanceWork.Evidence
+                            .Where(e =>
+                                e.EvidenceType ==
+                                CommunityServiceProject.Models.EvidenceType.BeforeMaintenance)
+                            .OrderByDescending(e => e.UploadedDate)
+                            .ToList();
+
+                        if (beforeEvidence.Any())
+                        {
+                            foreach (var evidence in beforeEvidence)
+                            {
+                                <div class="card mb-3">
+
+                                    <div class="card-body">
+
+                                        <p class="mb-2">
+                                            <strong>
+                                                Evidence
+                                            </strong>
+                                        </p>
+
+
+                                        <div style="text-align: center;">
+
+                                            <img src="@Url.Content(
+                                                            evidence.FilePath)"
+                                                 alt="Before-maintenance evidence"
+                                                 style="
+                                                         max-width: 500px;
+                                                         max-height: 300px;
+                                                         object-fit: contain;
+                                                         border-radius: 8px;
+                                                         display: inline-block;
+                                                     " />
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            evidence.Description))
+                                        {
+                                            <p class="mt-3 mb-1">
+
+                                                <strong>
+                                                    Description:
+                                                </strong>
+
+                                                @evidence.Description
+
+                                            </p>
+                                        }
+
+
+                                        <small class="text-muted">
+
+                                            Uploaded:
+                                            @evidence.UploadedDate.ToString(
+                                                "dd MMM yyyy HH:mm")
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">
+                                No before-maintenance evidence has been uploaded yet.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            No before-maintenance evidence has been uploaded yet.
+                        </p>
+                    }
+
+                </div>
+
+
+                <!-- PROGRESS EVIDENCE -->
+                <div style="margin-top: 25px;">
+
+                    <h4>Progress Evidence</h4>
+
+                    @if (maintenanceWork.Evidence != null)
+                    {
+                        var progressEvidence = maintenanceWork.Evidence
+                            .Where(e =>
+                                e.EvidenceType ==
+                                CommunityServiceProject.Models.EvidenceType.Progress)
+                            .OrderByDescending(e => e.UploadedDate)
+                            .ToList();
+
+                        if (progressEvidence.Any())
+                        {
+                            foreach (var evidence in progressEvidence)
+                            {
+                                <div class="card mb-3">
+
+                                    <div class="card-body">
+
+                                        <p class="mb-2">
+                                            <strong>
+                                                Progress Evidence
+                                            </strong>
+                                        </p>
+
+
+                                        <div style="text-align: center;">
+
+                                            <img src="@Url.Content(
+                                                            evidence.FilePath)"
+                                                 alt="Progress evidence"
+                                                 style="
+                                                         max-width: 500px;
+                                                         max-height: 300px;
+                                                         object-fit: contain;
+                                                         border-radius: 8px;
+                                                         display: inline-block;
+                                                     " />
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            evidence.Description))
+                                        {
+                                            <p class="mt-3 mb-1">
+
+                                                <strong>
+                                                    Description:
+                                                </strong>
+
+                                                @evidence.Description
+
+                                            </p>
+                                        }
+
+
+                                        <small class="text-muted">
+
+                                            Uploaded:
+                                            @evidence.UploadedDate.ToString(
+                                                "dd MMM yyyy HH:mm")
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">
+                                No progress evidence has been uploaded yet.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            No progress evidence has been uploaded yet.
+                        </p>
+                    }
+
+                </div>
+
+
+                <!-- COMPLETION EVIDENCE -->
+                <div style="margin-top: 25px;">
+
+                    <h4>Completion Evidence</h4>
+
+                    @if (maintenanceWork.Evidence != null)
+                    {
+                        var completionEvidence = maintenanceWork.Evidence
+                            .Where(e =>
+                                e.EvidenceType ==
+                                CommunityServiceProject.Models.EvidenceType.Completion)
+                            .OrderByDescending(e => e.UploadedDate)
+                            .ToList();
+
+                        if (completionEvidence.Any())
+                        {
+                            foreach (var evidence in completionEvidence)
+                            {
+                                <div class="card mb-3">
+
+                                    <div class="card-body">
+
+                                        <p class="mb-2">
+                                            <strong>
+                                                Completion Evidence
+                                            </strong>
+                                        </p>
+
+
+                                        <div style="text-align: center;">
+
+                                            <img src="@Url.Content(
+                                                            evidence.FilePath)"
+                                                 alt="Completion evidence"
+                                                 style="
+                                                         max-width: 500px;
+                                                         max-height: 300px;
+                                                         object-fit: contain;
+                                                         border-radius: 8px;
+                                                         display: inline-block;
+                                                     " />
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            evidence.Description))
+                                        {
+                                            <p class="mt-3 mb-1">
+
+                                                <strong>
+                                                    Description:
+                                                </strong>
+
+                                                @evidence.Description
+
+                                            </p>
+                                        }
+
+
+                                        <small class="text-muted">
+
+                                            Uploaded:
+                                            @evidence.UploadedDate.ToString(
+                                                "dd MMM yyyy HH:mm")
+
+                                        </small>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">
+                                No completion evidence has been uploaded yet.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            No completion evidence has been uploaded yet.
+                        </p>
+                    }
+
+                </div>
+
+            </div>
+
+        }
+
+        @if (Request.QueryString["returnTo"] == "PreviousResolutions")
+        {
+            <a href="@Url.Action("PreviousResolutions", "Technicians")"
+               class="back-to-resolutions">
+                ← Back to Previous Resolutions
+            </a>
+        }
+
+        @if (Request.QueryString["returnTo"] == "KnowledgeBase")
+        {
+            <a href="@Url.Action("KnowledgeBase", "Technicians")"
+               class="back-to-knowledge-base">
+                ← Back to Knowledge Base
+            </a>
+        }
+
+        <!-- ACTIONS -->
+        <div class="admin-review-actions">
+
+            <a href="@Url.Action(
+                            "AssignedRequests",
+                            "Technicians")"
+               class="admin-back-button">
+
+                Back to Assigned Requests
+
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+
+    <div class="admin-review-page">
+    </div>
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+
+                var mapElement = document.getElementById("map");
+
+                if (!mapElement) {
+                    return;
+                }
+
+                var latitudeText =
+                    mapElement.getAttribute("data-latitude");
+
+                var longitudeText =
+                    mapElement.getAttribute("data-longitude");
+
+                if (!latitudeText || !longitudeText) {
+                    return;
+                }
+
+                var latitude =
+                    Number(latitudeText);
+
+                var longitude =
+                    Number(longitudeText);
+
+                if (isNaN(latitude) || isNaN(longitude)) {
+                    return;
+                }
+
+                var map =
+                    L.map("map");
+
+                map.setView(
+                    [latitude, longitude],
+                    16
+                );
+
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        maxZoom: 19,
+                        attribution:
+                            "&copy; OpenStreetMap contributors"
+                    }
+                ).addTo(map);
+
+                L.marker(
+                    [latitude, longitude]
+                )
+                    .addTo(map)
+                    .bindPopup("Request Location")
+                    .openPopup();
+
+                setTimeout(function () {
+                    map.invalidateSize();
+                }, 300);
+
+            });
+
+        </script>
+        <style>
+             /* ==========================================================
+                TECHNICIAN DETAILS - PAGE STYLING
+                Scoped to this view
+                ========================================================== */
+
+             .admin-review-page {
+                 background: #f4f7fb;
+                 min-height: 100vh;
+                 padding: 30px 20px;
+             }
+
+             .admin-review-card {
+                 max-width: 1100px;
+                 margin: 0 auto;
+                 background: #ffffff;
+                 border-radius: 14px;
+                 box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+                 overflow: hidden;
+             }
+
+             /* =========================
+                HEADER
+                ========================= */
+
+             .admin-review-header {
+                 background: #0D5CC1;
+                 color: #ffffff;
+                 padding: 25px 30px;
+             }
+
+             .admin-review-header h2 {
+                 margin: 0;
+                 font-size: 28px;
+                 font-weight: 600;
+             }
+
+             .admin-review-header p {
+                 margin: 6px 0 0;
+                 font-size: 15px;
+                 opacity: 0.9;
+             }
+
+             /* =========================
+                CONTENT
+                ========================= */
+
+             .admin-review-content {
+                 padding: 30px;
+             }
+
+             /* =========================
+                SECTIONS
+                ========================= */
+
+             .admin-review-section {
+                 background: #ffffff;
+                 border: 1px solid #e3e8ef;
+                 border-radius: 12px;
+                 padding: 22px;
+                 margin-bottom: 22px;
+             }
+
+             .admin-review-section h3 {
+                 color: #0D5CC1;
+                 font-size: 20px;
+                 font-weight: 600;
+                 margin-top: 0;
+                 margin-bottom: 18px;
+             }
+
+             .admin-review-section h4 {
+                 color: #0D5CC1;
+                 font-size: 18px;
+                 font-weight: 600;
+                 margin-bottom: 15px;
+             }
+
+             /* =========================
+                INFORMATION ROWS
+                ========================= */
+
+             .admin-review-row {
+                 display: flex;
+                 justify-content: space-between;
+                 align-items: flex-start;
+                 gap: 30px;
+                 padding: 12px 0;
+                 border-bottom: 1px solid #edf0f4;
+             }
+
+             .admin-review-row:last-child {
+                 border-bottom: none;
+             }
+
+             .admin-review-label {
+                 min-width: 190px;
+                 font-weight: 600;
+                 color: #4b5563;
+             }
+
+             .admin-review-row > span:last-child {
+                 color: #333333;
+                 text-align: right;
+                 line-height: 1.5;
+             }
+
+             /* =========================
+                BUTTON AREA
+                ========================= */
+
+             .admin-review-actions {
+                 display: flex;
+                 flex-wrap: wrap;
+                 align-items: center;
+                 gap: 10px;
+                 margin-top: 15px;
+             }
+
+             /* Primary technician actions */
+
+             .admin-approve-button,
+             .btn.btn-primary {
+                 display: inline-block;
+                 background: #0D5CC1;
+                 color: #ffffff !important;
+                 border: none;
+                 border-radius: 7px;
+                 padding: 10px 18px;
+                 font-size: 14px;
+                 font-weight: 500;
+                 text-decoration: none !important;
+                 cursor: pointer;
+                 transition: all 0.2s ease;
+             }
+
+             .admin-approve-button:hover,
+             .btn.btn-primary:hover {
+                 background: #0a4da5;
+                 color: #ffffff !important;
+                 text-decoration: none !important;
+                 transform: translateY(-1px);
+             }
+
+             /* Secondary action */
+
+             .admin-back-button {
+                 display: inline-block;
+                 background: #ffffff;
+                 color: #0D5CC1 !important;
+                 border: 1px solid #0D5CC1;
+                 border-radius: 7px;
+                 padding: 10px 18px;
+                 font-size: 14px;
+                 font-weight: 500;
+                 text-decoration: none !important;
+                 transition: all 0.2s ease;
+             }
+
+             .admin-back-button:hover {
+                 background: #0D5CC1;
+                 color: #ffffff !important;
+                 text-decoration: none !important;
+             }
+
+             /* =========================
+                BOOTSTRAP CARDS
+                ========================= */
+
+             .admin-review-section .card {
+                 border: 1px solid #e3e8ef;
+                 border-radius: 10px;
+                 box-shadow: none;
+                 background: #ffffff;
+             }
+
+             .admin-review-section .card-body {
+                 padding: 18px;
+             }
+
+             /* =========================
+                MAP
+                ========================= */
+
+             #map {
+                 border: 1px solid #dce3ec;
+                 border-radius: 10px !important;
+             }
+
+             /* =========================
+                IMAGES
+                ========================= */
+
+             .admin-review-section img {
+                 border-radius: 10px;
+             }
+
+             /* =========================
+                MUTED INFORMATION
+                ========================= */
+
+             .admin-review-page .text-muted {
+                 color: #6b7280 !important;
+                 line-height: 1.5;
+             }
+
+             /* =========================
+                MOBILE
+                ========================= */
+
+            @@media (max-width: 768px) {
+
+                 .admin-review-page {
+                     padding: 15px;
+                 }
+
+                 .admin-review-content {
+                     padding: 18px;
+                 }
+
+                 .admin-review-header {
+                     padding: 20px;
+                 }
+
+                 .admin-review-header h2 {
+                     font-size: 24px;
+                 }
+
+                 .admin-review-section {
+                     padding: 18px;
+                 }
+
+                 .admin-review-row {
+                     flex-direction: column;
+                     gap: 5px;
+                 }
+
+                 .admin-review-label {
+                     min-width: auto;
+                 }
+
+                 .admin-review-row > span:last-child {
+                     text-align: left;
+                 }
+
+                 .admin-review-actions {
+                     flex-direction: column;
+                     align-items: stretch;
+                 }
+
+                 .admin-review-actions a,
+                 .admin-review-actions button {
+                     width: 100%;
+                     text-align: center;
+                 }
+             }
+
+            /* ==========================================================
+   STAGE B - STATUS, PROGRESS & MAINTENANCE STYLING
+   ========================================================== */
+
+            /* =========================
+   STATUS & PRIORITY VALUES
+   ========================= */
+
+            .admin-review-row > span:last-child {
+                font-weight: 500;
+            }
+
+            /* Make status values stand out */
+
+            .admin-review-section:first-of-type .admin-review-row:nth-child(5) > span:last-child {
+                display: inline-block;
+                background: #e8f1ff;
+                color: #0D5CC1;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            /* Priority value */
+
+            .admin-review-section:first-of-type .admin-review-row:nth-child(6) > span:last-child {
+                display: inline-block;
+                background: #f3f4f6;
+                color: #374151;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+
+            /* =========================
+   MAINTENANCE SECTION
+   ========================= */
+
+            .admin-review-section h3 {
+                position: relative;
+            }
+
+                .admin-review-section h3::after {
+                    content: "";
+                    display: block;
+                    width: 42px;
+                    height: 3px;
+                    background: #0D5CC1;
+                    border-radius: 3px;
+                    margin-top: 8px;
+                }
+
+
+            /* =========================
+   PROGRESS VALUE
+   ========================= */
+
+            .admin-review-section .admin-review-row:nth-child(3) > span:last-child {
+                font-weight: 600;
+            }
+
+
+            /* =========================
+   PROGRESS BAR
+   ========================= */
+
+            .technician-progress-container {
+                margin-top: 18px;
+                margin-bottom: 20px;
+            }
+
+            .technician-progress-label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #374151;
+            }
+
+            .technician-progress-track {
+                width: 100%;
+                height: 12px;
+                background: #e5e7eb;
+                border-radius: 20px;
+                overflow: hidden;
+            }
+
+            .technician-progress-fill {
+                height: 100%;
+                background: #0D5CC1;
+                border-radius: 20px;
+                transition: width 0.4s ease;
+            }
+
+
+            /* =========================
+   MAINTENANCE MESSAGES
+   ========================= */
+
+            .admin-review-actions span {
+                display: inline-block;
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 10px 14px;
+                color: #475569;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+
+            /* =========================
+   MAINTENANCE SUB-SECTIONS
+   ========================= */
+
+            .admin-review-section h4 {
+                padding-bottom: 8px;
+                border-bottom: 1px solid #edf0f4;
+            }
+
+
+            /* =========================
+   WORK NOTES / MATERIALS
+   ========================= */
+
+            .admin-review-section .card {
+                transition: box-shadow 0.2s ease, transform 0.2s ease;
+            }
+
+                .admin-review-section .card:hover {
+                    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+                    transform: translateY(-1px);
+                }
+
+                .admin-review-section .card p {
+                    color: #374151;
+                }
+
+                .admin-review-section .card strong {
+                    color: #1f2937;
+                }
+
+
+                /* =========================
+   EVIDENCE CARDS
+   ========================= */
+
+                .admin-review-section .card img {
+                    max-width: 100%;
+                    height: auto;
+                    background: #f8fafc;
+                    padding: 5px;
+                    border: 1px solid #e5e7eb;
+                }
+
+
+            /* =========================
+   EVIDENCE HEADINGS
+   ========================= */
+
+            .admin-review-section .card-body > p:first-child {
+                color: #0D5CC1;
+            }
+
+
+            /* =========================
+   ACTION BUTTON GROUP
+   ========================= */
+
+            .admin-review-actions {
+                padding-top: 4px;
+            }
+
+                .admin-review-actions + div {
+                    margin-top: 12px !important;
+                }
+
+
+                /* =========================
+   COMPLETION / VERIFICATION
+   ========================= */
+
+                .admin-review-actions[style*="display:none"] {
+                    display: none !important;
+                }
+
+
+            /* =========================
+   BACK TO DASHBOARD
+   ========================= */
+
+            .admin-review-page > .admin-review-actions {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 0 30px 30px;
+            }
+
+
+            /* =========================
+   BETTER BUTTON SPACING
+   ========================= */
+
+            .admin-review-actions .btn,
+            .admin-review-actions .admin-approve-button,
+            .admin-review-actions .admin-back-button {
+                white-space: nowrap;
+            }
+
+
+            /* =========================
+   MOBILE
+   ========================= */
+
+            @@media (max-width: 768px) {
+
+                .technician-progress-label {
+                    font-size: 13px;
+                }
+
+                .technician-progress-track {
+                    height: 10px;
+                }
+
+                .admin-review-section .card img {
+                    max-height: 250px;
+                }
+
+                .admin-review-page > .admin-review-actions {
+                    padding: 0 18px 20px;
+                }
+            }
+            .back-to-resolutions {
+                display: inline-block;
+                margin-right: 15px;
+                padding: 10px 18px;
+                background: #0D5CC1;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: background 0.2s ease;
+            }
+
+                .back-to-resolutions:hover {
+                    background: #094A9D;
+                    color: white;
+                    text-decoration: none;
+                }
+            .back-to-knowledge-base {
+                display: inline-block;
+                margin-right: 15px;
+                padding: 10px 18px;
+                background: #0D5CC1;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                font-weight: 600;
+                transition: background 0.2s ease;
+            }
+
+                .back-to-knowledge-base:hover {
+                    background: #094A9D;
+                    color: white;
+                    text-decoration: none;
+                }
+        </style>

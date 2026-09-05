@@ -23,9 +23,10 @@ namespace CommunityServiceProject.Models
             ErrorMessage = "Last name can contain letters, spaces, hyphens and apostrophes only.")]
         public string LastName { get; set; }
 
-        [Required]
-        [EmailAddress]
-        public string EmailAddress { get; set; }
+      
+[Required]
+[EmailAddress]
+public string EmailAddress { get; set; }
 
         [Required]
         [RegularExpression(@"^0\d{9}$",
@@ -54,6 +55,8 @@ namespace CommunityServiceProject.Models
         public DateTime DateRegistered { get; set; }
 
         public AccountStatus AccountStatus { get; set; }
+
+        public virtual ICollection<AccountRestriction> AccountRestrictions { get; set; }
 
         // Business methods
         public void Register()

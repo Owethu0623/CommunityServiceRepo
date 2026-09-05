@@ -1,0 +1,306 @@
+﻿@model CommunityServiceProject.ViewModels.RequestClassificationViewModel
+
+@{
+    ViewBag.Title = "Request Classification";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <!-- HEADER -->
+        <div class="admin-review-header">
+
+            <h2>Request Classification</h2>
+
+            <p>
+                Request #@Model.RequestID
+            </p>
+
+        </div>
+
+
+        <div class="admin-review-content">
+
+            <!-- REQUEST INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Request Information</h3>
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Request Title
+                    </span>
+
+                    <span>
+                        @Model.Title
+                    </span>
+
+                </div>
+
+
+                <div class="admin-review-row">
+
+                    <span class="admin-review-label">
+                        Category
+                    </span>
+
+                    <span>
+                        @Model.CategoryName
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLASSIFICATION -->
+            <div class="admin-review-section">
+
+                <h3>Classification</h3>
+
+                @using (Html.BeginForm(
+                    "Classify",
+                    "AdministratorRequests",
+                    FormMethod.Post))
+                {
+
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(model => model.RequestID)
+
+
+                    <!-- WARD -->
+
+                    <div class="admin-filter-group">
+
+                        @Html.LabelFor(
+                            model => model.WardID,
+                            "Ward"
+                        )
+
+                        @Html.DropDownListFor(
+                            model => model.WardID,
+                            Model.Wards,
+                            "Select Ward",
+                            new
+                            {
+                                @class = "form-control"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            model => model.WardID,
+                            "",
+                            new
+                            {
+                                @class = "text-danger"
+                            }
+                        )
+
+                    </div>
+
+
+                    <!-- PRIORITY -->
+
+                    <div class="admin-priority-group">
+
+                        @Html.LabelFor(
+                            model => model.Priority,
+                            "Priority"
+                        )
+
+                        <div class="priority-options">
+
+                            @foreach (
+                                CommunityServiceProject.Models.Priority priority
+                                in Enum.GetValues(
+                                    typeof(
+                                        CommunityServiceProject.Models.Priority
+                                    )
+                                )
+                            )
+                            {
+
+                                <label class="priority-option">
+
+                                    @Html.RadioButtonFor(
+                                        model => model.Priority,
+                                        priority
+                                    )
+
+                                    <span>
+                                        @priority
+                                    </span>
+
+                                </label>
+
+                            }
+
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            model => model.Priority,
+                            "",
+                            new
+                            {
+                                @class = "text-danger"
+                            }
+                        )
+
+                    </div>
+
+
+                    <!-- PRIORITY REASON -->
+
+                    <div class="admin-filter-group">
+
+                        @Html.LabelFor(
+                            model => model.PriorityReason,
+                            "Priority Reason"
+                        )
+
+                        @Html.TextAreaFor(
+                            model => model.PriorityReason,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = "4",
+                                placeholder = "Explain why this priority was selected..."
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            model => model.PriorityReason,
+                            "",
+                            new
+                            {
+                                @class = "text-danger"
+                            }
+                        )
+
+                    </div>
+
+
+                    <!-- LOCATION INFORMATION -->
+
+                    <div class="admin-review-section">
+
+                        <h3>Location Information</h3>
+
+                        <div class="admin-review-row">
+
+                            <span class="admin-review-label">
+                                Problem Location
+                            </span>
+
+                            <span>
+                                @if (!string.IsNullOrWhiteSpace(Model.ProblemLocation))
+                                {
+                                    @Model.ProblemLocation
+                                }
+                                else
+                                {
+                                    <span>No problem location description provided.</span>
+                                }
+                            </span>
+
+                        </div>
+
+
+                        <div class="admin-review-row">
+
+                            <span class="admin-review-label">
+                                GPS Latitude
+                            </span>
+
+                            <span>
+                                @if (Model.Latitude.HasValue)
+                                {
+                                    @Model.Latitude.Value.ToString("F6")
+                                }
+                                else
+                                {
+                                    <span>Not available</span>
+                                }
+                            </span>
+
+                        </div>
+
+
+                        <div class="admin-review-row">
+
+                            <span class="admin-review-label">
+                                GPS Longitude
+                            </span>
+
+                            <span>
+                                @if (Model.Longitude.HasValue)
+                                {
+                                    @Model.Longitude.Value.ToString("F6")
+                                }
+                                else
+                                {
+                                    <span>Not available</span>
+                                }
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+
+                            Save Classification
+
+                        </button>
+
+
+                        <a href="@Url.Action(
+                                    "Details",
+                                    "AdministratorRequests",
+                                    new { id = Model.RequestID }
+                                 )"
+                           class="admin-back-button">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="admin-review-footer">
+
+        <a href="@Url.Action(
+                    "Details",
+                    "AdministratorRequests",
+                    new { id = Model.RequestID }
+                 )"
+           class="admin-back-button">
+
+            Back to Request
+
+        </a>
+
+    </div>
+
+</div>
+

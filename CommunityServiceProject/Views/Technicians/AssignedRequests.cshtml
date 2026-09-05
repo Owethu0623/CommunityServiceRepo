@@ -1,0 +1,185 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+
+@{
+    ViewBag.Title = "Assigned Requests";
+}
+
+<style>
+    /* =========================================
+       TECHNICIAN DASHBOARD - STAGE 1
+       Layout and Width
+       ========================================= */
+
+    .technician-dashboard-page {
+        background: #f4f7fb;
+        min-height: 100vh;
+        padding: 35px 20px;
+    }
+
+    .technician-dashboard-card {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .technician-dashboard-content {
+        padding: 35px;
+    }
+
+        /* Dashboard section */
+
+        .technician-dashboard-content .admin-review-section {
+            width: 100%;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+            /* Dashboard heading */
+
+            .technician-dashboard-content .admin-review-section h3 {
+                margin-bottom: 25px;
+            }
+
+    /* Responsive */
+
+    @@media (max-width: 768px) {
+
+        .technician-dashboard-page {
+            padding: 20px 10px;
+        }
+
+        .technician-dashboard-content {
+            padding: 20px 15px;
+        }
+
+            .technician-dashboard-content .admin-review-section {
+                padding: 20px 15px;
+            }
+    }
+
+    /* Technician Dashboard - Compact Action Button */
+
+    .technician-dashboard-content .admin-approve-button {
+        display: inline-block;
+        padding: 7px 14px;
+        font-size: 13px;
+        line-height: 1.2;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+</style>
+
+
+<div class="technician-dashboard-page">
+
+    <div class="technician-dashboard-card">
+
+        <div class="admin-review-header">
+            <h2>Assigned Requests Dashboard</h2>
+            <p>
+                Welcome, @Session["TechnicianName"]
+            </p>
+        </div>
+
+        <div class="technician-dashboard-content">
+
+            <div class="admin-review-section">
+
+                <h3>Assigned Maintenance Requests</h3>
+
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info">
+                        You currently have no assigned maintenance requests.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+
+                        <table class="table">
+
+                            <thead>
+                                <tr>
+                                    <th>Reference Number</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Ward</th>
+                                    <th>Priority</th>
+                                    <th>Date Submitted</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var request in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                           @request.ReferenceNumber
+                                        </td>
+
+                                        <td>
+                                            @request.Title
+                                        </td>
+
+                                        <td>
+                                            @(request.Category != null
+                                                ? request.Category.CategoryName
+                                                : "Unknown")
+                                        </td>
+
+                                        <td>
+                                            @(request.Ward != null
+                                                ? request.Ward.WardName
+                                                : "Unknown")
+                                        </td>
+
+                                        <td>
+                                            @request.Priority
+                                        </td>
+
+                                        <td>
+                                            @request.DateSubmitted.ToString("dd MMM yyyy")
+                                        </td>
+
+                                        <td>
+                                            <a href="@Url.Action(
+                                                        "Details",
+                                                        "Technicians",
+                                                        new { id = request.RequestID }
+                                                     )"
+                                               class="admin-approve-button">
+                                                View Details
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+            <a href="@Url.Action("Dashboard", "Technicians")"
+               class="technician-home-button">
+                Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+

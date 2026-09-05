@@ -1,0 +1,282 @@
+﻿@model CommunityServiceProject.Models.ComplianceRecord
+
+@{
+    ViewBag.Title = "Account Compliance";
+
+    var citizen = ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
+
+    if (citizen == null)
+    {
+        return;
+    }
+}
+
+<div class="compliance-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="compliance-header">
+
+        <h2>
+            Account Compliance
+        </h2>
+
+        <p>
+            View your account compliance status and compliance history.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         CITIZEN ACCOUNT INFORMATION
+         ===================================================== -->
+
+    <div class="compliance-card">
+
+        <h3>
+            Account Information
+        </h3>
+
+        <div class="compliance-information">
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Citizen ID
+                </span>
+
+                <span class="information-value">
+                    @citizen.CitizenID
+                </span>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Full Name
+                </span>
+
+                <span class="information-value">
+                    @citizen.FirstName @citizen.LastName
+                </span>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <span class="information-label">
+                    Account Status
+                </span>
+
+                <span class="information-value">
+                    @citizen.AccountStatus
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMPLIANCE SUMMARY
+         ===================================================== -->
+
+    <div class="compliance-card">
+
+        <h3>
+            Compliance Summary
+        </h3>
+
+        @if (Model != null)
+        {
+            <div class="compliance-information">
+
+                <div class="information-row">
+
+                    <span class="information-label">
+                        Compliance ID
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ComplianceID
+                    </span>
+
+                </div>
+
+
+                <div class="information-row">
+
+                    <span class="information-label">
+                        Confirmed Violations
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ConfirmedViolationCount
+                    </span>
+
+                </div>
+
+
+                <div class="information-row">
+
+                    <span class="information-label">
+                        Compliance Status
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ComplianceStatus
+                    </span>
+
+                </div>
+
+
+                <div class="information-row">
+
+                    <span class="information-label">
+                        Last Updated
+                    </span>
+
+                    <span class="information-value">
+                        @Model.LastUpdated.ToString("dd MMMM yyyy")
+                    </span>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <p class="no-compliance-record">
+                No compliance record is currently available for your account.
+            </p>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         COMPLIANCE HISTORY
+         ===================================================== -->
+
+    <div class="compliance-card">
+
+        <h3>
+            Compliance History
+        </h3>
+
+        @if (Model != null &&
+             Model.Violations != null &&
+             Model.Violations.Any())
+        {
+            <div class="compliance-history">
+
+                <table class="compliance-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Violation Type
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Date Confirmed
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var violation in Model.Violations
+                            .OrderByDescending(v => v.DateConfirmed))
+                        {
+                            <tr>
+
+                                <td>
+                                    @violation.ViolationType
+                                </td>
+
+                                <td>
+                                    @violation.Description
+                                </td>
+
+                                <td>
+                                    @violation.DateConfirmed.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @violation.Status
+                                </td>
+
+                                <td>
+
+                                    <a href="@Url.Action(
+                                        "Details",
+                                        "CitizenCompliance",
+                                        new { id = violation.ViolationID })"
+                                       class="compliance-action">
+
+                                        View Details
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <p class="no-compliance-record">
+                No compliance violations have been recorded.
+            </p>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         BACK TO DASHBOARD
+         ===================================================== -->
+
+    <div class="compliance-navigation">
+
+        <a href="@Url.Action("Index", "CitizenDashboard")"
+           class="back-button">
+
+            ← Back to Dashboard
+
+        </a>
+
+    </div>
+
+</div>

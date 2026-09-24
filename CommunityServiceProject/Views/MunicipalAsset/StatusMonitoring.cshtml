@@ -1,0 +1,1361 @@
+﻿@model CommunityServiceProject.ViewModels.AssetStatusMonitoringViewModel
+
+@{
+    ViewBag.Title = "Monitor Asset Status";
+}
+
+<div class="asset-status-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+    <div class="page-header">
+
+        <div>
+            <span class="page-eyebrow">MUNICIPAL ASSET MANAGEMENT</span>
+
+            <h1>Monitor Asset Status</h1>
+
+            <p>
+                Monitor the current operational state and condition of
+                municipal assets and identify assets requiring attention.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            @Html.ActionLink(
+                "Back to Assets",
+                "Index",
+                "MunicipalAsset",
+                null,
+                new { @class = "btn-secondary" }
+            )
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY CARDS
+         ========================================================= -->
+    <div class="summary-grid">
+
+        <div class="summary-card total">
+            <div class="summary-icon">
+                <span>▦</span>
+            </div>
+
+            <div>
+                <span class="summary-label">Total Assets</span>
+                <strong>@Model.TotalAssets</strong>
+            </div>
+        </div>
+
+
+        <div class="summary-card active">
+            <div class="summary-icon">
+                <span>✓</span>
+            </div>
+
+            <div>
+                <span class="summary-label">Active</span>
+                <strong>@Model.ActiveAssets</strong>
+            </div>
+        </div>
+
+
+        <div class="summary-card maintenance">
+            <div class="summary-icon">
+                <span>⚙</span>
+            </div>
+
+            <div>
+                <span class="summary-label">Under Maintenance</span>
+                <strong>@Model.UnderMaintenanceAssets</strong>
+            </div>
+        </div>
+
+
+        <div class="summary-card attention">
+            <div class="summary-icon">
+                <span>!</span>
+            </div>
+
+            <div>
+                <span class="summary-label">Requires Attention</span>
+                <strong>@Model.AttentionAssets</strong>
+            </div>
+        </div>
+
+
+        <div class="summary-card inactive">
+            <div class="summary-icon">
+                <span>○</span>
+            </div>
+
+            <div>
+                <span class="summary-label">Inactive</span>
+                <strong>@Model.InactiveAssets</strong>
+            </div>
+        </div>
+
+
+        <div class="summary-card retired">
+            <div class="summary-icon">
+                <span>—</span>
+            </div>
+
+            <div>
+                <span class="summary-label">Retired</span>
+                <strong>@Model.RetiredAssets</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         INFORMATION NOTICE
+         ========================================================= -->
+    <div class="info-banner">
+
+        <div class="info-banner-icon">
+            i
+        </div>
+
+        <div>
+            <strong>Asset status monitoring</strong>
+
+            <p>
+                This page provides an operational overview of municipal
+                assets. Monitoring does not change an asset's status.
+                Use the relevant asset workflow when an action is required.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTER PANEL
+         ========================================================= -->
+    <div class="filter-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="section-number">01</span>
+
+                <div>
+                    <h2>Find Assets</h2>
+
+                    <p>
+                        Search and filter assets by operational state,
+                        condition, or municipal ward.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+
+        @using (Html.BeginForm(
+            "StatusMonitoring",
+            "MunicipalAsset",
+            FormMethod.Get,
+            new { @class = "filter-form" }
+        ))
+        {
+            <div class="filter-grid">
+
+                <!-- Search -->
+                <div class="form-group search-group">
+
+                    <label for="searchTerm">
+                        Search
+                    </label>
+
+                    <input type="text"
+                           id="searchTerm"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="form-control"
+                           placeholder="Asset code, name, type or category..." />
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="form-group">
+
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select id="status"
+                            name="status"
+                            class="form-control">
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        @foreach (var item in Model.StatusOptions)
+                        {
+                            <option value="@item"
+                                    @(Model.SelectedStatus == item ? "selected" : "")>
+                                @item
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- Condition -->
+                <div class="form-group">
+
+                    <label for="condition">
+                        Condition
+                    </label>
+
+                    <select id="condition"
+                            name="condition"
+                            class="form-control">
+
+                        <option value="">
+                            All conditions
+                        </option>
+
+                        @foreach (var item in Model.ConditionOptions)
+                        {
+                            <option value="@item"
+                                    @(Model.SelectedCondition == item ? "selected" : "")>
+                                @item
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- Ward -->
+                <div class="form-group">
+
+                    <label for="ward">
+                        Municipal Ward
+                    </label>
+
+                    <select id="ward"
+                            name="ward"
+                            class="form-control">
+
+                        <option value="">
+                            All wards
+                        </option>
+
+                        @foreach (var item in Model.WardOptions)
+                        {
+                            <option value="@item"
+                                    @(Model.SelectedWard == item ? "selected" : "")>
+                                @item
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="btn-primary">
+                    Apply Filters
+                </button>
+
+                @Html.ActionLink(
+                    "Clear Filters",
+                    "StatusMonitoring",
+                    "MunicipalAsset",
+                    null,
+                    new { @class = "btn-secondary" }
+                )
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         RESULTS
+         ========================================================= -->
+    <div class="results-card">
+
+        <div class="results-header">
+
+            <div>
+                <span class="section-number">02</span>
+
+                <div>
+                    <h2>Asset Status Overview</h2>
+
+                    <p>
+                        @Model.Assets.Count asset(s) match the current filters.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+
+        @if (Model.Assets.Any())
+        {
+            <div class="table-wrapper">
+
+                <table class="asset-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Asset</th>
+                            <th>Classification</th>
+                            <th>Ward</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Last Inspection</th>
+                            <th>Last Maintenance</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var asset in Model.Assets)
+                        {
+                            <tr>
+
+                                <!-- Asset -->
+                                <td>
+
+                                    <div class="asset-identity">
+
+                                        <strong>
+                                            @asset.AssetCode
+                                        </strong>
+
+                                        <span>
+                                            @asset.AssetName
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Classification -->
+                                <td>
+
+                                    <div class="classification">
+
+                                        <strong>
+                                            @asset.AssetType
+                                        </strong>
+
+                                        @if (!string.IsNullOrWhiteSpace(asset.AssetCategory))
+                                        {
+                                            <span>
+                                                @asset.AssetCategory
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Ward -->
+                                <td>
+                                    <span class="ward-value">
+                                        @asset.WardName
+                                    </span>
+                                </td>
+
+
+                                <!-- Condition -->
+                                <td>
+
+                                    <span class="condition-badge
+                                        condition-@asset.Condition">
+
+                                        @asset.Condition
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Status -->
+                                <td>
+
+                                    <span class="status-badge
+                                        status-@asset.Status">
+
+                                        <span class="status-dot"></span>
+
+                                        @asset.Status
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Inspection -->
+                                <td>
+
+                                    @if (asset.LastInspectionDate.HasValue)
+                                    {
+                                        <span class="date-value">
+                                            @asset.LastInspectionDate.Value.ToString("dd MMM yyyy")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted-value">
+                                            Not recorded
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Maintenance -->
+                                <td>
+
+                                    @if (asset.LastMaintenanceDate.HasValue)
+                                    {
+                                        <span class="date-value">
+                                            @asset.LastMaintenanceDate.Value.ToString("dd MMM yyyy")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted-value">
+                                            Not recorded
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Action -->
+                                <td>
+
+                                    @Html.ActionLink(
+                                        "View Details",
+                                        "Details",
+                                        "MunicipalAsset",
+                                        new { id = asset.AssetID },
+                                        new { @class = "table-action" }
+                                    )
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ○
+                </div>
+
+                <h3>No assets found</h3>
+
+                <p>
+                    No municipal assets match the selected search
+                    criteria or filters.
+                </p>
+
+                @Html.ActionLink(
+                    "Clear Filters",
+                    "StatusMonitoring",
+                    "MunicipalAsset",
+                    null,
+                    new { @class = "btn-secondary" }
+                )
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         STATUS GUIDE
+         ========================================================= -->
+    <div class="status-guide">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="section-number">03</span>
+
+                <div>
+                    <h2>Status Guide</h2>
+
+                    <p>
+                        Operational meaning of each municipal asset status.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="guide-grid">
+
+            <div class="guide-item">
+
+                <span class="guide-status active-status">
+                    Active
+                </span>
+
+                <p>
+                    Asset is operational and currently available for use.
+                </p>
+
+            </div>
+
+
+            <div class="guide-item">
+
+                <span class="guide-status maintenance-status">
+                    Under Maintenance
+                </span>
+
+                <p>
+                    Asset is currently undergoing maintenance activity.
+                </p>
+
+            </div>
+
+
+            <div class="guide-item">
+
+                <span class="guide-status attention-status">
+                    Requires Attention
+                </span>
+
+                <p>
+                    Asset requires administrative, inspection, or maintenance
+                    attention.
+                </p>
+
+            </div>
+
+
+            <div class="guide-item">
+
+                <span class="guide-status inactive-status">
+                    Inactive
+                </span>
+
+                <p>
+                    Asset is not currently operational but has not been retired.
+                </p>
+
+            </div>
+
+
+            <div class="guide-item">
+
+                <span class="guide-status retired-status">
+                    Retired
+                </span>
+
+                <p>
+                    Asset has permanently been removed from operational use.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .asset-status-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .page-eyebrow {
+        display: block;
+        margin-bottom: 8px;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .page-header p {
+        margin: 0;
+        max-width: 750px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .header-actions {
+        flex-shrink: 0;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid transparent;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: #fff;
+        border-color: #0D5CC1;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: #fff;
+        color: #374151;
+        border-color: #d1d5db;
+    }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            color: #111827;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       SUMMARY
+       ========================================================= */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 14px;
+        margin-bottom: 25px;
+    }
+
+    .summary-card {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 18px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+    }
+
+    .summary-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #f3f4f6;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .summary-label {
+        display: block;
+        margin-bottom: 3px;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .summary-card strong {
+        display: block;
+        color: #111827;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .summary-card.active .summary-icon {
+        background: #ecfdf5;
+    }
+
+    .summary-card.maintenance .summary-icon {
+        background: #eff6ff;
+    }
+
+    .summary-card.attention .summary-icon {
+        background: #fff7ed;
+    }
+
+    .summary-card.inactive .summary-icon {
+        background: #f3f4f6;
+    }
+
+    .summary-card.retired .summary-icon {
+        background: #fef2f2;
+    }
+
+
+    /* =========================================================
+       INFO BANNER
+       ========================================================= */
+
+    .info-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 20px;
+        margin-bottom: 25px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+    }
+
+    .info-banner-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .info-banner strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #174a86;
+    }
+
+    .info-banner p {
+        margin: 0;
+        color: #4b6480;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       CARDS
+       ========================================================= */
+
+    .filter-card,
+    .results-card,
+    .status-guide {
+        margin-bottom: 25px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+    }
+
+    .filter-card {
+        padding: 25px;
+    }
+
+    .results-card {
+        overflow: hidden;
+    }
+
+    .status-guide {
+        padding: 25px;
+    }
+
+
+    /* =========================================================
+       SECTION HEADINGS
+       ========================================================= */
+
+    .section-heading {
+        margin-bottom: 22px;
+    }
+
+        .section-heading > div {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+    .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 4px;
+        color: #111827;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       FILTER FORM
+       ========================================================= */
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.3fr;
+        gap: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 44px;
+        padding: 0 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #fff;
+        color: #1f2937;
+        font-size: 14px;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .form-control:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+
+    /* =========================================================
+       RESULTS HEADER
+       ========================================================= */
+
+    .results-header {
+        padding: 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .results-header > div {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .results-header h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .results-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .asset-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1100px;
+    }
+
+        .asset-table th {
+            padding: 13px 16px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .5px;
+            text-align: left;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .asset-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f1f3;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .asset-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .asset-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+
+    /* =========================================================
+       ASSET IDENTITY
+       ========================================================= */
+
+    .asset-identity strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #0D5CC1;
+        font-size: 13px;
+    }
+
+    .asset-identity span {
+        display: block;
+        max-width: 220px;
+        color: #374151;
+        line-height: 1.4;
+    }
+
+
+    /* =========================================================
+       CLASSIFICATION
+       ========================================================= */
+
+    .classification strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #374151;
+    }
+
+    .classification span {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       WARD / DATES
+       ========================================================= */
+
+    .ward-value {
+        color: #374151;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .date-value {
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    .muted-value {
+        color: #9ca3af;
+        font-style: italic;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       CONDITION BADGES
+       ========================================================= */
+
+    .condition-badge,
+    .status-badge,
+    .guide-status {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .condition-badge {
+        padding: 6px 10px;
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .condition-Excellent {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .condition-Good {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .condition-Fair {
+        background: #fffbeb;
+        color: #a16207;
+    }
+
+    .condition-Poor {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .condition-Critical {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge {
+        gap: 7px;
+        padding: 6px 10px;
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #6b7280;
+    }
+
+    .status-Active {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+        .status-Active .status-dot {
+            background: #10b981;
+        }
+
+    .status-UnderMaintenance {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+        .status-UnderMaintenance .status-dot {
+            background: #3b82f6;
+        }
+
+    .status-RequiresAttention {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+        .status-RequiresAttention .status-dot {
+            background: #f97316;
+        }
+
+    .status-Inactive {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+        .status-Inactive .status-dot {
+            background: #6b7280;
+        }
+
+    .status-Retired {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+        .status-Retired .status-dot {
+            background: #ef4444;
+        }
+
+
+    /* =========================================================
+       TABLE ACTION
+       ========================================================= */
+
+    .table-action {
+        display: inline-flex;
+        padding: 7px 11px;
+        border: 1px solid #dbeafe;
+        border-radius: 7px;
+        background: #eff6ff;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        .table-action:hover {
+            background: #dbeafe;
+            color: #094b9f;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 60px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #f3f4f6;
+        color: #9ca3af;
+        font-size: 24px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+        color: #111827;
+        font-size: 18px;
+    }
+
+    .empty-state p {
+        margin: 0 auto 20px;
+        max-width: 500px;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       STATUS GUIDE
+       ========================================================= */
+
+    .guide-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+    }
+
+    .guide-item {
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #fafafa;
+    }
+
+    .guide-status {
+        padding: 6px 10px;
+        margin-bottom: 10px;
+    }
+
+    .guide-item p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .active-status {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .maintenance-status {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .attention-status {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .inactive-status {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .retired-status {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1200px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .filter-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .guide-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+
+    @@media (max-width: 768px) {
+
+        .asset-status-page {
+            padding: 20px 15px 40px;
+        }
+
+        .page-header {
+            flex-direction: column;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+            .header-actions .btn-secondary {
+                width: 100%;
+            }
+
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .guide-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+            .filter-actions .btn-primary,
+            .filter-actions .btn-secondary {
+                width: 100%;
+            }
+    }
+
+
+    @@media (max-width: 480px) {
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+        }
+    }
+</style>

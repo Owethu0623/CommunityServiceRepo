@@ -1,5 +1,7 @@
 ﻿@model CommunityServiceProject.Models.MunicipalAsset
 
+@using CommunityServiceProject.Models
+
 @{
     ViewBag.Title = "Asset Details";
 }
@@ -33,20 +35,24 @@
                 Edit Asset
             </a>
 
-            <a href="@Url.Action("RecordCondition", "MunicipalAsset", new { id = Model.AssetID })"
-               class="asset-action-btn asset-action-secondary">
-                Record Asset Condition
+            <a href="@Url.Action("UpdateConditionAfterMaintenance", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-primary">
+                Update After Maintenance
             </a>
 
-            <a href="@Url.Action("Inspect", "MunicipalAsset", new { id = Model.AssetID })"
-               class="asset-action-btn asset-action-secondary">
-                Inspect Asset
+
+            <a href="@Url.Action("AssetHistory", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-primary">
+                Asset History
             </a>
 
-            <a href="@Url.Action("CreateMaintenanceNeed", "MunicipalAsset", new { id = Model.AssetID })"
-               class="asset-action-btn asset-action-secondary">
-                Record Maintenance Need
-            </a>
+            @if (Model.Status != AssetStatus.Retired)
+            {
+                <a href="@Url.Action("Retire", "MunicipalAsset", new { id = Model.AssetID })"
+                   class="asset-action-btn asset-action-primary">
+                   Retire Asset
+                </a>
+            }
 
         </div>
 
@@ -140,6 +146,8 @@
                     @if (Model.Ward != null)
                     {
                         @:Ward @Model.Ward.WardNumber
+
+
 
 
                         if (!string.IsNullOrWhiteSpace(Model.Ward.WardName))
@@ -406,7 +414,7 @@
             </div>
 
             <a href="@Url.Action(
-                "CreateMaintenanceNeed",
+                "IdentifyMaintenanceNeed",
                 "MunicipalAsset",
                 new { id = Model.AssetID })"
                class="section-action">
@@ -484,7 +492,7 @@
                 </span>
 
                 <a href="@Url.Action(
-                    "CreateMaintenanceNeed",
+                    "IdentifyMaintenanceNeed",
                     "MunicipalAsset",
                     new { id = Model.AssetID })"
                    class="asset-small-btn">
@@ -625,6 +633,13 @@
                 </p>
             </div>
 
+            <a href="@Url.Action(
+     "LinkRequest",
+     "MunicipalAsset",
+     new { id = Model.AssetID })"
+               class="section-action">
+                + Related Requests
+            </a>
         </div>
 
         @if (Model.AssetRequests != null &&
@@ -671,7 +686,7 @@
 
                                     <a href="@Url.Action(
                                         "Details",
-                                        "AdministratorRequest",
+                                        "AdministratorRequests",
                                         new { id = assetRequest.RequestID })"
                                        class="asset-small-btn">
                                         View Request
@@ -700,7 +715,13 @@
                     No citizen service requests are currently
                     associated with this asset.
                 </span>
-
+                <a href="@Url.Action(
+    "LinkRequest",
+    "MunicipalAsset",
+    new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    Related Requests
+                </a>
             </div>
         }
 
@@ -723,6 +744,13 @@
                 </p>
             </div>
 
+            <a href="@Url.Action(
+     "LinkMaintenance",
+     "MunicipalAsset",
+     new { id = Model.AssetID })"
+               class="section-action">
+                Link Maintenance
+            </a>
         </div>
 
         @if (Model.AssetMaintenanceRecords != null &&
@@ -784,7 +812,13 @@
                 <span>
                     No maintenance work has been linked to this asset.
                 </span>
-
+                <a href="@Url.Action(
+    "LinkMaintenance",
+    "MunicipalAsset",
+    new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    Link Maintenance
+                </a>
             </div>
         }
 
@@ -806,7 +840,13 @@
                     Municipal projects associated with this asset.
                 </p>
             </div>
-
+            <a href="@Url.Action(
+     "RelatedProjects",
+     "MunicipalAsset",
+     new { id = Model.AssetID })"
+               class="section-action">
+                + Related Projects
+            </a>
         </div>
 
         @if (Model.AssetProjects != null &&
@@ -866,7 +906,13 @@
                     No municipal projects are currently associated
                     with this asset.
                 </span>
-
+                <a href="@Url.Action(
+    "RelatedProjects",
+    "MunicipalAsset",
+    new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    Related Projects
+                </a>
             </div>
         }
 
@@ -888,7 +934,13 @@
                     Recorded lifecycle and administrative activities.
                 </p>
             </div>
-
+            <a href="@Url.Action(
+     "MaintenanceHistory",
+     "MunicipalAsset",
+     new { id = Model.AssetID })"
+               class="section-action">
+                Asset History
+            </a>
         </div>
 
         @if (Model.AssetHistory != null &&
@@ -969,7 +1021,13 @@
                     No lifecycle activities have been recorded
                     for this asset.
                 </span>
-
+                <a href="@Url.Action(
+    "MaintenanceHistory",
+    "MunicipalAsset",
+    new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    Asset History
+                </a>
             </div>
         }
 

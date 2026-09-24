@@ -1,0 +1,824 @@
+﻿@model CommunityServiceProject.ViewModels.AssetHistoryViewModel
+
+@{
+    ViewBag.Title = "Asset History";
+}
+
+<div class="asset-history-page">
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <div class="asset-history-header">
+
+        <div>
+            <span class="page-eyebrow">MUNICIPAL ASSET MANAGEMENT</span>
+
+            <h1>Asset History</h1>
+
+            <p>
+                Review the recorded lifecycle activities and changes
+                associated with this municipal asset.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            <a href="@Url.Action(
+                "Details",
+                "MunicipalAsset",
+                new { id = Model.AssetID }
+            )"
+               class="btn-secondary">
+                Back to Asset Details
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         ASSET SUMMARY
+    ========================================================== -->
+
+    <div class="asset-summary-card">
+
+        <div class="asset-summary-heading">
+
+            <div>
+                <span class="section-eyebrow">ASSET RECORD</span>
+
+                <h2>@Model.AssetName</h2>
+
+                <span class="asset-code">
+                    @Model.AssetCode
+                </span>
+            </div>
+
+            <div class="history-count">
+
+                <strong>@Model.TotalHistoryRecords</strong>
+
+                <span>History Records</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="asset-summary-grid">
+
+            <div class="summary-item">
+                <span>Asset Type</span>
+                <strong>
+                    @Model.AssetType
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Asset Category</span>
+                <strong>
+                    @Model.AssetCategory
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Municipal Ward</span>
+                <strong>
+                    @Model.WardName
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span>Asset Code</span>
+                <strong>
+                    @Model.AssetCode
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTERS
+    ========================================================== -->
+
+    <div class="history-filter-card">
+
+        <div class="filter-heading">
+
+            <div>
+                <span class="section-eyebrow">HISTORY FILTERS</span>
+
+                <h2>Find an activity</h2>
+
+                <p>
+                    Search the asset history or filter it by activity type.
+                </p>
+            </div>
+
+        </div>
+
+
+        @using (Html.BeginForm(
+            "AssetHistory",
+            "MunicipalAsset",
+            FormMethod.Get,
+            new { @class = "history-filter-form" }
+        ))
+        {
+            @Html.HiddenFor(m => m.AssetID)
+
+            <div class="filter-field search-field">
+
+                <label for="SearchTerm">
+                    Search History
+                </label>
+
+                <input type="text"
+                       id="SearchTerm"
+                       name="searchTerm"
+                       value="@Model.SearchTerm"
+                       placeholder="Search activity, description or administrator..." />
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label for="ActivityType">
+                    Activity Type
+                </label>
+
+                <select id="ActivityType"
+                        name="activityType">
+
+                    <option value="">
+                        All Activities
+                    </option>
+
+                    @foreach (var type in Model.ActivityTypes)
+                    {
+                        <option value="@type"
+                                @(Model.SelectedActivityType == type ? "selected" : "")>
+                            @type
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="btn-primary">
+                    Apply Filters
+                </button>
+
+                <a href="@Url.Action(
+                    "AssetHistory",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID }
+                )"
+                   class="btn-secondary">
+                    Clear
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         HISTORY CONTENT
+    ========================================================== -->
+
+    <div class="history-card">
+
+        <div class="history-card-header">
+
+            <div>
+                <span class="section-eyebrow">
+                    LIFECYCLE AUDIT TRAIL
+                </span>
+
+                <h2>Activity History</h2>
+            </div>
+
+            <span class="record-count">
+                @Model.TotalHistoryRecords record(s)
+            </span>
+
+        </div>
+
+
+        @if (Model.History != null && Model.History.Any())
+        {
+            <div class="history-table-wrapper">
+
+                <table class="history-table">
+
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Activity</th>
+                            <th>Description</th>
+                            <th>Previous Value</th>
+                            <th>New Value</th>
+                            <th>Administrator</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.History)
+                        {
+                            <tr>
+
+                                <td class="history-date">
+
+                                    <strong>
+                                        @item.ActivityDate.ToString("dd MMM yyyy")
+                                    </strong>
+
+                                    <span>
+                                        @item.ActivityDate.ToString("HH:mm")
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="activity-badge">
+                                        @item.ActivityType
+                                    </span>
+
+                                </td>
+
+
+                                <td class="history-description">
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                                    {
+                                        @item.Description
+                                    }
+                                    else
+                                    {
+                                        <span class="muted">
+                                            No description recorded
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.PreviousValue))
+                                    {
+                                        <span class="history-value previous">
+                                            @item.PreviousValue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.NewValue))
+                                    {
+                                        <span class="history-value new">
+                                            @item.NewValue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="administrator-cell">
+
+                                        <div class="administrator-icon">
+                                            ADM
+                                        </div>
+
+                                        <span>
+                                            @item.AdministratorName
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-history">
+
+                <div class="empty-icon">
+                    ↺
+                </div>
+
+                <h3>No history records found</h3>
+
+                <p>
+                    There are no asset history records matching
+                    the current filters.
+                </p>
+
+                <a href="@Url.Action(
+                    "AssetHistory",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID }
+                )"
+                   class="btn-secondary">
+                    View All History
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         FOOTER NAVIGATION
+    ========================================================== -->
+
+    <div class="page-footer-actions">
+
+        <a href="@Url.Action(
+            "Details",
+            "MunicipalAsset",
+            new { id = Model.AssetID }
+        )"
+           class="btn-secondary">
+            Back to Asset Details
+        </a>
+
+        <a href="@Url.Action(
+            "Index",
+            "MunicipalAsset"
+        )"
+           class="btn-secondary">
+            Back to Assets
+        </a>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .asset-history-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 30px;
+        color: #1f2937;
+    }
+
+    .asset-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+    .page-eyebrow,
+    .section-eyebrow {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        color: #0D5CC1;
+        margin-bottom: 7px;
+    }
+
+    .asset-history-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .asset-history-header p {
+        margin: 0;
+        color: #6b7280;
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        transition: 0.2s ease;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #09499c;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+        color: #111827;
+        text-decoration: none;
+    }
+
+    .asset-summary-card,
+    .history-filter-card,
+    .history-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.04);
+        margin-bottom: 22px;
+    }
+
+    .asset-summary-card {
+        padding: 25px;
+    }
+
+    .asset-summary-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .asset-summary-heading h2 {
+        margin: 0 0 5px;
+        font-size: 22px;
+        color: #111827;
+    }
+
+    .asset-code {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6b7280;
+    }
+
+    .history-count {
+        min-width: 130px;
+        text-align: center;
+        padding: 13px 18px;
+        border-radius: 10px;
+        background: #f3f7fc;
+    }
+
+    .history-count strong {
+        display: block;
+        font-size: 24px;
+        color: #0D5CC1;
+    }
+
+    .history-count span {
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 600;
+    }
+
+    .asset-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding-top: 22px;
+    }
+
+    .summary-item span {
+        display: block;
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .summary-item strong {
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .history-filter-card {
+        padding: 24px;
+    }
+
+    .filter-heading {
+        margin-bottom: 20px;
+    }
+
+    .filter-heading h2 {
+        margin: 0 0 5px;
+        font-size: 20px;
+    }
+
+    .filter-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .history-filter-form {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 15px;
+        align-items: end;
+    }
+
+    .filter-field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+    .filter-field input,
+    .filter-field select {
+        width: 100%;
+        min-height: 44px;
+        padding: 0 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: white;
+        color: #111827;
+        box-sizing: border-box;
+    }
+
+    .filter-field input:focus,
+    .filter-field select:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,0.1);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .history-card {
+        overflow: hidden;
+    }
+
+    .history-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 23px 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .history-card-header h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .record-count {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6b7280;
+    }
+
+    .history-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1050px;
+    }
+
+    .history-table th {
+        background: #f8fafc;
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 750;
+        color: #4b5563;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .history-table td {
+        padding: 16px;
+        border-bottom: 1px solid #eef0f3;
+        vertical-align: top;
+        font-size: 13px;
+    }
+
+    .history-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .history-date strong {
+        display: block;
+        color: #111827;
+    }
+
+    .history-date span {
+        display: block;
+        margin-top: 3px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .activity-badge {
+        display: inline-block;
+        padding: 6px 9px;
+        border-radius: 7px;
+        background: #eef5ff;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .history-description {
+        min-width: 260px;
+        max-width: 380px;
+        line-height: 1.55;
+    }
+
+    .history-value {
+        display: inline-block;
+        padding: 5px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .history-value.previous {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .history-value.new {
+        background: #edf8f1;
+        color: #23733f;
+    }
+
+    .muted {
+        color: #9ca3af;
+    }
+
+    .administrator-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .administrator-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #eaf2fc;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 800;
+    }
+
+    .empty-history {
+        text-align: center;
+        padding: 70px 30px;
+    }
+
+    .empty-icon {
+        width: 55px;
+        height: 55px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #f3f4f6;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .empty-history h3 {
+        margin: 0 0 7px;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .empty-history p {
+        margin: 0 0 20px;
+        color: #6b7280;
+    }
+
+    .page-footer-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    @@media (max-width: 900px) {
+
+        .asset-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .history-filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            justify-content: flex-start;
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .asset-history-page {
+            padding: 18px;
+        }
+
+        .asset-history-header {
+            flex-direction: column;
+        }
+
+        .asset-summary-heading {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .asset-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-footer-actions {
+            flex-direction: column;
+        }
+
+        .page-footer-actions .btn-secondary {
+            width: 100%;
+        }
+    }
+
+</style>

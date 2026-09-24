@@ -1,0 +1,967 @@
+﻿@model CommunityServiceProject.ViewModels.AssetMaintenanceHistoryViewModel
+
+@{
+    ViewBag.Title = "Asset Maintenance History";
+}
+
+<div class="asset-maintenance-history-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <a href="@Url.Action(
+                     "Details",
+                     "MunicipalAsset",
+                     new { id = Model.AssetID })"
+           class="back-link">
+
+            <span class="back-icon">←</span>
+
+            Back to Asset Details
+
+        </a>
+
+
+        <div class="page-title-row">
+
+            <div class="page-icon">
+                ↻
+            </div>
+
+            <div>
+
+                <h1>Maintenance History</h1>
+
+                <p>
+                    View completed maintenance work associated with this municipal asset.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ASSET SUMMARY
+    ====================================================== -->
+
+    <div class="asset-summary-card">
+
+        <div class="asset-summary-main">
+
+            <span class="asset-code">
+                @Model.AssetCode
+            </span>
+
+            <h2>
+                @Model.AssetName
+            </h2>
+
+            <p>
+                @Model.AssetType
+                @if (!string.IsNullOrWhiteSpace(Model.AssetCategory))
+                {
+                    @: · @Model.AssetCategory
+                }
+            </p>
+
+        </div>
+
+
+        <div class="asset-summary-details">
+
+            <div>
+                <span>Municipal Ward</span>
+                <strong>@Model.WardName</strong>
+            </div>
+
+            <div>
+                <span>Maintenance Records</span>
+                <strong>@Model.TotalMaintenanceRecords</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION NOTICE
+    ====================================================== -->
+
+    <div class="info-notice">
+
+        <div class="notice-icon">
+            i
+        </div>
+
+        <div>
+
+            <strong>Maintenance history</strong>
+
+            <p>
+                This history contains maintenance work that has been
+                associated with the asset after the related service
+                request was completed.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EMPTY STATE
+    ====================================================== -->
+
+    @if (Model.MaintenanceHistory == null ||
+         !Model.MaintenanceHistory.Any())
+    {
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ↻
+            </div>
+
+            <h2>No Maintenance History</h2>
+
+            <p>
+                No completed maintenance work has been linked to this
+                asset yet.
+            </p>
+
+            <a href="@Url.Action(
+                         "LinkMaintenance",
+                         "MunicipalAsset",
+                         new { id = Model.AssetID })"
+               class="btn-primary">
+
+                Link Maintenance Work
+
+            </a>
+
+        </div>
+    }
+    else
+    {
+
+        <!-- =================================================
+             HISTORY HEADER
+        ================================================== -->
+
+        <div class="history-heading">
+
+            <div>
+
+                <h2>Completed Maintenance</h2>
+
+                <p>
+                    @Model.TotalMaintenanceRecords
+                    @(Model.TotalMaintenanceRecords == 1
+                        ? "maintenance record"
+                        : "maintenance records")
+                    linked to this asset.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             HISTORY RECORDS
+        ================================================== -->
+
+        <div class="history-list">
+
+            @foreach (var item in Model.MaintenanceHistory)
+            {
+                <div class="maintenance-card">
+
+                    <!-- -------------------------------------
+                         CARD HEADER
+                    -------------------------------------- -->
+
+                    <div class="maintenance-card-header">
+
+                        <div>
+
+                            <span class="work-label">
+                                Maintenance Work
+                            </span>
+
+                            <h3>
+                                #@item.MaintenanceWorkID
+                            </h3>
+
+                            <span class="request-reference">
+                                Request @item.RequestReferenceNumber
+                            </span>
+
+                        </div>
+
+
+                        <div class="verified-badge">
+
+                            <span class="badge-dot"></span>
+
+                            @item.MaintenanceStatus
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- -------------------------------------
+                         REQUEST INFORMATION
+                    -------------------------------------- -->
+
+                    <div class="request-context">
+
+                        <span class="context-label">
+                            Service Request
+                        </span>
+
+                        <strong>
+                            @item.RequestTitle
+                        </strong>
+
+                        <span class="context-category">
+                            @item.CategoryName
+                        </span>
+
+                    </div>
+
+
+                    <!-- -------------------------------------
+                         DETAILS GRID
+                    -------------------------------------- -->
+
+                    <div class="maintenance-details-grid">
+
+                        <div class="detail-item">
+
+                            <span>Technician</span>
+
+                            <strong>
+                                @item.TechnicianName
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-item">
+
+                            <span>Started</span>
+
+                            <strong>
+                                @(item.StartedDate.HasValue
+                                    ? item.StartedDate.Value.ToString("dd MMM yyyy")
+                                    : "Not recorded")
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-item">
+
+                            <span>Completed</span>
+
+                            <strong>
+                                @(item.CompletedDate.HasValue
+                                    ? item.CompletedDate.Value.ToString("dd MMM yyyy")
+                                    : "Not recorded")
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-item">
+
+                            <span>Verified</span>
+
+                            <strong>
+                                @(item.VerifiedDate.HasValue
+                                    ? item.VerifiedDate.Value.ToString("dd MMM yyyy")
+                                    : "Not recorded")
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- -------------------------------------
+                         COMPLETION INFORMATION
+                    -------------------------------------- -->
+
+                    @if (!string.IsNullOrWhiteSpace(item.MaintenanceSummary))
+                    {
+                        <div class="completion-section">
+
+                            <div class="completion-block">
+
+                                <span>
+                                    Maintenance Summary
+                                </span>
+
+                                <p>
+                                    @item.MaintenanceSummary
+                                </p>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                item.ResolutionAction))
+                            {
+                                <div class="completion-block">
+
+                                    <span>
+                                        Resolution Action
+                                    </span>
+
+                                    <p>
+                                        @item.ResolutionAction
+                                    </p>
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+
+                    <!-- -------------------------------------
+                         ADMINISTRATOR COMMENTS
+                    -------------------------------------- -->
+
+                    @if (!string.IsNullOrWhiteSpace(
+                        item.AdministratorComments))
+                    {
+                        <div class="administrator-comment">
+
+                            <span>
+                                Administrator Verification Comments
+                            </span>
+
+                            <p>
+                                @item.AdministratorComments
+                            </p>
+
+                        </div>
+                    }
+
+
+                    <!-- -------------------------------------
+                         LINK INFORMATION
+                    -------------------------------------- -->
+
+                    <div class="link-information">
+
+                        <div>
+
+                            <span>
+                                Linked to Asset
+                            </span>
+
+                            <strong>
+                                @item.LinkDate.ToString("dd MMM yyyy HH:mm")
+                            </strong>
+
+                        </div>
+
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            item.LinkingNotes))
+                        {
+                            <div>
+
+                                <span>
+                                    Linking Notes
+                                </span>
+
+                                <strong>
+                                    @item.LinkingNotes
+                                </strong>
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    }
+
+
+    <!-- =====================================================
+         PAGE ACTIONS
+    ====================================================== -->
+
+    <div class="page-actions">
+
+        <a href="@Url.Action(
+                     "Details",
+                     "MunicipalAsset",
+                     new { id = Model.AssetID })"
+           class="btn-secondary">
+
+            ← Back to Asset Details
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .asset-maintenance-history-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+    }
+
+    /* =====================================================
+       HEADER
+    ====================================================== */
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 22px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .back-icon {
+        font-size: 20px;
+    }
+
+    .page-title-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .page-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: #EAF2FF;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .page-title-row h1 {
+        margin: 0 0 5px;
+        font-size: 30px;
+        font-weight: 700;
+        color: #172033;
+    }
+    .page-header p {
+        margin: 0;
+        max-width: 750px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       ASSET SUMMARY
+    ====================================================== */
+
+    .asset-summary-card {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        padding: 25px;
+        margin-bottom: 20px;
+        background: white;
+        border: 1px solid #E4E9F0;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(24, 39, 75, 0.04);
+    }
+
+    .asset-code {
+        display: inline-block;
+        margin-bottom: 6px;
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .04em;
+    }
+
+    .asset-summary-main h2 {
+        margin: 0 0 6px;
+        color: #1D2939;
+        font-size: 22px;
+    }
+
+    .asset-summary-main p {
+        margin: 0;
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .asset-summary-details {
+        display: flex;
+        gap: 35px;
+        align-items: center;
+    }
+
+    .asset-summary-details div {
+        min-width: 150px;
+    }
+
+    .asset-summary-details span {
+        display: block;
+        margin-bottom: 5px;
+        color: #7A8699;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .asset-summary-details strong {
+        color: #263447;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       NOTICE
+    ====================================================== */
+
+    .info-notice {
+        display: flex;
+        gap: 14px;
+        padding: 18px 20px;
+        margin-bottom: 25px;
+        background: #F1F7FF;
+        border: 1px solid #D8E8FF;
+        border-radius: 12px;
+    }
+
+    .notice-icon {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .info-notice strong {
+        color: #17345D;
+    }
+
+    .info-notice p {
+        margin: 4px 0 0;
+        color: #526276;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       HISTORY HEADING
+    ====================================================== */
+
+    .history-heading {
+        margin: 30px 0 15px;
+    }
+
+    .history-heading h2 {
+        margin: 0 0 5px;
+        color: #1C2738;
+        font-size: 20px;
+    }
+
+    .history-heading p {
+        margin: 0;
+        color: #758093;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       MAINTENANCE CARD
+    ====================================================== */
+
+    .maintenance-card {
+        background: white;
+        border: 1px solid #E1E7EF;
+        border-radius: 14px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(24, 39, 75, 0.04);
+    }
+
+    .maintenance-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 22px 24px;
+        background: #F8FAFC;
+        border-bottom: 1px solid #E7EBF0;
+    }
+
+    .work-label {
+        display: block;
+        margin-bottom: 3px;
+        color: #778397;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    .maintenance-card-header h3 {
+        display: inline;
+        margin: 0 10px 0 0;
+        color: #172033;
+        font-size: 21px;
+    }
+
+    .request-reference {
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        background: #EAF7EF;
+        color: #267545;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .badge-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #2E8B57;
+    }
+
+
+    /* =====================================================
+       REQUEST CONTEXT
+    ====================================================== */
+
+    .request-context {
+        padding: 20px 24px 5px;
+    }
+
+    .context-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #7A8699;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .request-context strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #273449;
+        font-size: 16px;
+    }
+
+    .context-category {
+        color: #6E7A8C;
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       DETAILS GRID
+    ====================================================== */
+
+    .maintenance-details-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        margin: 20px 24px;
+        background: #E5E9EF;
+        border: 1px solid #E5E9EF;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .detail-item {
+        padding: 15px;
+        background: #FAFBFC;
+    }
+
+    .detail-item span {
+        display: block;
+        margin-bottom: 5px;
+        color: #7A8699;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .detail-item strong {
+        color: #293548;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       COMPLETION
+    ====================================================== */
+
+    .completion-section {
+        margin: 20px 24px;
+        padding: 20px;
+        background: #F8FAFC;
+        border: 1px solid #E5E9EF;
+        border-radius: 10px;
+    }
+
+    .completion-block + .completion-block {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid #E2E7ED;
+    }
+
+    .completion-block span,
+    .administrator-comment span {
+        display: block;
+        margin-bottom: 7px;
+        color: #526174;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .completion-block p,
+    .administrator-comment p {
+        margin: 0;
+        color: #3E4B5D;
+        font-size: 14px;
+        line-height: 1.65;
+        white-space: pre-line;
+    }
+
+
+    /* =====================================================
+       ADMIN COMMENT
+    ====================================================== */
+
+    .administrator-comment {
+        margin: 20px 24px;
+        padding: 16px 18px;
+        background: #FFF9ED;
+        border: 1px solid #F2E3BC;
+        border-radius: 10px;
+    }
+
+
+    /* =====================================================
+       LINK INFORMATION
+    ====================================================== */
+
+    .link-information {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        padding: 17px 24px;
+        border-top: 1px solid #E7EBF0;
+        background: #FCFDFE;
+    }
+
+    .link-information div {
+        min-width: 180px;
+    }
+
+    .link-information span {
+        display: block;
+        margin-bottom: 4px;
+        color: #7A8699;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .link-information strong {
+        color: #344054;
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       EMPTY STATE
+    ====================================================== */
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+        background: white;
+        border: 1px solid #E4E9F0;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(24, 39, 75, 0.04);
+    }
+
+    .empty-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #EAF2FF;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .empty-state h2 {
+        margin: 0 0 8px;
+        color: #263447;
+        font-size: 20px;
+    }
+
+    .empty-state p {
+        max-width: 500px;
+        margin: 0 auto 20px;
+        color: #748095;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+    ====================================================== */
+
+    .page-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 25px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 20px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #094A9F;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #344054;
+        border: 1px solid #CBD3DF;
+    }
+
+    .btn-secondary:hover {
+        background: #F7F9FC;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ====================================================== */
+
+    @@media (max-width: 850px) {
+
+        .asset-summary-card {
+            flex-direction: column;
+        }
+
+        .asset-summary-details {
+            align-items: flex-start;
+        }
+
+        .maintenance-details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .asset-maintenance-history-page {
+            padding: 22px 15px 45px;
+        }
+
+        .page-title-row h1 {
+            font-size: 24px;
+        }
+
+        .maintenance-card-header {
+            flex-direction: column;
+        }
+
+        .maintenance-details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .asset-summary-details {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .page-actions {
+            justify-content: stretch;
+        }
+
+        .btn-secondary {
+            width: 100%;
+        }
+
+    }
+
+</style>
+

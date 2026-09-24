@@ -1,0 +1,542 @@
+﻿@model CommunityServiceProject.ViewModels.RetireMunicipalAssetViewModel
+
+@{
+    ViewBag.Title = "Retire Municipal Asset";
+}
+
+<div class="retire-asset-page">
+
+    <div class="retire-header">
+
+        <div>
+            <span class="page-eyebrow">
+                MUNICIPAL ASSET MANAGEMENT
+            </span>
+
+            <h1>Retire Municipal Asset</h1>
+
+            <p>
+                Remove this asset from active municipal service while
+                preserving its historical record.
+            </p>
+        </div>
+
+        <a href="@Url.Action(
+            "Details",
+            "MunicipalAsset",
+            new { id = Model.AssetID }
+        )"
+           class="btn-secondary">
+            Back to Asset Details
+        </a>
+
+    </div>
+
+
+    <div class="retirement-warning">
+
+        <div class="warning-icon">
+            !
+        </div>
+
+        <div>
+            <strong>Important</strong>
+
+            <p>
+                Retiring an asset does not delete it from the system.
+                The asset and its historical records will remain available
+                for audit and reference.
+            </p>
+        </div>
+
+    </div>
+
+
+    @using (Html.BeginForm(
+        "Retire",
+        "MunicipalAsset",
+        FormMethod.Post,
+        new { id = "retireAssetForm" }
+    ))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.AssetID)
+
+        <div class="retirement-card">
+
+            <div class="card-heading">
+
+                <span class="section-eyebrow">
+                    ASSET INFORMATION
+                </span>
+
+                <h2>Asset being retired</h2>
+
+            </div>
+
+
+            <div class="asset-information">
+
+                <div class="information-item">
+                    <span>Asset Code</span>
+                    <strong>@Model.AssetCode</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Asset Name</span>
+                    <strong>@Model.AssetName</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Asset Type</span>
+                    <strong>@Model.AssetType</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Asset Category</span>
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.AssetCategory)
+                            ? "Not specified"
+                            : Model.AssetCategory)
+                    </strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Ward</span>
+                    <strong>@Model.WardName</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Current Condition</span>
+                    <strong>@Model.CurrentCondition</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Current Status</span>
+                    <strong class="status-current">
+                        @Model.CurrentStatus
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="retirement-card">
+
+            <div class="card-heading">
+
+                <span class="section-eyebrow">
+                    RETIREMENT INFORMATION
+                </span>
+
+                <h2>Why is this asset being retired?</h2>
+
+            </div>
+
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.RetirementReason,
+                    new { @class = "form-label" }
+                )
+
+                @Html.TextAreaFor(
+                    m => m.RetirementReason,
+                    6,
+                    100,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder =
+                            "Example: Asset is no longer operational " +
+                            "and has been replaced."
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.RetirementReason,
+                    "",
+                    new { @class = "validation-message" }
+                )
+
+            </div>
+
+
+            <div class="confirmation-box">
+
+                <label class="confirmation-label">
+
+                    @Html.CheckBoxFor(
+                        m => m.ConfirmRetirement
+                    )
+
+                    <span>
+                        I confirm that this asset should be retired
+                        from active municipal service.
+                    </span>
+
+                </label>
+
+                @Html.ValidationMessageFor(
+                    m => m.ConfirmRetirement,
+                    "",
+                    new { @class = "validation-message" }
+                )
+
+            </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a href="@Url.Action(
+                "Details",
+                "MunicipalAsset",
+                new { id = Model.AssetID }
+            )"
+               class="btn-secondary">
+                Cancel
+            </a>
+
+            <button type="button"
+                    id="retireButton"
+                    class="btn-danger">
+                Retire Asset
+            </button>
+
+        </div>
+    }
+
+</div>
+
+
+<style>
+
+    .retire-asset-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 30px;
+        color: #1f2937;
+    }
+
+    .retire-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+    .page-eyebrow,
+    .section-eyebrow {
+        display: block;
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 1.4px;
+        color: #0D5CC1;
+        margin-bottom: 7px;
+    }
+
+    .retire-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .retire-header p {
+        margin: 0;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .retirement-warning {
+        display: flex;
+        gap: 14px;
+        padding: 18px;
+        margin-bottom: 22px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: #fafafa;
+    }
+
+    .warning-icon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        color: #4b5563;
+        font-weight: 800;
+    }
+
+    .retirement-warning strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #111827;
+    }
+
+    .retirement-warning p {
+        margin: 0;
+        color: #6b7280;
+        line-height: 1.55;
+        font-size: 14px;
+    }
+
+    .retirement-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.04);
+    }
+
+    .card-heading {
+        padding-bottom: 18px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+        .card-heading h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #111827;
+        }
+
+    .asset-information {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .information-item span {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 12px;
+        font-weight: 650;
+        color: #6b7280;
+    }
+
+    .information-item strong {
+        color: #111827;
+        font-size: 14px;
+    }
+
+    .status-current {
+        color: #0D5CC1 !important;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 750;
+        color: #374151;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 140px;
+        padding: 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        resize: vertical;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13,92,193,0.1);
+        }
+
+    .confirmation-box {
+        padding: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #f8fafc;
+    }
+
+    .confirmation-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 650;
+        color: #374151;
+        cursor: pointer;
+    }
+
+        .confirmation-label input {
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+        }
+
+    .validation-message {
+        display: block;
+        margin-top: 7px;
+        color: #b42318;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 7px;
+        color: #b42318;
+        font-size: 12px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-secondary,
+    .btn-danger {
+        min-height: 44px;
+        padding: 0 19px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+            color: #111827;
+            text-decoration: none;
+        }
+
+    .btn-danger {
+        background: #4b5563;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background: #374151;
+        }
+
+    @@media (max-width: 800px) {
+
+        .retire-header {
+            flex-direction: column;
+        }
+
+        .asset-information {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 550px) {
+
+        .retire-asset-page {
+            padding: 18px;
+        }
+
+        .asset-information {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+            .form-actions a,
+            .form-actions button {
+                width: 100%;
+            }
+    }
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var retireButton =
+            document.getElementById("retireButton");
+
+        var form =
+            document.getElementById("retireAssetForm");
+
+        if (!retireButton || !form) {
+            return;
+        }
+
+        retireButton.addEventListener("click", function () {
+
+            var confirmation =
+                document.querySelector(
+                    'input[name="ConfirmRetirement"]'
+                );
+
+            var reason =
+                document.querySelector(
+                    'textarea[name="RetirementReason"]'
+                );
+
+            if (!confirmation || !confirmation.checked) {
+
+                alert(
+                    "Please confirm that you want to retire this asset."
+                );
+
+                return;
+            }
+
+            if (!reason || !reason.value.trim()) {
+
+                alert(
+                    "Please provide a reason for retiring this asset."
+                );
+
+                return;
+            }
+
+            var confirmed = window.confirm(
+                "Are you sure you want to retire " +
+                "@Model.AssetCode" +
+                "?\n\n" +
+                "The asset will no longer be treated as an active " +
+                "municipal asset, but its records will be preserved."
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            form.submit();
+        });
+
+    });
+
+</script>

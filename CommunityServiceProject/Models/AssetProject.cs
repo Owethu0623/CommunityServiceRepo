@@ -15,6 +15,9 @@ namespace CommunityServiceProject.Models
         [Required]
         public int ProjectID { get; set; }
 
+        [ForeignKey("ProjectID")]
+        public virtual MunicipalProject Project { get; set; }
+
         [Required]
         public int LinkedByAdministratorID { get; set; }
 

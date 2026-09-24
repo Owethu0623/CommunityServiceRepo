@@ -280,11 +280,14 @@
     <Compile Include="Models\AppealStatus.cs" />
     <Compile Include="Models\AssetEnums.cs" />
     <Compile Include="Models\AssetHistory.cs" />
+    <Compile Include="Models\AssetHistoryViewModel.cs" />
     <Compile Include="Models\AssetInspection.cs" />
     <Compile Include="Models\AssetMaintenance.cs" />
+    <Compile Include="Models\AssetMaintenanceHistoryViewModel.cs" />
     <Compile Include="Models\AssetMaintenanceNeeded.cs" />
     <Compile Include="Models\AssetProject.cs" />
     <Compile Include="Models\AssetRequest.cs" />
+    <Compile Include="Models\AssetStatusMonitoringViewModel.cs" />
     <Compile Include="Models\AssignmentIssue.cs" />
     <Compile Include="Models\AssignmentIssueStatus.cs" />
     <Compile Include="Models\AssignmentIssueType.cs" />
@@ -304,7 +307,10 @@
     <Compile Include="Models\FeedbackController.cs" />
     <Compile Include="Models\FeedbackManagementController.cs" />
     <Compile Include="Models\FeedbackResolutionStatus.cs" />
+    <Compile Include="Models\IdentifyAssetMaintenanceNeedViewModel.cs" />
     <Compile Include="Models\InspectMunicipalAssetViewModel.cs" />
+    <Compile Include="Models\LinkAssetMaintenanceViewModel.cs" />
+    <Compile Include="Models\LinkAssetRequestViewModel.cs" />
     <Compile Include="Models\LoginController.cs" />
     <Compile Include="Models\MaintenanceCompletion.cs" />
     <Compile Include="Models\MaintenanceEvidence.cs" />
@@ -319,6 +325,8 @@
     <Compile Include="Models\MunicipalAssetEditViewModel.cs" />
     <Compile Include="Models\MunicipalAssetIndexViewModel.cs" />
     <Compile Include="Models\MunicipalAssetViewModel.cs" />
+    <Compile Include="Models\MunicipalProject.cs" />
+    <Compile Include="Models\MunicipalProjectEnums.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Priority.cs" />
     <Compile Include="Models\ReassignmentApprovalViewModel.cs" />
@@ -328,6 +336,7 @@
     <Compile Include="Models\RecordAssetConditionViewModel.cs" />
     <Compile Include="Models\RequestClassificationViewModel.cs" />
     <Compile Include="Models\RequestSkill.cs" />
+    <Compile Include="Models\RetireMunicipalAssetViewModel.cs" />
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\SystemHistoryViewModel.cs" />
     <Compile Include="Models\TechnicianAssignment.cs" />
@@ -337,6 +346,7 @@
     <Compile Include="Models\TechnicianProfileViewModel.cs" />
     <Compile Include="Models\TechniciansController.cs" />
     <Compile Include="Models\TechnicianSkill.cs" />
+    <Compile Include="Models\UpdateAssetConditionAfterMaintenanceViewModel.cs" />
     <Compile Include="Models\Violation.cs" />
     <Compile Include="Models\Ward.cs" />
     <Compile Include="Models\WardManagementController.cs" />
@@ -579,6 +589,14 @@
     <Content Include="Views\MunicipalAsset\Edit.cshtml" />
     <Content Include="Views\MunicipalAsset\RecordCondition.cshtml" />
     <Content Include="Views\MunicipalAsset\Inspect.cshtml" />
+    <Content Include="Views\MunicipalAsset\LinkMaintenance.cshtml" />
+    <Content Include="Views\MunicipalAsset\MaintenanceHistory.cshtml" />
+    <Content Include="Views\MunicipalAsset\IdentifyMaintenanceNeed.cshtml" />
+    <Content Include="Views\MunicipalAsset\LinkRequest.cshtml" />
+    <Content Include="Views\MunicipalAsset\UpdateConditionAfterMaintenance.cshtml" />
+    <Content Include="Views\MunicipalAsset\AssetHistory.cshtml" />
+    <Content Include="Views\MunicipalAsset\StatusMonitoring.cshtml" />
+    <Content Include="Views\MunicipalAsset\Retire.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

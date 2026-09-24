@@ -1,0 +1,887 @@
+﻿@model CommunityServiceProject.ViewModels.LinkAssetMaintenanceViewModel
+
+@{
+    ViewBag.Title = "Link Maintenance Work";
+}
+
+<div class="asset-link-maintenance-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div class="page-header-left">
+
+            <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+               class="back-link">
+                <span class="back-icon">←</span>
+                Back to Asset Details
+            </a>
+
+            <div class="page-title-row">
+                <div class="page-icon">🔗</div>
+
+                <div>
+                    <h1>Link Maintenance Work</h1>
+
+                    <p>
+                        Associate a completed municipal maintenance work record
+                        with this asset.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION NOTICE
+    ====================================================== -->
+
+    <div class="info-notice">
+
+        <div class="notice-icon">i</div>
+
+        <div>
+            <strong>Completed maintenance only</strong>
+
+            <p>
+                Only maintenance work associated with a completed service
+                request can be linked to a municipal asset.
+            </p>
+        </div>
+
+    </div>
+
+
+    @using (Html.BeginForm(
+        "LinkMaintenance",
+        "MunicipalAsset",
+        FormMethod.Post,
+        new { id = "linkMaintenanceForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.AssetID)
+
+
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary">
+                @Html.ValidationSummary(
+                    false,
+                    "Please correct the following before continuing."
+                )
+            </div>
+        }
+
+
+        <!-- =================================================
+             SECTION 01 — ASSET INFORMATION
+        ================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <span class="section-number">01</span>
+
+                <div>
+                    <h2>Asset Information</h2>
+
+                    <p>
+                        Confirm the asset that will receive the maintenance history.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="information-grid">
+
+                <div class="information-item">
+                    <span>Asset Code</span>
+                    <strong>@Model.AssetCode</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Asset Name</span>
+                    <strong>@Model.AssetName</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Asset Type</span>
+                    <strong>@Model.AssetType</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Asset Category</span>
+                    <strong>@Model.AssetCategory</strong>
+                </div>
+
+                <div class="information-item full-width">
+                    <span>Municipal Ward</span>
+                    <strong>@Model.WardName</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SECTION 02 — MAINTENANCE WORK
+        ================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <span class="section-number">02</span>
+
+                <div>
+                    <h2>Select Maintenance Work</h2>
+
+                    <p>
+                        Select a completed maintenance work record to associate
+                        with this asset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                @Html.LabelFor(
+                    m => m.MaintenanceWorkID,
+                    new { @class = "field-label" }
+                )
+
+                @Html.DropDownListFor(
+                    m => m.MaintenanceWorkID,
+                    Model.MaintenanceWorkOptions,
+                    "-- Select completed maintenance work --",
+                    new { @class = "form-control", id = "maintenanceWorkSelect" }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.MaintenanceWorkID,
+                    "",
+                    new { @class = "field-error" }
+                )
+
+                <small class="field-help">
+                    Only maintenance work belonging to completed requests is shown.
+                </small>
+
+            </div>
+
+
+            <div class="selection-preview" id="selectionPreview">
+
+                <div class="preview-header">
+
+                    <span class="preview-icon">✓</span>
+
+                    <div>
+                        <strong>Maintenance work selected</strong>
+
+                        <span>
+                            Review the request details before linking it to this asset.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="selected-work-details">
+
+                    <div class="selected-work-item">
+                        <span>Maintenance Work</span>
+                        <strong id="selectedWorkID">—</strong>
+                    </div>
+
+                    <div class="selected-work-item">
+                        <span>Request Reference</span>
+                        <strong id="selectedRequestReference">—</strong>
+                    </div>
+
+                    <div class="selected-work-item">
+                        <span>Category</span>
+                        <strong id="selectedCategory">—</strong>
+                    </div>
+
+                    <div class="selected-work-item full-width">
+                        <span>Request Title</span>
+                        <strong id="selectedRequestTitle">—</strong>
+                    </div>
+
+                    <div class="selected-work-item">
+                        <span>Technician</span>
+                        <strong id="selectedTechnician">—</strong>
+                    </div>
+
+                    <div class="selected-work-item">
+                        <span>Completed</span>
+                        <strong id="selectedCompletedDate">—</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SECTION 03 — LINKING NOTES
+        ================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <span class="section-number">03</span>
+
+                <div>
+                    <h2>Linking Notes</h2>
+
+                    <p>
+                        Add any useful administrative context for this association.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="field-group">
+
+                @Html.LabelFor(
+                    m => m.Notes,
+                    new { @class = "field-label" }
+                )
+
+                @Html.TextAreaFor(
+                    m => m.Notes,
+                    5,
+                    20,
+                    new
+                    {
+                        @class = "form-control textarea-control",
+                        id = "notes",
+                        maxlength = "1000",
+                        placeholder = "Enter any relevant notes about this maintenance link..."
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Notes,
+                    "",
+                    new { @class = "field-error" }
+                )
+
+                <div class="character-count">
+                    <span id="notesCount">0</span> / 1000
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SECTION 04 — CONFIRMATION
+        ================================================== -->
+
+        <div class="confirmation-card">
+
+            <div class="confirmation-icon">✓</div>
+
+            <div>
+
+                <h3>Ready to link maintenance history?</h3>
+
+                <p>
+                    The selected completed maintenance work will become part
+                    of this asset's maintenance history. This action does not
+                    modify the original maintenance work or service request.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <div class="form-actions">
+
+            <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+               class="btn-secondary">
+                Cancel
+            </a>
+
+            <button type="submit"
+                    class="btn-primary"
+                    id="linkButton">
+                Link Maintenance Work
+            </button>
+
+        </div>
+
+    }
+
+</div>
+
+
+<style>
+
+    .asset-link-maintenance-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 22px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .back-icon {
+        font-size: 20px;
+    }
+
+    .page-title-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .page-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: #EAF2FF;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+    }
+
+    .page-title-row h1 {
+        margin: 0 0 5px;
+        font-size: 30px;
+        font-weight: 700;
+        color: #172033;
+    }
+
+    .page-header p {
+        margin: 0;
+        max-width: 750px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .info-notice {
+        display: flex;
+        gap: 14px;
+        padding: 18px 20px;
+        margin-bottom: 22px;
+        background: #F1F7FF;
+        border: 1px solid #D8E8FF;
+        border-radius: 12px;
+    }
+
+    .notice-icon {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .info-notice strong {
+        color: #17345D;
+    }
+
+    .info-notice p {
+        margin: 4px 0 0;
+        color: #526276;
+        font-size: 14px;
+    }
+
+    .validation-summary {
+        padding: 15px 18px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        background: #FFF4F4;
+        border: 1px solid #F0CACA;
+        color: #9B2929;
+    }
+
+    .validation-summary ul {
+        margin: 5px 0 0 20px;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #E4E9F0;
+        border-radius: 14px;
+        padding: 27px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 12px rgba(24, 39, 75, 0.04);
+    }
+
+    .section-heading {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 25px;
+    }
+
+    .section-number {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        border-radius: 9px;
+        background: #EAF2FF;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 5px;
+        font-size: 19px;
+        color: #1C2738;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #758093;
+        font-size: 14px;
+    }
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .information-item {
+        padding: 16px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #E8EDF3;
+    }
+
+    .information-item.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .information-item span {
+        display: block;
+        color: #778397;
+        font-size: 12px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+
+    .information-item strong {
+        color: #1E293B;
+        font-size: 15px;
+    }
+
+    .field-group {
+        position: relative;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #263447;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 13px;
+        border: 1px solid #CBD3DF;
+        border-radius: 9px;
+        background: white;
+        color: #202B3C;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
+    }
+
+    .textarea-control {
+        resize: vertical;
+        min-height: 130px;
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 7px;
+        color: #7A8699;
+        font-size: 12px;
+    }
+
+    .field-error {
+        display: block;
+        margin-top: 6px;
+        color: #C0392B;
+        font-size: 12px;
+    }
+
+    .selection-preview {
+        margin-top: 18px;
+        padding: 15px 17px;
+        border-radius: 10px;
+        background: #F6FBF8;
+        border: 1px solid #D7EBDD;
+
+        .selected-work-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .selected-work-item {
+            padding: 13px 14px;
+            border-radius: 9px;
+            background: white;
+            border: 1px solid #DDE8E1;
+        }
+
+            .selected-work-item.full-width {
+                grid-column: 1 / -1;
+            }
+
+            .selected-work-item span {
+                display: block;
+                margin-bottom: 5px;
+                color: #778397;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: .04em;
+            }
+
+            .selected-work-item strong {
+                display: block;
+                color: #1E293B;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+    }
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .preview-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #23864D;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .preview-header strong {
+        display: block;
+        color: #245B3B;
+        font-size: 14px;
+    }
+
+    .preview-header span:not(.preview-icon) {
+        display: block;
+        margin-top: 3px;
+        color: #65766B;
+        font-size: 13px;
+    }
+
+    .character-count {
+        text-align: right;
+        margin-top: 6px;
+        color: #7A8699;
+        font-size: 12px;
+    }
+
+    .confirmation-card {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        padding: 20px;
+        margin-bottom: 22px;
+        background: #F8FAFC;
+        border: 1px solid #E4E9F0;
+        border-radius: 12px;
+    }
+
+    .confirmation-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #E8F6EE;
+        color: #21834B;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .confirmation-card h3 {
+        margin: 0 0 5px;
+        color: #263447;
+        font-size: 16px;
+    }
+
+    .confirmation-card p {
+        margin: 0;
+        color: #687386;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 21px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #094A9F;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #344054;
+        border: 1px solid #CBD3DF;
+    }
+
+    .btn-secondary:hover {
+        background: #F7F9FC;
+    }
+
+    @@media (max-width: 700px) {
+
+        .asset-link-maintenance-page {
+            padding: 22px 15px 45px;
+        }
+
+        .page-title-row h1 {
+            font-size: 24px;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .information-item.full-width {
+            grid-column: auto;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var select = document.getElementById("maintenanceWorkSelect");
+        var preview = document.getElementById("selectionPreview");
+        var selectedText = document.getElementById("selectedMaintenanceText");
+
+        var notes = document.getElementById("notes");
+        var notesCount = document.getElementById("notesCount");
+
+        function updateSelection() {
+
+            if (!select || !preview)
+                return;
+
+            if (select.selectedIndex > 0) {
+
+                var option =
+                    select.options[select.selectedIndex];
+
+                var parts =
+                    option.text.split(" | ");
+
+                /*
+                 * Expected format:
+                 *
+                 * Work #24
+                 * Category
+                 * Request Reference
+                 * Request Title
+                 * Technician
+                 * Completed Date
+                 */
+
+                document.getElementById("selectedWorkID").textContent =
+                    parts[0] || "—";
+
+                document.getElementById("selectedCategory").textContent =
+                    parts[1] || "—";
+
+                document.getElementById("selectedRequestReference").textContent =
+                    parts[2] || "—";
+
+                document.getElementById("selectedRequestTitle").textContent =
+                    parts[3] || "—";
+
+                document.getElementById("selectedTechnician").textContent =
+                    parts[4] || "—";
+
+                document.getElementById("selectedCompletedDate").textContent =
+                    parts[5] || "—";
+
+                preview.style.display = "block";
+
+            } else {
+
+                preview.style.display = "none";
+            }
+        }
+
+        function updateCharacterCount() {
+
+            if (!notes || !notesCount)
+                return;
+
+            notesCount.textContent =
+                notes.value.length;
+        }
+
+        if (select) {
+            select.addEventListener(
+                "change",
+                updateSelection
+            );
+
+            updateSelection();
+        }
+
+        if (notes) {
+            notes.addEventListener(
+                "input",
+                updateCharacterCount
+            );
+
+            updateCharacterCount();
+        }
+
+
+        var form =
+            document.getElementById("linkMaintenanceForm");
+
+        if (form) {
+
+            form.addEventListener("submit", function (event) {
+
+                if (!select || !select.value) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select a completed maintenance work record before continuing."
+                    );
+
+                    return;
+                }
+
+                var confirmed = confirm(
+                    "Are you sure you want to link this completed maintenance work to the selected asset?"
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+
+            });
+
+        }
+
+    });
+
+</script>
+

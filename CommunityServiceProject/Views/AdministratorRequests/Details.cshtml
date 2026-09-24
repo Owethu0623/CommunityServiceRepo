@@ -375,7 +375,7 @@
         </div>
 
     </div>
-       
+
 
     <!-- FOOTER -->
     <div class="admin-review-footer">
@@ -408,12 +408,25 @@
             </a>
         }
     </div>
-    <a href="@Url.Action(
-    "RequestHistory",
-    "CitizenManagement",
-    new { id = Model.CitizenID }
- )"
-       class="admin-back-button">
-        Back to Request History
-    </a>
+
+    @if (!string.IsNullOrWhiteSpace(ViewBag.ReturnUrl as string))
+    {
+        <a href="@ViewBag.ReturnUrl"
+           class="admin-back-button">
+            Back to System History
+        </a>
+    }
+
+
+    @if (ViewBag.LinkedAssetID != null)
+    {
+        <a href="@Url.Action(
+        "Details",
+        "MunicipalAsset",
+        new { id = ViewBag.LinkedAssetID }
+    )"
+           class="admin-back-button">
+            Back to Asset Register
+        </a>
+    }
 </div>

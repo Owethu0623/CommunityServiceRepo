@@ -66,6 +66,7 @@ namespace CommunityServiceProject.Models
         public DbSet<AssetProject> AssetProjects { get; set; }
 
         public DbSet<AssetHistory> AssetHistories { get; set; }
+        public DbSet<MunicipalProject> MunicipalProjects { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -501,6 +502,36 @@ namespace CommunityServiceProject.Models
             .WithMany()
              .HasForeignKey(a => a.WardID)
             .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<MunicipalProject>()
+           .HasRequired(p => p.Ward)
+           .WithMany()
+           .HasForeignKey(p => p.WardID)
+           .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<MunicipalProject>()
+                .HasRequired(p => p.ResponsibleAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.ResponsibleAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<MunicipalProject>()
+                .HasRequired(p => p.CreatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.CreatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<MunicipalProject>()
+                .HasOptional(p => p.LastUpdatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.LastUpdatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<AssetProject>()
+           .HasRequired(ap => ap.Project)
+          .WithMany(p => p.AssetProjects)
+            .HasForeignKey(ap => ap.ProjectID)
+             .WillCascadeOnDelete(false);
 
         }
     }

@@ -152,9 +152,16 @@
 
                                 <td>
                                     <a href="@Url.Action(
-                                        "Details",
-                                        "AdministratorRequests",
-                                        new { id = item.RequestID })"
+    "Details",
+    "AdministratorRequests",
+    new
+    {
+        id = item.RequestID,
+        returnUrl = Url.Action(
+            "Index",
+            "AdministratorSystemHistory"
+        )
+    })"
                                        class="history-reference">
                                         @item.ReferenceNumber
                                     </a>

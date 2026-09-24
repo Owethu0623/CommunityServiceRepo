@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
+using System.Data.Entity;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -138,8 +139,7 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-        // GET: AdministratorRequests/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, string returnUrl)
         {
             if (Session["AdministratorID"] == null)
             {
@@ -150,6 +150,7 @@ namespace CommunityServiceProject.Controllers
             {
                 return RedirectToAction("Index");
             }
+
             var request = db.Requests
                 .Include("Citizen")
                 .Include("Category")
@@ -161,8 +162,20 @@ namespace CommunityServiceProject.Controllers
                 return HttpNotFound();
             }
 
+            var linkedAsset = db.AssetRequests
+                .FirstOrDefault(ar => ar.RequestID == request.RequestID);
+
+            ViewBag.LinkedAssetID = linkedAsset != null
+                ? (int?)linkedAsset.AssetID
+                : null;
+
+            ViewBag.CitizenID = request.CitizenID;
+
             ViewBag.ViolationRecorded = db.Violations
-    .Any(v => v.RequestID == request.RequestID);
+                .Any(v => v.RequestID == request.RequestID);
+
+            ViewBag.ReturnUrl = returnUrl;
+
             return View(request);
         }
 

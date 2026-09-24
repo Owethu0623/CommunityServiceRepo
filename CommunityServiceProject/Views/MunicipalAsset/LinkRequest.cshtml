@@ -1,0 +1,845 @@
+﻿@model CommunityServiceProject.ViewModels.LinkAssetRequestViewModel
+
+@{
+    ViewBag.Title = "Link Service Request";
+}
+
+<div class="asset-link-page">
+
+    <div class="asset-link-header">
+
+        <div>
+            <div class="asset-page-eyebrow">
+                MUNICIPAL ASSET MANAGEMENT
+            </div>
+
+            <h1>Link Service Request</h1>
+
+            <p>
+                Associate an existing service request with this municipal asset.
+            </p>
+        </div>
+
+        <div class="asset-header-actions">
+            @Html.ActionLink(
+                "← Back to Asset Details",
+                "Details",
+                "MunicipalAsset",
+                new { id = Model.AssetID },
+                new { @class = "btn-secondary" }
+            )
+        </div>
+
+    </div>
+
+
+    <div class="asset-info-notice">
+
+        <div class="notice-icon">i</div>
+
+        <div>
+            <strong>Asset-to-request relationship</strong>
+
+            <p>
+                An asset can be associated with multiple service requests.
+                The same request cannot be linked to the same asset more than once.
+            </p>
+        </div>
+
+    </div>
+
+
+    @using (Html.BeginForm(
+        "LinkRequest",
+        "MunicipalAsset",
+        FormMethod.Post,
+        new { id = "linkRequestForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.AssetID)
+
+        @Html.ValidationSummary(
+            true,
+            "",
+            new { @class = "validation-summary" }
+        )
+
+
+        <!-- =========================================================
+             SECTION 01 — ASSET INFORMATION
+        ========================================================== -->
+
+        <div class="asset-form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">01</div>
+
+                <div>
+                    <h2>Asset Information</h2>
+
+                    <p>
+                        Confirm the asset that the service request will be associated with.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="asset-summary-grid">
+
+                <div class="summary-field">
+                    <span>Asset Code</span>
+                    <strong>@Model.AssetCode</strong>
+                </div>
+
+                <div class="summary-field">
+                    <span>Asset Name</span>
+                    <strong>@Model.AssetName</strong>
+                </div>
+
+                <div class="summary-field">
+                    <span>Asset Type</span>
+                    <strong>@Model.AssetType</strong>
+                </div>
+
+                <div class="summary-field">
+                    <span>Asset Category</span>
+                    <strong>@Model.AssetCategory</strong>
+                </div>
+
+                <div class="summary-field">
+                    <span>Municipal Ward</span>
+                    <strong>@Model.WardName</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             SECTION 02 — SERVICE REQUEST
+        ========================================================== -->
+
+        <div class="asset-form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">02</div>
+
+                <div>
+                    <h2>Service Request</h2>
+
+                    <p>
+                        Select the service request that relates to this asset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.RequestID,
+                    new { @class = "form-label" }
+                )
+
+                @Html.DropDownListFor(
+                    m => m.RequestID,
+                    Model.RequestOptions,
+                    "-- Select a service request --",
+                    new
+                    {
+                        @class = "form-control request-select",
+                        id = "requestSelect"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.RequestID,
+                    "",
+                    new { @class = "field-validation-error" }
+                )
+
+                <div class="field-help">
+                    Requests are shown with their reference, category,
+                    title, priority, ward, status and submission date.
+                </div>
+
+            </div>
+
+
+            <div class="selected-request-panel" id="selectedRequestPanel">
+
+                <div class="selected-request-header">
+                    <span class="selected-request-icon">✓</span>
+
+                    <div>
+                        <strong>Selected Service Request</strong>
+
+                        <span>
+                            Confirm that this is the correct request.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="selected-request-text"
+                     id="selectedRequestText">
+                    No service request selected.
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             SECTION 03 — LINKING NOTES
+        ========================================================== -->
+
+        <div class="asset-form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">03</div>
+
+                <div>
+                    <h2>Linking Notes</h2>
+
+                    <p>
+                        Record any relevant administrative context for this association.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.Notes,
+                    new { @class = "form-label" }
+                )
+
+                @Html.TextAreaFor(
+                    m => m.Notes,
+                    new
+                    {
+                        @class = "form-control textarea-control",
+                        id = "notesInput",
+                        rows = "5",
+                        maxlength = "1000",
+                        placeholder =
+                            "Explain why this request is associated with the asset, if necessary..."
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Notes,
+                    "",
+                    new { @class = "field-validation-error" }
+                )
+
+                <div class="character-counter">
+                    <span id="notesCount">0</span> / 1000 characters
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             SECTION 04 — LINKING CONFIRMATION
+        ========================================================== -->
+
+        <div class="confirmation-card">
+
+            <div class="confirmation-icon">✓</div>
+
+            <div>
+
+                <h3>Ready to link this request?</h3>
+
+                <p>
+                    The selected service request will be associated with
+                    <strong>@Model.AssetCode</strong>.
+                    This relationship will also be recorded in the asset history.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             ACTIONS
+        ========================================================== -->
+
+        <div class="form-actions">
+
+            @Html.ActionLink(
+                "Cancel",
+                "Details",
+                "MunicipalAsset",
+                new { id = Model.AssetID },
+                new { @class = "btn-secondary btn-large" }
+            )
+
+            <button type="submit"
+                    class="btn-primary btn-large"
+                    id="linkButton">
+
+                Link Service Request
+
+            </button>
+
+        </div>
+
+    }
+
+</div>
+
+
+<style>
+
+    .asset-link-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 35px 25px 60px;
+    }
+
+    .asset-link-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 30px;
+        margin-bottom: 25px;
+    }
+
+    .asset-page-eyebrow {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+        color: #0D5CC1;
+        margin-bottom: 8px;
+    }
+
+    .asset-link-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 800;
+        color: #172033;
+    }
+
+    .page-header p {
+        margin: 0;
+        max-width: 750px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .asset-header-actions {
+        flex-shrink: 0;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: 0.2s ease;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: #fff;
+        border-color: #0D5CC1;
+    }
+
+    .btn-primary:hover {
+        background: #094b9e;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #fff;
+        color: #344054;
+        border-color: #D0D5DD;
+    }
+
+    .btn-secondary:hover {
+        background: #F9FAFB;
+        color: #172033;
+    }
+
+    .btn-large {
+        min-height: 48px;
+        padding: 0 24px;
+    }
+
+    .asset-info-notice {
+        display: flex;
+        gap: 15px;
+        padding: 18px 20px;
+        margin-bottom: 25px;
+        border: 1px solid #C9DDF7;
+        border-left: 4px solid #0D5CC1;
+        border-radius: 10px;
+        background: #F5F9FF;
+        color: #344054;
+    }
+
+    .notice-icon {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .asset-info-notice strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #172033;
+    }
+
+    .asset-info-notice p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .asset-form-card {
+        background: #fff;
+        border: 1px solid #E4E7EC;
+        border-radius: 12px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .section-number {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: #EAF2FC;
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 5px;
+        font-size: 19px;
+        color: #172033;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .asset-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .summary-field {
+        padding: 15px 16px;
+        border: 1px solid #EAECF0;
+        border-radius: 8px;
+        background: #F9FAFB;
+    }
+
+    .summary-field span {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #667085;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .summary-field strong {
+        color: #172033;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 5px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #344054;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 13px;
+        border: 1px solid #D0D5DD;
+        border-radius: 8px;
+        background: #fff;
+        color: #172033;
+        font-size: 14px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+    }
+
+    .request-select {
+        min-height: 50px;
+    }
+
+    .textarea-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .field-help {
+        margin-top: 8px;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 6px;
+        color: #B42318;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .validation-summary {
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: 1px solid #FDA29B;
+        background: #FEF3F2;
+        color: #B42318;
+        font-size: 13px;
+    }
+
+    .validation-summary:empty {
+        display: none;
+    }
+
+    .selected-request-panel {
+        margin-top: 22px;
+        padding: 18px;
+        border: 1px solid #D6E5F7;
+        border-radius: 10px;
+        background: #F7FAFE;
+    }
+
+    .selected-request-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .selected-request-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .selected-request-header strong {
+        display: block;
+        color: #172033;
+        font-size: 14px;
+    }
+
+    .selected-request-header span {
+        display: block;
+        margin-top: 2px;
+        color: #667085;
+        font-size: 12px;
+    }
+
+    .selected-request-text {
+        padding: 13px 15px;
+        border-radius: 7px;
+        background: #fff;
+        border: 1px solid #E4E7EC;
+        color: #344054;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .character-counter {
+        text-align: right;
+        margin-top: 6px;
+        color: #667085;
+        font-size: 11px;
+    }
+
+    .confirmation-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px;
+        margin-bottom: 22px;
+        border: 1px solid #D6E5F7;
+        border-radius: 10px;
+        background: #F7FAFE;
+    }
+
+    .confirmation-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .confirmation-card h3 {
+        margin: 0 0 5px;
+        font-size: 15px;
+        color: #172033;
+    }
+
+    .confirmation-card p {
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+        @@media (max-width: 768px) {
+
+        .asset-link-page {
+            padding: 25px 15px 45px;
+        }
+
+        .asset-link-header {
+            flex-direction: column;
+        }
+
+        .asset-header-actions {
+            width: 100%;
+        }
+
+        .asset-header-actions .btn-secondary {
+            width: 100%;
+        }
+
+        .asset-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .asset-form-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .form-actions .btn-primary,
+        .form-actions .btn-secondary {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var requestSelect =
+            document.getElementById("requestSelect");
+
+        var selectedRequestText =
+            document.getElementById("selectedRequestText");
+
+        var notesInput =
+            document.getElementById("notesInput");
+
+        var notesCount =
+            document.getElementById("notesCount");
+
+        var form =
+            document.getElementById("linkRequestForm");
+
+        var linkButton =
+            document.getElementById("linkButton");
+
+
+        function updateSelectedRequest() {
+
+            if (!requestSelect || !selectedRequestText) {
+                return;
+            }
+
+            var selectedOption =
+                requestSelect.options[
+                    requestSelect.selectedIndex
+                ];
+
+            if (!selectedOption ||
+                !selectedOption.value) {
+
+                selectedRequestText.textContent =
+                    "No service request selected.";
+
+                return;
+            }
+
+            selectedRequestText.textContent =
+                selectedOption.text;
+        }
+
+
+        function updateNotesCount() {
+
+            if (!notesInput || !notesCount) {
+                return;
+            }
+
+            notesCount.textContent =
+                notesInput.value.length;
+        }
+
+
+        if (requestSelect) {
+
+            requestSelect.addEventListener(
+                "change",
+                updateSelectedRequest
+            );
+
+            updateSelectedRequest();
+        }
+
+
+        if (notesInput) {
+
+            notesInput.addEventListener(
+                "input",
+                updateNotesCount
+            );
+
+            updateNotesCount();
+        }
+
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    var selectedOption =
+                        requestSelect.options[
+                            requestSelect.selectedIndex
+                        ];
+
+                    if (!requestSelect.value) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please select a service request before continuing."
+                        );
+
+                        requestSelect.focus();
+
+                        return;
+                    }
+
+                    var requestDescription =
+                        selectedOption
+                            ? selectedOption.text
+                            : "the selected service request";
+
+                    var confirmed =
+                        confirm(
+                            "Are you sure you want to link this service request to " +
+                            "@Model.AssetCode" +
+                            "?\n\n" +
+                            requestDescription
+                        );
+
+                    if (!confirmed) {
+
+                        event.preventDefault();
+
+                        return;
+                    }
+
+                    if (linkButton) {
+
+                        linkButton.disabled = true;
+                        linkButton.innerText =
+                            "Linking...";
+                    }
+
+                }
+            );
+        }
+
+    });
+
+</script>

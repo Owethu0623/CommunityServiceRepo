@@ -1,7 +1,7 @@
-﻿@model CommunityServiceProject.ViewModels.MunicipalAssetEditViewModel
+﻿@model CommunityServiceProject.ViewModels.MunicipalAssetCreateViewModel
 
 @{
-    ViewBag.Title = "Edit Municipal Asset";
+    ViewBag.Title = "Register Municipal Asset";
 }
 
 <link rel="stylesheet"
@@ -9,224 +9,114 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
 
-<div class="municipal-asset-edit-page">
+<div class="municipal-asset-create-page">
 
-    <div class="municipal-asset-edit-header">
-
+    <div class="municipal-asset-create-header">
         <div>
-
-            <div class="page-eyebrow">
-                MUNICIPAL ASSET MANAGEMENT
-            </div>
+            <div class="page-eyebrow">MUNICIPAL ASSET MANAGEMENT</div>
 
             <h1>
                 <span class="header-icon">▣</span>
-                Edit Municipal Asset
+                Register Municipal Asset
             </h1>
 
             <p>
-                Update the registered information, location and operational
-                details of this municipal asset.
+                Register an existing municipal asset in the central asset management system.
             </p>
-
         </div>
 
         <div class="header-actions">
-
-            <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+            <a href="@Url.Action("Index", "MunicipalAsset")"
                class="btn btn-secondary">
-
-                ← Back to Asset Details
-
+                ← Back to Assets
             </a>
-
         </div>
-
     </div>
-
-
-    <!-- =========================================================
-         EDIT INFORMATION NOTICE
-         ========================================================= -->
 
     <div class="asset-info-notice">
-
-        <div class="notice-icon">
-            i
-        </div>
+        <div class="notice-icon">i</div>
 
         <div>
-
-            <strong>
-                Updating a municipal asset
-            </strong>
+            <strong>About asset registration</strong>
 
             <p>
-                Review the existing asset information carefully before saving.
-                Changes made to this asset are recorded in the asset history
-                for administrative auditing.
+                Municipal assets are normally existing infrastructure or facilities already owned or operated by the municipality.
+                The system automatically generates the Asset Code and Asset Name after registration.
             </p>
-
         </div>
-
     </div>
 
-
     @using (Html.BeginForm(
-        "Edit",
+        "Create",
         "MunicipalAsset",
         FormMethod.Post,
         new
         {
-            @class = "asset-edit-form",
-            id = "assetEditForm"
+            @class = "asset-registration-form",
+            id = "assetRegistrationForm"
         }))
     {
         @Html.AntiForgeryToken()
 
-        @Html.HiddenFor(
-            model => model.AssetID)
-
-        @Html.HiddenFor(
-            model => model.AssetCode)
-
-
         <!-- =========================================================
-             VALIDATION SUMMARY
+             LOCATION FIX:
+             MVC-generated hidden fields.
+
+             HTML names remain:
+             Latitude
+             Longitude
+
+             DOM IDs are unique:
+             AssetLatitude
+             AssetLongitude
              ========================================================= -->
 
-        <div class="validation-container">
+        @Html.Hidden(
+            "Latitude",
+            Model.Latitude,
+            new
+            {
+                id = "AssetLatitude"
+            })
 
+        @Html.Hidden(
+            "Longitude",
+            Model.Longitude,
+            new
+            {
+                id = "AssetLongitude"
+            })
+
+        <div class="validation-container">
             @Html.ValidationSummary(
                 true,
                 "",
                 new { @class = "validation-summary" })
-
         </div>
 
-
         <!-- =========================================================
-             SECTION 1 - ASSET IDENTIFICATION
+             SECTION 1 - ASSET CLASSIFICATION
              ========================================================= -->
 
         <div class="form-card">
 
             <div class="form-card-header">
 
-                <div class="section-number">
-                    01
-                </div>
+                <div class="section-number">01</div>
 
                 <div>
-
-                    <h2>
-                        Asset Identification
-                    </h2>
+                    <h2>Asset Classification</h2>
 
                     <p>
-                        Review the registered identity of the municipal asset.
+                        Identify the type and category of municipal asset being registered.
                     </p>
-
                 </div>
 
             </div>
-
 
             <div class="form-card-body">
 
                 <div class="form-grid">
-
-                    <!-- Asset Code -->
-
-                    <div class="form-group">
-
-                        @Html.LabelFor(
-                            model => model.AssetCode,
-                            new { @class = "form-label" })
-
-                        @Html.TextBoxFor(
-                            model => model.AssetCode,
-                            new
-                            {
-                                @class = "form-control",
-                                @readonly = "readonly"
-                            })
-
-                        <small class="field-help">
-                            Asset Code is generated by the system and cannot be changed.
-                        </small>
-
-                    </div>
-
-
-                    <!-- Asset Name -->
-
-                    <div class="form-group">
-
-                        @Html.LabelFor(
-                            model => model.AssetName,
-                            new { @class = "form-label" })
-
-                        @Html.TextBoxFor(
-                            model => model.AssetName,
-                            new
-                            {
-                                @class = "form-control",
-                                maxlength = "150",
-                                placeholder = "Enter asset name"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            model => model.AssetName,
-                            "",
-                            new { @class = "field-validation" })
-
-                        <small class="field-help">
-                            Update the asset name if the registered description requires correction.
-                        </small>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================================================
-             SECTION 2 - ASSET CLASSIFICATION
-             ========================================================= -->
-
-        <div class="form-card">
-
-            <div class="form-card-header">
-
-                <div class="section-number">
-                    02
-                </div>
-
-                <div>
-
-                    <h2>
-                        Asset Classification
-                    </h2>
-
-                    <p>
-                        Update the type, category, description and municipal ward.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-card-body">
-
-                <div class="form-grid">
-
-
-                    <!-- Asset Type -->
 
                     <div class="form-group">
 
@@ -254,9 +144,6 @@
                         </small>
 
                     </div>
-
-
-                    <!-- Asset Category -->
 
                     <div class="form-group">
 
@@ -287,9 +174,6 @@
 
                 </div>
 
-
-                <!-- Description -->
-
                 <div class="form-group full-width">
 
                     @Html.LabelFor(
@@ -312,13 +196,10 @@
                         new { @class = "field-validation" })
 
                     <small class="field-help">
-                        Update useful identifying or operational information where required.
+                        Optional. Include useful identifying or operational information.
                     </small>
 
                 </div>
-
-
-                <!-- Ward -->
 
                 <div class="form-group">
 
@@ -351,69 +232,47 @@
 
         </div>
 
-
         <!-- =========================================================
-             SECTION 3 - ASSET LOCATION
+             SECTION 2 - ASSET LOCATION
              ========================================================= -->
 
         <div class="form-card">
 
             <div class="form-card-header">
 
-                <div class="section-number">
-                    03
-                </div>
+                <div class="section-number">02</div>
 
                 <div>
-
-                    <h2>
-                        Asset Location
-                    </h2>
+                    <h2>Asset Location</h2>
 
                     <p>
-                        Review or update the physical location of the municipal asset.
+                        Select the physical location of the municipal asset on the map.
                     </p>
-
                 </div>
 
             </div>
 
-
             <div class="form-card-body">
-
 
                 <div class="location-notice">
 
-                    <div class="location-notice-icon">
-                        ⌖
-                    </div>
+                    <div class="location-notice-icon">⌖</div>
 
                     <div>
-
-                        <strong>
-                            Location information
-                        </strong>
+                        <strong>Location is required</strong>
 
                         <p>
-                            The current asset location is displayed on the map.
-                            Search for a new address, click the map, or drag the
-                            marker to update the location.
+                            Search for an address or select the asset's position directly on the map.
+                            You can also drag the marker to refine the location.
                         </p>
-
                     </div>
 
                 </div>
 
-
-                <!-- Address Search -->
-
                 <div class="address-search-section">
 
-                    <label class="form-label"
-                           for="addressSearch">
-
+                    <label class="form-label" for="addressSearch">
                         Search for an Address
-
                     </label>
 
                     <div class="address-search-row">
@@ -429,22 +288,17 @@
                                 id="searchAddressButton"
                                 class="btn btn-search">
 
-                            <span class="button-icon">
-                                ⌕
-                            </span>
-
+                            <span class="button-icon">⌕</span>
                             Search Address
 
                         </button>
 
                     </div>
 
-
                     <div id="searchStatus"
                          class="location-status"
                          aria-live="polite">
                     </div>
-
 
                     <div id="searchResults"
                          class="location-search-results">
@@ -452,26 +306,16 @@
 
                 </div>
 
-
-                <!-- Map -->
-
                 <div class="map-container">
 
-                    <div id="assetEditMap"></div>
+                    <div id="assetMap"></div>
 
                 </div>
-
 
                 <div class="map-help">
-
                     <span>●</span>
-
-                    Click anywhere on the map or drag the marker to update the asset location.
-
+                    Click anywhere on the map or drag the marker to select the asset location.
                 </div>
-
-
-                <!-- Select Centre -->
 
                 <div class="map-centre-row">
 
@@ -490,9 +334,6 @@
 
                 </div>
 
-
-                <!-- Existing Coordinates -->
-
                 <div class="selected-location-panel">
 
                     <div class="selected-location-header">
@@ -506,11 +347,11 @@
                             <div>
 
                                 <strong>
-                                    Current Asset Location
+                                    Selected Location
                                 </strong>
 
                                 <small>
-                                    Existing coordinates for this asset
+                                    Coordinates selected for this asset
                                 </small>
 
                             </div>
@@ -518,7 +359,6 @@
                         </div>
 
                     </div>
-
 
                     <div class="coordinate-grid">
 
@@ -529,11 +369,10 @@
                             </span>
 
                             <strong id="latitudeDisplay">
-                                @Model.Latitude
+                                Not selected
                             </strong>
 
                         </div>
-
 
                         <div class="coordinate-box">
 
@@ -542,7 +381,7 @@
                             </span>
 
                             <strong id="longitudeDisplay">
-                                @Model.Longitude
+                                Not selected
                             </strong>
 
                         </div>
@@ -550,9 +389,6 @@
                     </div>
 
                 </div>
-
-
-                <!-- Location Description -->
 
                 <div class="form-group location-description-group">
 
@@ -576,7 +412,7 @@
                         new { @class = "field-validation" })
 
                     <small class="field-help">
-                        Update the physical location description or nearby landmark if required.
+                        Describe the asset's physical position or nearby landmark if useful.
                     </small>
 
                 </div>
@@ -585,9 +421,8 @@
 
         </div>
 
-
         <!-- =========================================================
-             SECTION 4 - OPERATIONAL INFORMATION
+             SECTION 3 - INITIAL OPERATIONAL INFORMATION
              ========================================================= -->
 
         <div class="form-card">
@@ -595,30 +430,26 @@
             <div class="form-card-header">
 
                 <div class="section-number">
-                    04
+                    03
                 </div>
 
                 <div>
 
                     <h2>
-                        Operational Information
+                        Initial Operational Information
                     </h2>
 
                     <p>
-                        Update the current condition and operational status of the asset.
+                        Record the asset's current condition and operational status at the time of registration.
                     </p>
 
                 </div>
 
             </div>
 
-
             <div class="form-card-body">
 
                 <div class="form-grid">
-
-
-                    <!-- Condition -->
 
                     <div class="form-group">
 
@@ -641,9 +472,6 @@
                             new { @class = "field-validation" })
 
                     </div>
-
-
-                    <!-- Status -->
 
                     <div class="form-group">
 
@@ -673,53 +501,89 @@
 
         </div>
 
-
         <!-- =========================================================
-             SECTION 5 - UPDATE INFORMATION
+             SECTION 4 - SYSTEM GENERATED INFORMATION
              ========================================================= -->
 
-        <div class="form-card update-information-card">
+        <div class="form-card system-generated-card">
 
             <div class="form-card-header">
 
                 <div class="section-number">
-                    05
+                    04
                 </div>
 
                 <div>
 
                     <h2>
-                        Update Information
+                        System-Generated Information
                     </h2>
 
                     <p>
-                        Information about how this update is recorded.
+                        These values are automatically created when the asset is registered.
                     </p>
 
                 </div>
 
             </div>
 
-
             <div class="form-card-body">
 
-                <div class="update-information">
+                <div class="generated-information-grid">
 
-                    <div class="update-information-icon">
-                        ✓
-                    </div>
+                    <div class="generated-item">
 
-                    <div>
+                        <span class="generated-label">
+                            Asset Code
+                        </span>
 
                         <strong>
-                            Changes are recorded automatically
+                            Generated automatically
                         </strong>
 
-                        <p>
-                            When you save changes, the system records the
-                            updated information, the date of the update and
-                            the administrator responsible for the change.
-                        </p>
+                        <small>
+                            Example: AST-000124
+                        </small>
+
+                    </div>
+
+                    <div class="generated-item">
+
+                        <span class="generated-label">
+                            Asset Name
+                        </span>
+
+                        <strong>
+                            Generated automatically
+                        </strong>
+
+                        <small>
+                            Based on the asset category and location
+                        </small>
+
+                    </div>
+
+                    <div class="generated-item">
+
+                        <span class="generated-label">
+                            Date Registered
+                        </span>
+
+                        <strong>
+                            Current date and time
+                        </strong>
+
+                    </div>
+
+                    <div class="generated-item">
+
+                        <span class="generated-label">
+                            Registered By
+                        </span>
+
+                        <strong>
+                            Current administrator
+                        </strong>
 
                     </div>
 
@@ -729,63 +593,41 @@
 
         </div>
 
-
-        <!-- =========================================================
-             FORM ACTIONS
-             ========================================================= -->
-
         <div class="form-actions">
 
-            <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+            <a href="@Url.Action("Index", "MunicipalAsset")"
                class="btn btn-cancel">
-
                 Cancel
-
             </a>
 
-
             <button type="submit"
-                    id="saveAssetButton"
+                    id="registerAssetButton"
                     class="btn btn-primary">
 
                 <span class="button-icon">
                     ✓
                 </span>
 
-                Save Changes
+                Register Municipal Asset
 
             </button>
 
         </div>
-
     }
 
 </div>
-
-
-<!-- ================================================================
-     LEAFLET
-     ================================================================ -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin="">
 </script>
 
-
 <script>
-
     (function () {
 
         "use strict";
 
-
-        function initialiseEditPage() {
-
-
-            /* =========================================================
-               CLASSIFICATION
-               ========================================================= */
+        function initialiseAssetPage() {
 
             var categoryMap = {
 
@@ -831,13 +673,11 @@
 
             };
 
-
             var assetType =
                 document.getElementById("AssetType");
 
             var assetCategory =
                 document.getElementById("AssetCategory");
-
 
             function updateCategories() {
 
@@ -848,7 +688,6 @@
                     assetCategory.value;
 
                 assetCategory.innerHTML = "";
-
 
                 var defaultOption =
                     document.createElement("option");
@@ -862,7 +701,6 @@
                     defaultOption
                 );
 
-
                 if (
                     selectedType &&
                     categoryMap[selectedType]
@@ -872,9 +710,7 @@
                         function (category) {
 
                             var option =
-                                document.createElement(
-                                    "option"
-                                );
+                                document.createElement("option");
 
                             option.value =
                                 category;
@@ -888,7 +724,6 @@
 
                         }
                     );
-
 
                     if (
                         categoryMap[selectedType]
@@ -904,40 +739,28 @@
 
             }
 
-
             assetType.addEventListener(
                 "change",
                 updateCategories
             );
 
-
-            /* =========================================================
-               MAP
-               ========================================================= */
-
             var mapElement =
-                document.getElementById(
-                    "assetEditMap"
-                );
-
+                document.getElementById("assetMap");
 
             if (!mapElement) {
 
                 console.error(
-                    "Municipal asset edit map element was not found."
+                    "Municipal asset map element was not found."
                 );
 
                 return;
 
             }
 
-
             if (typeof L === "undefined") {
 
                 var failedMapMessage =
-                    document.createElement(
-                        "div"
-                    );
+                    document.createElement("div");
 
                 failedMapMessage.className =
                     "map-load-error";
@@ -953,87 +776,27 @@
 
             }
 
-
-            var latitudeInput =
-                document.getElementById(
-                    "Latitude"
-                );
-
-            var longitudeInput =
-                document.getElementById(
-                    "Longitude"
-                );
-
-
-            /*
-             * MVC TextBoxFor creates IDs:
-             *
-             * Latitude
-             * Longitude
-             *
-             * We therefore use those exact IDs here.
-             */
-
-
-            var latitude =
-                parseFloat(
-                    latitudeInput.value
-                );
-
-            var longitude =
-                parseFloat(
-                    longitudeInput.value
-                );
-
-
             var defaultLatitude =
                 -29.8587;
 
             var defaultLongitude =
                 31.0218;
 
-
-            if (
-                !Number.isFinite(latitude) ||
-                latitude < -90 ||
-                latitude > 90
-            ) {
-
-                latitude =
-                    defaultLatitude;
-
-            }
-
-
-            if (
-                !Number.isFinite(longitude) ||
-                longitude < -180 ||
-                longitude > 180
-            ) {
-
-                longitude =
-                    defaultLongitude;
-
-            }
-
-
             var map =
                 L.map(
-                    "assetEditMap",
+                    "assetMap",
                     {
                         zoomControl: true
                     }
                 );
 
-
             map.setView(
                 [
-                    latitude,
-                    longitude
+                    defaultLatitude,
+                    defaultLongitude
                 ],
-                15
+                12
             );
-
 
             L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1044,21 +807,33 @@
                 }
             ).addTo(map);
 
+            var marker = null;
 
-            var marker =
-                L.marker(
-                    [
-                        latitude,
-                        longitude
-                    ],
-                    {
-                        draggable: true
-                    }
-                );
+            /*
+             * =========================================================
+             * LOCATION FIX
+             * =========================================================
+             *
+             * MVC field names:
+             *
+             * name="Latitude"
+             * name="Longitude"
+             *
+             * Unique DOM IDs:
+             *
+             * id="AssetLatitude"
+             * id="AssetLongitude"
+             *
+             * The browser therefore posts Latitude and Longitude
+             * while JavaScript has unique elements to work with.
+             * =========================================================
+             */
 
+            var latitudeInput =
+                document.getElementById("AssetLatitude");
 
-            marker.addTo(map);
-
+            var longitudeInput =
+                document.getElementById("AssetLongitude");
 
             var latitudeDisplay =
                 document.getElementById(
@@ -1070,60 +845,50 @@
                     "longitudeDisplay"
                 );
 
-
             var locationDescription =
                 document.getElementById(
                     "LocationDescription"
                 );
-
 
             var locationStatus =
                 document.getElementById(
                     "locationStatus"
                 );
 
-
             var searchStatus =
                 document.getElementById(
                     "searchStatus"
                 );
-
 
             var searchResults =
                 document.getElementById(
                     "searchResults"
                 );
 
-
             var addressSearch =
                 document.getElementById(
                     "addressSearch"
                 );
-
 
             var searchButton =
                 document.getElementById(
                     "searchAddressButton"
                 );
 
-
             var selectMapCentre =
                 document.getElementById(
                     "selectMapCentre"
                 );
 
-
-            var editForm =
+            var registrationForm =
                 document.getElementById(
-                    "assetEditForm"
+                    "assetRegistrationForm"
                 );
 
-
-            var saveButton =
+            var registerButton =
                 document.getElementById(
-                    "saveAssetButton"
+                    "registerAssetButton"
                 );
-
 
             function setLocationStatus(
                 message,
@@ -1139,7 +904,6 @@
                     "warning"
                 );
 
-
                 if (type) {
 
                     locationStatus.classList.add(
@@ -1149,7 +913,6 @@
                 }
 
             }
-
 
             function setSearchStatus(
                 message,
@@ -1165,7 +928,6 @@
                     "warning"
                 );
 
-
                 if (type) {
 
                     searchStatus.classList.add(
@@ -1175,7 +937,6 @@
                 }
 
             }
-
 
             function updateCoordinateDisplay(
                 latitude,
@@ -1190,8 +951,15 @@
 
             }
 
+            /*
+             * =========================================================
+             * LOCATION FIX
+             *
+             * Write directly into the MVC fields.
+             * =========================================================
+             */
 
-            function updateCoordinates(
+            function updateHiddenCoordinates(
                 latitude,
                 longitude
             ) {
@@ -1202,7 +970,6 @@
                 var lon =
                     parseFloat(longitude);
 
-
                 if (
                     !Number.isFinite(lat) ||
                     !Number.isFinite(lon)
@@ -1212,6 +979,9 @@
 
                 }
 
+                /*
+                 * These are the actual values that will be posted.
+                 */
 
                 latitudeInput.value =
                     lat.toFixed(6);
@@ -1219,205 +989,72 @@
                 longitudeInput.value =
                     lon.toFixed(6);
 
-
-                updateCoordinateDisplay(
-                    lat,
-                    lon
+                latitudeInput.dispatchEvent(
+                    new Event(
+                        "input",
+                        {
+                            bubbles: true
+                        }
+                    )
                 );
 
+                longitudeInput.dispatchEvent(
+                    new Event(
+                        "input",
+                        {
+                            bubbles: true
+                        }
+                    )
+                );
+
+                latitudeInput.dispatchEvent(
+                    new Event(
+                        "change",
+                        {
+                            bubbles: true
+                        }
+                    )
+                );
+
+                longitudeInput.dispatchEvent(
+                    new Event(
+                        "change",
+                        {
+                            bubbles: true
+                        }
+                    )
+                );
 
                 return true;
 
             }
 
+            function synchroniseLocationFromMarker() {
 
-            function selectLocation(
-                latitude,
-                longitude,
-                performReverseGeocode
-            ) {
+                if (!marker) {
 
-                latitude =
-                    parseFloat(latitude);
-
-                longitude =
-                    parseFloat(longitude);
-
-
-                if (
-                    !Number.isFinite(latitude) ||
-                    !Number.isFinite(longitude)
-                ) {
-
-                    setLocationStatus(
-                        "The selected coordinates are invalid.",
-                        "error"
-                    );
-
-                    return;
+                    return false;
 
                 }
 
+                var position =
+                    marker.getLatLng();
 
-                if (
-                    latitude < -90 ||
-                    latitude > 90 ||
-                    longitude < -180 ||
-                    longitude > 180
-                ) {
+                if (!position) {
 
-                    setLocationStatus(
-                        "The selected coordinates are outside the valid range.",
-                        "error"
-                    );
-
-                    return;
+                    return false;
 
                 }
 
-
-                if (
-                    Math.abs(latitude) < 0.000001 &&
-                    Math.abs(longitude) < 0.000001
-                ) {
-
-                    setLocationStatus(
-                        "Please select a valid municipal location.",
-                        "error"
-                    );
-
-                    return;
-
-                }
-
-
-                updateCoordinates(
-                    latitude,
-                    longitude
+                return updateHiddenCoordinates(
+                    position.lat,
+                    position.lng
                 );
-
-
-                marker.setLatLng(
-                    [
-                        latitude,
-                        longitude
-                    ]
-                );
-
-
-                map.setView(
-                    [
-                        latitude,
-                        longitude
-                    ],
-                    Math.max(
-                        map.getZoom(),
-                        15
-                    )
-                );
-
-
-                setLocationStatus(
-                    "Location selected.",
-                    "success"
-                );
-
-
-                if (performReverseGeocode) {
-
-                    reverseGeocode(
-                        latitude,
-                        longitude
-                    );
-
-                }
 
             }
 
-
-            /* =========================================================
-               INITIAL DISPLAY
-               ========================================================= */
-
-            updateCoordinateDisplay(
-                latitude,
-                longitude
-            );
-
-
-            setLocationStatus(
-                "Current asset location loaded.",
-                "success"
-            );
-
-
-            /* =========================================================
-               MARKER DRAG
-               ========================================================= */
-
-            marker.on(
-                "dragend",
-                function () {
-
-                    var position =
-                        marker.getLatLng();
-
-                    selectLocation(
-                        position.lat,
-                        position.lng,
-                        true
-                    );
-
-                }
-            );
-
-
-            /* =========================================================
-               MAP CLICK
-               ========================================================= */
-
-            map.on(
-                "click",
-                function (event) {
-
-                    selectLocation(
-                        event.latlng.lat,
-                        event.latlng.lng,
-                        true
-                    );
-
-                }
-            );
-
-
-            /* =========================================================
-               MAP CENTRE
-               ========================================================= */
-
-            selectMapCentre.addEventListener(
-                "click",
-                function () {
-
-                    var centre =
-                        map.getCenter();
-
-                    selectLocation(
-                        centre.lat,
-                        centre.lng,
-                        true
-                    );
-
-                }
-            );
-
-
-            /* =========================================================
-               REVERSE GEOCODING
-               ========================================================= */
-
             var reverseGeocodeTimer =
                 null;
-
 
             function reverseGeocode(
                 latitude,
@@ -1434,7 +1071,6 @@
 
                 }
 
-
                 reverseGeocodeTimer =
                     setTimeout(
                         function () {
@@ -1444,28 +1080,20 @@
                                 "warning"
                             );
 
-
                             var url =
                                 "@Url.Action("ReverseGeocode", "MunicipalAsset")";
-
 
                             var separator =
                                 url.indexOf("?") === -1
                                     ? "?"
                                     : "&";
 
-
                             url +=
                                 separator +
                                 "lat=" +
-                                encodeURIComponent(
-                                    latitude
-                                ) +
+                                encodeURIComponent(latitude) +
                                 "&lon=" +
-                                encodeURIComponent(
-                                    longitude
-                                );
-
+                                encodeURIComponent(longitude);
 
                             fetch(
                                 url,
@@ -1478,6 +1106,7 @@
                                     }
                                 }
                             )
+
                             .then(
                                 function (response) {
 
@@ -1493,6 +1122,7 @@
 
                                 }
                             )
+
                             .then(
                                 function (data) {
 
@@ -1511,7 +1141,6 @@
 
                                     }
 
-
                                     if (
                                         data &&
                                         data.display_name
@@ -1528,7 +1157,6 @@
 
                                         }
 
-
                                         setLocationStatus(
                                             "Location identified successfully.",
                                             "success"
@@ -1538,7 +1166,7 @@
                                     else {
 
                                         setLocationStatus(
-                                            "Coordinates updated. Location description can be entered manually.",
+                                            "Coordinates selected. Location description can be entered manually.",
                                             "success"
                                         );
 
@@ -1546,13 +1174,14 @@
 
                                 }
                             )
+
                             .catch(
                                 function (error) {
 
                                     console.error(error);
 
                                     setLocationStatus(
-                                        "Coordinates updated. Location description can be entered manually.",
+                                        "Coordinates selected. Location description can be entered manually.",
                                         "success"
                                     );
 
@@ -1565,10 +1194,202 @@
 
             }
 
+            function selectLocation(
+                latitude,
+                longitude,
+                performReverseGeocode
+            ) {
 
-            /* =========================================================
-               ADDRESS SEARCH
-               ========================================================= */
+                latitude =
+                    parseFloat(latitude);
+
+                longitude =
+                    parseFloat(longitude);
+
+                if (
+                    !Number.isFinite(latitude) ||
+                    !Number.isFinite(longitude)
+                ) {
+
+                    setLocationStatus(
+                        "The selected coordinates are invalid.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                if (
+                    latitude < -90 ||
+                    latitude > 90 ||
+                    longitude < -180 ||
+                    longitude > 180
+                ) {
+
+                    setLocationStatus(
+                        "The selected coordinates are outside the valid range.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                if (
+                    Math.abs(latitude) < 0.000001 &&
+                    Math.abs(longitude) < 0.000001
+                ) {
+
+                    setLocationStatus(
+                        "Please select a valid municipal location.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                /*
+                 * FIRST:
+                 *
+                 * Update the actual MVC form fields.
+                 */
+
+                if (
+                    !updateHiddenCoordinates(
+                        latitude,
+                        longitude
+                    )
+                ) {
+
+                    setLocationStatus(
+                        "The selected location could not be saved.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                updateCoordinateDisplay(
+                    latitude,
+                    longitude
+                );
+
+                /*
+                 * SECOND:
+                 *
+                 * Create or move the marker.
+                 */
+
+                if (marker === null) {
+
+                    marker =
+                        L.marker(
+                            [
+                                latitude,
+                                longitude
+                            ],
+                            {
+                                draggable: true
+                            }
+                        );
+
+                    marker.addTo(map);
+
+                    marker.on(
+                        "dragend",
+                        function () {
+
+                            var position =
+                                marker.getLatLng();
+
+                            selectLocation(
+                                position.lat,
+                                position.lng,
+                                true
+                            );
+
+                        }
+                    );
+
+                }
+                else {
+
+                    marker.setLatLng(
+                        [
+                            latitude,
+                            longitude
+                        ]
+                    );
+
+                }
+
+                /*
+                 * THIRD:
+                 *
+                 * Make absolutely sure the marker and
+                 * hidden form fields are synchronized.
+                 */
+
+                synchroniseLocationFromMarker();
+
+                map.setView(
+                    [
+                        latitude,
+                        longitude
+                    ],
+                    Math.max(
+                        map.getZoom(),
+                        15
+                    )
+                );
+
+                setLocationStatus(
+                    "Location selected.",
+                    "success"
+                );
+
+                if (performReverseGeocode) {
+
+                    reverseGeocode(
+                        latitude,
+                        longitude
+                    );
+
+                }
+
+            }
+
+            map.on(
+                "click",
+                function (event) {
+
+                    selectLocation(
+                        event.latlng.lat,
+                        event.latlng.lng,
+                        true
+                    );
+
+                }
+            );
+
+            selectMapCentre.addEventListener(
+                "click",
+                function () {
+
+                    var centre =
+                        map.getCenter();
+
+                    selectLocation(
+                        centre.lat,
+                        centre.lng,
+                        true
+                    );
+
+                }
+            );
 
             searchButton.addEventListener(
                 "click",
@@ -1576,7 +1397,6 @@
 
                     var query =
                         addressSearch.value.trim();
-
 
                     if (!query) {
 
@@ -1591,38 +1411,29 @@
 
                     }
 
-
                     searchButton.disabled =
                         true;
 
-
                     searchResults.innerHTML =
                         "";
-
 
                     setSearchStatus(
                         "Searching for locations...",
                         "warning"
                     );
 
-
                     var url =
                         "@Url.Action("SearchAddress", "MunicipalAsset")";
-
 
                     var separator =
                         url.indexOf("?") === -1
                             ? "?"
                             : "&";
 
-
                     url +=
                         separator +
                         "query=" +
-                        encodeURIComponent(
-                            query
-                        );
-
+                        encodeURIComponent(query);
 
                     fetch(
                         url,
@@ -1635,6 +1446,7 @@
                             }
                         }
                     )
+
                     .then(
                         function (response) {
 
@@ -1650,12 +1462,12 @@
 
                         }
                     )
+
                     .then(
                         function (data) {
 
                             searchResults.innerHTML =
                                 "";
-
 
                             if (
                                 data &&
@@ -1672,7 +1484,6 @@
 
                             }
 
-
                             if (!Array.isArray(data)) {
 
                                 setSearchStatus(
@@ -1683,7 +1494,6 @@
                                 return;
 
                             }
-
 
                             if (data.length === 0) {
 
@@ -1696,13 +1506,11 @@
 
                             }
 
-
                             setSearchStatus(
                                 data.length +
                                 " location(s) found. Select a result below.",
                                 "success"
                             );
-
 
                             data.forEach(
                                 function (result) {
@@ -1716,48 +1524,41 @@
 
                                     }
 
-
                                     var resultButton =
                                         document.createElement(
                                             "button"
                                         );
 
-
                                     resultButton.type =
                                         "button";
 
-
                                     resultButton.className =
                                         "location-search-result";
-
 
                                     resultButton.textContent =
                                         result.display_name ||
                                         "Location";
 
-
                                     resultButton.addEventListener(
                                         "click",
                                         function () {
 
-                                            var resultLatitude =
+                                            var latitude =
                                                 parseFloat(
                                                     result.lat
                                                 );
 
-
-                                            var resultLongitude =
+                                            var longitude =
                                                 parseFloat(
                                                     result.lon
                                                 );
 
-
                                             if (
                                                 !Number.isFinite(
-                                                    resultLatitude
+                                                    latitude
                                                 ) ||
                                                 !Number.isFinite(
-                                                    resultLongitude
+                                                    longitude
                                                 )
                                             ) {
 
@@ -1770,13 +1571,11 @@
 
                                             }
 
-
                                             selectLocation(
-                                                resultLatitude,
-                                                resultLongitude,
+                                                latitude,
+                                                longitude,
                                                 false
                                             );
-
 
                                             if (
                                                 !locationDescription
@@ -1790,10 +1589,8 @@
 
                                             }
 
-
                                             searchResults.innerHTML =
                                                 "";
-
 
                                             setSearchStatus(
                                                 "Location selected.",
@@ -1802,7 +1599,6 @@
 
                                         }
                                     );
-
 
                                     searchResults.appendChild(
                                         resultButton
@@ -1813,6 +1609,7 @@
 
                         }
                     )
+
                     .catch(
                         function (error) {
 
@@ -1828,6 +1625,7 @@
 
                         }
                     )
+
                     .finally(
                         function () {
 
@@ -1840,14 +1638,11 @@
                 }
             );
 
-
             addressSearch.addEventListener(
                 "keydown",
                 function (event) {
 
-                    if (
-                        event.key === "Enter"
-                    ) {
+                    if (event.key === "Enter") {
 
                         event.preventDefault();
 
@@ -1858,132 +1653,145 @@
                 }
             );
 
+            /*
+             * =========================================================
+             * FINAL FORM SUBMISSION
+             * =========================================================
+             */
 
-            /* =========================================================
-               FORM SUBMISSION
-               ========================================================= */
-
-            editForm.addEventListener(
+            registrationForm.addEventListener(
                 "submit",
                 function (event) {
 
+                    if (marker) {
 
-                    /*
-                     * Always synchronize the marker
-                     * before submitting.
-                     */
-
-                    var markerPosition =
-                        marker.getLatLng();
-
-
-                    if (markerPosition) {
-
-                        updateCoordinates(
-                            markerPosition.lat,
-                            markerPosition.lng
-                        );
+                        synchroniseLocationFromMarker();
 
                     }
 
-
-                    var finalLatitude =
+                    var latitude =
                         parseFloat(
                             latitudeInput.value
                         );
 
-
-                    var finalLongitude =
+                    var longitude =
                         parseFloat(
                             longitudeInput.value
                         );
 
+                    if (
+                        (
+                            !Number.isFinite(latitude) ||
+                            !Number.isFinite(longitude)
+                        ) &&
+                        marker
+                    ) {
+
+                        var markerPosition =
+                            marker.getLatLng();
+
+                        updateHiddenCoordinates(
+                            markerPosition.lat,
+                            markerPosition.lng
+                        );
+
+                        latitude =
+                            parseFloat(
+                                latitudeInput.value
+                            );
+
+                        longitude =
+                            parseFloat(
+                                longitudeInput.value
+                            );
+
+                    }
 
                     if (
-                        !Number.isFinite(
-                            finalLatitude
-                        ) ||
-                        !Number.isFinite(
-                            finalLongitude
-                        )
+                        !Number.isFinite(latitude) ||
+                        !Number.isFinite(longitude)
                     ) {
 
                         event.preventDefault();
 
-
                         setLocationStatus(
-                            "Please select a valid municipal asset location.",
+                            "Please select the municipal asset location on the map before registering the asset.",
                             "error"
                         );
 
-
-                        document
-                            .querySelector(
+                        var locationPanel =
+                            document.querySelector(
                                 ".selected-location-panel"
-                            )
-                            .scrollIntoView(
+                            );
+
+                        if (locationPanel) {
+
+                            locationPanel.scrollIntoView(
                                 {
                                     behavior: "smooth",
                                     block: "center"
                                 }
                             );
 
+                        }
 
                         return false;
 
                     }
 
-
                     if (
-                        finalLatitude < -90 ||
-                        finalLatitude > 90 ||
-                        finalLongitude < -180 ||
-                        finalLongitude > 180
+                        latitude < -90 ||
+                        latitude > 90 ||
+                        longitude < -180 ||
+                        longitude > 180
                     ) {
 
                         event.preventDefault();
-
 
                         setLocationStatus(
                             "The selected coordinates are invalid.",
                             "error"
                         );
 
-
                         return false;
 
                     }
 
-
                     if (
-                        Math.abs(finalLatitude) < 0.000001 &&
-                        Math.abs(finalLongitude) < 0.000001
+                        Math.abs(latitude) < 0.000001 &&
+                        Math.abs(longitude) < 0.000001
                     ) {
 
                         event.preventDefault();
-
 
                         setLocationStatus(
                             "Please select a valid municipal asset location.",
                             "error"
                         );
 
+                        return false;
+
+                    }
+
+                    if (
+                        !assetType.value ||
+                        !assetCategory.value
+                    ) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please select a valid asset type and asset category before registering the asset."
+                        );
 
                         return false;
 
                     }
 
-
-                    /*
-                     * Confirmation before update.
-                     */
-
                     var confirmed =
                         window.confirm(
-                            "Are you sure you want to save these changes to this municipal asset?\n\n" +
-                            "The changes will be recorded in the asset history."
+                            "Are you sure you want to register this municipal asset with the selected ward and location?"
                         );
-
 
                     if (!confirmed) {
 
@@ -1993,35 +1801,31 @@
 
                     }
 
-
-                    saveButton.disabled =
+                    registerButton.disabled =
                         true;
 
-
-                    saveButton.innerHTML =
-                        '<span class="button-icon">✓</span> Saving Changes...';
-
+                    registerButton.innerHTML =
+                        '<span class="button-icon">✓</span> Registering Asset...';
 
                     /*
-                     * Final coordinate values.
+                     * FINAL WRITE:
+                     *
+                     * These exact values are submitted as:
+                     *
+                     * Latitude
+                     * Longitude
                      */
 
                     latitudeInput.value =
-                        finalLatitude.toFixed(6);
+                        latitude.toFixed(6);
 
                     longitudeInput.value =
-                        finalLongitude.toFixed(6);
-
+                        longitude.toFixed(6);
 
                     return true;
 
                 }
             );
-
-
-            /* =========================================================
-               MAP RESIZE
-               ========================================================= */
 
             setTimeout(
                 function () {
@@ -2032,7 +1836,6 @@
                 300
             );
 
-
             setTimeout(
                 function () {
 
@@ -2041,7 +1844,6 @@
                 },
                 1000
             );
-
 
             window.addEventListener(
                 "resize",
@@ -2054,31 +1856,28 @@
 
         }
 
-
         if (
             document.readyState === "loading"
         ) {
 
             document.addEventListener(
                 "DOMContentLoaded",
-                initialiseEditPage
+                initialiseAssetPage
             );
 
         }
         else {
 
-            initialiseEditPage();
+            initialiseAssetPage();
 
         }
 
     })();
-
 </script>
-
 
 <style>
 
-    .municipal-asset-edit-page {
+    .municipal-asset-create-page {
         max-width: 1250px;
         margin: 0 auto;
         padding: 30px 24px 60px;
@@ -2086,12 +1885,7 @@
         color: #1f2937;
     }
 
-
-    /* ================================================================
-       HEADER
-       ================================================================ */
-
-    .municipal-asset-edit-header {
+    .municipal-asset-create-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -2107,7 +1901,7 @@
         margin-bottom: 7px;
     }
 
-    .municipal-asset-edit-header h1 {
+    .municipal-asset-create-header h1 {
         margin: 0;
         font-size: 32px;
         font-weight: 700;
@@ -2122,16 +1916,11 @@
         font-size: 30px;
     }
 
-    .municipal-asset-edit-header p {
+    .municipal-asset-create-header p {
         margin: 9px 0 0;
         color: #6b7280;
         font-size: 15px;
     }
-
-
-    /* ================================================================
-       BUTTONS
-       ================================================================ */
 
     .btn {
         border: none;
@@ -2156,7 +1945,7 @@
     .btn-primary {
         background: #0d5cc1;
         color: #ffffff;
-        min-width: 160px;
+        min-width: 190px;
     }
 
         .btn-primary:hover {
@@ -2199,11 +1988,6 @@
             background: #e1edff;
         }
 
-
-    /* ================================================================
-       NOTICE
-       ================================================================ */
-
     .asset-info-notice {
         display: flex;
         gap: 13px;
@@ -2240,11 +2024,6 @@
         font-size: 14px;
         line-height: 1.55;
     }
-
-
-    /* ================================================================
-       FORM CARD
-       ================================================================ */
 
     .form-card {
         background: #ffffff;
@@ -2293,11 +2072,6 @@
         padding: 24px 22px;
     }
 
-
-    /* ================================================================
-       FORM
-       ================================================================ */
-
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2339,12 +2113,6 @@
             box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
         }
 
-        .form-control[readonly] {
-            background: #f3f4f6;
-            color: #6b7280;
-            cursor: not-allowed;
-        }
-
     .textarea-control {
         resize: vertical;
         min-height: 105px;
@@ -2364,29 +2132,6 @@
         color: #b42318;
         font-size: 12px;
     }
-
-
-    /* ================================================================
-       VALIDATION
-       ================================================================ */
-
-    .validation-summary {
-        color: #b42318;
-        background: #fff5f5;
-        border: 1px solid #f1b8b8;
-        border-radius: 8px;
-        padding: 12px 15px;
-        margin-bottom: 20px;
-    }
-
-        .validation-summary:empty {
-            display: none;
-        }
-
-
-    /* ================================================================
-       LOCATION
-       ================================================================ */
 
     .location-notice {
         display: flex;
@@ -2476,7 +2221,7 @@
         background: #f3f4f6;
     }
 
-    #assetEditMap {
+    #assetMap {
         height: 430px;
         width: 100%;
         min-height: 430px;
@@ -2512,11 +2257,6 @@
         margin-top: 7px;
         margin-bottom: 20px;
     }
-
-
-    /* ================================================================
-       SELECTED LOCATION
-       ================================================================ */
 
     .selected-location-panel {
         border: 1px solid #c9ddfa;
@@ -2595,57 +2335,59 @@
         margin-bottom: 0;
     }
 
-
-    /* ================================================================
-       UPDATE INFORMATION
-       ================================================================ */
-
-    .update-information-card {
+    .system-generated-card {
         background: #fbfcfe;
     }
 
-    .update-information {
-        display: flex;
-        align-items: flex-start;
-        gap: 13px;
-        padding: 15px;
-        border: 1px solid #dbe5f0;
+    .generated-information-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .generated-item {
+        border: 1px solid #e5e7eb;
         border-radius: 9px;
-        background: #f7faff;
+        padding: 14px;
+        background: #ffffff;
     }
 
-    .update-information-icon {
-        width: 28px;
-        height: 28px;
-        min-width: 28px;
-        border-radius: 50%;
-        background: #0d5cc1;
-        color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .update-information strong {
+    .generated-label {
         display: block;
-        color: #16447a;
-        margin-bottom: 4px;
-        font-size: 14px;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        margin-bottom: 6px;
     }
 
-    .update-information p {
-        margin: 0;
-        color: #48627d;
+    .generated-item strong {
+        display: block;
+        color: #374151;
         font-size: 13px;
-        line-height: 1.5;
     }
 
+    .generated-item small {
+        display: block;
+        margin-top: 5px;
+        color: #9ca3af;
+        font-size: 11px;
+        line-height: 1.4;
+    }
 
-    /* ================================================================
-       ACTIONS
-       ================================================================ */
+    .validation-summary {
+        color: #b42318;
+        background: #fff5f5;
+        border: 1px solid #f1b8b8;
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+    }
+
+        .validation-summary:empty {
+            display: none;
+        }
 
     .form-actions {
         display: flex;
@@ -2655,18 +2397,20 @@
         padding-top: 5px;
     }
 
+    @@media (max-width: 900px) {
 
-    /* ================================================================
-       RESPONSIVE
-       ================================================================ */
+        .generated-information-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
 
     @@media (max-width: 700px) {
 
-        .municipal-asset-edit-page {
+        .municipal-asset-create-page {
             padding: 20px 14px 40px;
         }
 
-        .municipal-asset-edit-header {
+        .municipal-asset-create-header {
             flex-direction: column;
         }
 
@@ -2683,6 +2427,10 @@
         }
 
         .coordinate-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .generated-information-grid {
             grid-template-columns: 1fr;
         }
 
@@ -2707,7 +2455,7 @@
                 width: 100%;
             }
 
-        #assetEditMap {
+        #assetMap {
             height: 350px;
             min-height: 350px;
         }

@@ -2,6 +2,20 @@
 
 @{
     ViewBag.Title = "Completed Work History";
+
+    // Sort wards naturally by their numeric WardNumber.
+    // This prevents: Ward 1, Ward 100, Ward 99
+    // and gives: Ward 1, Ward 2, Ward 3 ... Ward 99, Ward 100.
+    var orderedWards = ((IEnumerable<CommunityServiceProject.Models.Ward>)ViewBag.Wards)
+        .OrderBy(w =>
+        {
+            int number;
+            return int.TryParse(w.WardNumber, out number)
+                ? number
+                : int.MaxValue;
+        })
+        .ThenBy(w => w.WardNumber)
+        .ToList();
 }
 
 <div class="completed-work-page">
@@ -9,67 +23,112 @@
     <div class="completed-work-card">
 
         <div class="completed-work-header">
+
             <div>
                 <h2>Completed Work History</h2>
-                <p>View maintenance work you have successfully completed.</p>
+
+                <p>
+                    View maintenance work you have successfully completed.
+                </p>
             </div>
 
             <a href="@Url.Action("Dashboard", "Technicians")"
                class="back-button">
                 ← Back to Dashboard
             </a>
+
         </div>
+
 
         <div class="completed-work-content">
 
-            <!-- FILTERS -->
+            <!-- =======================================================
+                 FILTERS
+                 ======================================================= -->
+
             <div class="completed-work-filters">
 
-                @using (Html.BeginForm("CompletedWork", "Technicians", FormMethod.Get))
+                @using (Html.BeginForm(
+                    "CompletedWork",
+                    "Technicians",
+                    FormMethod.Get))
                 {
+
                     <div class="filter-group search-group">
-                        <label for="search">Search</label>
+
+                        <label for="search">
+                            Search
+                        </label>
+
                         <input type="text"
                                id="search"
                                name="search"
                                value="@ViewBag.Search"
                                placeholder="Search completed work..." />
+
                     </div>
 
-                    <div class="filter-group">
-                        <label for="categoryId">Category</label>
 
-                        <select id="categoryId" name="categoryId">
-                            <option value="">All Categories</option>
+                    <div class="filter-group">
+
+                        <label for="categoryId">
+                            Category
+                        </label>
+
+                        <select id="categoryId"
+                                name="categoryId">
+
+                            <option value="">
+                                All Categories
+                            </option>
 
                             @foreach (var category in ViewBag.Categories)
                             {
                                 <option value="@category.CategoryID"
                                         @(ViewBag.CategoryID != null && (int)ViewBag.CategoryID == category.CategoryID ? "selected" : "")>
+
                                     @category.CategoryName
+
                                 </option>
                             }
+
                         </select>
+
                     </div>
 
+
                     <div class="filter-group">
-                        <label for="wardId">Ward</label>
 
-                        <select id="wardId" name="wardId">
-                            <option value="">All Wards</option>
+                        <label for="wardId">
+                            Ward
+                        </label>
 
-                            @foreach (var ward in ViewBag.Wards)
+                        <select id="wardId"
+                                name="wardId">
+
+                            <option value="">
+                                All Wards
+                            </option>
+
+                            @foreach (var ward in orderedWards)
                             {
                                 <option value="@ward.WardID"
                                         @(ViewBag.WardID != null && (int)ViewBag.WardID == ward.WardID ? "selected" : "")>
+
                                     Ward @ward.WardNumber
+
                                 </option>
                             }
+
                         </select>
+
                     </div>
 
+
                     <div class="filter-buttons">
-                        <button type="submit" class="apply-button">
+
+                        <button type="submit"
+                                class="apply-button">
                             Apply Filters
                         </button>
 
@@ -77,41 +136,80 @@
                            class="clear-button">
                             Clear
                         </a>
+
                     </div>
+
                 }
 
             </div>
 
-            <!-- COMPLETED WORK TABLE -->
+
+            <!-- =======================================================
+                 COMPLETED WORK TABLE
+                 ======================================================= -->
+
             <div class="completed-work-section">
 
                 <div class="section-header">
+
                     <div>
-                        <h3>My Completed Work</h3>
-                        <p>Verified maintenance work completed by you.</p>
+
+                        <h3>
+                            My Completed Work
+                        </h3>
+
+                        <p>
+                            Verified maintenance work completed by you.
+                        </p>
+
                     </div>
 
                     <span class="work-count">
                         @Model.Count() completed
                     </span>
+
                 </div>
+
 
                 @if (Model.Any())
                 {
+
                     <div class="table-wrapper">
 
                         <table class="completed-work-table">
 
                             <thead>
+
                                 <tr>
-                                    <th>Reference</th>
-                                    <th>Category</th>
-                                    <th>Ward</th>
-                                    <th>Completed</th>
-                                    <th>Resolution</th>
-                                    <th>Action</th>
+
+                                    <th>
+                                        Reference
+                                    </th>
+
+                                    <th>
+                                        Category
+                                    </th>
+
+                                    <th>
+                                        Ward
+                                    </th>
+
+                                    <th>
+                                        Completed
+                                    </th>
+
+                                    <th>
+                                        Resolution
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
                                 </tr>
+
                             </thead>
+
 
                             <tbody>
 
@@ -126,26 +224,76 @@
 
                                     <tr>
 
+                                        <!-- ===================================================
+                                             REFERENCE NUMBER
+                                             =================================================== -->
+
                                         <td class="reference-cell">
-                                            #REQ-@work.RequestID
+
+                                            @if (work.Request != null &&
+                                                 !string.IsNullOrWhiteSpace(work.Request.ReferenceNumber))
+                                            {
+                                                @work.Request.ReferenceNumber
+                                            }
+                                            else
+                                            {
+                                                <span>
+                                                    REQ-@work.RequestID
+                                                </span>
+                                            }
+
                                         </td>
 
-                                        <td>
-                                            @work.Request.Category.CategoryName
-                                        </td>
+
+                                        <!-- ===================================================
+                                             CATEGORY
+                                             =================================================== -->
 
                                         <td>
-                                            Ward @work.Request.Ward.WardNumber
+
+                                            @(work.Request != null &&
+                                              work.Request.Category != null
+                                                ? work.Request.Category.CategoryName
+                                                : "—")
+
                                         </td>
 
+
+                                        <!-- ===================================================
+                                             WARD
+                                             =================================================== -->
+
                                         <td>
+
+                                            @(work.Request != null &&
+                                              work.Request.Ward != null
+                                                ? "Ward " + work.Request.Ward.WardNumber
+                                                : "—")
+
+                                        </td>
+
+
+                                        <!-- ===================================================
+                                             COMPLETED DATE
+                                             =================================================== -->
+
+                                        <td>
+
                                             @(work.CompletedDate.HasValue
                                                 ? work.CompletedDate.Value.ToString("dd/MM/yyyy")
                                                 : "—")
+
                                         </td>
 
+
+                                        <!-- ===================================================
+                                             RESOLUTION
+                                             =================================================== -->
+
                                         <td class="resolution-cell">
-                                            @if (completion != null)
+
+                                            @if (completion != null &&
+                                                 !string.IsNullOrWhiteSpace(completion.ResolutionAction))
                                             {
                                                 @completion.ResolutionAction
                                             }
@@ -155,13 +303,26 @@
                                                     Resolution unavailable
                                                 </span>
                                             }
+
                                         </td>
 
+
+                                        <!-- ===================================================
+                                             ACTION
+                                             =================================================== -->
+
                                         <td>
-                                            <a href="@Url.Action("Details", "Technicians", new { id = work.RequestID })"
+
+                                            <a href="@Url.Action(
+                                                "Details",
+                                                "Technicians",
+                                                new { id = work.RequestID })"
                                                class="view-button">
+
                                                 View Details
+
                                             </a>
+
                                         </td>
 
                                     </tr>
@@ -172,16 +333,24 @@
                         </table>
 
                     </div>
+
                 }
                 else
                 {
+
+                    <!-- ===================================================
+                         EMPTY STATE
+                         =================================================== -->
+
                     <div class="empty-state">
 
                         <div class="empty-icon">
                             ✓
                         </div>
 
-                        <h3>No Completed Work Found</h3>
+                        <h3>
+                            No Completed Work Found
+                        </h3>
 
                         <p>
                             You do not have any verified completed maintenance
@@ -189,6 +358,7 @@
                         </p>
 
                     </div>
+
                 }
 
             </div>
@@ -199,6 +369,7 @@
 
 </div>
 
+
 <style>
 
     .completed-work-page {
@@ -206,6 +377,7 @@
         min-height: 100vh;
         padding: 35px 20px;
     }
+
 
     .completed-work-card {
         width: 100%;
@@ -217,6 +389,11 @@
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
 
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+
     .completed-work-header {
         display: flex;
         justify-content: space-between;
@@ -227,6 +404,7 @@
         border-bottom: 1px solid #e5e7eb;
     }
 
+
         .completed-work-header h2 {
             margin: 0 0 6px 0;
             font-size: 28px;
@@ -234,11 +412,13 @@
             color: #0D5CC1;
         }
 
+
         .completed-work-header p {
             margin: 0;
             color: #6b7280;
             font-size: 14px;
         }
+
 
     .back-button {
         display: inline-block;
@@ -251,15 +431,26 @@
         font-size: 14px;
     }
 
+
         .back-button:hover {
             background: #e5e7eb;
             text-decoration: none;
             color: #111827;
         }
 
+
+    /* ============================================================
+       CONTENT
+       ============================================================ */
+
     .completed-work-content {
         padding: 35px;
     }
+
+
+    /* ============================================================
+       FILTERS
+       ============================================================ */
 
     .completed-work-filters {
         padding: 22px;
@@ -269,12 +460,14 @@
         border-radius: 12px;
     }
 
+
         .completed-work-filters form {
             display: flex;
             align-items: flex-end;
             gap: 18px;
             flex-wrap: wrap;
         }
+
 
     .filter-group {
         display: flex;
@@ -283,16 +476,19 @@
         min-width: 190px;
     }
 
+
     .search-group {
         flex: 1;
         min-width: 260px;
     }
+
 
     .filter-group label {
         font-size: 13px;
         font-weight: 600;
         color: #374151;
     }
+
 
     .filter-group input,
     .filter-group select {
@@ -305,15 +501,18 @@
         outline: none;
     }
 
+
         .filter-group input:focus,
         .filter-group select:focus {
             border-color: #6b7280;
         }
 
+
     .filter-buttons {
         display: flex;
         gap: 10px;
     }
+
 
     .apply-button,
     .clear-button {
@@ -330,19 +529,23 @@
         justify-content: center;
     }
 
+
     .apply-button {
         background: #2563eb;
         color: white;
     }
 
+
         .apply-button:hover {
             background: #1d4ed8;
         }
+
 
     .clear-button {
         background: #e5e7eb;
         color: #374151;
     }
+
 
         .clear-button:hover {
             background: #d1d5db;
@@ -350,9 +553,15 @@
             color: #111827;
         }
 
+
+    /* ============================================================
+       SECTION HEADER
+       ============================================================ */
+
     .completed-work-section {
         width: 100%;
     }
+
 
     .section-header {
         display: flex;
@@ -361,17 +570,20 @@
         margin-bottom: 18px;
     }
 
+
         .section-header h3 {
             margin: 0 0 5px 0;
             font-size: 21px;
             color: #1f2937;
         }
 
+
         .section-header p {
             margin: 0;
             color: #6b7280;
             font-size: 14px;
         }
+
 
     .work-count {
         padding: 7px 12px;
@@ -382,6 +594,11 @@
         font-weight: 600;
     }
 
+
+    /* ============================================================
+       TABLE
+       ============================================================ */
+
     .table-wrapper {
         width: 100%;
         overflow-x: auto;
@@ -389,11 +606,13 @@
         border-radius: 10px;
     }
 
+
     .completed-work-table {
         width: 100%;
         border-collapse: collapse;
         min-width: 900px;
     }
+
 
         .completed-work-table th {
             padding: 15px 16px;
@@ -406,6 +625,7 @@
             white-space: nowrap;
         }
 
+
         .completed-work-table td {
             padding: 16px;
             border-bottom: 1px solid #f0f0f0;
@@ -414,29 +634,48 @@
             vertical-align: middle;
         }
 
+
         .completed-work-table tbody tr:last-child td {
             border-bottom: none;
         }
+
 
         .completed-work-table tbody tr:hover {
             background: #fafafa;
         }
 
+
+    /* ============================================================
+       REFERENCE
+       ============================================================ */
+
     .reference-cell {
         font-weight: 700;
         color: #1f2937 !important;
         white-space: nowrap;
+        letter-spacing: 0.2px;
     }
+
+
+    /* ============================================================
+       RESOLUTION
+       ============================================================ */
 
     .resolution-cell {
         max-width: 350px;
         line-height: 1.5;
     }
 
+
     .no-resolution {
         color: #9ca3af;
         font-style: italic;
     }
+
+
+    /* ============================================================
+       VIEW BUTTON
+       ============================================================ */
 
     .view-button {
         display: inline-block;
@@ -450,11 +689,17 @@
         white-space: nowrap;
     }
 
+
         .view-button:hover {
             background: #dbeafe;
             color: #1e40af;
             text-decoration: none;
         }
+
+
+    /* ============================================================
+       EMPTY STATE
+       ============================================================ */
 
     .empty-state {
         text-align: center;
@@ -463,6 +708,7 @@
         border-radius: 12px;
         background: #fafafa;
     }
+
 
     .empty-icon {
         width: 52px;
@@ -478,16 +724,23 @@
         font-weight: 700;
     }
 
+
     .empty-state h3 {
         margin: 0 0 8px;
         color: #374151;
     }
+
 
     .empty-state p {
         margin: 0;
         color: #6b7280;
         font-size: 14px;
     }
+
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
 
     @@media (max-width: 900px) {
 
@@ -496,14 +749,17 @@
             align-items: flex-start;
         }
 
+
         .completed-work-content {
             padding: 20px;
         }
+
 
         .completed-work-filters form {
             align-items: stretch;
             flex-direction: column;
         }
+
 
         .filter-group,
         .search-group {
@@ -511,9 +767,11 @@
             min-width: 0;
         }
 
+
         .filter-buttons {
             width: 100%;
         }
+
 
         .apply-button,
         .clear-button {
@@ -521,19 +779,23 @@
         }
     }
 
+
     @@media (max-width: 600px) {
 
         .completed-work-page {
             padding: 15px 10px;
         }
 
+
         .completed-work-header {
             padding: 22px 20px;
         }
 
+
             .completed-work-header h2 {
                 font-size: 23px;
             }
+
 
         .section-header {
             align-items: flex-start;

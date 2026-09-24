@@ -1,0 +1,410 @@
+﻿@model IEnumerable<CommunityServiceProject.ViewModels.SystemHistoryViewModel>
+
+@{
+    ViewBag.Title = "System History";
+    var users = ViewBag.Users as List<string>;
+}
+
+<div class="system-history-page">
+
+    <div class="system-history-header">
+        <div>
+            <h2>System History</h2>
+            <p>View the history of requests and service activities across the system.</p>
+        </div>
+
+        <a href="@Url.Action("Index", "AdministratorDashboard")" class="btn-history-back">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="system-history-card">
+
+        @using (Html.BeginForm("Index", "AdministratorSystemHistory", FormMethod.Get))
+        {
+            <div class="history-filters">
+
+                <div class="history-search">
+                    <label>Search</label>
+                    <input type="text"
+                           name="search"
+                           value="@ViewBag.SelectedSearch"
+                           placeholder="Search user, reference or action..." />
+                </div>
+
+                <div>
+                    <label>Type</label>
+                    <select name="type">
+                        <option value="All">All</option>
+                        <option value="Request"
+                                @(ViewBag.SelectedType == "Request" ? "selected" : "")>
+                            Request
+                        </option>
+                        <option value="Assignment"
+                                @(ViewBag.SelectedType == "Assignment" ? "selected" : "")>
+                            Assignment
+                        </option>
+                        <option value="Maintenance"
+                                @(ViewBag.SelectedType == "Maintenance" ? "selected" : "")>
+                            Maintenance
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>User</label>
+                    <select name="user">
+                        <option value="All">All Users</option>
+
+                        @if (users != null)
+                        {
+                            foreach (var item in users)
+                            {
+                                <option value="@item"
+                                        @(ViewBag.SelectedUser == item ? "selected" : "")>
+                                    @item
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label>Date</label>
+                    <select name="date">
+                        <option value="All">All Dates</option>
+                        <option value="Today"
+                                @(ViewBag.SelectedDate == "Today" ? "selected" : "")>
+                            Today
+                        </option>
+                        <option value="Last7Days"
+                                @(ViewBag.SelectedDate == "Last7Days" ? "selected" : "")>
+                            Last 7 Days
+                        </option>
+                        <option value="Last30Days"
+                                @(ViewBag.SelectedDate == "Last30Days" ? "selected" : "")>
+                            Last 30 Days
+                        </option>
+                    </select>
+                </div>
+
+                <div class="history-filter-button">
+                    <button type="submit" class="btn-history-filter">
+                        Search
+                    </button>
+                </div>
+
+                <div class="history-reset-button">
+                    <a href="@Url.Action("Index", "AdministratorSystemHistory")"
+                       class="btn-history-reset">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+        }
+
+        <div class="history-table-wrapper">
+
+            <table class="system-history-table">
+
+                <thead>
+                    <tr>
+                        <th>Date / Time</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Reference</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="history-date">
+                                        @item.DateTime.ToString("dd/MM/yyyy")
+                                    </div>
+                                    <div class="history-time">
+                                        @item.DateTime.ToString("HH:mm")
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <strong>@item.UserName</strong>
+                                </td>
+
+                                <td>
+                                    <span class="history-role">
+                                        @item.UserRole
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="history-action">
+                                        @item.Action
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a href="@Url.Action(
+                                        "Details",
+                                        "AdministratorRequests",
+                                        new { id = item.RequestID })"
+                                       class="history-reference">
+                                        @item.ReferenceNumber
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="history-empty">
+                                No system history records were found.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="history-summary">
+            Showing <strong>@(Model?.Count() ?? 0)</strong> history record(s)
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+    .system-history-page {
+        padding: 30px;
+        background: #F4F7FB;
+        min-height: calc(100vh - 70px);
+    }
+
+    .system-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .system-history-header h2 {
+        margin: 0 0 6px;
+        color: #1F2937;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .system-history-header p {
+        margin: 0;
+        color: #6B7280;
+        font-size: 14px;
+    }
+
+    .btn-history-back {
+        background: #0D5CC1;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-history-back:hover {
+        color: white;
+        text-decoration: none;
+        background: #094A9F;
+    }
+
+    .system-history-card {
+        background: white;
+        border-radius: 10px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .history-filters {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1.3fr 1fr auto auto;
+        gap: 14px;
+        align-items: end;
+        margin-bottom: 24px;
+    }
+
+    .history-filters label {
+        display: block;
+        margin-bottom: 6px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .history-filters input,
+    .history-filters select {
+        width: 100%;
+        height: 40px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        padding: 0 11px;
+        background: white;
+        color: #374151;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .history-filters input:focus,
+    .history-filters select:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 2px rgba(13,92,193,0.08);
+    }
+
+    .btn-history-filter,
+    .btn-history-reset {
+        height: 40px;
+        padding: 0 18px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .btn-history-filter {
+        border: none;
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .btn-history-filter:hover {
+        background: #094A9F;
+    }
+
+    .btn-history-reset {
+        border: 1px solid #D1D5DB;
+        background: #F9FAFB;
+        color: #374151;
+    }
+
+    .btn-history-reset:hover {
+        background: #F3F4F6;
+        text-decoration: none;
+        color: #111827;
+    }
+
+    .history-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .system-history-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .system-history-table th {
+        text-align: left;
+        padding: 13px 14px;
+        background: #F8FAFC;
+        color: #374151;
+        border-bottom: 2px solid #E5E7EB;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .system-history-table td {
+        padding: 14px;
+        border-bottom: 1px solid #E5E7EB;
+        color: #4B5563;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .system-history-table tbody tr:hover {
+        background: #F8FAFC;
+    }
+
+    .history-date {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .history-time {
+        margin-top: 3px;
+        color: #6B7280;
+        font-size: 12px;
+    }
+
+    .history-role {
+        font-size: 12px;
+        font-weight: 600;
+        color: #4B5563;
+    }
+
+    .history-action {
+        color: #1F2937;
+        font-weight: 500;
+    }
+
+    .history-reference {
+        color: #0D5CC1;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .history-reference:hover {
+        text-decoration: underline;
+    }
+
+    .history-empty {
+        text-align: center;
+        padding: 45px 20px !important;
+        color: #6B7280 !important;
+    }
+
+    .history-summary {
+        margin-top: 16px;
+        color: #6B7280;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 1100px) {
+        .history-filters {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .system-history-page {
+            padding: 18px;
+        }
+
+        .system-history-header {
+            align-items: flex-start;
+            gap: 15px;
+            flex-direction: column;
+        }
+
+        .history-filters {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>

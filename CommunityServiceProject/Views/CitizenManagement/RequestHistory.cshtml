@@ -1,0 +1,243 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+
+@{
+    ViewBag.Title = "Citizen Request History";
+    var citizen = ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
+}
+
+<style>
+    .citizen-request-history-page {
+        background: #f4f7fb;
+        min-height: 100vh;
+        padding: 35px 20px;
+    }
+
+    .citizen-request-history-table th {
+        border-bottom: 2px solid #b8c0cc;
+        white-space: nowrap;
+    }
+
+    .citizen-request-history-card {
+        width: 100%;
+        max-width: 1500px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .citizen-request-history-content {
+        padding: 35px;
+    }
+
+    .citizen-request-history-section {
+        width: 100%;
+        padding: 30px;
+        margin-bottom: 25px;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+        .citizen-request-history-section h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+    .citizen-request-history-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .citizen-request-history-table {
+        width: 100%;
+        min-width: 950px;
+        border-collapse: collapse;
+    }
+
+        .citizen-request-history-table th,
+        .citizen-request-history-table td {
+            padding: 15px 14px;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid #d9dee7;
+
+            .citizen-request-history-table th {
+                border-bottom: 2px solid #b8c0cc;
+                white-space: nowrap;
+            }
+        }
+
+        .citizen-request-history-table th {
+            white-space: nowrap;
+        }
+
+        .citizen-request-history-table td:first-child {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .citizen-request-history-table td:nth-child(2) {
+            min-width: 220px;
+        }
+
+        .citizen-request-history-table td:nth-child(3) {
+            min-width: 180px;
+        }
+
+        .citizen-request-history-table td:nth-child(4) {
+            white-space: nowrap;
+        }
+
+        .citizen-request-history-table td:nth-child(5) {
+            white-space: nowrap;
+        }
+
+    .citizen-request-history-action {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 13px;
+        line-height: 1.2;
+        border-radius: 6px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .citizen-request-history-footer {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    @@media (max-width: 768px) {
+
+        .citizen-request-history-page {
+            padding: 20px 10px;
+        }
+
+        .citizen-request-history-content {
+            padding: 20px 15px;
+        }
+
+        .citizen-request-history-section {
+            padding: 20px 15px;
+        }
+    }
+</style>
+
+<div class="citizen-request-history-page">
+
+    <div class="citizen-request-history-card">
+
+        <div class="admin-citizen-details-header">
+
+            <h2>Citizen Request History</h2>
+
+            @if (citizen != null)
+            {
+                <p>
+                    Previous service requests submitted by
+                    @citizen.FirstName @citizen.LastName
+                </p>
+            }
+
+        </div>
+
+        <div class="citizen-request-history-content">
+
+            <div class="citizen-request-history-section">
+
+                <h3>Submitted Requests</h3>
+
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info">
+                        This citizen has not submitted any service requests.
+                    </div>
+                }
+                else
+                {
+                    <div class="citizen-request-history-table-wrapper">
+
+                        <table class="citizen-request-history-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Request Title</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Date Submitted</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var request in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @request.ReferenceNumber
+                                        </td>
+
+                                        <td>
+                                            @request.Title
+                                        </td>
+
+                                        <td>
+                                            @(request.Category != null
+                                                ? request.Category.CategoryName
+                                                : "Unknown")
+                                        </td>
+
+                                        <td>
+                                            @request.Status
+                                        </td>
+
+                                        <td>
+                                            @request.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
+                                        </td>
+
+                                        <td>
+                                            <a href="@Url.Action(
+                                                        "Details",
+                                                        "AdministratorRequests",
+                                                        new { id = request.RequestID }
+                                                     )"
+                                               class="admin-view-button citizen-request-history-action">
+                                                View Request
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="citizen-request-history-footer">
+
+                <a href="@Url.Action(
+                            "Details",
+                            "CitizenManagement",
+                            new { id = citizen.CitizenID }
+                         )"
+                   class="admin-back-button">
+                    Back to Citizen
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

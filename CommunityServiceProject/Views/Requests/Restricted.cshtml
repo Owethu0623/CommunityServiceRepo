@@ -1,0 +1,159 @@
+﻿
+@model CommunityServiceProject.Models.AccountRestriction
+
+@{
+    ViewBag.Title = "Request Submission Restricted";
+}
+
+<div class="admin-citizen-details-page">
+
+    <div class="admin-citizen-details-card">
+
+        <!-- HEADER -->
+        <div class="admin-citizen-details-header">
+            <h2>Request Submission Restricted</h2>
+
+            <p>
+                Your account is temporarily restricted from submitting
+                new maintenance requests.
+            </p>
+        </div>
+
+
+        <div class="admin-citizen-details-content">
+
+            <!-- NOTICE -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Restriction Notice</h3>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Status
+                    </div>
+
+                    <div class="admin-citizen-status">
+                        Restricted
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Restriction Type
+                    </div>
+
+                    <div>
+                        @Model.RestrictionType
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- REASON -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Restriction Details</h3>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Reason
+                    </div>
+
+                    <div>
+                        @Model.Reason
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Restriction Started
+                    </div>
+
+                    <div class="request-form-group">
+
+                        <strong>Restriction Started</strong>
+
+                        <p>
+                            @Model.DateStarted.ToString("dd/MM/yyyy HH:mm")
+                        </p>
+
+                    </div>
+
+                    <div class="request-form-group">
+
+                        <strong>Restriction Ends</strong>
+
+                        <p>
+                            @(Model.DateEnded.HasValue
+? Model.DateEnded.Value.ToString("dd/MM/yyyy HH:mm")
+: "Not specified")
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EFFECT -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Account Access</h3>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        New Requests
+                    </div>
+
+                    <div>
+                        You cannot submit new maintenance requests
+                        while this restriction is active.
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Existing Requests
+                    </div>
+
+                    <div>
+                        You can continue viewing and tracking your
+                        existing maintenance requests.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTION -->
+            <div class="admin-citizen-management-actions">
+
+                <a href="@Url.Action(
+                    "Index",
+                    "CitizenDashboard"
+                )"
+                   class="admin-back-button">
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

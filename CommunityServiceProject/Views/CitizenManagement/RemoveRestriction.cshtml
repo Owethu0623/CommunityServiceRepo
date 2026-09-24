@@ -1,0 +1,166 @@
+﻿@model CommunityServiceProject.Models.AccountRestriction
+
+@{
+    ViewBag.Title = "Remove Restriction";
+
+    var citizen =
+        ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
+}
+
+<div class="admin-citizen-details-page">
+
+    <div class="admin-citizen-details-card">
+
+        <div class="admin-citizen-details-header">
+
+            <h2>Remove Account Restriction</h2>
+
+            <p>
+                Review the active restriction before removing it.
+            </p>
+
+        </div>
+
+        <div class="admin-citizen-details-content">
+
+            <!-- CITIZEN INFORMATION -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Citizen Information</h3>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Citizen ID
+                    </div>
+
+                    <div>
+                        @citizen.CitizenID
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Full Name
+                    </div>
+
+                    <div>
+                        @citizen.FirstName @citizen.LastName
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESTRICTION INFORMATION -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Active Restriction</h3>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Restriction Type
+                    </div>
+
+                    <div>
+                        @Model.RestrictionType
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Reason
+                    </div>
+
+                    <div>
+                        @Model.Reason
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Started
+                    </div>
+
+                    <p>
+                        @Model.DateStarted.ToString("dd/MM/yyyy HH:mm")
+                    </p>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Current Status
+                    </div>
+
+                    <div class="admin-citizen-status">
+                        Active
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- WARNING -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Remove Restriction</h3>
+
+                <p>
+                    Removing this restriction will allow the citizen
+                    to submit new maintenance requests again.
+                    The restriction record will remain in the system
+                    as part of the citizen's compliance history.
+                </p>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+            <div class="admin-citizen-management-actions">
+
+                <form method="post"
+                      action="@Url.Action(
+                          "RemoveRestriction",
+                          "CitizenManagement"
+                      )">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@citizen.CitizenID" />
+
+                    <button type="submit"
+                            class="admin-citizen-action-button">
+                        Remove Restriction
+                    </button>
+
+                </form>
+
+                <a href="@Url.Action(
+                    "Compliance",
+                    "CitizenManagement",
+                    new { id = citizen.CitizenID }
+                )"
+                   class="admin-back-button">
+                    Cancel
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

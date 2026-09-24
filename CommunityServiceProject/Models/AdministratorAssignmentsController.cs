@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CommunityServiceProject.Models;
+using CommunityServiceProject.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using CommunityServiceProject.Models;
-using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -213,15 +214,38 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("ReassignmentRequests");
             }
 
-            // Get active technicians who can receive the reassignment.
-            var currentTechnicianID = reassignmentRequest.TechnicianID;
+            // -------------------------------------------------------
+            // Current technician must be excluded.
+            // -------------------------------------------------------
 
-            var technicians = db.Technicians
-    .Where(t =>
-        t.TechnicianID != currentTechnicianID)
-    .OrderBy(t => t.FirstName)
-    .ThenBy(t => t.LastName)
-    .ToList();
+            var currentTechnicianID =
+                reassignmentRequest.TechnicianID;
+
+            // -------------------------------------------------------
+            // Initially do not show replacement technicians.
+            //
+            // The administrator must first select the required
+            // skill(s), then matching technicians will appear.
+            // -------------------------------------------------------
+
+            var technicians = new List<Technician>();
+
+            // -------------------------------------------------------
+            // Load available skills.
+            // -------------------------------------------------------
+
+            var skills = db.Skills
+                .OrderBy(s => s.SkillName)
+                .Select(s => new SelectListItem
+                {
+                    Value = s.SkillID.ToString(),
+                    Text = s.SkillName
+                })
+                .ToList();
+
+            // -------------------------------------------------------
+            // Build ViewModel.
+            // -------------------------------------------------------
 
             var model = new ReassignmentApprovalViewModel
             {
@@ -263,9 +287,13 @@ namespace CommunityServiceProject.Controllers
                     technicians.Select(t => new SelectListItem
                     {
                         Value = t.TechnicianID.ToString(),
-
                         Text = t.FirstName + " " + t.LastName
-                    }),
+                    }).ToList(),
+
+                Skills = skills,
+
+                SelectedSkillIDs =
+                    new List<int>(),
 
                 AdministratorResponse = ""
             };
@@ -288,34 +316,101 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Login", "Administrators");
             }
 
+            // -------------------------------------------------------
+            // Get selected skills.
+            // -------------------------------------------------------
+
+            var selectedSkillIds =
+                model.SelectedSkillIDs?
+                    .Distinct()
+                    .ToList() ?? new List<int>();
+
+
+            // -------------------------------------------------------
+            // At least one skill is required.
+            // -------------------------------------------------------
+
+            if (!selectedSkillIds.Any())
+            {
+                ModelState.AddModelError(
+                    "SelectedSkillIDs",
+                    "Please select at least one required skill."
+                );
+            }
+
+
+            // -------------------------------------------------------
+            // If validation failed, reload the page options.
+            // -------------------------------------------------------
+
             if (!ModelState.IsValid)
             {
-                // Reload replacement technicians if validation fails.
                 var currentRequest = db.ReassignmentRequests
                     .FirstOrDefault(r =>
-                        r.ReassignmentRequestID == model.ReassignmentRequestID);
+                        r.ReassignmentRequestID ==
+                        model.ReassignmentRequestID);
 
                 int currentTechnicianID =
                     currentRequest != null
                         ? currentRequest.TechnicianID
                         : 0;
 
+
+                // Only active technicians.
+                // Only technicians with at least one selected skill.
+                // Current technician excluded.
                 var technicians = db.Technicians
                     .Where(t =>
-                        t.TechnicianID != currentTechnicianID)
+                        t.AccountStatus == AccountStatus.Active &&
+                        t.TechnicianID != currentTechnicianID &&
+                        t.TechnicianSkills.Any(ts =>
+                            selectedSkillIds.Contains(ts.SkillID)
+                        ))
                     .OrderBy(t => t.FirstName)
                     .ThenBy(t => t.LastName)
                     .ToList();
+
 
                 model.AvailableTechnicians =
                     technicians.Select(t => new SelectListItem
                     {
                         Value = t.TechnicianID.ToString(),
-                        Text = t.FirstName + " " + t.LastName
-                    });
+
+                        Text =
+                            t.FirstName +
+                            " " +
+                            t.LastName,
+
+                        Selected =
+                            model.ReplacementTechnicianID.HasValue &&
+                            model.ReplacementTechnicianID.Value ==
+                            t.TechnicianID
+
+                    }).ToList();
+
+
+                // Reload skills.
+                model.Skills = db.Skills
+                    .OrderBy(s => s.SkillName)
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.SkillID.ToString(),
+                        Text = s.SkillName,
+
+                        Selected =
+                            selectedSkillIds.Contains(s.SkillID)
+
+                    })
+                    .ToList();
+
 
                 return View(model);
             }
+
+
+            // -------------------------------------------------------
+            // Get reassignment request.
+            // -------------------------------------------------------
 
             var reassignmentRequest = db.ReassignmentRequests
                 .Include("Assignment")
@@ -325,19 +420,30 @@ namespace CommunityServiceProject.Controllers
                     r.ReassignmentRequestID ==
                     model.ReassignmentRequestID);
 
+
             if (reassignmentRequest == null)
             {
                 return HttpNotFound();
             }
 
+
+            // -------------------------------------------------------
             // Only pending reassignment requests can be approved.
-            if (reassignmentRequest.Status != ReassignmentStatus.Pending)
+            // -------------------------------------------------------
+
+            if (reassignmentRequest.Status !=
+                ReassignmentStatus.Pending)
             {
                 TempData["ErrorMessage"] =
                     "This reassignment request is no longer pending.";
 
                 return RedirectToAction("ReassignmentRequests");
             }
+
+
+            // -------------------------------------------------------
+            // Make sure original assignment exists.
+            // -------------------------------------------------------
 
             if (reassignmentRequest.Assignment == null)
             {
@@ -347,59 +453,262 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("ReassignmentRequests");
             }
 
-            if (model.ReplacementTechnicianID == null)
-            {
-                TempData["ErrorMessage"] =
-                    "Please select a replacement technician.";
 
-                return RedirectToAction(
-                    "ApproveReassignment",
-                    new { id = model.ReassignmentRequestID });
+            // -------------------------------------------------------
+            // Replacement technician required.
+            // -------------------------------------------------------
+
+            if (!model.ReplacementTechnicianID.HasValue)
+            {
+                ModelState.AddModelError(
+                    "ReplacementTechnicianID",
+                    "Please select a replacement technician."
+                );
+
+
+                var technicians = db.Technicians
+                    .Where(t =>
+                        t.AccountStatus == AccountStatus.Active &&
+                        t.TechnicianID !=
+                            reassignmentRequest.TechnicianID &&
+                        t.TechnicianSkills.Any(ts =>
+                            selectedSkillIds.Contains(ts.SkillID)
+                        ))
+                    .OrderBy(t => t.FirstName)
+                    .ThenBy(t => t.LastName)
+                    .ToList();
+
+
+                model.AvailableTechnicians =
+                    technicians.Select(t => new SelectListItem
+                    {
+                        Value = t.TechnicianID.ToString(),
+
+                        Text =
+                            t.FirstName +
+                            " " +
+                            t.LastName
+                    }).ToList();
+
+
+                model.Skills = db.Skills
+                    .OrderBy(s => s.SkillName)
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.SkillID.ToString(),
+                        Text = s.SkillName,
+
+                        Selected =
+                            selectedSkillIds.Contains(s.SkillID)
+
+                    }).ToList();
+
+
+                return View(model);
             }
+
 
             int replacementTechnicianID =
                 model.ReplacementTechnicianID.Value;
 
-            // The replacement technician cannot be the current technician.
+
+            // -------------------------------------------------------
+            // Replacement technician cannot be current technician.
+            // -------------------------------------------------------
+
             if (replacementTechnicianID ==
                 reassignmentRequest.TechnicianID)
             {
-                TempData["ErrorMessage"] =
-                    "The replacement technician must be different from the current technician.";
+                ModelState.AddModelError(
+                    "ReplacementTechnicianID",
+                    "The replacement technician must be different from the current technician."
+                );
 
-                return RedirectToAction(
-                    "ApproveReassignment",
-                    new { id = model.ReassignmentRequestID });
+
+                var technicians = db.Technicians
+                    .Where(t =>
+                        t.AccountStatus == AccountStatus.Active &&
+                        t.TechnicianID !=
+                            reassignmentRequest.TechnicianID &&
+                        t.TechnicianSkills.Any(ts =>
+                            selectedSkillIds.Contains(ts.SkillID)
+                        ))
+                    .OrderBy(t => t.FirstName)
+                    .ThenBy(t => t.LastName)
+                    .ToList();
+
+
+                model.AvailableTechnicians =
+                    technicians.Select(t => new SelectListItem
+                    {
+                        Value = t.TechnicianID.ToString(),
+
+                        Text =
+                            t.FirstName +
+                            " " +
+                            t.LastName
+                    }).ToList();
+
+
+                model.Skills = db.Skills
+                    .OrderBy(s => s.SkillName)
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.SkillID.ToString(),
+                        Text = s.SkillName,
+
+                        Selected =
+                            selectedSkillIds.Contains(s.SkillID)
+
+                    }).ToList();
+
+
+                return View(model);
             }
 
-            // Check that the replacement technician exists.
+
+            // -------------------------------------------------------
+            // Check replacement technician exists and is active.
+            // -------------------------------------------------------
+
             var replacementTechnician = db.Technicians
                 .FirstOrDefault(t =>
-                    t.TechnicianID == replacementTechnicianID);
+                    t.TechnicianID ==
+                    replacementTechnicianID &&
+                    t.AccountStatus ==
+                    AccountStatus.Active);
+
 
             if (replacementTechnician == null)
             {
-                TempData["ErrorMessage"] =
-                    "The selected replacement technician could not be found.";
+                ModelState.AddModelError(
+                    "ReplacementTechnicianID",
+                    "The selected replacement technician could not be found or is not active."
+                );
 
-                return RedirectToAction(
-                    "ApproveReassignment",
-                    new { id = model.ReassignmentRequestID });
+
+                var technicians = db.Technicians
+                    .Where(t =>
+                        t.AccountStatus == AccountStatus.Active &&
+                        t.TechnicianID !=
+                            reassignmentRequest.TechnicianID &&
+                        t.TechnicianSkills.Any(ts =>
+                            selectedSkillIds.Contains(ts.SkillID)
+                        ))
+                    .OrderBy(t => t.FirstName)
+                    .ThenBy(t => t.LastName)
+                    .ToList();
+
+
+                model.AvailableTechnicians =
+                    technicians.Select(t => new SelectListItem
+                    {
+                        Value = t.TechnicianID.ToString(),
+
+                        Text =
+                            t.FirstName +
+                            " " +
+                            t.LastName
+                    }).ToList();
+
+
+                model.Skills = db.Skills
+                    .OrderBy(s => s.SkillName)
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.SkillID.ToString(),
+                        Text = s.SkillName,
+
+                        Selected =
+                            selectedSkillIds.Contains(s.SkillID)
+
+                    }).ToList();
+
+
+                return View(model);
             }
+
+
+            // -------------------------------------------------------
+            // IMPORTANT:
+            // Verify the selected technician actually possesses
+            // at least ONE of the selected skills.
+            // -------------------------------------------------------
+
+            bool technicianHasRequiredSkill =
+                db.TechnicianSkills.Any(ts =>
+                    ts.TechnicianID ==
+                        replacementTechnicianID &&
+                    selectedSkillIds.Contains(ts.SkillID)
+                );
+
+
+            if (!technicianHasRequiredSkill)
+            {
+                ModelState.AddModelError(
+                    "ReplacementTechnicianID",
+                    "The selected technician does not possess any of the required skills."
+                );
+
+
+                var technicians = db.Technicians
+                    .Where(t =>
+                        t.AccountStatus == AccountStatus.Active &&
+                        t.TechnicianID !=
+                            reassignmentRequest.TechnicianID &&
+                        t.TechnicianSkills.Any(ts =>
+                            selectedSkillIds.Contains(ts.SkillID)
+                        ))
+                    .OrderBy(t => t.FirstName)
+                    .ThenBy(t => t.LastName)
+                    .ToList();
+
+
+                model.AvailableTechnicians =
+                    technicians.Select(t => new SelectListItem
+                    {
+                        Value = t.TechnicianID.ToString(),
+
+                        Text =
+                            t.FirstName +
+                            " " +
+                            t.LastName
+                    }).ToList();
+
+
+                model.Skills = db.Skills
+                    .OrderBy(s => s.SkillName)
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.SkillID.ToString(),
+                        Text = s.SkillName,
+
+                        Selected =
+                            selectedSkillIds.Contains(s.SkillID)
+
+                    })
+                    .ToList();
+
+
+                return View(model);
+            }
+
 
             int administratorID =
                 (int)Session["AdministratorID"];
 
-            // -------------------------------------------------------
-            // 1. Preserve the original assignment as history
-            // -------------------------------------------------------
+
+            // =======================================================
+            // 1. PRESERVE ORIGINAL ASSIGNMENT AS HISTORY
+            // =======================================================
 
             reassignmentRequest.Assignment.Status =
                 AssignmentStatus.Reassigned;
 
-            // -------------------------------------------------------
-            // 2. Create the new technician assignment
-            // -------------------------------------------------------
+
+            // =======================================================
+            // 2. CREATE NEW TECHNICIAN ASSIGNMENT
+            // =======================================================
 
             var newAssignment = new TechnicianAssignment
             {
@@ -421,20 +730,21 @@ namespace CommunityServiceProject.Controllers
 
             db.TechnicianAssignments.Add(newAssignment);
 
-            // -------------------------------------------------------
-            // 3. Update the current technician on the Request
-            // -------------------------------------------------------
+
+            // =======================================================
+            // 3. UPDATE REQUEST
+            // =======================================================
 
             reassignmentRequest.Assignment.Request.TechnicianID =
                 replacementTechnicianID;
 
-            // Request remains Assigned.
             reassignmentRequest.Assignment.Request.Status =
                 RequestStatus.Assigned;
 
-            // -------------------------------------------------------
-            // 4. Approve the reassignment request
-            // -------------------------------------------------------
+
+            // =======================================================
+            // 4. APPROVE REASSIGNMENT REQUEST
+            // =======================================================
 
             reassignmentRequest.Status =
                 ReassignmentStatus.Approved;
@@ -446,20 +756,25 @@ namespace CommunityServiceProject.Controllers
                 DateTime.Now;
 
             reassignmentRequest.AdministratorResponse =
-                string.IsNullOrWhiteSpace(model.AdministratorResponse)
-                    ? "Reassignment approved."
-                    : model.AdministratorResponse.Trim();
+                string.IsNullOrWhiteSpace(
+                    model.AdministratorResponse)
+                        ? "Reassignment approved."
+                        : model.AdministratorResponse.Trim();
 
-            // -------------------------------------------------------
-            // 5. Save everything
-            // -------------------------------------------------------
+
+            // =======================================================
+            // 5. SAVE EVERYTHING
+            // =======================================================
 
             db.SaveChanges();
+
 
             TempData["SuccessMessage"] =
                 "Reassignment approved successfully. The request has been assigned to the replacement technician.";
 
-            return RedirectToAction("ReassignmentRequests");
+
+            return RedirectToAction(
+                "ReassignmentRequests");
         }
 
         // ===========================================================
@@ -571,26 +886,27 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-        // ===========================================================
-        // CREATE - POST
-        // ===========================================================
 
-        // POST: AdministratorAssignments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(
-            TechnicianAssignmentViewModel model)
+        public ActionResult Create(TechnicianAssignmentViewModel model)
         {
+            // ============================================================
+            // CHECK ADMINISTRATOR LOGIN
+            // ============================================================
+
             if (Session["AdministratorID"] == null)
             {
-                return RedirectToAction(
-                    "Login",
-                    "Administrators"
-                );
+                return RedirectToAction("Login", "Login");
             }
 
-            if (model.SelectedSkillIDs == null ||
-    !model.SelectedSkillIDs.Any())
+
+            // ============================================================
+            // REQUIRED SKILL VALIDATION
+            // At least one skill must be selected.
+            // ============================================================
+
+            if (model.SelectedSkillIDs == null || !model.SelectedSkillIDs.Any())
             {
                 ModelState.AddModelError(
                     "SelectedSkillIDs",
@@ -598,22 +914,27 @@ namespace CommunityServiceProject.Controllers
                 );
             }
 
+
+            // ============================================================
+            // IF VALIDATION FAILED
+            // Reload request information and dropdown options.
+            // ============================================================
+
             if (!ModelState.IsValid)
             {
                 RestoreRequestInformation(model);
-
                 LoadAssignmentOptions(model);
 
                 return View(model);
             }
 
-            // -------------------------------------------------------
-            // Find request
-            // -------------------------------------------------------
+
+            // ============================================================
+            // GET REQUEST
+            // ============================================================
 
             var request = db.Requests
-                .FirstOrDefault(r =>
-                    r.RequestID == model.RequestID);
+                .FirstOrDefault(r => r.RequestID == model.RequestID);
 
             if (request == null)
             {
@@ -621,37 +942,47 @@ namespace CommunityServiceProject.Controllers
             }
 
 
-            // -------------------------------------------------------
-            // Request must still be approved
-            // -------------------------------------------------------
+            // ============================================================
+            // REQUEST MUST BE APPROVED
+            // ============================================================
 
             if (request.Status != RequestStatus.Approved)
             {
                 return RedirectToAction(
                     "Details",
                     "AdministratorRequests",
-                    new { id = request.RequestID }
+                    new { id = model.RequestID }
                 );
             }
 
 
-            // -------------------------------------------------------
-            // Request must be classified
-            // -------------------------------------------------------
+            // ============================================================
+            // PRIORITY REASON MUST EXIST
+            // ============================================================
 
             if (string.IsNullOrWhiteSpace(request.PriorityReason))
             {
                 return RedirectToAction(
                     "Classify",
                     "AdministratorRequests",
-                    new { id = request.RequestID }
+                    new { id = model.RequestID }
                 );
             }
 
 
-            // -------------------------------------------------------
-            // Find selected technician
-            // -------------------------------------------------------
+            // ============================================================
+            // GET SELECTED SKILLS
+            // Remove duplicate skill IDs.
+            // ============================================================
+
+            var selectedSkillIds = model.SelectedSkillIDs
+                .Distinct()
+                .ToList();
+
+
+            // ============================================================
+            // GET ACTIVE TECHNICIAN
+            // ============================================================
 
             var technician = db.Technicians
                 .FirstOrDefault(t =>
@@ -659,27 +990,74 @@ namespace CommunityServiceProject.Controllers
                     t.AccountStatus == AccountStatus.Active
                 );
 
+
+            // ============================================================
+            // CHECK THAT TECHNICIAN EXISTS AND IS ACTIVE
+            // ============================================================
+
             if (technician == null)
             {
                 ModelState.AddModelError(
                     "TechnicianID",
                     "Please select an active technician."
                 );
+
+                RestoreRequestInformation(model);
                 LoadAssignmentOptions(model);
+
                 return View(model);
             }
 
 
-            // -------------------------------------------------------
-            // Prevent duplicate active assignment
-            // -------------------------------------------------------
+            // ============================================================
+            // CHECK TECHNICIAN HAS AT LEAST ONE SELECTED SKILL
+            //
+            // IMPORTANT:
+            // Multiple selected skills use OR matching.
+            //
+            // Example:
+            // Selected skills = Plumbing + Electrical
+            //
+            // Technician has Plumbing only
+            //       -> allowed
+            //
+            // Technician has Electrical only
+            //       -> allowed
+            //
+            // Technician has neither
+            //       -> not allowed
+            // ============================================================
 
-            bool alreadyAssigned =
-                db.TechnicianAssignments.Any(a =>
-                    a.RequestID == model.RequestID &&
-                    a.Status != AssignmentStatus.Completed &&
-                    a.Status != AssignmentStatus.Cancelled
+            bool technicianHasRequiredSkill = db.TechnicianSkills.Any(ts =>
+                ts.TechnicianID == technician.TechnicianID &&
+                selectedSkillIds.Contains(ts.SkillID)
+            );
+
+
+            if (!technicianHasRequiredSkill)
+            {
+                ModelState.AddModelError(
+                    "TechnicianID",
+                    "The selected technician does not possess any of the required skills."
                 );
+
+                RestoreRequestInformation(model);
+                LoadAssignmentOptions(model);
+
+                return View(model);
+            }
+
+
+            // ============================================================
+            // CHECK WHETHER REQUEST ALREADY HAS AN ACTIVE ASSIGNMENT
+            // ============================================================
+
+            bool alreadyAssigned = db.TechnicianAssignments.Any(a =>
+                a.RequestID == model.RequestID &&
+                a.Status != AssignmentStatus.Completed &&
+                a.Status != AssignmentStatus.Cancelled
+            );
+
 
             if (alreadyAssigned)
             {
@@ -689,83 +1067,104 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction(
                     "Details",
                     "AdministratorRequests",
-                    new { id = request.RequestID }
+                    new { id = model.RequestID }
                 );
             }
 
 
-            // -------------------------------------------------------
-            // Create assignment history
-            // -------------------------------------------------------
+            // ============================================================
+            // CREATE TECHNICIAN ASSIGNMENT
+            // ============================================================
 
             var assignment = new TechnicianAssignment
             {
                 RequestID = request.RequestID,
-
                 TechnicianID = technician.TechnicianID,
-
-                AdministratorID =
-                    (int)Session["AdministratorID"],
-
+                AdministratorID = (int)Session["AdministratorID"],
                 AssignedDate = DateTime.Now,
-
-                Status =
-                    AssignmentStatus.PendingAcknowledgement
+                Status = AssignmentStatus.PendingAcknowledgement
             };
-
 
             db.TechnicianAssignments.Add(assignment);
 
 
-            // -------------------------------------------------------
-            // Update current responsible technician
-            // -------------------------------------------------------
+            // ============================================================
+            // UPDATE REQUEST
+            // ============================================================
 
-            request.TechnicianID =
-                technician.TechnicianID;
-
-            request.Status =
-                RequestStatus.Assigned;
+            request.TechnicianID = technician.TechnicianID;
+            request.Status = RequestStatus.Assigned;
 
 
-            // -------------------------------------------------------
-            // Save required skills
-            // -------------------------------------------------------
+            // ============================================================
+            // SAVE REQUEST SKILLS
+            //
+            // Only save valid skills.
+            // Prevent duplicate RequestSkill records.
+            // ============================================================
 
-            if (model.SelectedSkillIDs != null)
+            foreach (var skillId in selectedSkillIds)
             {
-                foreach (int skillID in model.SelectedSkillIDs.Distinct())
+                bool skillExists = db.Skills.Any(s => s.SkillID == skillId);
+
+                if (!skillExists)
                 {
-                    bool skillExists =
-                        db.Skills.Any(s =>
-                            s.SkillID == skillID);
+                    continue;
+                }
 
-                    if (!skillExists)
-                    {
-                        continue;
-                    }
+                bool requestSkillExists = db.RequestSkills.Any(rs =>
+                    rs.RequestID == request.RequestID &&
+                    rs.SkillID == skillId
+                );
 
-                    bool alreadyExists =
-                        db.RequestSkills.Any(rs =>
-                            rs.RequestID == request.RequestID &&
-                            rs.SkillID == skillID);
-
-                    if (!alreadyExists)
-                    {
-                        db.RequestSkills.Add(new RequestSkill
+                if (!requestSkillExists)
+                {
+                    db.RequestSkills.Add(
+                        new RequestSkill
                         {
                             RequestID = request.RequestID,
-                            SkillID = skillID
-                        });
-                    }
+                            SkillID = skillId
+                        }
+                    );
                 }
             }
 
+
+            // ============================================================
+            // CITIZEN NOTIFICATION
+            // ============================================================
+
+            var notification = new Notification
+            {
+                CitizenID = request.CitizenID,
+                RequestID = request.RequestID,
+
+                Message =
+                    "Technician " +
+                    technician.FirstName +
+                    " " +
+                    technician.LastName +
+                    " has been assigned to " +
+                    request.ReferenceNumber +
+                    ".",
+
+                DateCreated = DateTime.Now,
+                IsRead = false
+            };
+
+            db.Notifications.Add(notification);
+
+
+            // ============================================================
+            // SAVE EVERYTHING
+            // ============================================================
+
             db.SaveChanges();
 
-            // -------------------------------------------------------
-            // Return to request details
-            // -------------------------------------------------------
+
+            // ============================================================
+            // SUCCESS MESSAGE
+            // ============================================================
 
             TempData["SuccessMessage"] =
                 "Technician assigned successfully.";
@@ -779,18 +1178,47 @@ namespace CommunityServiceProject.Controllers
 
 
         private void LoadAssignmentOptions(
-    TechnicianAssignmentViewModel model)
+     TechnicianAssignmentViewModel model)
         {
-            model.Technicians =
-                db.Technicians
+            var selectedSkillIds = model.SelectedSkillIDs?
+                .Distinct()
+                .ToList() ?? new List<int>();
+
+
+            // -------------------------------------------------------
+            // Load technicians
+            // -------------------------------------------------------
+
+            var technicianQuery = db.Technicians
+                .Where(t =>
+                    t.AccountStatus == AccountStatus.Active);
+
+
+            // If skills have been selected, only show technicians
+            // who possess at least one selected skill.
+            if (selectedSkillIds.Any())
+            {
+                technicianQuery = technicianQuery
                     .Where(t =>
-                        t.AccountStatus == AccountStatus.Active)
+                        t.TechnicianSkills.Any(ts =>
+                            selectedSkillIds.Contains(ts.SkillID)
+                        )
+                    );
+            }
+
+
+            model.Technicians =
+                technicianQuery
                     .OrderBy(t => t.LastName)
                     .ThenBy(t => t.FirstName)
                     .Select(t => new SelectListItem
                     {
                         Value = t.TechnicianID.ToString(),
-                        Text = t.FirstName + " " + t.LastName,
+
+                        Text =
+                            t.FirstName + " " +
+                            t.LastName,
+
                         Selected =
                             t.TechnicianID ==
                             model.TechnicianID
@@ -798,12 +1226,17 @@ namespace CommunityServiceProject.Controllers
                     .ToList();
 
 
+            // -------------------------------------------------------
+            // Load skills
+            // -------------------------------------------------------
+
             model.Skills =
                 db.Skills
                     .OrderBy(s => s.SkillName)
                     .Select(s => new SelectListItem
                     {
                         Value = s.SkillID.ToString(),
+
                         Text = s.SkillName
                     })
                     .ToList();
@@ -845,6 +1278,57 @@ namespace CommunityServiceProject.Controllers
             model.PriorityReason =
                 request.PriorityReason;
         }
+
+        // ===========================================================
+        // GET TECHNICIANS BY REQUIRED SKILL
+        // ===========================================================
+
+        // GET: AdministratorAssignments/GetTechniciansBySkills
+        public ActionResult GetTechniciansBySkills(int[] skillIds)
+        {
+            if (Session["AdministratorID"] == null)
+            {
+                return new HttpStatusCodeResult(401);
+            }
+
+            // No skills selected
+            if (skillIds == null || skillIds.Length == 0)
+            {
+                return Json(
+                    new object[0],
+                    JsonRequestBehavior.AllowGet
+                );
+            }
+
+            // Remove duplicate skill IDs
+            var selectedSkillIds = skillIds
+                .Distinct()
+                .ToList();
+
+            // Find active technicians who possess
+            // at least ONE of the selected skills.
+            var technicians = db.Technicians
+                .Where(t =>
+                    t.AccountStatus == AccountStatus.Active &&
+                    t.TechnicianSkills.Any(ts =>
+                        selectedSkillIds.Contains(ts.SkillID)
+                    )
+                )
+                .OrderBy(t => t.LastName)
+                .ThenBy(t => t.FirstName)
+                .Select(t => new
+                {
+                    id = t.TechnicianID,
+                    name = t.FirstName + " " + t.LastName
+                })
+                .ToList();
+
+            return Json(
+                technicians,
+                JsonRequestBehavior.AllowGet
+            );
+        }
+
 
         // ===========================================================
         // DISPOSE

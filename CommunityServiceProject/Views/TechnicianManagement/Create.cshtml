@@ -36,267 +36,307 @@
         {
             @Html.AntiForgeryToken()
 
-            <div class="admin-technician-create-content">
+    <div class="admin-technician-create-content">
 
-                <!-- =================================================
-                     VALIDATION SUMMARY
-                     ================================================= -->
+        <!-- =================================================
+         VALIDATION SUMMARY
+         ================================================= -->
 
-                @Html.ValidationSummary(
-                    true,
-                    "",
-                    new
+        @Html.ValidationSummary(
+            true,
+            "",
+            new
+            {
+                @class = "admin-validation-summary"
+            }
+        )
+
+
+        <!-- =================================================
+         FIRST NAME
+         ================================================= -->
+
+        <div class="admin-technician-form-group">
+
+            @Html.LabelFor(
+                model => model.FirstName,
+                "First Name"
+            )
+
+            @Html.TextBoxFor(
+                model => model.FirstName,
+                new
+                {
+                    @class = "admin-technician-input",
+                    autocomplete = "off"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.FirstName,
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
+
+        </div>
+
+
+        <!-- =================================================
+         LAST NAME
+         ================================================= -->
+
+        <div class="admin-technician-form-group">
+
+            @Html.LabelFor(
+                model => model.LastName,
+                "Last Name"
+            )
+
+            @Html.TextBoxFor(
+                model => model.LastName,
+                new
+                {
+                    @class = "admin-technician-input",
+                    autocomplete = "off"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.LastName,
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
+
+        </div>
+
+
+        <!-- =================================================
+         EMAIL ADDRESS
+         ================================================= -->
+
+        <div class="admin-technician-form-group">
+
+            @Html.LabelFor(
+                model => model.EmailAddress,
+                "Email Address"
+            )
+
+            @Html.TextBoxFor(
+                model => model.EmailAddress,
+                new
+                {
+                    @class = "admin-technician-input",
+                    type = "email",
+                    autocomplete = "off"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.EmailAddress,
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
+
+        </div>
+
+
+        <!-- =================================================
+         PHONE NUMBER
+         ================================================= -->
+
+        <div class="admin-technician-form-group">
+
+            @Html.LabelFor(
+                model => model.PhoneNumber,
+                "Phone Number"
+            )
+
+            @Html.TextBoxFor(
+                model => model.PhoneNumber,
+                new
+                {
+                    @class = "admin-technician-input",
+                    type = "tel",
+                    autocomplete = "off"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.PhoneNumber,
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
+
+        </div>
+
+        <!-- =================================================
+    SKILL
+    ================================================= -->
+
+        <div class="admin-technician-form-group">
+
+            <label for="skillId">
+                Skill
+            </label>
+
+            <select id="skillId"
+                    name="skillId"
+                    class="admin-technician-input">
+
+                <option value="">
+                    -- Select Skill --
+                </option>
+
+                @if (ViewBag.Skills != null)
+                {
+                    foreach (var skill in ViewBag.Skills)
                     {
-                        @class = "admin-validation-summary"
+                        <option value="@skill.SkillID">
+                            @skill.SkillName
+                        </option>
                     }
-                )
+                }
+
+            </select>
+
+            @Html.ValidationMessage(
+                "SkillID",
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
+
+        </div>
+
+        <!-- =================================================
+         PASSWORD
+         ================================================= -->
+
+        <div class="admin-technician-form-group">
+
+            @Html.LabelFor(
+                model => model.Password,
+                "Password"
+            )
+
+            @Html.PasswordFor(
+                model => model.Password,
+                new
+                {
+                    @class = "admin-technician-input",
+                    id = "technicianPassword",
+                    autocomplete = "new-password"
+                }
+            )
+
+            @Html.ValidationMessageFor(
+                model => model.Password,
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
+
+            <small class="admin-technician-password-help">
+                Password must be at least 8 characters and contain
+                an uppercase letter, a lowercase letter, and a number.
+            </small>
+
+        </div>
 
 
-                <!-- =================================================
-                     FIRST NAME
-                     ================================================= -->
+        <!-- =================================================
+         CONFIRM PASSWORD
+         ================================================= -->
 
-                <div class="admin-technician-form-group">
+        <div class="admin-technician-form-group">
 
-                    @Html.LabelFor(
-                        model => model.FirstName,
-                        "First Name"
-                    )
+            @Html.LabelFor(
+                model => model.ConfirmPassword,
+                "Confirm Password"
+            )
 
-                    @Html.TextBoxFor(
-                        model => model.FirstName,
-                        new
-                        {
-                            @class = "admin-technician-input",
-                            autocomplete = "off"
-                        }
-                    )
+            @Html.PasswordFor(
+                model => model.ConfirmPassword,
+                new
+                {
+                    @class = "admin-technician-input",
+                    id = "technicianConfirmPassword",
+                    autocomplete = "new-password"
+                }
+            )
 
-                    @Html.ValidationMessageFor(
-                        model => model.FirstName,
-                        "",
-                        new
-                        {
-                            @class = "admin-validation-message"
-                        }
-                    )
+            @Html.ValidationMessageFor(
+                model => model.ConfirmPassword,
+                "",
+                new
+                {
+                    @class = "admin-validation-message"
+                }
+            )
 
-                </div>
-
-
-                <!-- =================================================
-                     LAST NAME
-                     ================================================= -->
-
-                <div class="admin-technician-form-group">
-
-                    @Html.LabelFor(
-                        model => model.LastName,
-                        "Last Name"
-                    )
-
-                    @Html.TextBoxFor(
-                        model => model.LastName,
-                        new
-                        {
-                            @class = "admin-technician-input",
-                            autocomplete = "off"
-                        }
-                    )
-
-                    @Html.ValidationMessageFor(
-                        model => model.LastName,
-                        "",
-                        new
-                        {
-                            @class = "admin-validation-message"
-                        }
-                    )
-
-                </div>
+        </div>
 
 
-                <!-- =================================================
-                     EMAIL ADDRESS
-                     ================================================= -->
+        <!-- =================================================
+         SHOW PASSWORD
+         ================================================= -->
 
-                <div class="admin-technician-form-group">
+        <div class="admin-technician-password-toggle">
 
-                    @Html.LabelFor(
-                        model => model.EmailAddress,
-                        "Email Address"
-                    )
+            <label>
+                <input type="checkbox"
+                       id="showTechnicianPassword"
+                       onclick="toggleTechnicianPassword()" />
 
-                    @Html.TextBoxFor(
-                        model => model.EmailAddress,
-                        new
-                        {
-                            @class = "admin-technician-input",
-                            type = "email",
-                            autocomplete = "off"
-                        }
-                    )
+                Show Password
+            </label>
 
-                    @Html.ValidationMessageFor(
-                        model => model.EmailAddress,
-                        "",
-                        new
-                        {
-                            @class = "admin-validation-message"
-                        }
-                    )
-
-                </div>
+        </div>
 
 
-                <!-- =================================================
-                     PHONE NUMBER
-                     ================================================= -->
+        <!-- =================================================
+         ACTION BUTTONS
+         ================================================= -->
 
-                <div class="admin-technician-form-group">
+        <div class="admin-technician-create-actions">
 
-                    @Html.LabelFor(
-                        model => model.PhoneNumber,
-                        "Phone Number"
-                    )
+            <button type="submit"
+                    class="admin-technician-save-button">
 
-                    @Html.TextBoxFor(
-                        model => model.PhoneNumber,
-                        new
-                        {
-                            @class = "admin-technician-input",
-                            type = "tel",
-                            autocomplete = "off"
-                        }
-                    )
+                Add Technician
 
-                    @Html.ValidationMessageFor(
-                        model => model.PhoneNumber,
-                        "",
-                        new
-                        {
-                            @class = "admin-validation-message"
-                        }
-                    )
-
-                </div>
+            </button>
 
 
-                <!-- =================================================
-                     PASSWORD
-                     ================================================= -->
-
-                <div class="admin-technician-form-group">
-
-                    @Html.LabelFor(
-                        model => model.Password,
-                        "Password"
-                    )
-
-                    @Html.PasswordFor(
-                        model => model.Password,
-                        new
-                        {
-                            @class = "admin-technician-input",
-                            id = "technicianPassword",
-                            autocomplete = "new-password"
-                        }
-                    )
-
-                    @Html.ValidationMessageFor(
-                        model => model.Password,
-                        "",
-                        new
-                        {
-                            @class = "admin-validation-message"
-                        }
-                    )
-
-                    <small class="admin-technician-password-help">
-                        Password must be at least 8 characters and contain
-                        an uppercase letter, a lowercase letter, and a number.
-                    </small>
-
-                </div>
-
-
-                <!-- =================================================
-                     CONFIRM PASSWORD
-                     ================================================= -->
-
-                <div class="admin-technician-form-group">
-
-                    @Html.LabelFor(
-                        model => model.ConfirmPassword,
-                        "Confirm Password"
-                    )
-
-                    @Html.PasswordFor(
-                        model => model.ConfirmPassword,
-                        new
-                        {
-                            @class = "admin-technician-input",
-                            id = "technicianConfirmPassword",
-                            autocomplete = "new-password"
-                        }
-                    )
-
-                    @Html.ValidationMessageFor(
-                        model => model.ConfirmPassword,
-                        "",
-                        new
-                        {
-                            @class = "admin-validation-message"
-                        }
-                    )
-
-                </div>
-
-
-                <!-- =================================================
-                     SHOW PASSWORD
-                     ================================================= -->
-
-                <div class="admin-technician-password-toggle">
-
-                    <label>
-                        <input type="checkbox"
-                               id="showTechnicianPassword"
-                               onclick="toggleTechnicianPassword()" />
-
-                        Show Password
-                    </label>
-
-                </div>
-
-
-                <!-- =================================================
-                     ACTION BUTTONS
-                     ================================================= -->
-
-                <div class="admin-technician-create-actions">
-
-                    <button type="submit"
-                            class="admin-technician-save-button">
-
-                        Add Technician
-
-                    </button>
-
-
-                    <a href="@Url.Action(
+            <a href="@Url.Action(
                         "Index",
                         "TechnicianManagement"
                     )"
-                       class="admin-technician-cancel-button">
+               class="admin-technician-cancel-button">
 
-                        Cancel
+                Cancel
 
-                    </a>
+            </a>
 
-                </div>
+        </div>
 
-            </div>
+    </div>
         }
 
     </div>

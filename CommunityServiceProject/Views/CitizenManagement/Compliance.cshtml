@@ -1,0 +1,397 @@
+﻿
+@model CommunityServiceProject.Models.ComplianceRecord
+
+@{
+ViewBag.Title = "Citizen Compliance";
+
+
+var citizen =
+    ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
+
+var latestRestriction =
+    ViewBag.LatestRestriction as CommunityServiceProject.Models.AccountRestriction;
+
+
+}
+
+<div class="admin-citizen-details-page">
+
+```
+<div class="admin-citizen-details-card">
+
+    <!-- HEADER -->
+    <div class="admin-citizen-details-header">
+
+        <h2>Citizen Compliance</h2>
+
+        <p>
+            View the compliance information and violation history
+            for this citizen.
+        </p>
+
+    </div>
+
+
+    <div class="admin-citizen-details-content">
+
+        <!-- CITIZEN INFORMATION -->
+        <div class="admin-citizen-details-section">
+
+            <h3>Citizen Information</h3>
+
+            <div class="admin-citizen-details-row">
+
+                <div class="admin-citizen-details-label">
+                    Citizen ID
+                </div>
+
+                <div>
+                    @citizen.CitizenID
+                </div>
+
+            </div>
+
+            <div class="admin-citizen-details-row">
+
+                <div class="admin-citizen-details-label">
+                    Full Name
+                </div>
+
+                <div>
+                    @citizen.FirstName @citizen.LastName
+                </div>
+
+            </div>
+
+            <div class="admin-citizen-details-row">
+
+                <div class="admin-citizen-details-label">
+                    Email Address
+                </div>
+
+                <div>
+                    @citizen.EmailAddress
+                </div>
+
+            </div>
+
+            <div class="admin-citizen-details-row">
+
+                <div class="admin-citizen-details-label">
+                    Account Status
+                </div>
+
+                <div class="admin-citizen-status">
+                    @citizen.AccountStatus
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLIANCE SUMMARY -->
+        <div class="admin-citizen-details-section">
+
+            <h3>Compliance Summary</h3>
+
+            @if (Model != null)
+            {
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Compliance ID
+                    </div>
+
+                    <div>
+                        @Model.ComplianceID
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Confirmed Violations
+                    </div>
+
+                    <div>
+                        @Model.ConfirmedViolationCount
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Compliance Status
+                    </div>
+
+                    <div class="admin-citizen-status">
+                        @Model.ComplianceStatus
+                    </div>
+
+                </div>
+
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Last Updated
+                    </div>
+
+                    <div>
+                        @Model.LastUpdated
+                    </div>
+
+                </div>
+
+
+                <!-- RESTRICTION ACTION -->
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Account Restriction
+                    </div>
+
+                    <div>
+
+                        @if (latestRestriction != null &&
+                             latestRestriction.IsActive)
+                        {
+                            <a href="@Url.Action(
+                                "RemoveRestriction",
+                                "CitizenManagement",
+                                new { id = citizen.CitizenID }
+                            )"
+                               class="admin-view-button">
+                                Remove Restriction
+                            </a>
+                        }
+                        else if (
+                            Model.ComplianceStatus ==
+                            CommunityServiceProject.Models.ComplianceStatus.Warning)
+                        {
+                            <a href="@Url.Action(
+                                "ApplyRestriction",
+                                "CitizenManagement",
+                                new { id = citizen.CitizenID }
+                            )"
+                               class="admin-view-button">
+                                Apply Restriction
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="admin-citizen-details-row">
+
+                    <div>
+                        No compliance record is available
+                        for this citizen.
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- COMPLIANCE HISTORY -->
+        <div class="admin-citizen-details-section">
+
+            <h3>Compliance History</h3>
+
+            @if (Model != null &&
+                 Model.Violations != null &&
+                 Model.Violations.Any())
+            {
+                foreach (var violation in
+                         Model.Violations
+                         .OrderByDescending(v => v.DateConfirmed))
+                {
+                    <!-- VIOLATION -->
+                    <div class="admin-citizen-details-row">
+
+                        <div class="admin-citizen-details-label">
+                            Violation
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                @violation.ViolationType
+                            </strong>
+
+                            <br />
+
+                            @violation.Description
+
+                            <br />
+
+                            <small>
+                                Confirmed:
+                                @violation.DateConfirmed
+                            </small>
+
+                            <br />
+
+                            <small>
+                                Status:
+                                @violation.Status
+                            </small>
+
+                            <br />
+                            <br />
+
+
+                            <!-- WARNING HISTORY -->
+                            @if (violation.Warnings != null &&
+                                 violation.Warnings.Any())
+                            {
+                                foreach (var warning in
+                                         violation.Warnings
+                                         .OrderByDescending(w => w.DateIssued))
+                                {
+                                    <div style="margin-top: 10px;">
+
+                                        <strong>
+                                            Warning Issued
+                                        </strong>
+
+                                        <br />
+
+                                        <small>
+                                            Date:
+                                            @warning.DateIssued
+                                        </small>
+
+                                        <br />
+
+                                        <small>
+                                            Reason:
+                                            @warning.WarningReason
+                                        </small>
+
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <!-- WARNING ACTION -->
+                                <a href="@Url.Action(
+                                    "IssueWarning",
+                                    "CitizenManagement",
+                                    new { id = violation.ViolationID }
+                                )"
+                                   class="admin-view-button">
+                                    Issue Warning
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="admin-citizen-details-row">
+
+                    <div>
+                        No violations have been recorded
+                        for this citizen.
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- RESTRICTION HISTORY -->
+            @if (latestRestriction != null)
+            {
+                <div class="admin-citizen-details-row">
+
+                    <div class="admin-citizen-details-label">
+                        Account Restriction
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            @latestRestriction.RestrictionType
+                        </strong>
+
+                        <br />
+
+                        <small>
+                            Reason:
+                            @latestRestriction.Reason
+                        </small>
+
+                        <br />
+
+                        <small>
+                            Started:
+                            @latestRestriction.DateStarted
+                         
+                        </small>
+
+                        <br />
+
+                        @if (latestRestriction.IsActive)
+                        {
+                            <small>
+                                Status: Active
+                            </small>
+                        }
+                        else
+                        {
+                            <small>
+                                Status: Removed
+                            </small>
+
+                            if (latestRestriction.DateEnded.HasValue)
+                            {
+                                <br />
+
+                                <small>
+                                    Removed:
+                                    @latestRestriction.DateEnded.Value
+                                   
+                                </small>
+                            }
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- FOOTER -->
+        <div class="admin-citizen-details-footer">
+
+            <a href="@Url.Action(
+                "Details",
+                "CitizenManagement",
+                new { id = citizen.CitizenID }
+            )"
+               class="admin-back-button">
+                Back to Citizen
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+

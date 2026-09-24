@@ -1,5 +1,4 @@
-﻿
-@model CommunityServiceProject.ViewModels.TechnicianAssignmentViewModel
+﻿@model CommunityServiceProject.ViewModels.TechnicianAssignmentViewModel
 
 @{
     ViewBag.Title = "Assign Technician";
@@ -9,168 +8,164 @@
 
     <div class="admin-review-card">
 
-        <!-- HEADER -->
+        <!-- =======================================================
+             HEADER
+        ======================================================== -->
+
         <div class="admin-review-header">
 
-            <h2>Assign Technician</h2>
+            <div>
+                <h2>Assign Technician</h2>
 
-            <p>
-                Request #@Model.RequestID
-            </p>
+                <p>
+                    Assign a suitable technician to this maintenance request.
+                </p>
+            </div>
 
         </div>
 
 
+        <!-- =======================================================
+             CONTENT
+        ======================================================== -->
+
         <div class="admin-review-content">
 
-            <!-- REQUEST INFORMATION -->
-            <div class="admin-review-section">
+            @using (Html.BeginForm(
+                "Create",
+                "AdministratorAssignments",
+                FormMethod.Post,
+                new { @class = "admin-review-form" }
+            ))
+            {
+                @Html.AntiForgeryToken()
 
-                <h3>Request Information</h3>
-
-                <div class="admin-review-row">
-
-                    <span class="admin-review-label">
-                        Title
-                    </span>
-
-                    <span>
-                        @Model.Title
-                    </span>
-
-                </div>
+                @Html.HiddenFor(model => model.RequestID)
 
 
-                <div class="admin-review-row">
+                <!-- ===================================================
+                     REQUEST INFORMATION
+                ==================================================== -->
 
-                    <span class="admin-review-label">
-                        Category
-                    </span>
+                <div class="admin-review-section">
 
-                    <span>
-                        @Model.CategoryName
-                    </span>
-
-                </div>
+                    <h3>Request Information</h3>
 
 
-                <div class="admin-review-row">
+                    <div class="admin-review-row">
 
-                    <span class="admin-review-label">
-                        Ward
-                    </span>
+                        <div class="admin-filter-group">
 
-                    <span>
-                        @Model.WardName
-                    </span>
+                            <label>Request ID</label>
 
-                </div>
+                            <div class="form-control-static">
+                                @Model.RequestID
+                            </div>
 
-
-                <div class="admin-review-row">
-
-                    <span class="admin-review-label">
-                        Priority
-                    </span>
-
-                    <span>
-                        @Model.Priority
-                    </span>
-
-                </div>
+                        </div>
 
 
-                <div class="admin-review-row">
+                        <div class="admin-filter-group">
 
-                    <span class="admin-review-label">
-                        Priority Reason
-                    </span>
+                            <label>Title</label>
 
-                    <span>
-                        @Model.PriorityReason
-                    </span>
+                            <div class="form-control-static">
+                                @Model.Title
+                            </div>
 
-                </div>
-
-            </div>
-
-
-            <!-- LOCATION -->
-            <div class="admin-review-section">
-
-                <h3>Location</h3>
-
-                <div class="admin-review-row">
-
-                    <span class="admin-review-label">
-                        Problem Location
-                    </span>
-
-                    <span>
-                        @Model.ProblemLocation
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- TECHNICIAN ASSIGNMENT -->
-            <div class="admin-review-section">
-
-                <h3>Technician Assignment</h3>
-
-                @using (Html.BeginForm(
-                    "Create",
-                    "AdministratorAssignments",
-                    FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
-
-                    @Html.HiddenFor(
-                        model => model.RequestID
-                    )
-
-
-                    <!-- TECHNICIAN -->
-                    <div class="admin-filter-group">
-
-                        @Html.LabelFor(
-                            model => model.TechnicianID,
-                            "Technician"
-                        )
-
-                        @Html.DropDownListFor(
-                            model => model.TechnicianID,
-                            Model.Technicians,
-                            "Select Technician",
-                            new
-                            {
-                                @class = "form-control"
-                            }
-                        )
-
-                        @Html.ValidationMessageFor(
-                            model => model.TechnicianID,
-                            "",
-                            new
-                            {
-                                @class = "text-danger"
-                            }
-                        )
+                        </div>
 
                     </div>
 
 
-                    <!-- REQUIRED SKILLS -->
+                    <div class="admin-review-row">
+
+                        <div class="admin-filter-group">
+
+                            <label>Category</label>
+
+                            <div class="form-control-static">
+                                @Model.CategoryName
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-filter-group">
+
+                            <label>Ward</label>
+
+                            <div class="form-control-static">
+                                @Model.WardName
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-review-row">
+
+                        <div class="admin-filter-group">
+
+                            <label>Priority</label>
+
+                            <div class="form-control-static">
+                                @Model.Priority
+                            </div>
+
+                        </div>
+
+
+                        <div class="admin-filter-group">
+
+                            <label>Problem Location</label>
+
+                            <div class="form-control-static">
+                                @Model.ProblemLocation
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
                     <div class="admin-filter-group">
 
-                        <label class="form-label">
+                        <label>Priority Reason</label>
+
+                        <div class="form-control-static">
+                            @Model.PriorityReason
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ===================================================
+                     TECHNICIAN ASSIGNMENT
+                ==================================================== -->
+
+                <div class="admin-review-section">
+
+                    <h3>Technician Assignment</h3>
+
+
+                    <!-- =================================================
+                         REQUIRED SKILLS
+                    ================================================== -->
+
+                    <div class="admin-filter-group">
+
+                        <label>
                             Required Skills
+                            <span class="text-danger">*</span>
                         </label>
 
-                        <div class="skills-dropdown"
-                             id="skillsDropdown">
+
+                        <div class="skills-dropdown" id="skillsDropdown">
 
                             <button type="button"
                                     class="skills-dropdown-button"
@@ -190,8 +185,7 @@
                             <div class="skills-dropdown-menu"
                                  id="skillsDropdownMenu">
 
-                                @if (Model.Skills != null &&
-                                     Model.Skills.Any())
+                                @if (Model.Skills != null && Model.Skills.Any())
                                 {
                                     foreach (var skill in Model.Skills)
                                     {
@@ -217,6 +211,12 @@
                                         </label>
                                     }
                                 }
+                                else
+                                {
+                                    <div class="skill-empty">
+                                        No skills available.
+                                    </div>
+                                }
 
                             </div>
 
@@ -231,44 +231,90 @@
                         @Html.ValidationMessage(
                             "SelectedSkillIDs",
                             "",
-                            new
-                            {
-                                @class = "text-danger"
-                            }
+                            new { @class = "text-danger" }
                         )
 
                     </div>
 
 
-                    <!-- ACTIONS -->
-                    <div class="admin-review-actions">
 
-                        <button type="submit"
-                                class="admin-approve-button">
+                    <!-- =================================================
+                         TECHNICIAN
+                    ================================================== -->
 
-                            Assign Technician
+                    <div class="admin-filter-group">
 
-                        </button>
+                        <label for="TechnicianID">
+                            Technician
+                            <span class="text-danger">*</span>
+                        </label>
 
 
-                        <a href="@Url.Action(
-                        "Details",
-                        "AdministratorRequests",
-                        new { id = Model.RequestID }
-                     )"
-                           class="admin-back-button">
+                        @Html.DropDownListFor(
+                            model => model.TechnicianID,
+                            Model.Technicians,
+                            "Select Technician",
+                            new
+                            {
+                                @class = "form-control",
+                                id = "TechnicianID"
+                            }
+                        )
 
-                            Cancel
 
-                        </a>
+                        @Html.ValidationMessageFor(
+                            model => model.TechnicianID,
+                            "",
+                            new { @class = "text-danger" }
+                        )
+
+
+                        <small id="technicianSkillMessage"
+                               class="form-text text-muted">
+                            Select a required skill to see matching technicians.
+                        </small>
 
                     </div>
-                }
 
-                 </div>
-           </div>
-      </div>
+                </div>
+
+
+
+                <!-- ===================================================
+                     ACTIONS
+                ==================================================== -->
+
+                <div class="admin-review-actions">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Assign Technician
+                    </button>
+
+
+                    @Html.ActionLink(
+                        "Cancel",
+                        "Details",
+                        "AdministratorRequests",
+                        new { id = Model.RequestID },
+                        new { @class = "btn btn-secondary" }
+                    )
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
 </div>
+
+
+
+<!-- ===============================================================
+     STYLES
+================================================================ -->
 
 <style>
 
@@ -282,22 +328,21 @@
     .skills-dropdown-button {
         width: 100%;
         min-height: 42px;
-        padding: 9px 14px;
+        padding: 10px 14px;
         background: #ffffff;
         border: 1px solid #ced4da;
         border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        text-align: left;
         cursor: pointer;
         font-size: 14px;
-        color: #495057;
+        text-align: left;
     }
 
 
         .skills-dropdown-button:hover {
-            border-color: #adb5bd;
+            border-color: #0D5CC1;
         }
 
 
@@ -320,7 +365,6 @@
         border-radius: 6px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         z-index: 1000;
-        padding: 6px 0;
     }
 
 
@@ -333,156 +377,509 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        width: 100%;
-        padding: 9px 12px;
-        margin: 0;
+        padding: 10px 12px;
         cursor: pointer;
-        font-size: 14px;
+        margin: 0;
     }
 
 
         .skill-option:hover {
-            background: #f5f5f5;
+            background: #F4F7FB;
         }
 
 
         .skill-option input[type="checkbox"] {
             width: 16px;
             height: 16px;
-            margin: 0;
             cursor: pointer;
         }
 
 
     .skill-name {
-        flex: 1;
+        font-size: 14px;
     }
 
 
-    .skills-dropdown-menu::-webkit-scrollbar {
-        width: 6px;
+    .skill-empty {
+        padding: 12px;
+        color: #6c757d;
+        font-size: 14px;
     }
 
 
-    .skills-dropdown-menu::-webkit-scrollbar-thumb {
-        border-radius: 10px;
+    .form-control-static {
+        min-height: 42px;
+        padding: 10px 12px;
+        background: #F4F7FB;
+        border: 1px solid #e1e5ea;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
     }
 
 
-    .text-danger {
+    #TechnicianID:disabled {
+        background-color: #f1f3f5;
+        cursor: not-allowed;
+        opacity: 0.75;
+    }
+
+
+    #technicianSkillMessage {
         display: block;
         margin-top: 6px;
     }
 </style>
 
+
+
+<!-- ===============================================================
+     JAVASCRIPT
+================================================================ -->
+
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
 
-        var dropdown =
+        // ============================================================
+        // ELEMENTS
+        // ============================================================
+
+        var skillsDropdown =
             document.getElementById("skillsDropdown");
 
-        var button =
+        var skillsDropdownButton =
             document.getElementById("skillsDropdownButton");
 
-        var menu =
-            document.getElementById("skillsDropdownMenu");
-
-        var text =
+        var skillsDropdownText =
             document.getElementById("skillsDropdownText");
 
+        var technicianDropdown =
+            document.getElementById("TechnicianID");
 
-        if (!dropdown || !button || !menu || !text) {
-            return;
+        var technicianSkillMessage =
+            document.getElementById("technicianSkillMessage");
+
+
+        // ============================================================
+        // SELECTED TECHNICIAN FROM SERVER
+        //
+        // This helps preserve the technician if the form is returned
+        // because of a validation error.
+        // ============================================================
+
+        var previousTechnicianId =
+            '@Model.TechnicianID';
+
+
+        // ============================================================
+        // GET ALL SKILL CHECKBOXES
+        // ============================================================
+
+        function getSkillCheckboxes() {
+
+            return document.querySelectorAll(
+                'input[name="SelectedSkillIDs"]'
+            );
+
         }
 
 
+        // ============================================================
+        // UPDATE SKILL DROPDOWN TEXT
+        // ============================================================
+
         function updateSelectedText() {
 
-            var selected =
-                menu.querySelectorAll(
-                    'input[name="SelectedSkillIDs"]:checked'
-                );
+            var checkboxes = getSkillCheckboxes();
+
+            var selectedSkills = [];
 
 
-            if (selected.length === 0) {
+            checkboxes.forEach(function (checkbox) {
 
-                text.textContent =
+                if (checkbox.checked) {
+
+                    var label =
+                        checkbox.closest(".skill-option");
+
+                    if (label) {
+
+                        var skillName =
+                            label.querySelector(".skill-name");
+
+                        if (skillName) {
+
+                            selectedSkills.push(
+                                skillName.textContent.trim()
+                            );
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+
+            if (selectedSkills.length === 0) {
+
+                skillsDropdownText.textContent =
                     "Select required skills";
 
             }
-            else if (selected.length === 1) {
+            else if (selectedSkills.length === 1) {
 
-                var label =
-                    selected[0].closest(".skill-option");
-
-                text.textContent =
-                    label.querySelector(
-                        ".skill-name"
-                    ).textContent.trim();
+                skillsDropdownText.textContent =
+                    selectedSkills[0];
 
             }
             else {
 
-                text.textContent =
-                    selected.length +
+                skillsDropdownText.textContent =
+                    selectedSkills.length +
                     " skills selected";
 
             }
+
         }
 
 
-        button.addEventListener(
+        // ============================================================
+        // GET SELECTED SKILL IDS
+        // ============================================================
+
+        function getSelectedSkillIds() {
+
+            var checkboxes = getSkillCheckboxes();
+
+            var selectedSkillIds = [];
+
+
+            checkboxes.forEach(function (checkbox) {
+
+                if (checkbox.checked) {
+
+                    selectedSkillIds.push(
+                        checkbox.value
+                    );
+
+                }
+
+            });
+
+
+            return selectedSkillIds;
+
+        }
+
+
+        // ============================================================
+        // SET TECHNICIAN DROPDOWN TO EMPTY
+        // ============================================================
+
+        function clearTechnicians(message) {
+
+            technicianDropdown.innerHTML = "";
+
+
+            var option =
+                document.createElement("option");
+
+            option.value = "";
+            option.textContent = message;
+
+
+            technicianDropdown.appendChild(option);
+
+        }
+
+
+        // ============================================================
+        // LOAD TECHNICIANS BASED ON SELECTED SKILLS
+        // ============================================================
+
+        function loadTechniciansBySkills() {
+
+            var selectedSkillIds =
+                getSelectedSkillIds();
+
+
+            // --------------------------------------------------------
+            // NO SKILLS SELECTED
+            // --------------------------------------------------------
+
+            if (selectedSkillIds.length === 0) {
+
+                clearTechnicians(
+                    "Select required skill first"
+                );
+
+                technicianDropdown.disabled = true;
+
+
+                technicianSkillMessage.textContent =
+                    "Select a required skill to see matching technicians.";
+
+                return;
+            }
+
+
+            // --------------------------------------------------------
+            // SHOW LOADING STATE
+            // --------------------------------------------------------
+
+            technicianDropdown.disabled = true;
+
+            clearTechnicians(
+                "Loading technicians..."
+            );
+
+
+            technicianSkillMessage.textContent =
+                "Finding active technicians with the selected skills...";
+
+
+            // --------------------------------------------------------
+            // BUILD REQUEST URL
+            // --------------------------------------------------------
+
+            var url =
+                '@Url.Action(
+                    "GetTechniciansBySkills",
+                    "AdministratorAssignments"
+                )';
+
+
+            var query =
+                selectedSkillIds
+                    .map(function (id) {
+                        return "skillIds=" +
+                            encodeURIComponent(id);
+                    })
+                    .join("&");
+
+
+            // --------------------------------------------------------
+            // REQUEST TECHNICIANS
+            // --------------------------------------------------------
+
+            fetch(url + "?" + query, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            })
+            .then(function (response) {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to load technicians."
+                    );
+
+                }
+
+                return response.json();
+
+            })
+            .then(function (technicians) {
+
+                technicianDropdown.innerHTML = "";
+
+
+                // ----------------------------------------------------
+                // NO MATCHING TECHNICIANS
+                // ----------------------------------------------------
+
+                if (!technicians ||
+                    technicians.length === 0) {
+
+                    var noOption =
+                        document.createElement("option");
+
+                    noOption.value = "";
+
+                    noOption.textContent =
+                        "No matching technicians available";
+
+                    technicianDropdown.appendChild(
+                        noOption
+                    );
+
+                    technicianDropdown.disabled = true;
+
+
+                    technicianSkillMessage.textContent =
+                        "No active technicians possess any of the selected skills.";
+
+                    return;
+                }
+
+
+                // ----------------------------------------------------
+                // DEFAULT OPTION
+                // ----------------------------------------------------
+
+                var defaultOption =
+                    document.createElement("option");
+
+                defaultOption.value = "";
+
+                defaultOption.textContent =
+                    "Select Technician";
+
+                technicianDropdown.appendChild(
+                    defaultOption
+                );
+
+
+                // ----------------------------------------------------
+                // ADD MATCHING TECHNICIANS
+                // ----------------------------------------------------
+
+                technicians.forEach(function (technician) {
+
+                    var option =
+                        document.createElement("option");
+
+                    option.value =
+                        technician.id;
+
+                    option.textContent =
+                        technician.name;
+
+
+                    // Preserve previous selection if available
+                    if (
+                        previousTechnicianId &&
+                        String(technician.id) ===
+                        String(previousTechnicianId)
+                    ) {
+
+                        option.selected = true;
+
+                    }
+
+
+                    technicianDropdown.appendChild(
+                        option
+                    );
+
+                });
+
+
+                // ----------------------------------------------------
+                // ENABLE TECHNICIAN DROPDOWN
+                // ----------------------------------------------------
+
+                technicianDropdown.disabled = false;
+
+
+                technicianSkillMessage.textContent =
+                    technicians.length +
+                    " matching technician(s) available.";
+
+            })
+            .catch(function (error) {
+
+                console.error(error);
+
+
+                clearTechnicians(
+                    "Unable to load technicians"
+                );
+
+                technicianDropdown.disabled = true;
+
+
+                technicianSkillMessage.textContent =
+                    "Unable to load technicians. Please try again.";
+
+            });
+
+        }
+
+
+        // ============================================================
+        // OPEN / CLOSE SKILLS DROPDOWN
+        // ============================================================
+
+        skillsDropdownButton.addEventListener(
             "click",
             function (event) {
 
                 event.stopPropagation();
 
-                dropdown.classList.toggle("open");
+                skillsDropdown.classList.toggle("open");
 
             }
         );
 
 
-        menu.addEventListener(
-            "click",
-            function (event) {
-
-                event.stopPropagation();
-
-            }
-        );
-
+        // ============================================================
+        // CLOSE WHEN CLICKING OUTSIDE
+        // ============================================================
 
         document.addEventListener(
             "click",
             function () {
 
-                dropdown.classList.remove("open");
+                skillsDropdown.classList.remove("open");
 
             }
         );
 
 
-        var checkboxes =
-            menu.querySelectorAll(
-                'input[name="SelectedSkillIDs"]'
-            );
+        // ============================================================
+        // PREVENT MENU CLICK FROM CLOSING DROPDOWN
+        // ============================================================
+
+        document.getElementById(
+            "skillsDropdownMenu"
+        ).addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+            }
+        );
 
 
-        checkboxes.forEach(
+        // ============================================================
+        // SKILL CHECKBOX CHANGES
+        // ============================================================
+
+        getSkillCheckboxes().forEach(
             function (checkbox) {
 
                 checkbox.addEventListener(
                     "change",
-                    updateSelectedText
+                    function () {
+
+                        updateSelectedText();
+
+                        loadTechniciansBySkills();
+
+                    }
                 );
 
             }
         );
 
 
+        // ============================================================
+        // INITIAL PAGE LOAD
+        //
+        // If skills are already selected, load their technicians.
+        // This is useful after server-side validation errors.
+        // ============================================================
+
         updateSelectedText();
+
+        loadTechniciansBySkills();
 
     });
 

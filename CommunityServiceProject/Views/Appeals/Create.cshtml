@@ -1,0 +1,528 @@
+﻿@model CommunityServiceProject.Models.Appeal
+
+@{
+    Layout = null;
+    ViewBag.Title = "Submit Account Appeal";
+
+    var citizen =
+        ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
+
+    var restriction =
+        ViewBag.Restriction as CommunityServiceProject.Models.AccountRestriction;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Submit Account Appeal</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+
+    <style>
+        body {
+            margin: 0;
+            background: #f4f7fb;
+            color: #1f2937;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .appeal-page {
+            min-height: 100vh;
+            padding: 45px 20px;
+        }
+
+        .appeal-container {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .appeal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .appeal-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #eaf2ff;
+            color: #2f5bea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 29px;
+            box-shadow: 0 8px 20px rgba(47, 91, 234, 0.10);
+        }
+
+        .appeal-header h1 {
+            margin: 0;
+            font-size: 29px;
+            font-weight: 700;
+        }
+
+        .appeal-header p {
+            max-width: 560px;
+            margin: 10px auto 0;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .appeal-card {
+            background: #ffffff;
+            border: 1px solid #e3e8ef;
+            border-radius: 15px;
+            padding: 34px;
+            box-shadow: 0 16px 42px rgba(15, 23, 42, 0.09);
+        }
+
+        .account-summary {
+            padding: 19px;
+            background: #f8fafc;
+            border: 1px solid #e7ebf1;
+            border-radius: 10px;
+            margin-bottom: 28px;
+        }
+
+        .summary-title {
+            margin-bottom: 15px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 13px;
+        }
+
+            .summary-row:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+        .summary-label {
+            color: #6b7280;
+        }
+
+        .summary-value {
+            color: #1f2937;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .restriction-status {
+            color: #a15c00;
+        }
+
+        .form-section-title {
+            margin-bottom: 18px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 600;
+                color: #374151;
+            }
+
+        .required {
+            color: #b42318;
+        }
+
+        .appeal-textarea {
+            width: 100%;
+            min-height: 190px;
+            padding: 13px 14px;
+            border: 1px solid #d6dbe3;
+            border-radius: 9px;
+            resize: vertical;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: none;
+            transition: all 0.2s ease;
+        }
+
+            .appeal-textarea:focus {
+                outline: none;
+                border-color: #2f5bea;
+                box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.10);
+            }
+
+        .field-help {
+            margin-top: 7px;
+            color: #8b93a1;
+            font-size: 11px;
+        }
+
+        .document-box {
+            border: 1px dashed #cfd6e2;
+            border-radius: 10px;
+            padding: 18px;
+            background: #fbfcfe;
+        }
+
+            .document-box input[type="file"] {
+                width: 100%;
+                font-size: 13px;
+            }
+
+        .document-help {
+            margin-top: 9px;
+            color: #7b8493;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .validation-summary {
+            padding: 13px 15px;
+            margin-bottom: 22px;
+            border-radius: 9px;
+            background: #fff1f0;
+            border: 1px solid #f3c7c3;
+            color: #b42318;
+            font-size: 13px;
+        }
+
+            .validation-summary ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+        .field-validation-error {
+            display: block;
+            margin-top: 6px;
+            color: #b42318;
+            font-size: 12px;
+        }
+
+        .appeal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .submit-button,
+        .cancel-button {
+            flex: 1;
+            min-height: 46px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+        }
+
+        .submit-button {
+            border: none;
+            background: #2f5bea;
+            color: #ffffff;
+            box-shadow: 0 7px 18px rgba(47, 91, 234, 0.19);
+        }
+
+            .submit-button:hover,
+            .submit-button:focus {
+                background: #2449c7;
+                color: #ffffff;
+                transform: translateY(-1px);
+            }
+
+        .cancel-button {
+            border: 1px solid #d5dae3;
+            background: #ffffff;
+            color: #4b5563;
+        }
+
+            .cancel-button:hover,
+            .cancel-button:focus {
+                background: #f8fafc;
+                color: #1f2937;
+            }
+
+        .security-note {
+            text-align: center;
+            margin-top: 22px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        @@media (max-width: 576px) {
+            .appeal-page {
+                padding: 25px 15px;
+            }
+
+            .appeal-card {
+                padding: 24px 19px;
+            }
+
+            .appeal-header h1 {
+                font-size: 24px;
+            }
+
+            .summary-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .summary-value {
+                text-align: left;
+            }
+
+            .appeal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="appeal-page">
+
+        <div class="appeal-container">
+
+            <div class="appeal-header">
+
+                <div class="appeal-icon">
+                    <span class="glyphicon glyphicon-file"></span>
+                </div>
+
+                <h1>Submit Account Appeal</h1>
+
+                <p>
+                    Submit your appeal for administrator review.
+                    Please provide a clear explanation of why you
+                    believe your account restriction should be reconsidered.
+                </p>
+
+            </div>
+
+
+            <div class="appeal-card">
+
+                @using (Html.BeginForm(
+                    "Create",
+                    "Appeals",
+                    FormMethod.Post,
+                    new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.ValidationSummary(
+                        true,
+                        "",
+                        new { @class = "validation-summary" }
+                    )
+
+
+                    <!-- =================================================
+                         ACCOUNT SUMMARY
+                         ================================================= -->
+
+                    <div class="account-summary">
+
+                        <div class="summary-title">
+                            Account Information
+                        </div>
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Account
+                            </span>
+
+                            <span class="summary-value">
+                                @(citizen != null
+                                    ? citizen.FirstName + " " + citizen.LastName
+                                    : "Citizen")
+                            </span>
+
+                        </div>
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Account Status
+                            </span>
+
+                            <span class="summary-value restriction-status">
+                                @(citizen != null
+                                    ? citizen.AccountStatus.ToString()
+                                    : "Restricted")
+                            </span>
+
+                        </div>
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Restriction
+                            </span>
+
+                            <span class="summary-value">
+                                @(restriction != null
+                                    ? restriction.RestrictionType
+                                    : "Account Restriction")
+                            </span>
+
+                        </div>
+
+                        <div class="summary-row">
+
+                            <span class="summary-label">
+                                Restriction Start
+                            </span>
+
+                            <span class="summary-value">
+                                @(restriction != null
+                                    ? restriction.DateStarted.ToString("dd MMM yyyy")
+                                    : "-")
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         APPEAL REASON
+                         ================================================= -->
+
+                    <div class="form-section-title">
+                        Appeal Details
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="Reason">
+                            Appeal Reason <span class="required">*</span>
+                        </label>
+
+                        @Html.TextAreaFor(
+                            m => m.Reason,
+                            new
+                            {
+                                @class = "appeal-textarea",
+                                placeholder =
+                                    "Explain why you are appealing the account restriction...",
+                                maxlength = "2000"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.Reason,
+                            "",
+                            new { @class = "field-validation-error" }
+                        )
+
+                        <div class="field-help">
+                            Please provide a clear explanation to help
+                            the administrator understand your appeal.
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SUPPORTING DOCUMENT
+                         ================================================= -->
+
+                    <div class="form-group">
+
+                        <label for="SupportingDocument">
+                            Supporting Document
+                            <span style="font-weight: normal; color: #8b93a1;">
+                                (Optional)
+                            </span>
+                        </label>
+
+                        <div class="document-box">
+
+                            <input type="file"
+                                   id="SupportingDocument"
+                                   name="SupportingDocument"
+                                   accept=".pdf,.jpg,.jpeg,.png" />
+
+                            <div class="document-help">
+                                You may attach relevant supporting evidence.
+                                Accepted formats: PDF, JPG, JPEG and PNG.
+                                Maximum file size: 5 MB.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ACTIONS
+                         ================================================= -->
+
+                    <div class="appeal-actions">
+
+                        <a href="@Url.Action("Index", "Login")"
+                           class="cancel-button">
+
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Cancel
+
+                        </a>
+
+                        <button type="submit"
+                                class="submit-button">
+
+                            <span class="glyphicon glyphicon-send"></span>
+                            Submit Account Appeal
+
+                        </button>
+
+                    </div>
+
+                }
+
+            </div>
+
+
+            <div class="security-note">
+
+                <span class="glyphicon glyphicon-lock"></span>
+
+                &nbsp;Your appeal will be securely submitted for administrator review.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+
+

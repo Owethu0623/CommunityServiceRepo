@@ -21,9 +21,27 @@
             Manage Citizens
         </a>
 
+        <a href="@Url.Action("AdminIndex", "Appeals")"
+           class="dashboard-button appeals-button">
+            Account Appeals
+        </a>
+
+        <a href="@Url.Action("Index", "WardManagement")"
+           class="dashboard-button">
+
+            Ward Management
+
+        </a>
+
+
         <a href="@Url.Action("Index", "TechnicianManagement")"
            class="dashboard-button">
             Manage Technicians
+        </a>
+
+        <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+             class="dashboard-button">
+            Municipal Operations
         </a>
 
         <a href="@Url.Action("Index", "CategoryManagement")"
@@ -36,9 +54,19 @@
             Reports
         </a>
 
+        <a href="@Url.Action("Index", "AdministratorSystemHistory")"
+           class="dashboard-button">
+            System History
+        </a>
+
         <a href="@Url.Action("Index", "AdministratorStatistics")"
            class="dashboard-button">
-            Statistics
+            Service Performance
+        </a>
+
+        <a href="@Url.Action("Index", "FeedbackManagement")"
+           class="dashboard-button">
+            <span>Citizen Feedback</span>
         </a>
 
         <a href="@Url.Action("Index", "Home")"

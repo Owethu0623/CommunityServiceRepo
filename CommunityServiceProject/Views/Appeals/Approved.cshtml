@@ -1,0 +1,572 @@
+﻿
+@model CommunityServiceProject.Models.Appeal
+
+@{
+    ViewBag.Title = "Appeal Approved";
+
+    int resolutionDays = 0;
+
+    if (Model.DateDecision.HasValue)
+    {
+        resolutionDays =
+            (Model.DateDecision.Value -
+             Model.DateSubmitted).Days;
+    }
+}
+
+<div class="appeal-result-page">
+
+    <div class="appeal-result-container">
+
+        <div class="appeal-result-card">
+
+            <!-- =================================================
+                 SUCCESS ICON
+                 ================================================= -->
+
+            <div class="appeal-result-icon">
+                <span class="glyphicon glyphicon-ok"></span>
+            </div>
+
+
+            <!-- =================================================
+                 TITLE
+                 ================================================= -->
+
+            <div class="appeal-result-title">
+
+                <h1>APPEAL APPROVED</h1>
+
+                <p>
+                    The citizen's account appeal has been
+                    successfully approved.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUCCESS MESSAGE
+                 ================================================= -->
+
+            <div class="success-message">
+
+                <span class="glyphicon glyphicon-ok-circle"></span>
+
+                <div>
+                    <strong>Appeal approved successfully.</strong>
+
+                    <br />
+
+                    The account restriction has been removed and
+                    the citizen account has been restored to
+                    Active status.
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 APPEAL DETAILS
+                 ================================================= -->
+
+            <div class="result-details">
+
+                <div class="result-row">
+
+                    <span class="result-label">
+                        Appeal Reference
+                    </span>
+
+                    <span class="result-value reference">
+                        @Model.ReferenceNumber
+                    </span>
+
+                </div>
+
+
+                <div class="result-row">
+
+                    <span class="result-label">
+                        Status
+                    </span>
+
+                    <span class="result-value">
+
+                        <span class="approved-badge">
+                            Approved
+                        </span>
+
+                    </span>
+
+                </div>
+
+
+                <div class="result-row">
+
+                    <span class="result-label">
+                        Submitted
+                    </span>
+
+                    <span class="result-value">
+                        @Model.DateSubmitted.ToString(
+                            "dd MMM yyyy, HH:mm")
+                    </span>
+
+                </div>
+
+
+                <div class="result-row">
+
+                    <span class="result-label">
+                        Decision Date
+                    </span>
+
+                    <span class="result-value">
+
+                        @(Model.DateDecision.HasValue
+                            ? Model.DateDecision.Value.ToString(
+                                "dd MMM yyyy, HH:mm")
+                            : "-")
+
+                    </span>
+
+                </div>
+
+
+                <div class="result-row">
+
+                    <span class="result-label">
+                        Resolution Time
+                    </span>
+
+                    <span class="result-value">
+
+                        @resolutionDays
+
+                        @(resolutionDays == 1
+                            ? " Day"
+                            : " Days")
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DECISION REASON
+                 ================================================= -->
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.DecisionReason))
+            {
+                <div class="decision-reason-box">
+
+                    <div class="decision-reason-title">
+                        Administrator Decision
+                    </div>
+
+                    <div class="decision-reason-text">
+                        @Model.DecisionReason
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =================================================
+                 ACCOUNT RESULT
+                 ================================================= -->
+
+            <div class="account-result-box">
+
+                <div class="account-result-icon">
+                    <span class="glyphicon glyphicon-user"></span>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Account Restored
+                    </strong>
+
+                    <p>
+                        The citizen's account restriction has been
+                        removed. The account is now Active.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NAVIGATION
+                 ================================================= -->
+
+            <div class="result-actions">
+
+                <a href="@Url.Action(
+                    "AdminIndex",
+                    "Appeals")"
+                   class="result-button primary">
+
+                    <span class="glyphicon glyphicon-list"></span>
+
+                    Back to Account Appeals
+
+                </a>
+
+
+                <a href="@Url.Action(
+                    "Index",
+                    "AdministratorDashboard")"
+                   class="result-button secondary">
+
+                    <span class="glyphicon glyphicon-home"></span>
+
+                    Back to Admin Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <div class="result-footer">
+
+            <span class="glyphicon glyphicon-lock"></span>
+
+            &nbsp;Community Service Request System
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .appeal-result-page {
+        min-height: 75vh;
+        padding: 40px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .appeal-result-container {
+        width: 100%;
+        max-width: 650px;
+    }
+
+
+    /* =========================================================
+       CARD
+       ========================================================= */
+
+    .appeal-result-card {
+        background: #ffffff;
+        border: 1px solid #e2e7ee;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+    }
+
+
+    /* =========================================================
+       ICON
+       ========================================================= */
+
+    .appeal-result-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #ecfdf3;
+        color: #198754;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+    }
+
+
+    /* =========================================================
+       TITLE
+       ========================================================= */
+
+    .appeal-result-title {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .appeal-result-title h1 {
+        margin: 0 0 9px;
+        font-size: 27px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .appeal-result-title p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       SUCCESS MESSAGE
+       ========================================================= */
+
+    .success-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: 9px;
+        background: #ecfdf3;
+        border: 1px solid #b8e8c8;
+        color: #166534;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .success-message .glyphicon {
+        margin-top: 2px;
+        font-size: 15px;
+    }
+
+
+    /* =========================================================
+       DETAILS
+       ========================================================= */
+
+    .result-details {
+        border-top: 1px solid #edf0f4;
+    }
+
+    .result-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 13px 0;
+        border-bottom: 1px solid #edf0f4;
+        font-size: 13px;
+    }
+
+    .result-label {
+        color: #6b7280;
+    }
+
+    .result-value {
+        color: #374151;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .reference {
+        color: #2f5bea;
+        letter-spacing: 0.5px;
+    }
+
+
+    /* =========================================================
+       APPROVED BADGE
+       ========================================================= */
+
+    .approved-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: #ecfdf3;
+        color: #167044;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+
+    /* =========================================================
+       DECISION REASON
+       ========================================================= */
+
+    .decision-reason-box {
+        margin-top: 24px;
+        padding: 16px;
+        border-radius: 9px;
+        background: #f8fafc;
+        border: 1px solid #e6ebf1;
+    }
+
+    .decision-reason-title {
+        margin-bottom: 8px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .decision-reason-text {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+
+    /* =========================================================
+       ACCOUNT RESTORED
+       ========================================================= */
+
+    .account-result-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 9px;
+        background: #f8fafc;
+        border: 1px solid #e6ebf1;
+    }
+
+    .account-result-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #eaf2ff;
+        color: #2f5bea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .account-result-box strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #374151;
+        font-size: 12px;
+    }
+
+    .account-result-box p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .result-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .result-button {
+        flex: 1;
+        min-height: 45px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+    }
+
+    .result-button.primary {
+        background: #2f5bea;
+        color: #ffffff;
+        box-shadow: 0 6px 16px rgba(47, 91, 234, 0.18);
+    }
+
+    .result-button.primary:hover,
+    .result-button.primary:focus {
+        background: #2449c7;
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+    .result-button.secondary {
+        background: #ffffff;
+        border: 1px solid #d7dde6;
+        color: #4b5563;
+    }
+
+    .result-button.secondary:hover,
+    .result-button.secondary:focus {
+        background: #f8fafc;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .result-footer {
+        margin-top: 18px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 576px) {
+
+        .appeal-result-page {
+            padding: 25px 15px;
+        }
+
+        .appeal-result-card {
+            padding: 28px 20px;
+        }
+
+        .appeal-result-title h1 {
+            font-size: 23px;
+        }
+
+        .result-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .result-value {
+            text-align: left;
+        }
+
+        .result-actions {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+

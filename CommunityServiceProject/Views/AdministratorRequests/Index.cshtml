@@ -59,6 +59,16 @@
                     </div>
 
                     <div class="admin-filter-group">
+                        <label for="wardId">Ward</label>
+
+                        @Html.DropDownList(
+                            "wardId",
+                            (SelectList)ViewBag.Wards,
+                            "All Wards"
+                        )
+                    </div>
+
+                    <div class="admin-filter-group">
                         <label for="sortOrder">Sort By</label>
 
                         <select id="sortOrder" name="sortOrder">
@@ -113,8 +123,11 @@
                             <th>Title</th>
                             <th>Citizen Information</th>
                             <th>Category</th>
+                            <th>Ward</th>
+                            <th>Priority</th>
                             <th>Date Submitted</th>
                             <th>Status</th>
+                            <th>Days Open</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -125,9 +138,9 @@
                         {
                             <tr>
 
-                               <td>
-                                   @request.ReferenceNumber
-                               </td>
+                                <td>
+                                    @request.ReferenceNumber
+                                </td>
 
                                 <td>
                                     @request.Title
@@ -143,11 +156,33 @@
                                 </td>
 
                                 <td>
+                                    @if (request.Ward != null)
+                                    {
+                                        <span>W@(request.Ward.WardNumber)</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Not Assigned</span>
+                                    }
+                                </td>
+
+                                
+                                <td>
+                                    @request.Priority
+                                </td>
+
+                             
+
+                                <td>
                                     @request.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
                                 </td>
 
                                 <td>
                                     @request.Status
+                                </td>
+
+                                <td>
+                                    @request.DaysOpen()
                                 </td>
 
                                 <td>
@@ -220,7 +255,7 @@
             </a>
 
         </div>
-
+        
     </div>
 
 </div>

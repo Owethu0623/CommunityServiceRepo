@@ -1066,6 +1066,22 @@ namespace CommunityServiceProject.Controllers
             // Update the request lifecycle.
             request.Status = RequestStatus.InProgress;
 
+            // -------------------------------------------------------
+            // Create citizen notification
+            // -------------------------------------------------------
+
+            var notification = new Notification
+            {
+                CitizenID = request.CitizenID,
+                RequestID = request.RequestID,
+                Message = request.ReferenceNumber +
+                          " is now In Progress.",
+                DateCreated = DateTime.Now,
+                IsRead = false
+            };
+
+            db.Notifications.Add(notification);
+
             db.SaveChanges();
 
             TempData["SuccessMessage"] =

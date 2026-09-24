@@ -40,52 +40,46 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-     
-// =========================================================
-// GET: Requests/Details/5
-// =========================================================
-
-public ActionResult Details(int? id)
+        public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(
-                    HttpStatusCode.BadRequest
-                );
-            }
-
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Login", "Login");
+            }
+
+            if (!id.HasValue)
+            {
+                return RedirectToAction("Index");
             }
 
             int citizenId = (int)Session["CitizenID"];
 
-            Request request = db.Requests
-                .Include(r => r.Category)
-                .Include(r => r.Citizen)
-                .Include(r => r.Ward)
-                .Include(r => r.Technician)
-                .FirstOrDefault(
-                    r =>
-                        r.RequestID == id &&
-                        r.CitizenID == citizenId
-                );
+            var request = db.Requests
+                .Include("Category")
+                .Include("Citizen")
+                .Include("Ward")
+                .Include("Technician")
+                .FirstOrDefault(r =>
+                    r.RequestID == id.Value &&
+                    r.CitizenID == citizenId);
 
             if (request == null)
             {
                 return HttpNotFound();
             }
 
+            ViewBag.HasFeedback = db.Feedbacks
+                .Any(f => f.RequestID == request.RequestID);
+
             return View(request);
         }
 
 
-// =========================================================
-// GET: Requests/Track/5
-// =========================================================
+        // =========================================================
+        // GET: Requests/Track/5
+        // =========================================================
 
-public ActionResult Track(int? id)
+        public ActionResult Track(int? id)
         {
             if (id == null)
             {
@@ -129,6 +123,11 @@ public ActionResult Track(int? id)
                 return HttpNotFound();
             }
 
+            bool hasFeedback = db.Feedbacks
+           .Any(f => f.RequestID == request.RequestID);
+
+            ViewBag.HasFeedback = hasFeedback;
+
             return View(request);
         }
 
@@ -145,6 +144,29 @@ public ActionResult Track(int? id)
             {
                 return RedirectToAction("Index", "Login");
             }
+
+            int citizenId = (int)Session["CitizenID"];
+
+            // =====================================================
+            // CHECK ACTIVE ACCOUNT RESTRICTION
+            // =====================================================
+
+            var activeRestriction = db.AccountRestrictions
+                .FirstOrDefault(r =>
+                    r.CitizenID == citizenId &&
+                    r.IsActive &&
+                    r.DateStarted <= DateTime.Now &&
+                    r.DateEnded > DateTime.Now
+                );
+
+            if (activeRestriction != null)
+            {
+                return View("Restricted", activeRestriction);
+            }
+
+            // =====================================================
+            // LOAD REQUEST FORM DATA
+            // =====================================================
 
             ViewBag.CategoryID = new SelectList(
                 db.Categories,
@@ -181,6 +203,20 @@ public ActionResult Track(int? id)
                 return RedirectToAction("Index", "Login");
             }
 
+            int citizenId = (int)Session["CitizenID"];
+
+            var activeRestriction = db.AccountRestrictions
+                .FirstOrDefault(r =>
+                    r.CitizenID == citizenId &&
+                    r.IsActive &&
+                    r.DateStarted <= DateTime.Now &&
+                    r.DateEnded > DateTime.Now
+                );
+
+            if (activeRestriction != null)
+            {
+                return View("Restricted", activeRestriction);
+            }
 
             // =====================================================
             // REMOVE AUTOMATIC MVC VALIDATION FOR GPS FIELDS
@@ -191,6 +227,7 @@ public ActionResult Track(int? id)
 
             ModelState.Remove("Latitude");
             ModelState.Remove("Longitude");
+            ModelState.Remove("ReferenceNumber");
 
 
             // =====================================================
@@ -352,29 +389,22 @@ public ActionResult Track(int? id)
                         "~/Uploads/" + fileName;
                 }
 
+                // Generate the next sequential reference number
+                var lastRequest = db.Requests
+                    .OrderByDescending(r => r.RequestID)
+                    .FirstOrDefault();
 
-                // =================================================
-                // SAVE TO DATABASE
-                // =================================================
+                int nextNumber = lastRequest == null
+                    ? 1
+                    : lastRequest.RequestID + 1;
 
-                db.Requests.Add(request);
-
-                db.SaveChanges();
-
-
-                // =================================================
-                // GENERATE REQUEST REFERENCE
-                // =================================================
-
-                // RequestID is now available after the first save.
                 request.ReferenceNumber =
                     "REQ-" +
                     DateTime.Now.Year +
                     "-" +
-                    request.RequestID.ToString("D6");
+                    nextNumber.ToString("D6");
 
-
-                // Save the generated reference number.
+                db.Requests.Add(request);
                 db.SaveChanges();
 
 

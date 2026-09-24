@@ -1,0 +1,1828 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalAssetEditViewModel
+
+@{
+    ViewBag.Title = "Edit Municipal Asset";
+}
+
+<div class="admin-asset-create-page">
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="admin-asset-create-header">
+
+        <div>
+            <div class="page-eyebrow">
+                MUNICIPAL ASSET MANAGEMENT
+            </div>
+
+            <h1>
+                Edit Municipal Asset
+            </h1>
+
+            <p>
+                Update the registered information, location and
+                operational status of this municipal asset.
+            </p>
+        </div>
+
+        <div class="page-header-actions">
+            @Html.ActionLink(
+                "← Back to Asset Details",
+                "Details",
+                "MunicipalAsset",
+                new { id = Model.AssetID },
+                new { @class = "btn-secondary" }
+            )
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         INFORMATION NOTICE
+         ============================================================ -->
+    <div class="asset-info-notice">
+
+        <div class="asset-info-icon">
+            <span>i</span>
+        </div>
+
+        <div>
+            <strong>Editing a registered municipal asset</strong>
+
+            <p>
+                Update only information that has changed.
+                The asset code is system-generated and cannot be changed.
+                All successful changes are recorded in the asset history.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         VALIDATION SUMMARY
+         ============================================================ -->
+    @Html.ValidationSummary(
+        true,
+        "",
+        new { @class = "validation-summary-errors" }
+    )
+
+
+    @using (Html.BeginForm(
+        "Edit",
+        "MunicipalAsset",
+        FormMethod.Post,
+        new
+        {
+            @class = "admin-asset-create-form",
+            id = "editAssetForm"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(
+            model => model.AssetID
+        )
+
+        @Html.Hidden(
+            "Latitude",
+            Model.Latitude,
+            new
+            {
+                id = "AssetLatitude"
+            }
+        )
+
+        @Html.Hidden(
+            "Longitude",
+            Model.Longitude,
+            new
+            {
+                id = "AssetLongitude"
+            }
+        )
+
+
+        <!-- ========================================================
+             SECTION 01 — ASSET IDENTIFICATION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    01
+                </div>
+
+                <div>
+                    <h2>
+                        Asset Identification
+                    </h2>
+
+                    <p>
+                        Review the system-generated asset identifier
+                        and update the asset name where required.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="asset-form-grid">
+
+                <!-- Asset Code -->
+                <div class="form-group">
+
+                    <label>
+                        Asset Code
+                    </label>
+
+                    <div class="readonly-field">
+
+                        <span class="readonly-value">
+                            @Model.AssetCode
+                        </span>
+
+                        <span class="readonly-badge">
+                            System Generated
+                        </span>
+
+                    </div>
+
+                    <small class="form-help">
+                        The asset code uniquely identifies this municipal
+                        asset and cannot be changed.
+                    </small>
+
+                </div>
+
+
+                <!-- Asset Name -->
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.AssetName
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.AssetName,
+                        new
+                        {
+                            @class = "form-control",
+                            autocomplete = "off",
+                            maxlength = "150",
+                            placeholder = "Enter asset name"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.AssetName,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 02 — ASSET CLASSIFICATION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    02
+                </div>
+
+                <div>
+                    <h2>
+                        Asset Classification
+                    </h2>
+
+                    <p>
+                        Update the classification and municipal ward
+                        associated with this asset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="asset-form-grid">
+
+                <!-- Asset Type -->
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.AssetType
+                    )
+
+                    @Html.DropDownListFor(
+                        model => model.AssetType,
+                        Model.AssetTypeOptions,
+                        "-- Select Asset Type --",
+                        new
+                        {
+                            @class = "form-control",
+                            id = "AssetType"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.AssetType,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                </div>
+
+
+                <!-- Asset Category -->
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.AssetCategory
+                    )
+
+                    @Html.DropDownListFor(
+                        model => model.AssetCategory,
+                        Model.AssetCategoryOptions,
+                        "-- Select Asset Category --",
+                        new
+                        {
+                            @class = "form-control",
+                            id = "AssetCategory"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.AssetCategory,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        model => model.Description
+                    )
+
+                    @Html.TextAreaFor(
+                        model => model.Description,
+                        new
+                        {
+                            @class = "form-control",
+                            rows = "4",
+                            maxlength = "1000",
+                            placeholder =
+                                "Provide a description of the municipal asset..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Description,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                    <small class="form-help">
+                        Provide useful identifying or operational
+                        information about the asset.
+                    </small>
+
+                </div>
+
+
+                <!-- Ward -->
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        model => model.WardID
+                    )
+
+                    @Html.DropDownListFor(
+                        model => model.WardID,
+                        Model.WardOptions,
+                        "-- Select Municipal Ward --",
+                        new
+                        {
+                            @class = "form-control",
+                            id = "WardID"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.WardID,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                    <small class="form-help">
+                        Select the municipal ward where the asset
+                        is administratively located.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 03 — ASSET LOCATION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    03
+                </div>
+
+                <div>
+                    <h2>
+                        Asset Location
+                    </h2>
+
+                    <p>
+                        Update the physical location of the municipal asset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="asset-location-search">
+
+                <div class="form-group">
+
+                    <label for="addressSearch">
+                        Search Location
+                    </label>
+
+                    <div class="location-search-row">
+
+                        <input type="text"
+                               id="addressSearch"
+                               class="form-control"
+                               placeholder="Search for an address or location..." />
+
+                        <button type="button"
+                                id="searchAddressBtn"
+                                class="btn-map-action">
+                            Search
+                        </button>
+
+                    </div>
+
+                    <small id="addressSearchMessage"
+                           class="form-help">
+                        Search for the asset location, then select the
+                        appropriate position on the map.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Map -->
+            <div class="asset-map-wrapper">
+
+                <div id="assetMap"></div>
+
+            </div>
+
+
+            <!-- Selected Coordinates -->
+            <div class="coordinate-panel">
+
+                <div class="coordinate-item">
+
+                    <span class="coordinate-label">
+                        Latitude
+                    </span>
+
+                    <strong id="latitudeDisplay">
+                        @(string.IsNullOrWhiteSpace(Model.Latitude)
+                            ? "Not selected"
+                            : Model.Latitude)
+                    </strong>
+
+                </div>
+
+
+                <div class="coordinate-item">
+
+                    <span class="coordinate-label">
+                        Longitude
+                    </span>
+
+                    <strong id="longitudeDisplay">
+                        @(string.IsNullOrWhiteSpace(Model.Longitude)
+                            ? "Not selected"
+                            : Model.Longitude)
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- Location Description -->
+            <div class="form-group location-description-group">
+
+                @Html.LabelFor(
+                    model => model.LocationDescription
+                )
+
+                @Html.TextAreaFor(
+                    model => model.LocationDescription,
+                    new
+                    {
+                        @class = "form-control",
+                        rows = "3",
+                        maxlength = "500",
+                        placeholder =
+                            "Describe the physical location of the asset..."
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.LocationDescription,
+                    "",
+                    new { @class = "field-validation-error" }
+                )
+
+                <small class="form-help">
+                    Describe the location in a way that helps municipal
+                    personnel physically identify the asset.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 04 — OPERATIONAL INFORMATION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    04
+                </div>
+
+                <div>
+                    <h2>
+                        Operational Information
+                    </h2>
+
+                    <p>
+                        Update the current physical condition and
+                        operational status of the asset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="asset-form-grid">
+
+                <!-- Condition -->
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.Condition
+                    )
+
+                    @Html.EnumDropDownListFor(
+                        model => model.Condition,
+                        "-- Select Condition --",
+                        new
+                        {
+                            @class = "form-control",
+                            id = "Condition"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Condition,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.Status
+                    )
+
+                    @Html.EnumDropDownListFor(
+                        model => model.Status,
+                        "-- Select Status --",
+                        new
+                        {
+                            @class = "form-control",
+                            id = "Status"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Status,
+                        "",
+                        new { @class = "field-validation-error" }
+                    )
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 05 — SYSTEM INFORMATION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    05
+                </div>
+
+                <div>
+                    <h2>
+                        System Information
+                    </h2>
+
+                    <p>
+                        Information managed by the municipal asset
+                        management system.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="system-information-grid">
+
+                <div class="system-information-item">
+
+                    <span class="system-information-label">
+                        Asset Code
+                    </span>
+
+                    <strong>
+                        @Model.AssetCode
+                    </strong>
+
+                </div>
+
+
+                <div class="system-information-item">
+
+                    <span class="system-information-label">
+                        Asset ID
+                    </span>
+
+                    <strong>
+                        @Model.AssetID
+                    </strong>
+
+                </div>
+
+
+                <div class="system-information-item">
+
+                    <span class="system-information-label">
+                        Record Status
+                    </span>
+
+                    <strong>
+                        Registered Asset
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             FORM ACTIONS
+             ======================================================== -->
+        <div class="asset-form-actions">
+
+            <div class="asset-form-actions-left">
+
+                @Html.ActionLink(
+                    "Cancel",
+                    "Details",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID },
+                    new { @class = "btn-secondary" }
+                )
+
+            </div>
+
+
+            <div class="asset-form-actions-right">
+
+                @Html.ActionLink(
+                    "View Asset Details",
+                    "Details",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID },
+                    new { @class = "btn-secondary" }
+                )
+
+                <button type="submit"
+                        class="btn-primary"
+                        id="saveAssetBtn">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+
+    }
+
+
+</div>
+
+
+<!-- ================================================================
+     LEAFLET
+     ================================================================ -->
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIINfQ3D3J7m5P9p4n7Y5n0rJ7fV3v5nX1Q="
+      crossorigin="" />
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="">
+</script>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* ============================================================
+           EXISTING COORDINATES
+           ============================================================ */
+
+        var latitudeInput =
+            document.getElementById("AssetLatitude");
+
+        var longitudeInput =
+            document.getElementById("AssetLongitude");
+
+        var latitudeDisplay =
+            document.getElementById("latitudeDisplay");
+
+        var longitudeDisplay =
+            document.getElementById("longitudeDisplay");
+
+
+        function getExistingLatitude() {
+
+            if (!latitudeInput ||
+                !latitudeInput.value) {
+                return null;
+            }
+
+            var value =
+                parseFloat(latitudeInput.value);
+
+            return isNaN(value)
+                ? null
+                : value;
+        }
+
+
+        function getExistingLongitude() {
+
+            if (!longitudeInput ||
+                !longitudeInput.value) {
+                return null;
+            }
+
+            var value =
+                parseFloat(longitudeInput.value);
+
+            return isNaN(value)
+                ? null
+                : value;
+        }
+
+
+        /* ============================================================
+           MAP DEFAULT
+           ============================================================ */
+
+        var defaultLatitude = -29.8587;
+        var defaultLongitude = 31.0218;
+        var defaultZoom = 12;
+
+
+        var existingLatitude =
+            getExistingLatitude();
+
+        var existingLongitude =
+            getExistingLongitude();
+
+
+        var mapLatitude =
+            existingLatitude !== null
+                ? existingLatitude
+                : defaultLatitude;
+
+        var mapLongitude =
+            existingLongitude !== null
+                ? existingLongitude
+                : defaultLongitude;
+
+        var mapZoom =
+            existingLatitude !== null &&
+                existingLongitude !== null
+                ? 16
+                : defaultZoom;
+
+
+        /* ============================================================
+           INITIALISE MAP
+           ============================================================ */
+
+        var map =
+            L.map("assetMap")
+                .setView(
+                    [mapLatitude, mapLongitude],
+                    mapZoom
+                );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+
+        var marker = null;
+
+
+        /* ============================================================
+           EXISTING ASSET MARKER
+           ============================================================ */
+
+        function placeMarker(
+            latitude,
+            longitude,
+            updateInputs
+        ) {
+
+            if (marker !== null) {
+                map.removeLayer(marker);
+            }
+
+            marker =
+                L.marker(
+                    [latitude, longitude],
+                    {
+                        draggable: true
+                    }
+                ).addTo(map);
+
+
+            marker.bindPopup(
+                "<strong>Municipal Asset Location</strong><br/>" +
+                "Latitude: " +
+                latitude.toFixed(6) +
+                "<br/>Longitude: " +
+                longitude.toFixed(6)
+            );
+
+
+            marker.on(
+                "dragend",
+                function () {
+
+                    var position =
+                        marker.getLatLng();
+
+                    setCoordinates(
+                        position.lat,
+                        position.lng
+                    );
+
+                }
+            );
+
+
+            if (updateInputs) {
+
+                setCoordinates(
+                    latitude,
+                    longitude
+                );
+
+            }
+        }
+
+
+        /* ============================================================
+           SET COORDINATES
+           ============================================================ */
+
+        function setCoordinates(
+            latitude,
+            longitude
+        ) {
+
+            latitudeInput.value =
+                latitude.toFixed(6);
+
+            longitudeInput.value =
+                longitude.toFixed(6);
+
+
+            latitudeDisplay.textContent =
+                latitude.toFixed(6);
+
+            longitudeDisplay.textContent =
+                longitude.toFixed(6);
+
+
+            if (marker !== null) {
+
+                marker.setLatLng(
+                    [latitude, longitude]
+                );
+
+            }
+
+        }
+
+
+        /* ============================================================
+           LOAD EXISTING LOCATION
+           ============================================================ */
+
+        if (existingLatitude !== null &&
+            existingLongitude !== null) {
+
+            placeMarker(
+                existingLatitude,
+                existingLongitude,
+                false
+            );
+
+        }
+
+
+        /* ============================================================
+           MAP CLICK
+           ============================================================ */
+
+        map.on(
+            "click",
+            function (event) {
+
+                var latitude =
+                    event.latlng.lat;
+
+                var longitude =
+                    event.latlng.lng;
+
+
+                placeMarker(
+                    latitude,
+                    longitude,
+                    true
+                );
+
+            }
+        );
+
+
+        /* ============================================================
+           ADDRESS SEARCH
+           ============================================================ */
+
+        var searchButton =
+            document.getElementById(
+                "searchAddressBtn"
+            );
+
+        var addressInput =
+            document.getElementById(
+                "addressSearch"
+            );
+
+        var searchMessage =
+            document.getElementById(
+                "addressSearchMessage"
+            );
+
+
+        if (searchButton) {
+
+            searchButton.addEventListener(
+                "click",
+                function () {
+
+                    var address =
+                        addressInput.value.trim();
+
+
+                    if (!address) {
+
+                        searchMessage.textContent =
+                            "Please enter an address or location to search.";
+
+                        return;
+
+                    }
+
+
+                    searchMessage.textContent =
+                        "Searching for location...";
+
+
+                    searchButton.disabled = true;
+
+
+                    fetch(
+                        "https://nominatim.openstreetmap.org/search?" +
+                        "format=json" +
+                        "&limit=1" +
+                        "&q=" +
+                        encodeURIComponent(address),
+                        {
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            }
+                        }
+                    )
+                        .then(
+                            function (response) {
+
+                                if (!response.ok) {
+                                    throw new Error(
+                                        "Location search failed."
+                                    );
+                                }
+
+                                return response.json();
+
+                            }
+                        )
+                        .then(
+                            function (data) {
+
+                                if (!data ||
+                                    data.length === 0) {
+
+                                    searchMessage.textContent =
+                                        "No matching location was found.";
+
+                                    return;
+
+                                }
+
+
+                                var latitude =
+                                    parseFloat(
+                                        data[0].lat
+                                    );
+
+                                var longitude =
+                                    parseFloat(
+                                        data[0].lon
+                                    );
+
+
+                                map.setView(
+                                    [latitude, longitude],
+                                    17
+                                );
+
+
+                                placeMarker(
+                                    latitude,
+                                    longitude,
+                                    true
+                                );
+
+
+                                searchMessage.textContent =
+                                    "Location found. Review the marker and adjust it if necessary.";
+
+                            }
+                        )
+                        .catch(
+                            function () {
+
+                                searchMessage.textContent =
+                                    "The location could not be found. Please try again or select the location directly on the map.";
+
+                            }
+                        )
+                        .finally(
+                            function () {
+
+                                searchButton.disabled =
+                                    false;
+
+                            }
+                        );
+
+                }
+            );
+
+        }
+
+
+        /* ============================================================
+           ENTER KEY SEARCH
+           ============================================================ */
+
+        if (addressInput) {
+
+            addressInput.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (event.key === "Enter") {
+
+                        event.preventDefault();
+
+                        searchButton.click();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ============================================================
+           CONFIRM BEFORE SAVE
+           ============================================================ */
+
+        var editForm =
+            document.getElementById(
+                "editAssetForm"
+            );
+
+
+        if (editForm) {
+
+            editForm.addEventListener(
+                "submit",
+                function (event) {
+
+                    var confirmed =
+                        window.confirm(
+                            "Are you sure you want to save these changes to this municipal asset?\n\n" +
+                            "The updated information will be recorded in the asset history."
+                        );
+
+
+                    if (!confirmed) {
+
+                        event.preventDefault();
+
+                        return false;
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* ============================================================
+           ASSET TYPE / CATEGORY
+           ============================================================ */
+
+        var assetType =
+            document.getElementById(
+                "AssetType"
+            );
+
+        var assetCategory =
+            document.getElementById(
+                "AssetCategory"
+            );
+
+
+        /*
+         * Keep this classification map synchronized with the
+         * classification used by MunicipalAssetController.
+         */
+
+        var categoryMap = {
+
+            "Road Infrastructure": [
+                "Road",
+                "Bridge",
+                "Sidewalk",
+                "Traffic Island",
+                "Drainage Infrastructure"
+            ],
+
+            "Street Lighting": [
+                "Streetlight",
+                "High Mast Light",
+                "Traffic Light"
+            ],
+
+            "Sports and Recreation": [
+                "Stadium",
+                "Sports Field",
+                "Golf Course",
+                "Swimming Pool",
+                "Recreation Facility"
+            ],
+
+            "Parks and Open Spaces": [
+                "Park",
+                "Botanical Garden",
+                "Public Garden",
+                "Open Space"
+            ],
+
+            "Municipal Buildings": [
+                "Municipal Building",
+                "Library",
+                "Community Hall",
+                "Fire Station",
+                "Administrative Building"
+            ],
+
+            "Transport Infrastructure": [
+                "Bus Depot",
+                "Transport Facility",
+                "Public Transport Infrastructure"
+            ],
+
+            "Water and Sanitation": [
+                "Water Treatment Facility",
+                "Wastewater Treatment Facility",
+                "Reservoir",
+                "Pump Station"
+            ]
+
+        };
+
+
+        /*
+         * Preserve the current category when the page first loads.
+         */
+
+        var existingCategory =
+            assetCategory
+                ? assetCategory.value
+                : "";
+
+
+        function updateCategories(
+            preserveCategory
+        ) {
+
+            if (!assetType ||
+                !assetCategory) {
+                return;
+            }
+
+
+            var selectedType =
+                assetType.value;
+
+
+            var categories =
+                categoryMap[selectedType] || [];
+
+
+            assetCategory.innerHTML = "";
+
+
+            var placeholder =
+                document.createElement(
+                    "option"
+                );
+
+            placeholder.value = "";
+
+            placeholder.text =
+                "-- Select Asset Category --";
+
+            assetCategory.appendChild(
+                placeholder
+            );
+
+
+            categories.forEach(
+                function (category) {
+
+                    var option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value =
+                        category;
+
+                    option.text =
+                        category;
+
+
+                    if (preserveCategory &&
+                        category ===
+                        preserveCategory) {
+
+                        option.selected =
+                            true;
+
+                    }
+
+
+                    assetCategory.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+
+
+        if (assetType) {
+
+            assetType.addEventListener(
+                "change",
+                function () {
+
+                    updateCategories("");
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Only rebuild the category list when necessary.
+         * The server-provided list remains authoritative.
+         */
+
+        if (assetType &&
+            assetCategory &&
+            categoryMap[assetType.value]) {
+
+            var currentCategory =
+                assetCategory.value ||
+                existingCategory;
+
+
+            updateCategories(
+                currentCategory
+            );
+
+        }
+
+
+        /* ============================================================
+           MAP SIZE FIX
+           ============================================================ */
+
+        setTimeout(
+            function () {
+
+                map.invalidateSize();
+
+            },
+            300
+        );
+
+    });
+
+</script>
+
+
+<style>
+
+    /* ================================================================
+       EDIT PAGE
+       ================================================================ */
+
+    .admin-asset-create-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 35px 25px 60px;
+    }
+
+
+    /* ================================================================
+       HEADER
+       ================================================================ */
+
+    .admin-asset-create-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 30px;
+        margin-bottom: 25px;
+    }
+
+    .page-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        opacity: .65;
+    }
+
+    .admin-asset-create-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .admin-asset-create-header p {
+        margin: 0;
+        max-width: 720px;
+        line-height: 1.6;
+        opacity: .72;
+    }
+
+    .page-header-actions {
+        flex-shrink: 0;
+    }
+
+
+    /* ================================================================
+       NOTICE
+       ================================================================ */
+
+    .asset-info-notice {
+        display: flex;
+        gap: 15px;
+        padding: 18px 20px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        border: 1px solid #d9e5f5;
+        background: #f5f9ff;
+    }
+
+    .asset-info-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: #0D5CC1;
+        color: white;
+        font-weight: 700;
+    }
+
+    .asset-info-notice strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .asset-info-notice p {
+        margin: 0;
+        line-height: 1.5;
+        opacity: .72;
+    }
+
+
+    /* ================================================================
+       SECTIONS
+       ================================================================ */
+
+    .asset-form-section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.03);
+    }
+
+    .asset-section-header {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+
+    .asset-section-number {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .asset-section-header h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+    }
+
+    .asset-section-header p {
+        margin: 0;
+        opacity: .65;
+        line-height: 1.5;
+    }
+
+
+    /* ================================================================
+       FORM GRID
+       ================================================================ */
+
+    .asset-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .form-group {
+        min-width: 0;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid #d7dce2;
+        border-radius: 7px;
+        padding: 10px 12px;
+        font-size: 14px;
+        box-sizing: border-box;
+        background: #fff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,.10);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 105px;
+    }
+
+    .form-help {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+        opacity: .62;
+    }
+
+
+    /* ================================================================
+       READ ONLY ASSET CODE
+       ================================================================ */
+
+    .readonly-field {
+        min-height: 44px;
+        box-sizing: border-box;
+        border: 1px solid #d7dce2;
+        border-radius: 7px;
+        background: #f5f6f8;
+        padding: 9px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .readonly-value {
+        font-weight: 700;
+        letter-spacing: .3px;
+    }
+
+    .readonly-badge {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 5px 8px;
+        border-radius: 20px;
+        background: #e8edf4;
+        white-space: nowrap;
+    }
+
+
+    /* ================================================================
+       MAP
+       ================================================================ */
+
+    .asset-location-search {
+        margin-bottom: 15px;
+    }
+
+    .location-search-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .location-search-row .form-control {
+        flex: 1;
+    }
+
+    .btn-map-action {
+        border: 0;
+        border-radius: 7px;
+        padding: 0 20px;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-map-action:hover {
+        opacity: .9;
+    }
+
+    .btn-map-action:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    .asset-map-wrapper {
+        overflow: hidden;
+        border-radius: 10px;
+        border: 1px solid #dfe3e8;
+    }
+
+    #assetMap {
+        width: 100%;
+        height: 430px;
+    }
+
+
+    /* ================================================================
+       COORDINATES
+       ================================================================ */
+
+    .coordinate-panel {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+
+    .coordinate-item {
+        padding: 14px 16px;
+        border-radius: 8px;
+        background: #f7f9fb;
+        border: 1px solid #e4e8ed;
+    }
+
+    .coordinate-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        opacity: .58;
+        margin-bottom: 4px;
+    }
+
+    .coordinate-item strong {
+        font-size: 14px;
+    }
+
+    .location-description-group {
+        margin-top: 5px;
+    }
+
+
+    /* ================================================================
+       SYSTEM INFORMATION
+       ================================================================ */
+
+    .system-information-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .system-information-item {
+        padding: 16px;
+        border-radius: 9px;
+        background: #f7f9fb;
+        border: 1px solid #e4e8ed;
+    }
+
+    .system-information-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        opacity: .58;
+        margin-bottom: 6px;
+    }
+
+
+    /* ================================================================
+       BUTTONS
+       ================================================================ */
+
+    .asset-form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding-top: 5px;
+    }
+
+    .asset-form-actions-left,
+    .asset-form-actions-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        opacity: .92;
+    }
+
+    .btn-secondary {
+        border: 1px solid #d2d7dd;
+        background: #fff;
+        color: #30353b;
+    }
+
+    .btn-secondary:hover {
+        background: #f5f6f7;
+        text-decoration: none;
+    }
+
+
+    /* ================================================================
+       VALIDATION
+       ================================================================ */
+
+    .validation-summary-errors {
+        margin-bottom: 20px;
+        padding: 15px 18px;
+        border-radius: 8px;
+        border: 1px solid #efcaca;
+        background: #fff5f5;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #c62828;
+    }
+
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+
+    @@media (max-width: 850px) {
+
+        .admin-asset-create-header {
+            flex-direction: column;
+        }
+
+        .asset-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width {
+            grid-column: auto;
+        }
+
+        .system-information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .coordinate-panel {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    @@media (max-width: 600px) {
+
+        .admin-asset-create-page {
+            padding: 20px 15px 40px;
+        }
+
+        .asset-form-section {
+            padding: 20px;
+        }
+
+        .location-search-row {
+            flex-direction: column;
+        }
+
+        .btn-map-action {
+            min-height: 44px;
+        }
+
+        .asset-form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .asset-form-actions-left,
+        .asset-form-actions-right {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .asset-form-actions .btn-primary,
+        .asset-form-actions .btn-secondary {
+            width: 100%;
+        }
+
+        .readonly-field {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+    }
+
+</style>

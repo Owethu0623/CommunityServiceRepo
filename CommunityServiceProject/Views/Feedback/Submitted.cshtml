@@ -1,0 +1,227 @@
+﻿@model CommunityServiceProject.Models.Feedback
+
+@{
+    ViewBag.Title = "Feedback Submitted";
+}
+
+<style>
+    .feedback-success-page {
+        background: #F4F7FB;
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .feedback-success-card {
+        max-width: 700px;
+        margin: 40px auto;
+        background: white;
+        border-radius: 14px;
+        padding: 35px;
+        text-align: center;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .success-icon {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #DCFCE7;
+        color: #166534;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .feedback-success-card h2 {
+        margin: 0 0 10px;
+        color: #1F2937;
+        font-size: 26px;
+    }
+
+    .feedback-success-card > p {
+        color: #6B7280;
+        margin-bottom: 28px;
+    }
+
+    .confirmation-details {
+        text-align: left;
+        background: #F8FAFC;
+        border: 1px solid #E5E7EB;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .confirmation-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 11px 0;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+        .confirmation-row:last-child {
+            border-bottom: none;
+        }
+
+    .confirmation-label {
+        color: #6B7280;
+        font-weight: 600;
+    }
+
+    .confirmation-value {
+        color: #1F2937;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .feedback-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .feedback-action-primary,
+    .feedback-action-secondary {
+        display: inline-block;
+        padding: 11px 20px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .feedback-action-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .feedback-action-primary:hover {
+            background: #094A9E;
+            color: white;
+            text-decoration: none;
+        }
+
+    .feedback-action-secondary {
+        background: #EEF2F7;
+        color: #374151;
+        border: 1px solid #D1D5DB;
+    }
+
+        .feedback-action-secondary:hover {
+            background: #E5E7EB;
+            color: #1F2937;
+            text-decoration: none;
+        }
+
+    @@media (max-width: 600px) {
+        .confirmation-row {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .confirmation-value {
+            text-align: left;
+        }
+
+        .feedback-actions {
+            flex-direction: column;
+        }
+
+        .feedback-action-primary,
+        .feedback-action-secondary {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="feedback-success-page">
+
+    <div class="feedback-success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h2>Feedback Submitted Successfully</h2>
+
+        <p>
+            Thank you for taking the time to provide feedback on your completed
+            service request.
+        </p>
+
+        <div class="confirmation-details">
+
+            <div class="confirmation-row">
+                <span class="confirmation-label">
+                    Feedback ID
+                </span>
+
+                <span class="confirmation-value">
+                    #@Model.FeedbackID
+                </span>
+            </div>
+
+            <div class="confirmation-row">
+                <span class="confirmation-label">
+                    Request Reference
+                </span>
+
+                <span class="confirmation-value">
+                    @Model.Request.ReferenceNumber
+                </span>
+            </div>
+
+            <div class="confirmation-row">
+                <span class="confirmation-label">
+                    Rating
+                </span>
+
+                <span class="confirmation-value">
+                    @Model.Rating / 5
+                </span>
+            </div>
+
+            <div class="confirmation-row">
+                <span class="confirmation-label">
+                    Resolution
+                </span>
+
+                <span class="confirmation-value">
+                    @Model.ResolutionStatus
+                </span>
+            </div>
+
+            <div class="confirmation-row">
+                <span class="confirmation-label">
+                    Date Submitted
+                </span>
+
+                <span class="confirmation-value">
+                    @Model.DateSubmitted.ToString("dd MMMM yyyy, HH:mm")
+                </span>
+            </div>
+
+        </div>
+
+        <div class="feedback-actions">
+
+            <a href="@Url.Action("Track", "Requests", new { id = Model.RequestID })"
+               class="feedback-action-primary">
+                Back to Track Requests
+            </a>
+
+            <a href="@Url.Action("Index", "CitizenDashboard")"
+               class="feedback-action-secondary">
+                Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

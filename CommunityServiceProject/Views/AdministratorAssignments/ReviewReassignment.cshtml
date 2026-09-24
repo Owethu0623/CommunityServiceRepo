@@ -1,81 +1,264 @@
 ﻿
-@model CommunityServiceProject.ViewModels.AssignmentIssueViewModel
+@model CommunityServiceProject.Models.ReassignmentRequest
 
 @{
-    ViewBag.Title = "Report Assignment Issue";
+    ViewBag.Title = "Review Reassignment";
 }
 
-<div class="container mt-4">
+<div class="admin-review-page">
 
-    <div class="card shadow-sm">
+    <div class="admin-review-card">
 
-        <div class="card-header">
-            <h3>Report Assignment Issue</h3>
+        <div class="admin-review-header">
+            <div>
+                <h2>Review Reassignment Request</h2>
+                <p>Review the technician's reassignment request before making a decision.</p>
+            </div>
         </div>
 
-        <div class="card-body">
+        <div class="admin-review-content">
 
-            <p>
-                <strong>Request:</strong>
-                @Model.RequestTitle
-            </p>
+            <!-- REQUEST INFORMATION -->
+            <div class="admin-review-section">
 
-            @using (Html.BeginForm("ReportIssue", "Technicians", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
+                <h3>Request Information</h3>
 
-                @Html.HiddenFor(m => m.AssignmentID)
+                <div class="admin-review-row">
 
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.IssueType, new { @class = "form-label" })
+                    <div class="admin-filter-group">
+                        <label>Request ID</label>
+                        <div class="form-control-static">
+                            @Model.Assignment.Request.RequestID
+                        </div>
+                    </div>
 
-                    @Html.EnumDropDownListFor(
-                        m => m.IssueType,
-                        "-- Select Issue Type --",
-                        new { @class = "form-control" }
-                    )
+                    <div class="admin-filter-group">
+                        <label>Request Title</label>
+                        <div class="form-control-static">
+                            @Model.Assignment.Request.Title
+                        </div>
+                    </div>
 
-                    @Html.ValidationMessageFor(
-                        m => m.IssueType,
-                        "",
-                        new { @class = "text-danger" }
-                    )
                 </div>
 
-                <div class="mb-3">
-                    @Html.LabelFor(m => m.Reason, new { @class = "form-label" })
+                <div class="admin-review-row">
 
-                    @Html.TextAreaFor(
-                        m => m.Reason,
-                        5,
-                        60,
-                        new
+                    <div class="admin-filter-group">
+                        <label>Category</label>
+                        <div class="form-control-static">
+                            @(Model.Assignment.Request.Category != null
+                                ? Model.Assignment.Request.Category.CategoryName
+                                : "Unknown")
+                        </div>
+                    </div>
+
+                    <div class="admin-filter-group">
+                        <label>Ward</label>
+                        <div class="form-control-static">
+                            @(Model.Assignment.Request.Ward != null
+                                ? Model.Assignment.Request.Ward.WardName
+                                : "Unknown")
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="admin-review-row">
+
+                    <div class="admin-filter-group">
+                        <label>Priority</label>
+                        <div class="form-control-static">
+                            @Model.Assignment.Request.Priority
+                        </div>
+                    </div>
+
+                    <div class="admin-filter-group">
+                        <label>Problem Location</label>
+                        <div class="form-control-static">
+                            @Model.Assignment.Request.ProblemLocation
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CURRENT TECHNICIAN -->
+            <div class="admin-review-section">
+
+                <h3>Current Technician</h3>
+
+                <div class="admin-filter-group">
+
+                    <label>Technician</label>
+
+                    <div class="form-control-static">
+
+                        @if (Model.Assignment.Technician != null)
                         {
-                            @class = "form-control",
-                            placeholder = "Explain the issue with this assignment..."
+                            @Model.Assignment.Technician.FirstName
+                            @Model.Assignment.Technician.LastName
                         }
-                    )
+                        else
+                        {
+                            <span>Unknown</span>
+                        }
 
-                    @Html.ValidationMessageFor(
-                        m => m.Reason,
-                        "",
-                        new { @class = "text-danger" }
-                    )
+                    </div>
+
                 </div>
 
-                <button type="submit" class="btn btn-danger">
-                    Submit Issue
+            </div>
+
+
+            <!-- REASSIGNMENT INFORMATION -->
+            <div class="admin-review-section">
+
+                <h3>Reassignment Request</h3>
+
+                <div class="admin-filter-group">
+
+                    <label>Requested Date</label>
+
+                    <div class="form-control-static">
+                        @Model.RequestedDate.ToString("dd MMMM yyyy HH:mm")
+                    </div>
+
+                </div>
+
+                <div class="admin-filter-group">
+
+                    <label>Reason</label>
+
+                    <div class="reassignment-reason-box">
+                        @Model.Reason
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNMENT ISSUES -->
+            @if (Model.Assignment.AssignmentIssues != null &&
+                 Model.Assignment.AssignmentIssues.Any())
+            {
+                <div class="admin-review-section">
+
+                    <h3>Assignment Issues</h3>
+
+                    @foreach (var issue in Model.Assignment.AssignmentIssues)
+                    {
+                        <div class="assignment-issue-card">
+
+                            <div class="issue-row">
+
+                                <strong>Issue Type:</strong>
+
+                                <span>
+                                    @issue.IssueType
+                                </span>
+
+                            </div>
+
+                            <div class="issue-row">
+
+                                <strong>Reason:</strong>
+
+                                <span>
+                                    @issue.Reason
+                                </span>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+
+            <!-- ACTIONS -->
+            <div class="admin-review-actions">
+
+                @Html.ActionLink(
+                    "Approve / Reassign",
+                    "ApproveReassignment",
+                    "AdministratorAssignments",
+                    new { id = Model.ReassignmentRequestID },
+                    new { @class = "btn btn-primary" }
+                )
+
+                <button type="button"
+                        class="btn btn-danger"
+                        onclick="showRejectForm()">
+                    Reject
                 </button>
 
-                <a href="@Url.Action(
-                            "Details",
-                            "Technicians",
-                            new { id = Model.RequestID }
-                         )"
-                   class="btn btn-secondary">
-                    Cancel
-                </a>
-            }
+                @Html.ActionLink(
+                    "Back",
+                    "ReassignmentRequests",
+                    "AdministratorAssignments",
+                    null,
+                    new { @class = "btn btn-secondary" }
+                )
+
+            </div>
+
+
+            <!-- REJECT FORM -->
+            <div id="rejectForm"
+                 class="reject-form"
+                 style="display:none;">
+
+                <h3>Reject Reassignment</h3>
+
+                @using (Html.BeginForm(
+                    "RejectReassignment",
+                    "AdministratorAssignments",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.Hidden(
+                        "id",
+                        Model.ReassignmentRequestID
+                    )
+
+                    <div class="admin-filter-group">
+
+                        <label for="administratorResponse">
+                            Response
+                        </label>
+
+                        <textarea id="administratorResponse"
+                                  name="administratorResponse"
+                                  class="form-control"
+                                  rows="5"
+                                  maxlength="2000"
+                                  placeholder="Enter the reason for rejecting this reassignment request..."
+                                  required></textarea>
+
+                    </div>
+
+                    <div class="admin-review-actions">
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            Confirm Rejection
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                onclick="hideRejectForm()">
+                            Cancel
+                        </button>
+
+                    </div>
+                }
+
+            </div>
 
         </div>
 
@@ -83,7 +266,73 @@
 
 </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
 
+<style>
+
+    .form-control-static {
+        min-height: 42px;
+        padding: 10px 12px;
+        background: #F4F7FB;
+        border: 1px solid #e1e5ea;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+    }
+
+    .reassignment-reason-box {
+        padding: 15px;
+        background: #F4F7FB;
+        border: 1px solid #e1e5ea;
+        border-radius: 6px;
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .assignment-issue-card {
+        padding: 15px;
+        margin-bottom: 12px;
+        background: #F4F7FB;
+        border: 1px solid #e1e5ea;
+        border-radius: 6px;
+    }
+
+    .issue-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+        .issue-row:last-child {
+            margin-bottom: 0;
+        }
+
+    .reject-form {
+        margin-top: 25px;
+        padding: 20px;
+        border: 1px solid #e1e5ea;
+        border-radius: 8px;
+        background: #F4F7FB;
+    }
+</style>
+
+
+<script>
+
+    function showRejectForm() {
+
+        document.getElementById("rejectForm").style.display = "block";
+
+        document.getElementById("rejectForm")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+    }
+
+
+    function hideRejectForm() {
+
+        document.getElementById("rejectForm").style.display = "none";
+
+    }
+
+</script>

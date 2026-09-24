@@ -13,10 +13,12 @@ namespace CommunityServiceProject.Controllers
         private Community db = new Community();
 
         public ActionResult Index(
-     string search,
-     RequestStatus? status,
-     int? categoryId,
-     string sortOrder)
+    string search,
+    RequestStatus? status,
+    int? categoryId,
+    int? wardId,
+    Priority? priority,
+    string sortOrder)
         {
             // Make sure an administrator is logged in
             if (Session["AdministratorID"] == null)
@@ -25,9 +27,10 @@ namespace CommunityServiceProject.Controllers
             }
 
             var requests = db.Requests
-            .Include("Citizen")
-            .Include("Category")
-            .Include("MaintenanceWorks")
+              .Include("Citizen")
+              .Include("Category")
+              .Include("Ward")
+             .Include("MaintenanceWorks")
              .AsQueryable();
 
             // Search by request title
@@ -50,6 +53,22 @@ namespace CommunityServiceProject.Controllers
                 requests = requests.Where(r =>
                     r.CategoryID == categoryId.Value);
             }
+
+            // Filter by ward
+            if (wardId.HasValue)
+            {
+                requests = requests.Where(r =>
+                    r.WardID == wardId.Value);
+            }
+
+            // Filter by priority
+            if (priority.HasValue)
+            {
+                requests = requests.Where(r =>
+                    r.Priority == priority.Value);
+            }
+
+
 
             // Sorting
             switch (sortOrder)
@@ -82,9 +101,23 @@ namespace CommunityServiceProject.Controllers
                 categoryId
             );
 
+            ViewBag.Wards = new SelectList(
+            db.Wards
+            .Where(w => w.IsActive)
+            .OrderBy(w => w.WardNumber),
+            "WardID",
+            "WardNumber",
+            wardId
+            );
+
+
+
             ViewBag.Search = search;
             ViewBag.Status = status;
             ViewBag.SortOrder = sortOrder;
+
+            ViewBag.WardId = wardId;
+            ViewBag.Priority = priority;
 
             var pendingReassignmentLookup = db.ReassignmentRequests
     .Where(r => r.Status == ReassignmentStatus.Pending)
@@ -128,8 +161,161 @@ namespace CommunityServiceProject.Controllers
                 return HttpNotFound();
             }
 
+            ViewBag.ViolationRecorded = db.Violations
+    .Any(v => v.RequestID == request.RequestID);
             return View(request);
         }
+
+        // GET: AdministratorRequests/RecordViolation/5
+        public ActionResult RecordViolation(int? id)
+        {
+            if (Session["AdministratorID"] == null)
+            {
+                return RedirectToAction("Login", "Administrators");
+            }
+
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var request = db.Requests
+                .Include("Citizen")
+                .Include("Category")
+                .FirstOrDefault(r => r.RequestID == id.Value);
+
+            if (request == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(request);
+        }
+
+        // POST: AdministratorRequests/RecordViolation
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RecordViolation(
+            int requestID,
+            string violationType,
+            string description)
+        {
+            if (Session["AdministratorID"] == null)
+            {
+                return RedirectToAction("Login", "Administrators");
+            }
+
+            // Validate violation type
+            if (string.IsNullOrWhiteSpace(violationType))
+            {
+                ModelState.AddModelError(
+                    "violationType",
+                    "Violation type is required."
+                );
+            }
+
+            // Validate description
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                ModelState.AddModelError(
+                    "description",
+                    "A reason or description is required."
+                );
+            }
+
+            // Find the request
+            var request = db.Requests
+                .Include("Citizen")
+                .Include("Category")
+                .FirstOrDefault(r => r.RequestID == requestID);
+
+            if (request == null)
+            {
+                return HttpNotFound();
+            }
+
+            // A violation can only be recorded while the request
+            // is still within the administrator review stage.
+            if (request.Status != RequestStatus.Pending &&
+                request.Status != RequestStatus.UnderReview &&
+                request.Status != RequestStatus.Rejected)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "A violation can only be recorded for pending, under review, or rejected requests."
+                );
+            }
+
+            // Prevent more than one violation from being recorded
+            // against the same request.
+            var existingViolation = db.Violations
+                .FirstOrDefault(v => v.RequestID == request.RequestID);
+
+            if (existingViolation != null)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "A violation has already been recorded for this request. " +
+                    "Another violation cannot be submitted."
+                );
+            }
+
+            // If ANY validation failed, return to the same page
+            // so the administrator can see the validation message.
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
+            int administratorId = (int)Session["AdministratorID"];
+
+            // Find the citizen's existing compliance record.
+            var complianceRecord = db.ComplianceRecords
+                .FirstOrDefault(c => c.CitizenID == request.CitizenID);
+
+            // Create a compliance record if one does not exist.
+            if (complianceRecord == null)
+            {
+                complianceRecord = new ComplianceRecord
+                {
+                    CitizenID = request.CitizenID,
+                    ConfirmedViolationCount = 0,
+                    ComplianceStatus = ComplianceStatus.Compliant,
+                    LastUpdated = DateTime.Now
+                };
+
+                db.ComplianceRecords.Add(complianceRecord);
+            }
+
+            // Create the violation.
+            var violation = new Violation
+            {
+                ComplianceID = complianceRecord.ComplianceID,
+                RequestID = request.RequestID,
+                AdministratorID = administratorId,
+                ViolationType = violationType.Trim(),
+                Description = description.Trim(),
+                Status = "Confirmed",
+                DateConfirmed = DateTime.Now
+            };
+
+            db.Violations.Add(violation);
+
+            // Update compliance information.
+            complianceRecord.ConfirmedViolationCount++;
+            complianceRecord.LastUpdated = DateTime.Now;
+
+            db.SaveChanges();
+
+            TempData["SuccessMessage"] =
+                "Violation recorded successfully.";
+
+            return RedirectToAction(
+                "Details",
+                new { id = request.RequestID }
+            );
+        }
+
 
         // GET: AdministratorRequests/Classify/5
         public ActionResult Classify(int? id)
@@ -289,7 +475,9 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Login", "Administrators");
             }
 
-            var request = db.Requests.Find(id);
+            var request = db.Requests
+                .Include("Citizen")
+                .FirstOrDefault(r => r.RequestID == id);
 
             if (request == null)
             {
@@ -300,6 +488,20 @@ namespace CommunityServiceProject.Controllers
             {
                 request.Status = RequestStatus.Approved;
                 request.AdministratorID = (int)Session["AdministratorID"];
+                request.ApprovedDate = DateTime.Now;
+
+                // Create citizen notification
+                var notification = new Notification
+                {
+                    CitizenID = request.CitizenID,
+                    RequestID = request.RequestID,
+                    Message = "Request " + request.ReferenceNumber +
+                              " has been approved.",
+                    DateCreated = DateTime.Now,
+                    IsRead = false
+                };
+
+                db.Notifications.Add(notification);
 
                 db.SaveChanges();
 
@@ -308,7 +510,7 @@ namespace CommunityServiceProject.Controllers
 
             return RedirectToAction("Details", new { id = id });
         }
-        
+
         // POST: AdministratorRequests/Reject
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -451,7 +653,24 @@ namespace CommunityServiceProject.Controllers
                 DateTime.Now;
 
             maintenanceWork.Request.Status =
-                RequestStatus.Completed;
+    RequestStatus.Completed;
+
+            // -------------------------------------------------------
+            // Create citizen notification
+            // -------------------------------------------------------
+
+            var notification = new Notification
+            {
+                CitizenID = maintenanceWork.Request.CitizenID,
+                RequestID = maintenanceWork.Request.RequestID,
+                Message = "Your request " +
+                          maintenanceWork.Request.ReferenceNumber +
+                          " has been completed.",
+                DateCreated = DateTime.Now,
+                IsRead = false
+            };
+
+            db.Notifications.Add(notification);
 
             db.SaveChanges();
 

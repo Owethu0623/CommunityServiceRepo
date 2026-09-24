@@ -5,120 +5,120 @@
 }
 
 <div>
-<div>
-<div class="admin-review-page">
+    <div>
+        <div class="admin-review-page">
 
-    <div class="admin-review-card">
+            <div class="admin-review-card">
 
-        <!-- HEADER -->
-        <div class="admin-review-header">
+                <!-- HEADER -->
+                <div class="admin-review-header">
 
-            <h2>Review Maintenance Request</h2>
+                    <h2>Review Maintenance Request</h2>
 
-            <p>
-                Request @Model.ReferenceNumber
-            </p>
+                    <p>
+                        Request @Model.ReferenceNumber
+                    </p>
 
-        </div>
-
-
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Request Reference
-            </span>
-
-            <span>
-                @Model.ReferenceNumber
-            </span>
-        </div>
-
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Title
-            </span>
-
-            <span>
-                @Model.Title
-            </span>
-     </div>
+                </div>
 
 
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Request Reference
+                    </span>
+
+                    <span>
+                        @Model.ReferenceNumber
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Title
+                    </span>
+
+                    <span>
+                        @Model.Title
+                    </span>
+                </div>
 
 
 
 
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Category
-            </span>
 
-            <span>
-                @(Model.Category != null
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Category
+                    </span>
+
+                    <span>
+                        @(Model.Category != null
                             ? Model.Category.CategoryName
                             : "Unknown")
-            </span>
-        </div>
+                    </span>
+                </div>
 
 
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Description
-            </span>
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Description
+                    </span>
 
-            <span>
-                @Model.Description
-            </span>
-        </div>
+                    <span>
+                        @Model.Description
+                    </span>
+                </div>
 
 
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Problem Location
-            </span>
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Problem Location
+                    </span>
 
-            <span>
-                @(!string.IsNullOrWhiteSpace(Model.ProblemLocation)
+                    <span>
+                        @(!string.IsNullOrWhiteSpace(Model.ProblemLocation)
                             ? Model.ProblemLocation
                             : "No problem location description provided.")
-            </span>
-        </div>
+                    </span>
+                </div>
 
 
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Ward
-            </span>
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Ward
+                    </span>
 
-            <span>
-                @(Model.Ward != null
+                    <span>
+                        @(Model.Ward != null
                             ? Model.Ward.WardName
                             : "Unknown")
-            </span>
-        </div>
+                    </span>
+                </div>
 
 
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Date Submitted
-            </span>
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Date Submitted
+                    </span>
 
-            <span>
-                @Model.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
-            </span>
-        </div>
+                    <span>
+                        @Model.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
+                    </span>
+                </div>
 
 
-        <div class="admin-review-row">
-            <span class="admin-review-label">
-                Current Status
-            </span>
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Current Status
+                    </span>
 
-            <span class="admin-status">
-                @Model.Status
-            </span>
-        </div>
+                    <span class="admin-status">
+                        @Model.Status
+                    </span>
+                </div>
 
-    </div>
+            </div>
 
 
             <!-- CITIZEN INFORMATION -->
@@ -263,119 +263,119 @@
 
 
             <!-- ADMINISTRATIVE ACTIONS -->
-        <div class="admin-review-actions">
+            <div class="admin-review-actions">
 
-            <!-- PENDING -->
-            @if (Model.Status == CommunityServiceProject.Models.RequestStatus.Pending)
-            {
-                <form action="@Url.Action("StartReview", "AdministratorRequests")"
-                      method="post"
-                      class="admin-action-form">
-
-                    @Html.AntiForgeryToken()
-
-                    <input type="hidden"
-                           name="id"
-                           value="@Model.RequestID" />
-
-                    <button type="submit"
-                            class="admin-approve-button">
-
-                        Start Review
-
-                    </button>
-
-                </form>
-            }
-
-
-            <!-- UNDER REVIEW -->
-            @if (Model.Status == CommunityServiceProject.Models.RequestStatus.UnderReview)
-            {
-                <form action="@Url.Action("Approve", "AdministratorRequests")"
-                      method="post"
-                      class="admin-action-form">
-
-                    @Html.AntiForgeryToken()
-
-                    <input type="hidden"
-                           name="id"
-                           value="@Model.RequestID" />
-
-                    <button type="submit"
-                            class="admin-approve-button">
-
-                        Approve Request
-
-                    </button>
-
-                </form>
-
-
-                <form action="@Url.Action("Reject", "AdministratorRequests")"
-                      method="post"
-                      class="admin-action-form">
-
-                    @Html.AntiForgeryToken()
-
-                    <input type="hidden"
-                           name="id"
-                           value="@Model.RequestID" />
-
-                    <button type="submit"
-                            class="admin-reject-button">
-
-                        Reject Request
-
-                    </button>
-
-                </form>
-            }
-
-            @if (Model.Status == CommunityServiceProject.Models.RequestStatus.Approved)
-            {
-                if (string.IsNullOrWhiteSpace(Model.PriorityReason))
+                <!-- PENDING -->
+                @if (Model.Status == CommunityServiceProject.Models.RequestStatus.Pending)
                 {
-                    <div class="admin-action-form">
+                    <form action="@Url.Action("StartReview", "AdministratorRequests")"
+                          method="post"
+                          class="admin-action-form">
 
-                        <a href="@Url.Action(
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.RequestID" />
+
+                        <button type="submit"
+                                class="admin-approve-button">
+
+                            Start Review
+
+                        </button>
+
+                    </form>
+                }
+
+
+                <!-- UNDER REVIEW -->
+                @if (Model.Status == CommunityServiceProject.Models.RequestStatus.UnderReview)
+                {
+                    <form action="@Url.Action("Approve", "AdministratorRequests")"
+                          method="post"
+                          class="admin-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.RequestID" />
+
+                        <button type="submit"
+                                class="admin-approve-button">
+
+                            Approve Request
+
+                        </button>
+
+                    </form>
+
+
+                    <form action="@Url.Action("Reject", "AdministratorRequests")"
+                          method="post"
+                          class="admin-action-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.RequestID" />
+
+                        <button type="submit"
+                                class="admin-reject-button">
+
+                            Reject Request
+
+                        </button>
+
+                    </form>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.RequestStatus.Approved)
+                {
+                    if (string.IsNullOrWhiteSpace(Model.PriorityReason))
+                    {
+                        <div class="admin-action-form">
+
+                            <a href="@Url.Action(
                         "Classify",
                         "AdministratorRequests",
                         new { id = Model.RequestID }
                      )"
-                           class="admin-approve-button">
+                               class="admin-approve-button">
 
-                            Classify Request
+                                Classify Request
 
-                        </a>
+                            </a>
 
-                    </div>
-                }
-                else
-                {
-                    <div class="admin-action-form">
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-action-form">
 
-                        <a href="@Url.Action(
+                            <a href="@Url.Action(
                         "Create",
                         "AdministratorAssignments",
                         new { id = Model.RequestID }
                      )"
-                           class="admin-approve-button">
+                               class="admin-approve-button">
 
-                            Assign Technician
+                                Assign Technician
 
-                        </a>
+                            </a>
 
-                    </div>
+                        </div>
+                    }
                 }
-            }
 
-        </div>
+            </div>
 
         </div>
 
     </div>
-
+       
 
     <!-- FOOTER -->
     <div class="admin-review-footer">
@@ -386,7 +386,34 @@
             Back to Requests
 
         </a>
-
+        @if (ViewBag.ViolationRecorded == true)
+        {
+            <div class="admin-violation-success">
+                <strong>Violation Recorded</strong>
+                <span>
+                    The violation for this request has been successfully submitted
+                    and recorded.
+                </span>
+            </div>
+        }
+        else
+        {
+            <a href="@Url.Action(
+        "RecordViolation",
+        "AdministratorRequests",
+        new { id = Model.RequestID }
+    )"
+               class="admin-approve-button">
+                Record Violation
+            </a>
+        }
     </div>
-
+    <a href="@Url.Action(
+    "RequestHistory",
+    "CitizenManagement",
+    new { id = Model.CitizenID }
+ )"
+       class="admin-back-button">
+        Back to Request History
+    </a>
 </div>

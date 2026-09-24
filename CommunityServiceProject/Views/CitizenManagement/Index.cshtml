@@ -32,7 +32,8 @@
                             <th>Email Address</th>
                             <th> Number</th>
                             <th>Date Registered</th>
-                            <th> Status</th>
+                            <th>Status</th>
+                            <th>Violations</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -41,6 +42,15 @@
 
                         @foreach (var citizen in Model)
                         {
+                           
+                                var complianceRecords =
+                                    ViewBag.ComplianceRecords as IEnumerable<CommunityServiceProject.Models.ComplianceRecord>;
+
+                                var complianceRecord = complianceRecords?
+                                    .FirstOrDefault(c => c.CitizenID == citizen.CitizenID);
+
+                                var violationCount = complianceRecord?.Violations?.Count ?? 0;
+                            
                             <tr>
 
                                 <td>
@@ -66,6 +76,9 @@
 
                                 <td>
                                     @citizen.AccountStatus
+                                </td>
+                                <td>
+                                    @violationCount
                                 </td>
 
                                 <td>

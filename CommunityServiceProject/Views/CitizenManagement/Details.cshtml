@@ -93,6 +93,28 @@
 
             <div class="admin-citizen-management-actions">
 
+                <a href="@Url.Action(
+                "RequestHistory",
+                "CitizenManagement",
+                new { id = Model.CitizenID }
+             )"
+                   class="admin-view-button">
+                    View Request History
+                </a>
+
+                <a href="@Url.Action(
+    "Compliance",
+    "CitizenManagement",
+    new { id = Model.CitizenID }
+)"
+                   class="admin-view-button">
+                    View Compliance
+                </a>
+
+            </div>
+
+            <div class="admin-citizen-management-actions">
+
                 <form action="@Url.Action("Activate", "CitizenManagement")"
                       method="post"
                       class="admin-citizen-action-form">

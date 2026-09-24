@@ -70,6 +70,10 @@
                             </th>
 
                             <th>
+                                Skill
+                            </th>
+
+                            <th>
                                 Account Status
                             </th>
 
@@ -103,6 +107,22 @@
 
                                 <td>
                                     @technician.PhoneNumber
+                                </td>
+
+                                <td>
+                                    @{
+                                        var technicianSkill = technician.TechnicianSkills
+                                            .FirstOrDefault(ts => ts.Skill != null);
+                                    }
+
+                                    @if (technicianSkill != null)
+                                    {
+                                        @technicianSkill.Skill.SkillName
+                                    }
+                                    else
+                                    {
+                                        <span>Not Assigned</span>
+                                    }
                                 </td>
 
                                 <td>

@@ -1,0 +1,258 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Notification>
+
+@{
+    ViewBag.Title = "Notifications";
+}
+
+<div class="notifications-page">
+
+    <div class="notifications-card">
+
+        <div class="notifications-header">
+            <div>
+                <h2>Notifications</h2>
+                <p>Stay updated with the latest activity on your service requests.</p>
+            </div>
+
+            @if (Model != null && Model.Any(n => !n.IsRead))
+            {
+                using (Html.BeginForm(
+                    "MarkAllAsRead",
+                    "CitizenNotification",
+                    FormMethod.Post,
+                    new { @class = "mark-read-form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="mark-all-btn">
+                        ✓ Mark All as Read
+                    </button>
+                }
+            }
+        </div>
+
+        <div class="notifications-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var notification in Model)
+                {
+                    <div class="notification-item @(notification.IsRead ? "read" : "unread")">
+
+                        <div class="notification-status">
+                            @if (!notification.IsRead)
+                            {
+                                <span class="new-indicator">🔵 NEW</span>
+                            }
+                            else
+                            {
+                                <span class="read-indicator">✓</span>
+                            }
+                        </div>
+
+                        <div class="notification-content">
+
+                            <div class="notification-message">
+                                @notification.Message
+                            </div>
+
+                            <div class="notification-date">
+                                @notification.DateCreated.ToString("dd MMM yyyy")
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-notifications">
+                    <div class="empty-icon">🔔</div>
+                    <h3>No Notifications</h3>
+                    <p>You currently have no notifications.</p>
+                </div>
+            }
+
+        </div>
+
+        <div class="notifications-footer">
+            <a href="@Url.Action("Index", "CitizenDashboard")"
+               class="back-btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+    .notifications-page {
+        min-height: 100vh;
+        background: #F4F7FB;
+        padding: 40px 20px;
+    }
+
+    .notifications-card {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 25px 30px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .notifications-header h2 {
+            margin: 0 0 6px;
+            color: #0D5CC1;
+            font-size: 26px;
+        }
+
+        .notifications-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+    .mark-all-btn {
+        border: none;
+        background: #0D5CC1;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .mark-all-btn:hover {
+            background: #094a9d;
+        }
+
+    .notifications-list {
+        padding: 0;
+    }
+
+    .notification-item {
+        display: flex;
+        gap: 18px;
+        padding: 22px 30px;
+        border-bottom: 1px solid #edf0f4;
+        transition: background 0.2s ease;
+    }
+
+        .notification-item:hover {
+            background: #f8fafc;
+        }
+
+        .notification-item.unread {
+            background: #f5f9ff;
+        }
+
+    .notification-status {
+        min-width: 75px;
+        padding-top: 2px;
+    }
+
+    .new-indicator {
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .read-indicator {
+        color: #6b7280;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-message {
+        color: #1f2937;
+        font-size: 15px;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    .notification-date {
+        margin-top: 6px;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .empty-notifications {
+        text-align: center;
+        padding: 70px 20px;
+    }
+
+    .empty-icon {
+        font-size: 35px;
+        margin-bottom: 12px;
+    }
+
+    .empty-notifications h3 {
+        margin: 0 0 8px;
+        color: #374151;
+    }
+
+    .empty-notifications p {
+        margin: 0;
+        color: #6b7280;
+    }
+
+    .notifications-footer {
+        padding: 20px 30px;
+        background: #fafbfc;
+        border-top: 1px solid #edf0f4;
+    }
+
+    .back-btn {
+        display: inline-block;
+        text-decoration: none;
+        color: #0D5CC1;
+        font-weight: 600;
+    }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+    @@media (max-width: 700px) {
+
+        .notifications-page {
+            padding: 20px 10px;
+        }
+
+        .notifications-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .mark-all-btn {
+            width: 100%;
+        }
+
+        .notification-item {
+            padding: 18px;
+            gap: 10px;
+        }
+
+        .notification-status {
+            min-width: 55px;
+        }
+    }
+</style>

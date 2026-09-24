@@ -36,5 +36,10 @@ namespace CommunityServiceProject.ViewModels
         [StringLength(1000)]
         [Display(Name = "Administrator Response")]
         public string AdministratorResponse { get; set; }
+
+        public IEnumerable<SelectListItem> Skills { get; set; }
+
+        [Display(Name = "Required Skills")]
+        public IEnumerable<int> SelectedSkillIDs { get; set; }
     }
 }

@@ -3208,13 +3208,43 @@ a {
     border: 1px solid #C8D0DA;
     border-radius: 7px;
     background: #F5F7FA;
-    color: #7A8491 !important;
+    color: #4A5568 !important;
     font-size: 13px;
     font-weight: 600;
     text-decoration: none !important;
-    cursor: not-allowed;
-    opacity: 0.75;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
+
+    .track-secondary-button:hover {
+        background: #E9EEF5;
+        border-color: #AEB8C4;
+        color: #222 !important;
+        text-decoration: none !important;
+    }
+
+.track-feedback-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid #0D5CC1;
+    border-radius: 7px;
+    background: #0D5CC1;
+    color: #FFFFFF !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .track-feedback-button:hover {
+        background: #08479A;
+        border-color: #08479A;
+        color: #FFFFFF !important;
+        text-decoration: none !important;
+    }
 
 
 /* ---------- Track Link ---------- */
@@ -3317,7 +3347,8 @@ a {
         flex-direction: column;
     }
 
-    .track-secondary-button {
+    .track-secondary-button,
+    .track-feedback-button {
         width: 100%;
     }
 
@@ -3573,6 +3604,23 @@ a {
         text-align: center;
         box-sizing: border-box;
     }
+    .track-feedback-button {
+        display: inline-block;
+        background: #0D5CC1;
+        color: #ffffff;
+        padding: 11px 20px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background 0.2s ease;
+    }
+
+        .track-feedback-button:hover {
+            background: #094a9d;
+            color: #ffffff;
+            text-decoration: none;
+        }
 }
 /* =========================================================
    CITIZEN LOGIN PAGE
@@ -4096,14 +4144,14 @@ a {
    ========================================================= */
 
 .admin-request-page {
-    padding: 40px 20px;
+    padding: 90px 50px;
 }
 
 .admin-request-card {
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
     background: white;
-    border-radius: 12px;
+    border-radius: 25px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     overflow: hidden;
 }
@@ -4116,12 +4164,12 @@ a {
 .admin-request-header {
     background: #0D5CC1;
     color: white;
-    padding: 25px 30px;
+    padding: 35px 30px;
 }
 
     .admin-request-header h2 {
         margin: 0 0 5px 0;
-        font-size: 26px;
+        font-size: 30px;
     }
 
     .admin-request-header p {
@@ -5229,6 +5277,144 @@ a {
 
 
 /* =========================================================
+   REPORT SELECTION
+   ========================================================= */
+
+.admin-report-selection {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #D9E1EA;
+}
+
+.admin-report-selection-header {
+    margin-bottom: 18px;
+}
+
+    .admin-report-selection-header h3 {
+        margin: 0 0 5px 0;
+        font-size: 20px;
+        color: #333333;
+    }
+
+    .admin-report-selection-header p {
+        margin: 0;
+        color: #666666;
+        font-size: 14px;
+    }
+
+
+/* =========================================================
+   REPORT OPTION GRID
+   ========================================================= */
+
+.admin-report-options {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+}
+
+
+/* =========================================================
+   REPORT OPTION
+   ========================================================= */
+
+.admin-report-option {
+    position: relative;
+    display: block;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.admin-report-option-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   REPORT OPTION CARD
+   ========================================================= */
+
+.admin-report-option-card {
+    min-height: 105px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+    background: #FFFFFF;
+    border: 1px solid #D9E1EA;
+    border-radius: 9px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.admin-report-option:hover .admin-report-option-card {
+    border-color: #AFC3DD;
+    background: #F8FAFD;
+    transform: translateY(-1px);
+}
+
+.admin-report-option-input:checked + .admin-report-option-card {
+    border-color: #0D5CC1;
+    background: #F4F7FB;
+    box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.10);
+}
+
+
+/* =========================================================
+   REPORT OPTION ICON
+   ========================================================= */
+
+.admin-report-option-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F0F5FB;
+    border: 1px solid #D5E1EF;
+    border-radius: 8px;
+    color: #0D5CC1;
+    font-size: 19px;
+    box-sizing: border-box;
+}
+
+.admin-report-option-input:checked + .admin-report-option-card
+.admin-report-option-icon {
+    background: #0D5CC1;
+    border-color: #0D5CC1;
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   REPORT OPTION CONTENT
+   ========================================================= */
+
+.admin-report-option-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+    .admin-report-option-content strong {
+        margin-bottom: 6px;
+        color: #333333;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .admin-report-option-content small {
+        color: #666666;
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+
+/* =========================================================
    REPORT BUTTON
    ========================================================= */
 
@@ -5359,7 +5545,7 @@ a {
 
 .admin-report-table {
     width: 100%;
-    min-width: 850px;
+    min-width: 700px;
     border-collapse: collapse;
 }
 
@@ -5382,6 +5568,65 @@ a {
 
     .admin-report-table tbody tr:hover {
         background: #F8FAFD;
+    }
+
+
+/* =========================================================
+   RESOLUTION METRICS
+   ========================================================= */
+
+.admin-resolution-metrics {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.admin-resolution-metric {
+    background: #FFFFFF;
+    border: 1px solid #D9E1EA;
+    border-left: 4px solid #0D5CC1;
+    border-radius: 9px;
+    padding: 18px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+}
+
+.admin-resolution-metric-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #666666;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-resolution-metric strong {
+    display: block;
+    color: #0D5CC1;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+
+/* =========================================================
+   REPORT SUBSECTION
+   ========================================================= */
+
+.admin-report-subsection {
+    margin-top: 10px;
+}
+
+    .admin-report-subsection h4 {
+        margin: 0 0 5px 0;
+        color: #333333;
+        font-size: 17px;
+    }
+
+    .admin-report-subsection > p {
+        margin: 0 0 18px 0;
+        color: #666666;
+        font-size: 14px;
     }
 
 
@@ -5464,8 +5709,16 @@ a {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .admin-report-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .admin-report-summary-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .admin-resolution-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -5499,8 +5752,16 @@ a {
         gap: 15px;
     }
 
+    .admin-report-options {
+        grid-template-columns: 1fr;
+    }
+
     .admin-report-summary-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-resolution-metrics {
+        grid-template-columns: 1fr;
     }
 
     .admin-reports-footer {
@@ -5541,32 +5802,15 @@ a {
         font-size: 25px;
     }
 
+    .admin-report-option-card {
+        min-height: 95px;
+        padding: 15px;
+    }
+
     .admin-reports-footer {
         padding: 18px;
     }
 }
-/* =========================================================
-ADMINISTRATOR STATISTICS
-NORMAL VERSION
-========================================================= */
-
-.admin-statistics-page {
-    width: 100%;
-    padding: 40px 20px;
-    box-sizing: border-box;
-}
-
-.admin-statistics-card {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    background: #FFFFFF;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
 /* =========================================================
 STATISTICS HEADER
 ========================================================= */
@@ -7055,3 +7299,87 @@ MOBILE
         gap: 5px;
     }
 }
+.admin-violation-success {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 18px;
+    border: 1px solid #b7dfc5;
+    border-radius: 6px;
+    background-color: #edf8f1;
+    color: #216e39;
+}
+
+    .admin-violation-success strong {
+        font-size: 15px;
+    }
+
+    .admin-violation-success span {
+        font-size: 14px;
+    }
+/* =========================================================
+   ACCOUNT APPEAL NOTICE
+   Appears only for Suspended / Inactive accounts
+   ========================================================= */
+
+.account-appeal-box {
+    margin-top: 18px;
+    padding: 18px;
+    background: #fff8e8;
+    border: 1px solid #f1d28a;
+    border-radius: 10px;
+}
+
+.account-appeal-message {
+    margin-bottom: 14px;
+}
+
+    .account-appeal-message strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #8a5a00;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .account-appeal-message p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+.account-appeal-button {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #8a5a00;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: all 0.2s ease;
+    box-shadow: 0 5px 14px rgba(138, 90, 0, 0.18);
+}
+
+    .account-appeal-button:hover,
+    .account-appeal-button:focus {
+        background: #704900;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        transform: translateY(-1px);
+        box-shadow: 0 7px 17px rgba(138, 90, 0, 0.24);
+    }
+
+    .account-appeal-button:active {
+        transform: translateY(0);
+    }
+
+
+

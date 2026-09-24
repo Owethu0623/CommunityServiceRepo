@@ -1,0 +1,594 @@
+﻿
+@model IEnumerable<CommunityServiceProject.Models.Ward>
+
+@{
+    ViewBag.Title = "Ward Management";
+}
+
+<style>
+
+    /* =========================================================
+       WARD MANAGEMENT
+       ========================================================= */
+
+    .ward-management-page {
+        max-width: 1100px;
+        margin: 35px auto 40px;
+        padding: 0 20px;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .ward-management-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .ward-management-header h1 {
+        margin: 0 0 7px;
+        color: #0D5CC1;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .ward-management-header p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .ward-management-header .blue-line {
+        margin-top: 14px;
+        width: 65px;
+        border-top: 3px solid #0D5CC1;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .ward-management-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.10);
+        border: 1px solid #e7edf5;
+    }
+
+
+    /* =========================================================
+       TOP CONTROLS
+       ========================================================= */
+
+    .ward-management-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .ward-search-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .ward-search-form .form-control {
+        height: 40px;
+        margin: 0;
+        border: 1px solid #d7e0eb;
+        box-shadow: none;
+    }
+
+    .ward-search-form .form-control:focus {
+        border-color: #0D5CC1;
+        box-shadow: none;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .ward-button {
+        border-radius: 7px;
+        padding: 9px 16px;
+        min-height: 40px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s ease;
+        text-decoration: none !important;
+        border: none;
+        cursor: pointer;
+    }
+
+    .ward-primary-button {
+        background: #0D5CC1;
+        color: white !important;
+    }
+
+    .ward-primary-button:hover {
+        background: #08479A;
+        color: white !important;
+    }
+
+    .ward-secondary-button {
+        background: white;
+        color: #0D5CC1 !important;
+        border: 1px solid #0D5CC1;
+    }
+
+    .ward-secondary-button:hover {
+        background: #0D5CC1;
+        color: white !important;
+    }
+
+    .ward-danger-button {
+        background: #fff;
+        color: #b42318 !important;
+        border: 1px solid #d9a5a0;
+    }
+
+    .ward-danger-button:hover {
+        background: #b42318;
+        color: white !important;
+        border-color: #b42318;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .ward-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .ward-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .ward-table th {
+        background: #0D5CC1;
+        color: white;
+        padding: 12px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .ward-table th:first-child {
+        border-radius: 7px 0 0 0;
+    }
+
+    .ward-table th:last-child {
+        border-radius: 0 7px 0 0;
+    }
+
+    .ward-table td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #edf1f6;
+        color: #333;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .ward-table tbody tr:hover {
+        background: #f8fbff;
+    }
+
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+
+    .ward-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .ward-status-active {
+        background: #e8f5ec;
+        color: #20743a;
+    }
+
+    .ward-status-inactive {
+        background: #f4eaea;
+        color: #a12d2d;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .ward-actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .ward-inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .ward-empty {
+        text-align: center;
+        padding: 35px 15px;
+        color: #777;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       MESSAGE
+       ========================================================= */
+
+    .ward-message {
+        padding: 11px 14px;
+        margin-bottom: 18px;
+        border-radius: 7px;
+        font-size: 13px;
+    }
+
+    .ward-success-message {
+        background: #eaf6ee;
+        color: #236b3a;
+        border: 1px solid #cce6d4;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 700px) {
+
+        .ward-management-page {
+            margin-top: 25px;
+            padding: 0 14px;
+        }
+
+        .ward-management-card {
+            padding: 18px;
+        }
+
+        .ward-management-controls {
+            align-items: stretch;
+        }
+
+        .ward-search-form {
+            max-width: none;
+            width: 100%;
+        }
+
+        .ward-primary-button {
+            width: 100%;
+            text-align: center;
+        }
+
+        .ward-table th,
+        .ward-table td {
+            padding: 10px;
+        }
+
+        .ward-actions {
+            flex-direction: column;
+        }
+
+        .ward-button {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .ward-dashboard-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: white;
+        color: #0D5CC1 !important;
+        border: 1px solid #0D5CC1;
+        border-radius: 7px;
+        padding: 9px 16px;
+        min-height: 40px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: 0.2s ease;
+    }
+
+        .ward-dashboard-button:hover {
+            background: #0D5CC1;
+            color: white !important;
+        }
+
+</style>
+
+
+<div class="ward-management-page">
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
+    <div class="ward-management-header">
+
+        <h1>
+            WARD MANAGEMENT
+        </h1>
+
+        <p>
+            Manage municipal wards and their availability for service requests.
+        </p>
+
+        <div class="blue-line"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MAIN CARD
+         ========================================================= -->
+
+    <div class="ward-management-card">
+
+        <!-- SUCCESS MESSAGE -->
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="ward-message ward-success-message">
+
+                @TempData["SuccessMessage"]
+
+            </div>
+        }
+
+
+        <!-- =====================================================
+             CONTROLS
+             ===================================================== -->
+
+        <div class="ward-management-controls">
+
+            @using (Html.BeginForm(
+                "Index",
+                "WardManagement",
+                FormMethod.Get,
+                new { @class = "ward-search-form" }
+            ))
+            {
+                <input type="text"
+                       name="search"
+                       value="@ViewBag.Search"
+                       class="form-control"
+                       placeholder="Search by ward number or name..." />
+
+                <button type="submit"
+                        class="ward-button ward-primary-button">
+
+                    <span class="glyphicon glyphicon-search"></span>
+
+                    Search
+
+                </button>
+            }
+
+
+            <a href="@Url.Action("Create", "WardManagement")"
+               class="ward-button ward-primary-button">
+
+                <span class="glyphicon glyphicon-plus"></span>
+
+                Add Ward
+
+            </a>
+
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <a href="@Url.Action("Index", "AdministratorDashboard")"
+               class="ward-dashboard-button">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Back to Administrator Dashboard
+            </a>
+        </div>
+        <!-- =====================================================
+             WARD TABLE
+             ===================================================== -->
+
+        <div class="ward-table-wrapper">
+
+            @if (Model != null && Model.Any())
+            {
+                <table class="ward-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Ward
+                            </th>
+
+                            <th>
+                                Name / Area
+                            </th>
+
+                            <th>
+                                Open Requests
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var ward in Model)
+                        {
+                            var openRequests = ward.Requests == null
+                                ? 0
+                                : ward.Requests.Count(r =>
+                                    r.Status !=
+                                    CommunityServiceProject.Models.RequestStatus.Completed &&
+                                    r.Status !=
+                                    CommunityServiceProject.Models.RequestStatus.Rejected
+                                );
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Ward @ward.WardNumber
+                                    </strong>
+                                </td>
+
+
+                                <td>
+                                    @ward.WardName
+                                </td>
+
+
+                                <td>
+                                    @openRequests
+                                </td>
+
+
+                                <td>
+
+                                    @if (ward.IsActive)
+                                    {
+                                        <span class="ward-status ward-status-active">
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="ward-status ward-status-inactive">
+                                            Inactive
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="ward-actions">
+
+                                        <a href="@Url.Action(
+                                                    "Edit",
+                                                    "WardManagement",
+                                                    new { id = ward.WardID }
+                                                )"
+                                           class="ward-button ward-secondary-button">
+
+                                            <span class="glyphicon glyphicon-pencil"></span>
+
+                                            Edit
+
+                                        </a>
+
+
+                                        @if (ward.IsActive)
+                                        {
+                                            using (Html.BeginForm(
+                                                "Deactivate",
+                                                "WardManagement",
+                                                new { id = ward.WardID },
+                                                FormMethod.Post,
+                                                new { @class = "ward-inline-form" }
+                                            ))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="ward-button ward-danger-button">
+
+                                                    <span class="glyphicon glyphicon-ban-circle"></span>
+
+                                                    Deactivate
+
+                                                </button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            using (Html.BeginForm(
+                                                "Activate",
+                                                "WardManagement",
+                                                new { id = ward.WardID },
+                                                FormMethod.Post,
+                                                new { @class = "ward-inline-form" }
+                                            ))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="ward-button ward-primary-button">
+
+                                                    <span class="glyphicon glyphicon-ok"></span>
+
+                                                    Activate
+
+                                                </button>
+                                            }
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="ward-empty">
+
+                    No wards were found.
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+

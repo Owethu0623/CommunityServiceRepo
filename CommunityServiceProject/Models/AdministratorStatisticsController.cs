@@ -1,7 +1,8 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Data.Entity;
 using CommunityServiceProject.Models;
 
 namespace CommunityServiceProject.Controllers
@@ -19,114 +20,266 @@ namespace CommunityServiceProject.Controllers
             }
 
             // =========================================================
-            // REQUEST STATISTICS
+            // OVERALL SERVICE PERFORMANCE
             // =========================================================
 
-            ViewBag.TotalRequests = db.Requests.Count();
+            var allRequests = db.Requests.ToList();
 
-            ViewBag.PendingRequests = db.Requests
-                .Count(r => r.Status == RequestStatus.Pending);
+            ViewBag.TotalRequests = allRequests.Count;
 
-            ViewBag.UnderReviewRequests = db.Requests
-                .Count(r => r.Status == RequestStatus.UnderReview);
-
-            ViewBag.ApprovedRequests = db.Requests
-                .Count(r => r.Status == RequestStatus.Approved);
-
-            ViewBag.AssignedRequests = db.Requests
-                .Count(r => r.Status == RequestStatus.Assigned);
-
-            ViewBag.InProgressRequests = db.Requests
-                .Count(r => r.Status == RequestStatus.InProgress);
-
-            ViewBag.CompletedRequests = db.Requests
+            ViewBag.CompletedRequests = allRequests
                 .Count(r => r.Status == RequestStatus.Completed);
 
-            ViewBag.RejectedRequests = db.Requests
-                .Count(r => r.Status == RequestStatus.Rejected);
-
 
             // =========================================================
-            // REQUESTS BY CATEGORY
+            // AVERAGE APPROVAL TIME
+            // DateSubmitted -> ApprovedDate
             // =========================================================
 
-            var categoryStatistics = db.Categories
-                .Select(c => new
-                {
-                    CategoryName = c.CategoryName,
-                    RequestCount = c.Requests.Count()
-                })
-                .OrderByDescending(c => c.RequestCount)
+            var approvalTimes = allRequests
+                .Where(r => r.ApprovedDate.HasValue)
+                .Select(r =>
+                    (r.ApprovedDate.Value - r.DateSubmitted).TotalDays)
                 .ToList();
 
-            var categoryList = new List<Dictionary<string, object>>();
+            ViewBag.AverageApprovalTime =
+                approvalTimes.Any()
+                    ? approvalTimes.Average()
+                    : (double?)null;
 
-            foreach (var category in categoryStatistics)
+
+            // =========================================================
+            // AVERAGE ASSIGNMENT TIME
+            // ApprovedDate -> AssignedDate
+            // =========================================================
+
+            var assignments = db.TechnicianAssignments
+                .Include(a => a.Request)
+                .ToList();
+
+            var assignmentTimes = assignments
+                .Where(a =>
+                    a.Request != null &&
+                    a.Request.ApprovedDate.HasValue)
+                .Select(a =>
+                    (a.AssignedDate -
+                     a.Request.ApprovedDate.Value).TotalDays)
+                .ToList();
+
+            ViewBag.AverageAssignmentTime =
+                assignmentTimes.Any()
+                    ? assignmentTimes.Average()
+                    : (double?)null;
+
+
+            // =========================================================
+            // AVERAGE RESOLUTION TIME
+            // DateSubmitted -> CompletedDate
+            // =========================================================
+
+            var maintenanceWorks = db.MaintenanceWorks
+                .Include(m => m.Request)
+                .ToList();
+
+            var resolutionTimes = maintenanceWorks
+                .Where(m =>
+                    m.Request != null &&
+                    m.CompletedDate.HasValue)
+                .Select(m =>
+                    (m.CompletedDate.Value -
+                     m.Request.DateSubmitted).TotalDays)
+                .ToList();
+
+            ViewBag.AverageResolutionTime =
+                resolutionTimes.Any()
+                    ? resolutionTimes.Average()
+                    : (double?)null;
+
+
+            // =========================================================
+            // CATEGORY PERFORMANCE
+            // =========================================================
+
+            var categoryPerformance = new List<Dictionary<string, object>>();
+
+            var categories = db.Categories
+                .Include(c => c.Requests)
+                .ToList();
+
+            foreach (var category in categories)
             {
-                categoryList.Add(
+                var requests = category.Requests.ToList();
+
+                var categoryResolutionTimes = maintenanceWorks
+                    .Where(m =>
+                        m.Request != null &&
+                        m.Request.CategoryID == category.CategoryID &&
+                        m.CompletedDate.HasValue)
+                    .Select(m =>
+                        (m.CompletedDate.Value -
+                         m.Request.DateSubmitted).TotalDays)
+                    .ToList();
+
+                var openMoreThan7Days = requests
+                    .Count(r =>
+                        r.Status != RequestStatus.Completed &&
+                        r.DateSubmitted <= DateTime.Now.AddDays(-7));
+
+                categoryPerformance.Add(
                     new Dictionary<string, object>
                     {
                         { "CategoryName", category.CategoryName },
-                        { "RequestCount", category.RequestCount }
+
+                        { "RequestCount", requests.Count },
+
+                        {
+                            "AverageResolutionTime",
+                            categoryResolutionTimes.Any()
+                                ? (object)categoryResolutionTimes.Average()
+                                : null
+                        },
+
+                        {
+                            "OpenMoreThan7Days",
+                            openMoreThan7Days
+                        }
                     }
                 );
             }
 
-            ViewBag.CategoryStatistics = categoryList;
+            ViewBag.CategoryPerformance = categoryPerformance
+                .OrderByDescending(c =>
+                    (int)c["RequestCount"])
+                .ToList();
 
 
             // =========================================================
-            // CITIZEN STATISTICS
+            // WARD PERFORMANCE
             // =========================================================
 
-            ViewBag.TotalCitizens = db.Citizens.Count();
+            var wardPerformance = new List<Dictionary<string, object>>();
 
-            ViewBag.ActiveCitizens = db.Citizens
-                .Count(c => c.AccountStatus == AccountStatus.Active);
+            var wards = db.Wards
+                .Include(w => w.Requests)
+                .ToList();
 
-            ViewBag.CitizensWithRequests = db.Citizens
-                .Count(c => db.Requests
-                    .Any(r => r.CitizenID == c.CitizenID));
-
-
-            // =========================================================
-            // CHART DATA - REQUEST STATUS
-            // =========================================================
-
-            ViewBag.StatusLabels = new[]
+            foreach (var ward in wards)
             {
-                "Pending",
-                "Under Review",
-                "Approved",
-                "Assigned",
-                "In Progress",
-                "Completed",
-                "Rejected"
-            };
+                var requests = ward.Requests.ToList();
 
-            ViewBag.StatusValues = new[]
+                if (!requests.Any())
+                {
+                    continue;
+                }
+
+                var completedRequests = requests
+                    .Count(r =>
+                        r.Status == RequestStatus.Completed);
+
+                var wardResolutionTimes = maintenanceWorks
+                    .Where(m =>
+                        m.Request != null &&
+                        m.Request.WardID == ward.WardID &&
+                        m.CompletedDate.HasValue)
+                    .Select(m =>
+                        (m.CompletedDate.Value -
+                         m.Request.DateSubmitted).TotalDays)
+                    .ToList();
+
+                wardPerformance.Add(
+                    new Dictionary<string, object>
+                    {
+                        {
+                            "WardName",
+                            "Ward " + ward.WardNumber
+                        },
+
+                        {
+                            "RequestCount",
+                            requests.Count
+                        },
+
+                        {
+                            "CompletedRequests",
+                            completedRequests
+                        },
+
+                        {
+                            "AverageResolutionTime",
+                            wardResolutionTimes.Any()
+                                ? (object)wardResolutionTimes.Average()
+                                : null
+                        }
+                    }
+                );
+            }
+
+            ViewBag.WardPerformance = wardPerformance
+                .OrderByDescending(w =>
+                    (int)w["RequestCount"])
+                .ToList();
+
+
+            // =========================================================
+            // TECHNICIAN PERFORMANCE
+            // =========================================================
+
+            var technicianPerformance =
+                new List<Dictionary<string, object>>();
+
+            var technicians = db.Technicians
+                .ToList();
+
+            foreach (var technician in technicians)
             {
-                ViewBag.PendingRequests,
-                ViewBag.UnderReviewRequests,
-                ViewBag.ApprovedRequests,
-                ViewBag.AssignedRequests,
-                ViewBag.InProgressRequests,
-                ViewBag.CompletedRequests,
-                ViewBag.RejectedRequests
-            };
+                var technicianWorks = maintenanceWorks
+                    .Where(m =>
+                        m.TechnicianID == technician.TechnicianID &&
+                        m.CompletedDate.HasValue)
+                    .ToList();
 
+                if (!technicianWorks.Any())
+                {
+                    continue;
+                }
 
-            // =========================================================
-            // CHART DATA - REQUEST CATEGORY
-            // =========================================================
+                var technicianResolutionTimes =
+                    technicianWorks
+                        .Where(m => m.Request != null)
+                        .Select(m =>
+                            (m.CompletedDate.Value -
+                             m.Request.DateSubmitted).TotalDays)
+                        .ToList();
 
-            ViewBag.CategoryLabels = categoryStatistics
-                .Select(c => c.CategoryName)
-                .ToArray();
+                technicianPerformance.Add(
+                    new Dictionary<string, object>
+                    {
+                        {
+                            "TechnicianName",
+                            technician.FirstName + " " +
+                            technician.LastName
+                        },
 
-            ViewBag.CategoryValues = categoryStatistics
-                .Select(c => c.RequestCount)
-                .ToArray();
+                        {
+                            "CompletedRequests",
+                            technicianWorks.Count
+                        },
+
+                        {
+                            "AverageResolutionTime",
+                            technicianResolutionTimes.Any()
+                                ? (object)technicianResolutionTimes.Average()
+                                : null
+                        }
+                    }
+                );
+            }
+
+            ViewBag.TechnicianPerformance =
+                technicianPerformance
+                    .OrderByDescending(t =>
+                        (int)t["CompletedRequests"])
+                    .ToList();
 
 
             return View();
@@ -148,4 +301,3 @@ namespace CommunityServiceProject.Controllers
         }
     }
 }
-

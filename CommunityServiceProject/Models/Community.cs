@@ -16,7 +16,7 @@ namespace CommunityServiceProject.Models
         public DbSet<Request> Requests { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Ward> Wards { get; set; }
-
+        public DbSet<Appeal> Appeals { get; set; }
         // Technician skills
         public DbSet<Skill> Skills { get; set; }
         public DbSet<TechnicianSkill> TechnicianSkills { get; set; }
@@ -44,6 +44,28 @@ namespace CommunityServiceProject.Models
         public DbSet<Warning> Warnings { get; set; }
         public DbSet<AccountRestriction> AccountRestrictions { get; set; }
 
+        // Feedback
+        public DbSet<Feedback> Feedbacks { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
+
+        // =========================================================
+        // MUNICIPAL ASSET MANAGEMENT
+        // =========================================================
+
+        public DbSet<MunicipalAsset> MunicipalAssets { get; set; }
+
+        public DbSet<AssetInspection> AssetInspections { get; set; }
+
+        public DbSet<AssetMaintenanceNeed> AssetMaintenanceNeeds { get; set; }
+
+        public DbSet<AssetRequest> AssetRequests { get; set; }
+
+        public DbSet<AssetMaintenance> AssetMaintenances { get; set; }
+
+        public DbSet<AssetProject> AssetProjects { get; set; }
+
+        public DbSet<AssetHistory> AssetHistories { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -339,6 +361,146 @@ namespace CommunityServiceProject.Models
                 .WithMany()
                 .HasForeignKey(r => r.AdministratorID)
                 .WillCascadeOnDelete(false);
+
+            // =========================================================
+            // FEEDBACK
+            // =========================================================
+
+            // Feedback -> Request
+            modelBuilder.Entity<Feedback>()
+                .HasRequired(f => f.Request)
+                .WithMany(r => r.Feedbacks)
+                .HasForeignKey(f => f.RequestID)
+                .WillCascadeOnDelete(false);
+
+            // Feedback -> Citizen
+            modelBuilder.Entity<Feedback>()
+                .HasRequired(f => f.Citizen)
+                .WithMany()
+                .HasForeignKey(f => f.CitizenID)
+                .WillCascadeOnDelete(false);
+
+            // =========================================================
+            // MUNICIPAL ASSET MANAGEMENT
+            // =========================================================
+
+            // MunicipalAsset -> Created By Administrator
+            modelBuilder.Entity<MunicipalAsset>()
+                .HasRequired(a => a.CreatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(a => a.CreatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // MunicipalAsset -> Last Updated By Administrator
+            modelBuilder.Entity<MunicipalAsset>()
+                .HasOptional(a => a.LastUpdatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(a => a.LastUpdatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // AssetInspection -> MunicipalAsset
+            modelBuilder.Entity<AssetInspection>()
+                .HasRequired(i => i.Asset)
+                .WithMany(a => a.AssetInspections)
+                .HasForeignKey(i => i.AssetID)
+                .WillCascadeOnDelete(false);
+
+            // AssetInspection -> Administrator
+            modelBuilder.Entity<AssetInspection>()
+                .HasRequired(i => i.Administrator)
+                .WithMany()
+                .HasForeignKey(i => i.AdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // AssetMaintenanceNeed -> MunicipalAsset
+            modelBuilder.Entity<AssetMaintenanceNeed>()
+                .HasRequired(n => n.Asset)
+                .WithMany(a => a.MaintenanceNeeds)
+                .HasForeignKey(n => n.AssetID)
+                .WillCascadeOnDelete(false);
+
+            // AssetMaintenanceNeed -> Administrator
+            modelBuilder.Entity<AssetMaintenanceNeed>()
+                .HasRequired(n => n.IdentifiedByAdministrator)
+                .WithMany()
+                .HasForeignKey(n => n.IdentifiedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // AssetRequest -> MunicipalAsset
+            modelBuilder.Entity<AssetRequest>()
+                .HasRequired(ar => ar.Asset)
+                .WithMany(a => a.AssetRequests)
+                .HasForeignKey(ar => ar.AssetID)
+                .WillCascadeOnDelete(false);
+
+            // AssetRequest -> Request
+            modelBuilder.Entity<AssetRequest>()
+                .HasRequired(ar => ar.Request)
+                .WithMany()
+                .HasForeignKey(ar => ar.RequestID)
+                .WillCascadeOnDelete(false);
+
+            // AssetRequest -> Administrator
+            modelBuilder.Entity<AssetRequest>()
+                .HasRequired(ar => ar.LinkedByAdministrator)
+                .WithMany()
+                .HasForeignKey(ar => ar.LinkedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // AssetMaintenance -> MunicipalAsset
+            modelBuilder.Entity<AssetMaintenance>()
+                .HasRequired(am => am.Asset)
+                .WithMany(a => a.AssetMaintenanceRecords)
+                .HasForeignKey(am => am.AssetID)
+                .WillCascadeOnDelete(false);
+
+            // AssetMaintenance -> MaintenanceWork
+            modelBuilder.Entity<AssetMaintenance>()
+                .HasRequired(am => am.MaintenanceWork)
+                .WithMany()
+                .HasForeignKey(am => am.MaintenanceWorkID)
+                .WillCascadeOnDelete(false);
+
+            // AssetMaintenance -> Administrator
+            modelBuilder.Entity<AssetMaintenance>()
+                .HasRequired(am => am.LinkedByAdministrator)
+                .WithMany()
+                .HasForeignKey(am => am.LinkedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // AssetProject -> MunicipalAsset
+            modelBuilder.Entity<AssetProject>()
+                .HasRequired(ap => ap.Asset)
+                .WithMany(a => a.AssetProjects)
+                .HasForeignKey(ap => ap.AssetID)
+                .WillCascadeOnDelete(false);
+
+            // AssetProject -> Administrator
+            modelBuilder.Entity<AssetProject>()
+                .HasRequired(ap => ap.LinkedByAdministrator)
+                .WithMany()
+                .HasForeignKey(ap => ap.LinkedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // AssetHistory -> MunicipalAsset
+            modelBuilder.Entity<AssetHistory>()
+                .HasRequired(h => h.Asset)
+                .WithMany(a => a.AssetHistory)
+                .HasForeignKey(h => h.AssetID)
+                .WillCascadeOnDelete(false);
+
+            // AssetHistory -> Administrator
+            modelBuilder.Entity<AssetHistory>()
+                .HasRequired(h => h.Administrator)
+                .WithMany()
+                .HasForeignKey(h => h.AdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<MunicipalAsset>()
+            .HasRequired(a => a.Ward)
+            .WithMany()
+             .HasForeignKey(a => a.WardID)
+            .WillCascadeOnDelete(false);
 
         }
     }

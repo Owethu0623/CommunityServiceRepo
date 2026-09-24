@@ -1,5 +1,4 @@
-﻿
-@model CommunityServiceProject.Models.Request
+﻿@model CommunityServiceProject.Models.Request
 
 @{
     ViewBag.Title = "Track Request";
@@ -832,6 +831,7 @@
     <!-- =========================
          ACTIONS
          ========================= -->
+
     <div class="track-actions">
 
         <a href="@Url.Action("Index", "Requests")"
@@ -852,19 +852,21 @@
          ========================= -->
     <div class="track-secondary-actions">
 
-        <button type="button"
-                class="track-secondary-button"
-                disabled>
+        <a href="@Url.Action("Index", "CitizenNotification", new { requestId = Model.RequestID })"
+           class="track-secondary-button">
             View Notifications
-        </button>
+        </a>
+        @{
+            bool hasFeedback = ViewBag.HasFeedback != null
+                && (bool)ViewBag.HasFeedback;
+        }
 
-        @if (isCompleted && verificationComplete)
+        @if (isCompleted && verificationComplete && !hasFeedback)
         {
-            <button type="button"
-                    class="track-secondary-button"
-                    disabled>
-                Provide Feedback
-            </button>
+            <a href="@Url.Action("Create", "Feedback", new { requestId = Model.RequestID })"
+               class="track-feedback-button">
+                ★ Provide Feedback
+            </a>
         }
 
     </div>

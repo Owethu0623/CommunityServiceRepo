@@ -1,0 +1,1346 @@
+﻿
+@model CommunityServiceProject.ViewModels.RecordAssetConditionViewModel
+
+@{
+    ViewBag.Title = "Record Asset Condition";
+}
+
+<div class="admin-asset-condition-page">
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+    <div class="admin-asset-condition-header">
+
+        <div>
+
+            <div class="page-eyebrow">
+                MUNICIPAL ASSET MANAGEMENT
+            </div>
+
+            <h1>
+                Record Asset Condition
+            </h1>
+
+            <p>
+                Record the current physical condition of this municipal
+                asset and document the assessment findings.
+            </p>
+
+        </div>
+
+        <div class="page-header-actions">
+
+            @Html.ActionLink(
+                "← Back to Asset Details",
+                "Details",
+                "MunicipalAsset",
+                new { id = Model.AssetID },
+                new { @class = "btn-secondary" }
+            )
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         INFORMATION NOTICE
+         ============================================================ -->
+    <div class="asset-info-notice">
+
+        <div class="asset-info-icon">
+            <span>i</span>
+        </div>
+
+        <div>
+
+            <strong>
+                Recording a condition assessment
+            </strong>
+
+            <p>
+                Review the current condition before recording an updated
+                condition. Your assessment findings will be stored in the
+                asset history for future reference.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         VALIDATION SUMMARY
+         ============================================================ -->
+    @Html.ValidationSummary(
+        true,
+        "",
+        new
+        {
+            @class = "validation-summary-errors"
+        }
+    )
+
+
+    @using (Html.BeginForm(
+        "RecordCondition",
+        "MunicipalAsset",
+        FormMethod.Post,
+        new
+        {
+            @class = "admin-asset-condition-form",
+            id = "recordConditionForm"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(
+            model => model.AssetID
+        )
+
+
+        <!-- ========================================================
+             SECTION 01 — ASSET INFORMATION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    01
+                </div>
+
+                <div>
+
+                    <h2>
+                        Asset Information
+                    </h2>
+
+                    <p>
+                        Confirm the municipal asset being assessed.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="asset-information-grid">
+
+                <!-- Asset Code -->
+                <div class="asset-information-card">
+
+                    <span class="information-label">
+                        Asset Code
+                    </span>
+
+                    <strong class="asset-code-value">
+                        @Model.AssetCode
+                    </strong>
+
+                    <span class="information-note">
+                        System-generated identifier
+                    </span>
+
+                </div>
+
+
+                <!-- Asset Name -->
+                <div class="asset-information-card">
+
+                    <span class="information-label">
+                        Asset Name
+                    </span>
+
+                    <strong>
+                        @Model.AssetName
+                    </strong>
+
+                </div>
+
+
+                <!-- Asset Type -->
+                <div class="asset-information-card">
+
+                    <span class="information-label">
+                        Asset Type
+                    </span>
+
+                    <strong>
+                        @Model.AssetType
+                    </strong>
+
+                </div>
+
+
+                <!-- Asset Category -->
+                <div class="asset-information-card">
+
+                    <span class="information-label">
+                        Asset Category
+                    </span>
+
+                    <strong>
+                        @Model.AssetCategory
+                    </strong>
+
+                </div>
+
+
+                <!-- Ward -->
+                <div class="asset-information-card full-width">
+
+                    <span class="information-label">
+                        Municipal Ward
+                    </span>
+
+                    <strong>
+                        @Model.WardName
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 02 — CURRENT CONDITION
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    02
+                </div>
+
+                <div>
+
+                    <h2>
+                        Current Condition
+                    </h2>
+
+                    <p>
+                        Review the condition currently recorded for
+                        this municipal asset.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="current-condition-panel">
+
+                <div class="current-condition-content">
+
+                    <span class="condition-label">
+                        Current Recorded Condition
+                    </span>
+
+                    <strong id="currentConditionValue"
+                            class="condition-value">
+                        @Model.CurrentCondition
+                    </strong>
+
+                </div>
+
+                <div id="currentConditionBadge"
+                     class="condition-badge">
+                    @Model.CurrentCondition
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 03 — CONDITION ASSESSMENT
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    03
+                </div>
+
+                <div>
+
+                    <h2>
+                        Condition Assessment
+                    </h2>
+
+                    <p>
+                        Record the updated condition and explain the
+                        observations supporting your assessment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="asset-form-grid">
+
+                <!-- New Condition -->
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        model => model.NewCondition
+                    )
+
+                    @Html.EnumDropDownListFor(
+                        model => model.NewCondition,
+                        "-- Select New Condition --",
+                        new
+                        {
+                            @class = "form-control",
+                            id = "NewCondition"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.NewCondition,
+                        "",
+                        new
+                        {
+                            @class = "field-validation-error"
+                        }
+                    )
+
+                    <small class="form-help">
+                        Select the condition that best represents the
+                        asset's current physical state.
+                    </small>
+
+                </div>
+
+
+                <!-- Findings -->
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        model => model.Findings
+                    )
+
+                    @Html.TextAreaFor(
+                        model => model.Findings,
+                        new
+                        {
+                            @class = "form-control",
+                            id = "Findings",
+                            rows = "6",
+                            maxlength = "2000",
+                            placeholder =
+                                "Describe the condition observed, visible defects, deterioration, damage or other relevant findings..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Findings,
+                        "",
+                        new
+                        {
+                            @class = "field-validation-error"
+                        }
+                    )
+
+                    <div class="character-counter">
+                        <span id="findingsCharacterCount">
+                            0
+                        </span>
+                        / 2000 characters
+                    </div>
+
+                    <small class="form-help">
+                        Provide clear and factual findings that support
+                        the selected condition.
+                    </small>
+
+                </div>
+
+
+                <!-- Recommended Action -->
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        model => model.RecommendedAction
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.RecommendedAction,
+                        new
+                        {
+                            @class = "form-control",
+                            id = "RecommendedAction",
+                            maxlength = "100",
+                            autocomplete = "off",
+                            placeholder =
+                                "e.g. Schedule maintenance, monitor condition, repair required..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.RecommendedAction,
+                        "",
+                        new
+                        {
+                            @class = "field-validation-error"
+                        }
+                    )
+
+                    <small class="form-help">
+                        Optional. Record the recommended follow-up action
+                        based on the condition assessment.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 04 — CONDITION CHANGE SUMMARY
+             ======================================================== -->
+        <div class="asset-form-section">
+
+            <div class="asset-section-header">
+
+                <div class="asset-section-number">
+                    04
+                </div>
+
+                <div>
+
+                    <h2>
+                        Assessment Summary
+                    </h2>
+
+                    <p>
+                        Review the condition change before submitting
+                        the assessment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="condition-change-summary">
+
+                <div class="condition-change-item">
+
+                    <span class="change-label">
+                        Current Condition
+                    </span>
+
+                    <strong id="summaryCurrentCondition">
+                        @Model.CurrentCondition
+                    </strong>
+
+                </div>
+
+
+                <div class="condition-change-arrow">
+                    →
+                </div>
+
+
+                <div class="condition-change-item">
+
+                    <span class="change-label">
+                        New Condition
+                    </span>
+
+                    <strong id="summaryNewCondition">
+                        @(Model.NewCondition.HasValue
+                            ? Model.NewCondition.Value.ToString()
+                            : "Not selected")
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div id="sameConditionNotice"
+                 class="same-condition-notice"
+                 style="display:none;">
+
+                <strong>
+                    No condition change selected
+                </strong>
+
+                <p>
+                    The selected condition is the same as the current
+                    recorded condition. Select a different condition
+                    if the asset's condition has changed.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             SECTION 05 — RECORDING NOTICE
+             ======================================================== -->
+        <div class="asset-recording-notice">
+
+            <div class="recording-notice-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>
+                    Asset history will be updated
+                </strong>
+
+                <p>
+                    When this assessment is saved, the previous and new
+                    condition, assessment findings and recommended action
+                    will be recorded as an asset history activity.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             FORM ACTIONS
+             ======================================================== -->
+        <div class="asset-form-actions">
+
+            <div class="asset-form-actions-left">
+
+                @Html.ActionLink(
+                    "Cancel",
+                    "Details",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID },
+                    new { @class = "btn-secondary" }
+                )
+
+            </div>
+
+
+            <div class="asset-form-actions-right">
+
+                @Html.ActionLink(
+                    "View Asset Details",
+                    "Details",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID },
+                    new { @class = "btn-secondary" }
+                )
+
+                <button type="submit"
+                        class="btn-primary"
+                        id="saveConditionBtn">
+
+                    Record Condition
+
+                </button>
+
+            </div>
+
+        </div>
+
+    }
+
+</div>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            /* ========================================================
+               ELEMENTS
+               ======================================================== */
+
+            var conditionSelect =
+                document.getElementById(
+                    "NewCondition"
+                );
+
+            var currentCondition =
+                "@Model.CurrentCondition";
+
+            var summaryCurrentCondition =
+                document.getElementById(
+                    "summaryCurrentCondition"
+                );
+
+            var summaryNewCondition =
+                document.getElementById(
+                    "summaryNewCondition"
+                );
+
+            var sameConditionNotice =
+                document.getElementById(
+                    "sameConditionNotice"
+                );
+
+            var findings =
+                document.getElementById(
+                    "Findings"
+                );
+
+            var findingsCharacterCount =
+                document.getElementById(
+                    "findingsCharacterCount"
+                );
+
+            var form =
+                document.getElementById(
+                    "recordConditionForm"
+                );
+
+
+            /* ========================================================
+               CONDITION SUMMARY
+               ======================================================== */
+
+            function updateConditionSummary() {
+
+                if (!conditionSelect) {
+                    return;
+                }
+
+                var selectedOption =
+                    conditionSelect.options[
+                        conditionSelect.selectedIndex
+                    ];
+
+                var selectedText =
+                    selectedOption &&
+                    selectedOption.value
+                        ? selectedOption.text
+                        : "Not selected";
+
+
+                if (summaryNewCondition) {
+
+                    summaryNewCondition.textContent =
+                        selectedText;
+
+                }
+
+
+                if (summaryCurrentCondition) {
+
+                    summaryCurrentCondition.textContent =
+                        currentCondition;
+
+                }
+
+
+                if (sameConditionNotice) {
+
+                    if (
+                        selectedOption &&
+                        selectedOption.value &&
+                        selectedOption.value ===
+                            currentCondition
+                    ) {
+
+                        sameConditionNotice.style.display =
+                            "block";
+
+                    }
+                    else {
+
+                        sameConditionNotice.style.display =
+                            "none";
+
+                    }
+
+                }
+
+            }
+
+
+            if (conditionSelect) {
+
+                conditionSelect.addEventListener(
+                    "change",
+                    updateConditionSummary
+                );
+
+                updateConditionSummary();
+
+            }
+
+
+            /* ========================================================
+               CHARACTER COUNTER
+               ======================================================== */
+
+            function updateCharacterCount() {
+
+                if (!findings ||
+                    !findingsCharacterCount) {
+                    return;
+                }
+
+                findingsCharacterCount.textContent =
+                    findings.value.length;
+
+            }
+
+
+            if (findings) {
+
+                findings.addEventListener(
+                    "input",
+                    updateCharacterCount
+                );
+
+                updateCharacterCount();
+
+            }
+
+
+            /* ========================================================
+               FORM CONFIRMATION
+               ======================================================== */
+
+            if (form) {
+
+                form.addEventListener(
+                    "submit",
+                    function (event) {
+
+                        var selectedOption =
+                            conditionSelect.options[
+                                conditionSelect.selectedIndex
+                            ];
+
+                        var selectedCondition =
+                            selectedOption &&
+                            selectedOption.value
+                                ? selectedOption.text
+                                : "";
+
+
+                        if (!selectedCondition) {
+
+                            return;
+
+                        }
+
+
+                        if (
+                            conditionSelect.value ===
+                            currentCondition
+                        ) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "The selected condition is the same as the current recorded condition. Please select a different condition."
+                            );
+
+                            conditionSelect.focus();
+
+                            return false;
+
+                        }
+
+
+                        var confirmed =
+                            window.confirm(
+                                "Are you sure you want to record this condition assessment?\n\n" +
+                                "Current condition: " +
+                                currentCondition +
+                                "\n" +
+                                "New condition: " +
+                                selectedCondition +
+                                "\n\n" +
+                                "The assessment will be recorded in the asset history."
+                            );
+
+
+                        if (!confirmed) {
+
+                            event.preventDefault();
+
+                            return false;
+
+                        }
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+<style>
+
+    /* ================================================================
+       PAGE
+       ================================================================ */
+
+    .admin-asset-condition-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 35px 25px 60px;
+    }
+
+
+    /* ================================================================
+       HEADER
+       ================================================================ */
+
+    .admin-asset-condition-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 30px;
+        margin-bottom: 25px;
+    }
+
+    .page-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        opacity: .65;
+    }
+
+    .admin-asset-condition-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .admin-asset-condition-header p {
+        margin: 0;
+        max-width: 720px;
+        line-height: 1.6;
+        opacity: .72;
+    }
+
+    .page-header-actions {
+        flex-shrink: 0;
+    }
+
+
+    /* ================================================================
+       INFORMATION NOTICE
+       ================================================================ */
+
+    .asset-info-notice {
+        display: flex;
+        gap: 15px;
+        padding: 18px 20px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        border: 1px solid #d9e5f5;
+        background: #f5f9ff;
+    }
+
+    .asset-info-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .asset-info-notice strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .asset-info-notice p {
+        margin: 0;
+        line-height: 1.5;
+        opacity: .72;
+    }
+
+
+    /* ================================================================
+       FORM SECTION
+       ================================================================ */
+
+    .asset-form-section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.03);
+    }
+
+    .asset-section-header {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+
+    .asset-section-number {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .asset-section-header h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+    }
+
+    .asset-section-header p {
+        margin: 0;
+        opacity: .65;
+        line-height: 1.5;
+    }
+
+
+    /* ================================================================
+       ASSET INFORMATION
+       ================================================================ */
+
+    .asset-information-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .asset-information-card {
+        padding: 17px 18px;
+        border-radius: 9px;
+        background: #f7f9fb;
+        border: 1px solid #e4e8ed;
+        min-width: 0;
+    }
+
+    .asset-information-card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .information-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        opacity: .58;
+        margin-bottom: 6px;
+    }
+
+    .asset-information-card strong {
+        display: block;
+        font-size: 15px;
+        line-height: 1.4;
+        word-break: break-word;
+    }
+
+    .asset-code-value {
+        letter-spacing: .4px;
+    }
+
+    .information-note {
+        display: block;
+        margin-top: 5px;
+        font-size: 11px;
+        opacity: .55;
+    }
+
+
+    /* ================================================================
+       CURRENT CONDITION
+       ================================================================ */
+
+    .current-condition-panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 22px;
+        border-radius: 10px;
+        background: #f7f9fb;
+        border: 1px solid #e4e8ed;
+    }
+
+    .current-condition-content {
+        min-width: 0;
+    }
+
+    .condition-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        opacity: .58;
+        margin-bottom: 7px;
+    }
+
+    .condition-value {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .condition-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 95px;
+        padding: 9px 15px;
+        border-radius: 30px;
+        background: #e8eef7;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+
+    /* ================================================================
+       FORM GRID
+       ================================================================ */
+
+    .asset-form-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .form-group {
+        min-width: 0;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid #d7dce2;
+        border-radius: 7px;
+        padding: 10px 12px;
+        font-size: 14px;
+        box-sizing: border-box;
+        background: #fff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow:
+            0 0 0 3px rgba(13,92,193,.10);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 135px;
+    }
+
+    .form-help {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+        opacity: .62;
+    }
+
+
+    /* ================================================================
+       CHARACTER COUNTER
+       ================================================================ */
+
+    .character-counter {
+        text-align: right;
+        margin-top: 5px;
+        font-size: 11px;
+        opacity: .55;
+    }
+
+
+    /* ================================================================
+       CONDITION CHANGE SUMMARY
+       ================================================================ */
+
+    .condition-change-summary {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto
+            minmax(0, 1fr);
+        align-items: center;
+        gap: 20px;
+    }
+
+    .condition-change-item {
+        padding: 20px;
+        border-radius: 9px;
+        background: #f7f9fb;
+        border: 1px solid #e4e8ed;
+    }
+
+    .change-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        opacity: .58;
+    }
+
+    .condition-change-item strong {
+        font-size: 17px;
+    }
+
+    .condition-change-arrow {
+        font-size: 28px;
+        opacity: .45;
+    }
+
+
+    /* ================================================================
+       SAME CONDITION NOTICE
+       ================================================================ */
+
+    .same-condition-notice {
+        margin-top: 15px;
+        padding: 15px 17px;
+        border-radius: 8px;
+        border: 1px solid #e7d7a4;
+        background: #fffaf0;
+    }
+
+    .same-condition-notice strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .same-condition-notice p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        opacity: .72;
+    }
+
+
+    /* ================================================================
+       RECORDING NOTICE
+       ================================================================ */
+
+    .asset-recording-notice {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+        padding: 18px 20px;
+        margin-bottom: 22px;
+        border-radius: 10px;
+        border: 1px solid #d9e5f5;
+        background: #f5f9ff;
+    }
+
+    .recording-notice-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: #0D5CC1;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .asset-recording-notice strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .asset-recording-notice p {
+        margin: 0;
+        line-height: 1.5;
+        opacity: .72;
+    }
+
+
+    /* ================================================================
+       ACTIONS
+       ================================================================ */
+
+    .asset-form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding-top: 5px;
+    }
+
+    .asset-form-actions-left,
+    .asset-form-actions-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        opacity: .92;
+    }
+
+    .btn-secondary {
+        border: 1px solid #d2d7dd;
+        background: #fff;
+        color: #30353b;
+    }
+
+    .btn-secondary:hover {
+        background: #f5f6f7;
+        text-decoration: none;
+    }
+
+
+    /* ================================================================
+       VALIDATION
+       ================================================================ */
+
+    .validation-summary-errors {
+        margin-bottom: 20px;
+        padding: 15px 18px;
+        border-radius: 8px;
+        border: 1px solid #efcaca;
+        background: #fff5f5;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #c62828;
+    }
+
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+
+    @@media (max-width: 850px) {
+
+        .admin-asset-condition-header {
+            flex-direction: column;
+        }
+
+        .asset-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .asset-information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .asset-information-card.full-width {
+            grid-column: auto;
+        }
+
+        .condition-change-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .condition-change-arrow {
+            text-align: center;
+            transform: rotate(90deg);
+        }
+
+    }
+
+
+    @@media (max-width: 600px) {
+
+        .admin-asset-condition-page {
+            padding: 20px 15px 40px;
+        }
+
+        .asset-form-section {
+            padding: 20px;
+        }
+
+        .current-condition-panel {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .asset-form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .asset-form-actions-left,
+        .asset-form-actions-right {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .asset-form-actions .btn-primary,
+        .asset-form-actions .btn-secondary {
+            width: 100%;
+        }
+
+    }
+
+</style>

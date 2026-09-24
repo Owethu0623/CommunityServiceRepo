@@ -1,0 +1,419 @@
+﻿@model CommunityServiceProject.Models.Appeal
+
+@{
+    ViewBag.Title = "Appeal Approved";
+}
+
+<style>
+
+    /* =========================================================
+       APPROVED APPEAL PAGE
+       ========================================================= */
+
+    .appeal-approved-page {
+        max-width: 700px;
+        margin: 45px auto 35px;
+        padding: 0 20px;
+    }
+
+    .appeal-approved-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .appeal-approved-header h1 {
+        margin: 0 0 8px;
+        font-size: 27px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .appeal-approved-header p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .appeal-approved-header hr {
+        width: 55px;
+        margin: 15px auto 0;
+        border: 0;
+        border-top: 3px solid #333;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .appeal-approved-card {
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        border-radius: 10px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+    }
+
+
+    /* =========================================================
+       APPROVAL BANNER
+       ========================================================= */
+
+    .appeal-approved-banner {
+        text-align: center;
+        padding: 25px 25px 22px;
+        background: #f7fbf8;
+        border-bottom: 1px solid #dce9df;
+    }
+
+    .appeal-approved-icon {
+        width: 46px;
+        height: 46px;
+        margin: 0 auto 12px;
+        border: 2px solid #2f6f42;
+        border-radius: 50%;
+        color: #2f6f42;
+        font-size: 24px;
+        line-height: 42px;
+        font-weight: 700;
+    }
+
+    .appeal-approved-banner h2 {
+        margin: 0 0 7px;
+        font-size: 21px;
+        font-weight: 700;
+        color: #2f6f42;
+    }
+
+    .appeal-approved-banner p {
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       CONTENT
+       ========================================================= */
+
+    .appeal-approved-content {
+        padding: 25px;
+    }
+
+    .appeal-approved-section {
+        margin-bottom: 22px;
+    }
+
+    .appeal-approved-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .appeal-approved-section h3 {
+        margin: 0 0 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #ededed;
+        font-size: 15px;
+        font-weight: 700;
+        color: #333;
+    }
+
+
+    /* =========================================================
+       DETAILS
+       ========================================================= */
+
+    .appeal-approved-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 25px;
+    }
+
+    .appeal-approved-item {
+        padding: 8px 0;
+    }
+
+    .appeal-approved-label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .appeal-approved-value {
+        font-size: 13px;
+        color: #333;
+    }
+
+
+    /* =========================================================
+       DECISION MESSAGE
+       ========================================================= */
+
+    .appeal-approved-decision {
+        padding: 15px;
+        border: 1px solid #dce9df;
+        border-radius: 7px;
+        background: #f8fbf9;
+        color: #444;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+
+    /* =========================================================
+       ACTION
+       ========================================================= */
+
+    .appeal-approved-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e6e6e6;
+    }
+
+    .appeal-approved-button {
+        display: inline-block;
+        min-width: 190px;
+        padding: 11px 20px;
+        border-radius: 6px;
+        background: #333;
+        color: #fff !important;
+        border: 1px solid #333;
+        text-align: center;
+        text-decoration: none !important;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .appeal-approved-button:hover {
+        background: #555;
+        border-color: #555;
+    }
+
+    .appeal-approved-button .glyphicon {
+        margin-right: 6px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 650px) {
+
+        .appeal-approved-page {
+            margin-top: 25px;
+            padding: 0 14px;
+        }
+
+        .appeal-approved-content {
+            padding: 20px;
+        }
+
+        .appeal-approved-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .appeal-approved-header h1 {
+            font-size: 24px;
+        }
+
+        .appeal-approved-button {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<div class="appeal-approved-page">
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
+    <div class="appeal-approved-header">
+
+        <h1>
+            APPEAL APPROVED
+        </h1>
+
+        <p>
+            Your account appeal has been reviewed by an administrator.
+        </p>
+
+        <hr />
+
+    </div>
+
+
+    <!-- =========================================================
+         MAIN CARD
+         ========================================================= -->
+
+    <div class="appeal-approved-card">
+
+
+        <!-- =====================================================
+             APPROVAL BANNER
+             ===================================================== -->
+
+        <div class="appeal-approved-banner">
+
+            <div class="appeal-approved-icon">
+                ✓
+            </div>
+
+            <h2>
+                Your Appeal Has Been Approved
+            </h2>
+
+            <p>
+                Your account has been restored and is now active.
+                You can continue to the login page to access your account.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <div class="appeal-approved-content">
+
+
+            <!-- =================================================
+                 APPEAL DETAILS
+                 ================================================= -->
+
+            <div class="appeal-approved-section">
+
+                <h3>
+                    Appeal Details
+                </h3>
+
+                <div class="appeal-approved-grid">
+
+                    <div class="appeal-approved-item">
+
+                        <span class="appeal-approved-label">
+                            Reference Number
+                        </span>
+
+                        <span class="appeal-approved-value">
+                            @Model.ReferenceNumber
+                        </span>
+
+                    </div>
+
+
+                    <div class="appeal-approved-item">
+
+                        <span class="appeal-approved-label">
+                            Date Submitted
+                        </span>
+
+                        <span class="appeal-approved-value">
+                            @Model.DateSubmitted.ToString(
+                                "dd MMMM yyyy, HH:mm"
+                            )
+                        </span>
+
+                    </div>
+
+
+                    @if (Model.DateDecision.HasValue)
+                    {
+                        <div class="appeal-approved-item">
+
+                            <span class="appeal-approved-label">
+                                Date Approved
+                            </span>
+
+                            <span class="appeal-approved-value">
+                                @Model.DateDecision.Value.ToString(
+                                    "dd MMMM yyyy, HH:mm"
+                                )
+                            </span>
+
+                        </div>
+                    }
+
+
+                    <div class="appeal-approved-item">
+
+                        <span class="appeal-approved-label">
+                            Account Status
+                        </span>
+
+                        <span class="appeal-approved-value">
+                            Active
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ADMINISTRATOR DECISION
+                 ================================================= -->
+
+            <div class="appeal-approved-section">
+
+                <h3>
+                    Administrator Decision
+                </h3>
+
+                <div class="appeal-approved-decision">
+
+                    @if (!string.IsNullOrWhiteSpace(Model.DecisionReason))
+                    {
+                        @Model.DecisionReason
+                    }
+                    else
+                    {
+                        <span>
+                            Your appeal has been approved by the administrator.
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTION
+                 ================================================= -->
+
+            <div class="appeal-approved-actions">
+
+                <a href="@Url.Action("Index", "Login")"
+                   class="appeal-approved-button">
+
+                    <span class="glyphicon glyphicon-log-in"></span>
+
+                    Continue to Login
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+

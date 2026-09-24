@@ -1,0 +1,1620 @@
+﻿@model CommunityServiceProject.Models.MunicipalAsset
+
+@{
+    ViewBag.Title = "Asset Details";
+}
+
+<div class="asset-details-page">
+
+    <!-- =======================================================
+         TOP NAVIGATION
+    ======================================================== -->
+
+    <div class="asset-page-navigation">
+
+        <div class="navigation-left">
+
+            <a href="@Url.Action("Index", "MunicipalAsset")"
+               class="asset-nav-btn">
+                ← Asset Register
+            </a>
+
+            <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+               class="asset-nav-btn">
+                Asset Dashboard
+            </a>
+
+        </div>
+
+        <div class="navigation-right">
+
+            <a href="@Url.Action("Edit", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-primary">
+                Edit Asset
+            </a>
+
+            <a href="@Url.Action("RecordCondition", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-secondary">
+                Record Asset Condition
+            </a>
+
+            <a href="@Url.Action("Inspect", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-secondary">
+                Inspect Asset
+            </a>
+
+            <a href="@Url.Action("CreateMaintenanceNeed", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-secondary">
+                Record Maintenance Need
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         ASSET HEADER
+    ======================================================== -->
+
+    <div class="asset-hero">
+
+        <div class="asset-hero-main">
+
+            <div class="asset-code">
+                @Model.AssetCode
+            </div>
+
+            <h1>
+                @Model.AssetName
+            </h1>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="asset-description">
+                    @Model.Description
+                </p>
+            }
+
+        </div>
+
+        <div class="asset-hero-status">
+
+            <span class="status-badge status-@Model.Status">
+                ● @Model.Status
+            </span>
+
+            <span class="condition-badge condition-@Model.Condition">
+                ● @Model.Condition
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         ASSET OVERVIEW
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Asset Overview</h2>
+
+                <p>
+                    Core identification and registration information.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="information-grid">
+
+            <div class="information-item">
+                <span>Asset Code</span>
+                <strong>@Model.AssetCode</strong>
+            </div>
+
+            <div class="information-item">
+                <span>Asset Type</span>
+                <strong>@Model.AssetType</strong>
+            </div>
+
+            <div class="information-item">
+                <span>Asset Category</span>
+
+                <strong>
+                    @(string.IsNullOrWhiteSpace(Model.AssetCategory)
+                        ? "Not specified"
+                        : Model.AssetCategory)
+                </strong>
+            </div>
+
+            <div class="information-item">
+                <span>Municipal Ward</span>
+
+                <strong>
+                    @if (Model.Ward != null)
+                    {
+                        @:Ward @Model.Ward.WardNumber
+
+
+                        if (!string.IsNullOrWhiteSpace(Model.Ward.WardName))
+                        {
+                            @: – @Model.Ward.WardName
+                        }
+                    }
+                    else
+                    {
+                        @:Ward not specified
+                    }
+                </strong>
+            </div>
+
+            <div class="information-item">
+                <span>Date Registered</span>
+
+                <strong>
+                    @Model.DateRegistered.ToString("dd MMM yyyy")
+                </strong>
+            </div>
+
+            <div class="information-item">
+                <span>Registered By</span>
+
+                <strong>
+                    @(Model.CreatedByAdministrator == null
+                        ? "Administrator"
+                        : Model.CreatedByAdministrator.FirstName
+                          + " "
+                          + Model.CreatedByAdministrator.LastName)
+                </strong>
+            </div>
+
+            <div class="information-item">
+                <span>Last Updated</span>
+
+                <strong>
+                    @(Model.LastUpdatedDate.HasValue
+                        ? Model.LastUpdatedDate.Value.ToString("dd MMM yyyy HH:mm")
+                        : "Not updated")
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         LOCATION
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Location</h2>
+
+                <p>
+                    Physical location and geographic coordinates.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="location-layout">
+
+            <div class="location-information">
+
+                <div class="location-address">
+
+                    <span>Location Description</span>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.LocationDescription)
+                            ? "Location not specified"
+                            : Model.LocationDescription)
+                    </strong>
+
+                </div>
+
+                <div class="coordinates-grid">
+
+                    <div class="coordinate-item">
+                        <span>Latitude</span>
+
+                        <strong>
+                            @(Model.Latitude.HasValue
+                                ? Model.Latitude.Value.ToString("F6")
+                                : "Not recorded")
+                        </strong>
+                    </div>
+
+                    <div class="coordinate-item">
+                        <span>Longitude</span>
+
+                        <strong>
+                            @(Model.Longitude.HasValue
+                                ? Model.Longitude.Value.ToString("F6")
+                                : "Not recorded")
+                        </strong>
+                    </div>
+
+                </div>
+
+                @if (Model.Latitude.HasValue &&
+                     Model.Longitude.HasValue)
+                {
+                    <a target="_blank"
+                       rel="noopener noreferrer"
+                       class="map-button"
+                       href="https://www.google.com/maps/dir/?api=1&destination=@Model.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),@Model.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                        📍 Open Location in Google Maps
+                    </a>
+                }
+
+            </div>
+
+            <div class="location-map-placeholder">
+
+                @if (Model.Latitude.HasValue &&
+                     Model.Longitude.HasValue)
+                {
+                    <div class="map-coordinate-display">
+
+                        <div class="map-icon">
+                            ◎
+                        </div>
+
+                        <strong>
+                            Asset Location Recorded
+                        </strong>
+
+                        <span>
+                            @Model.Latitude.Value.ToString("F6"),
+                            @Model.Longitude.Value.ToString("F6")
+                        </span>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="map-coordinate-display">
+
+                        <div class="map-icon">
+                            ◎
+                        </div>
+
+                        <strong>
+                            Location Coordinates Not Available
+                        </strong>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         CONDITION & STATUS
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Current Condition & Status</h2>
+
+                <p>
+                    Current operational state of the asset.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="current-state-grid">
+
+            <div class="state-card">
+
+                <span>Condition</span>
+
+                <strong>
+                    @Model.Condition
+                </strong>
+
+                <small>
+                    Current recorded physical condition
+                </small>
+
+            </div>
+
+            <div class="state-card">
+
+                <span>Status</span>
+
+                <strong>
+                    @Model.Status
+                </strong>
+
+                <small>
+                    Current operational status
+                </small>
+
+            </div>
+
+            <div class="state-card">
+
+                <span>Last Inspection</span>
+
+                <strong>
+                    @(Model.LastInspectionDate.HasValue
+                        ? Model.LastInspectionDate.Value.ToString("dd MMM yyyy")
+                        : "Not recorded")
+                </strong>
+
+                <small>
+                    Most recent recorded inspection
+                </small>
+
+            </div>
+
+            <div class="state-card">
+
+                <span>Last Maintenance</span>
+
+                <strong>
+                    @(Model.LastMaintenanceDate.HasValue
+                        ? Model.LastMaintenanceDate.Value.ToString("dd MMM yyyy")
+                        : "Not recorded")
+                </strong>
+
+                <small>
+                    Most recent maintenance activity
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         MAINTENANCE NEEDS
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Maintenance Needs</h2>
+
+                <p>
+                    Identified maintenance requirements for this asset.
+                </p>
+            </div>
+
+            <a href="@Url.Action(
+                "CreateMaintenanceNeed",
+                "MunicipalAsset",
+                new { id = Model.AssetID })"
+               class="section-action">
+                + Record Maintenance Need
+            </a>
+
+        </div>
+
+        @if (Model.MaintenanceNeeds != null &&
+             Model.MaintenanceNeeds.Any())
+        {
+            <div class="related-table-wrapper">
+
+                <table class="related-table">
+
+                    <thead>
+                        <tr>
+                            <th>Maintenance Type</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Date Identified</th>
+                            <th>Target Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var need in Model.MaintenanceNeeds
+                            .OrderByDescending(n => n.DateIdentified))
+                        {
+                            <tr>
+
+                                <td>
+                                    @need.MaintenanceType
+                                </td>
+
+                                <td>
+                                    @need.Priority
+                                </td>
+
+                                <td>
+                                    @need.Status
+                                </td>
+
+                                <td>
+                                    @need.DateIdentified.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @(need.TargetDate.HasValue
+                                        ? need.TargetDate.Value.ToString("dd MMM yyyy")
+                                        : "Not set")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-related-state">
+
+                <strong>
+                    No maintenance needs recorded
+                </strong>
+
+                <span>
+                    No maintenance requirement has been identified
+                    for this asset.
+                </span>
+
+                <a href="@Url.Action(
+                    "CreateMaintenanceNeed",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    Record Maintenance Need
+                </a>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =======================================================
+         INSPECTION HISTORY
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Inspection History</h2>
+
+                <p>
+                    Previous inspections and recorded findings.
+                </p>
+            </div>
+
+            <a href="@Url.Action(
+                "Inspect",
+                "MunicipalAsset",
+                new { id = Model.AssetID })"
+               class="section-action">
+                + Inspect Asset
+            </a>
+
+        </div>
+
+        @if (Model.AssetInspections != null &&
+             Model.AssetInspections.Any())
+        {
+            <div class="related-table-wrapper">
+
+                <table class="related-table">
+
+                    <thead>
+                        <tr>
+                            <th>Inspection Date</th>
+                            <th>Condition</th>
+                            <th>Findings</th>
+                            <th>Recommended Action</th>
+                            <th>Next Inspection</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var inspection in Model.AssetInspections
+                            .OrderByDescending(i => i.InspectionDate))
+                        {
+                            <tr>
+
+                                <td>
+                                    @inspection.InspectionDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @inspection.Condition
+                                </td>
+
+                                <td class="wide-cell">
+                                    @inspection.Findings
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(
+                                        inspection.RecommendedAction)
+                                        ? "None recorded"
+                                        : inspection.RecommendedAction)
+                                </td>
+
+                                <td>
+                                    @(inspection.NextInspectionDate.HasValue
+                                        ? inspection.NextInspectionDate.Value
+                                            .ToString("dd MMM yyyy")
+                                        : "Not scheduled")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-related-state">
+
+                <strong>
+                    No inspections recorded
+                </strong>
+
+                <span>
+                    This asset has not yet had an inspection recorded
+                    in the system.
+                </span>
+
+                <a href="@Url.Action(
+                    "Inspect",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    Inspect Asset
+                </a>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =======================================================
+         RELATED SERVICE REQUESTS
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Related Service Requests</h2>
+
+                <p>
+                    Citizen service requests associated with this asset.
+                </p>
+            </div>
+
+        </div>
+
+        @if (Model.AssetRequests != null &&
+             Model.AssetRequests.Any())
+        {
+            <div class="related-table-wrapper">
+
+                <table class="related-table">
+
+                    <thead>
+                        <tr>
+                            <th>Request</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Linked Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var assetRequest in Model.AssetRequests
+                            .OrderByDescending(r => r.LinkDate))
+                        {
+                            <tr>
+
+                                <td>
+                                    @assetRequest.Request.ReferenceNumber
+                                </td>
+
+                                <td>
+                                    @assetRequest.Request.Title
+                                </td>
+
+                                <td>
+                                    @assetRequest.Request.Status
+                                </td>
+
+                                <td>
+                                    @assetRequest.LinkDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+
+                                    <a href="@Url.Action(
+                                        "Details",
+                                        "AdministratorRequest",
+                                        new { id = assetRequest.RequestID })"
+                                       class="asset-small-btn">
+                                        View Request
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-related-state">
+
+                <strong>
+                    No service requests linked
+                </strong>
+
+                <span>
+                    No citizen service requests are currently
+                    associated with this asset.
+                </span>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =======================================================
+         MAINTENANCE HISTORY
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Maintenance History</h2>
+
+                <p>
+                    Maintenance work associated with this asset.
+                </p>
+            </div>
+
+        </div>
+
+        @if (Model.AssetMaintenanceRecords != null &&
+             Model.AssetMaintenanceRecords.Any())
+        {
+            <div class="related-table-wrapper">
+
+                <table class="related-table">
+
+                    <thead>
+                        <tr>
+                            <th>Maintenance Work</th>
+                            <th>Linked Date</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var maintenance in
+                            Model.AssetMaintenanceRecords
+                                .OrderByDescending(m => m.LinkDate))
+                        {
+                            <tr>
+
+                                <td>
+                                    Maintenance Work
+                                    #@maintenance.MaintenanceWorkID
+                                </td>
+
+                                <td>
+                                    @maintenance.LinkDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(
+                                        maintenance.Notes)
+                                        ? "No notes recorded"
+                                        : maintenance.Notes)
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-related-state">
+
+                <strong>
+                    No maintenance history recorded
+                </strong>
+
+                <span>
+                    No maintenance work has been linked to this asset.
+                </span>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =======================================================
+         RELATED PROJECTS
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Related Projects</h2>
+
+                <p>
+                    Municipal projects associated with this asset.
+                </p>
+            </div>
+
+        </div>
+
+        @if (Model.AssetProjects != null &&
+             Model.AssetProjects.Any())
+        {
+            <div class="related-table-wrapper">
+
+                <table class="related-table">
+
+                    <thead>
+                        <tr>
+                            <th>Project ID</th>
+                            <th>Linked Date</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var project in Model.AssetProjects
+                            .OrderByDescending(p => p.LinkDate))
+                        {
+                            <tr>
+
+                                <td>
+                                    Project #@project.ProjectID
+                                </td>
+
+                                <td>
+                                    @project.LinkDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(project.Notes)
+                                        ? "No notes recorded"
+                                        : project.Notes)
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-related-state">
+
+                <strong>
+                    No projects linked
+                </strong>
+
+                <span>
+                    No municipal projects are currently associated
+                    with this asset.
+                </span>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =======================================================
+         ASSET HISTORY
+    ======================================================== -->
+
+    <section class="asset-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>Asset History</h2>
+
+                <p>
+                    Recorded lifecycle and administrative activities.
+                </p>
+            </div>
+
+        </div>
+
+        @if (Model.AssetHistory != null &&
+             Model.AssetHistory.Any())
+        {
+            <div class="history-timeline">
+
+                @foreach (var history in Model.AssetHistory
+                    .OrderByDescending(h => h.ActivityDate))
+                {
+                    <div class="history-item">
+
+                        <div class="history-marker"></div>
+
+                        <div class="history-content">
+
+                            <div class="history-top">
+
+                                <strong>
+                                    @history.ActivityType
+                                </strong>
+
+                                <span>
+                                    @history.ActivityDate.ToString(
+                                        "dd MMM yyyy HH:mm")
+                                </span>
+
+                            </div>
+
+                            <p>
+                                @history.Description
+                            </p>
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                history.PreviousValue) ||
+                                !string.IsNullOrWhiteSpace(
+                                history.NewValue))
+                            {
+                                <div class="history-change">
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        history.PreviousValue))
+                                    {
+                                        <span>
+                                            Previous:
+                                            @history.PreviousValue
+                                        </span>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        history.NewValue))
+                                    {
+                                        <span>
+                                            New:
+                                            @history.NewValue
+                                        </span>
+                                    }
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-related-state">
+
+                <strong>
+                    No asset history recorded
+                </strong>
+
+                <span>
+                    No lifecycle activities have been recorded
+                    for this asset.
+                </span>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =======================================================
+         BOTTOM NAVIGATION
+    ======================================================== -->
+
+    <div class="asset-bottom-navigation">
+
+        <a href="@Url.Action("Index", "MunicipalAsset")"
+           class="asset-nav-btn">
+            ← Back to Asset Register
+        </a>
+
+        <div>
+
+            <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+               class="asset-nav-btn">
+                Asset Dashboard
+            </a>
+
+            <a href="@Url.Action("Edit", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-primary">
+                Edit Asset
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .asset-details-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 30px;
+        font-family: Arial, sans-serif;
+    }
+
+    /* ========================================================
+       NAVIGATION
+    ======================================================== */
+
+    .asset-page-navigation,
+    .asset-bottom-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .navigation-left,
+    .navigation-right {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .asset-nav-btn,
+    .asset-action-btn,
+    .asset-small-btn,
+    .section-action,
+    .map-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .asset-nav-btn {
+        min-height: 40px;
+        padding: 0 14px;
+        background: white;
+        color: #344054;
+        border: 1px solid #d0d5dd;
+    }
+
+        .asset-nav-btn:hover {
+            background: #f8fafc;
+            color: #172033;
+            text-decoration: none;
+        }
+
+    .asset-action-btn {
+        min-height: 40px;
+        padding: 0 15px;
+        border: 1px solid transparent;
+    }
+
+    .asset-action-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .asset-action-primary:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .asset-action-secondary {
+        background: white;
+        color: #0D5CC1;
+        border-color: #b8c7dc;
+    }
+
+        .asset-action-secondary:hover {
+            background: #eff6ff;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+
+    /* ========================================================
+       HERO
+    ======================================================== */
+
+    .asset-hero {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        padding: 28px;
+        display: flex;
+        justify-content: space-between;
+        gap: 25px;
+        align-items: center;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .asset-code {
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .asset-hero h1 {
+        margin: 0;
+        color: #172033;
+        font-size: 30px;
+        line-height: 1.25;
+    }
+
+    .asset-description {
+        margin: 10px 0 0;
+        color: #667085;
+        max-width: 800px;
+        line-height: 1.6;
+    }
+
+    .asset-hero-status {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .status-badge,
+    .condition-badge {
+        padding: 7px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-Active {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .status-UnderMaintenance {
+        background: #fff6ed;
+        color: #c4320a;
+    }
+
+    .status-RequiresAttention {
+        background: #fffaeb;
+        color: #b54708;
+    }
+
+    .status-Inactive,
+    .status-Retired {
+        background: #f2f4f7;
+        color: #475467;
+    }
+
+    .condition-Excellent {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .condition-Good {
+        background: #eff8ff;
+        color: #175cd3;
+    }
+
+    .condition-Fair {
+        background: #fffaeb;
+        color: #b54708;
+    }
+
+    .condition-Poor,
+    .condition-Critical {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+
+    /* ========================================================
+       SECTIONS
+    ======================================================== */
+
+    .asset-section {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.035);
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 19px;
+            color: #172033;
+        }
+
+        .section-heading p {
+            margin: 5px 0 0;
+            color: #667085;
+            font-size: 13px;
+        }
+
+    .section-action {
+        min-height: 37px;
+        padding: 0 12px;
+        background: #eff6ff;
+        color: #0D5CC1;
+        border: 1px solid #c7d9f2;
+        white-space: nowrap;
+    }
+
+        .section-action:hover {
+            background: #dcecff;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+
+    /* ========================================================
+       INFORMATION
+    ======================================================== */
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        background: #eaecf0;
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .information-item {
+        background: white;
+        padding: 17px;
+    }
+
+        .information-item span,
+        .coordinate-item span,
+        .location-address span,
+        .state-card span {
+            display: block;
+            color: #667085;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .information-item strong,
+        .coordinate-item strong,
+        .location-address strong {
+            display: block;
+            color: #172033;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+
+    /* ========================================================
+       LOCATION
+    ======================================================== */
+
+    .location-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .location-information {
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+        padding: 18px;
+    }
+
+    .location-address {
+        margin-bottom: 20px;
+    }
+
+    .coordinates-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .coordinate-item {
+        background: #f8fafc;
+        border-radius: 7px;
+        padding: 14px;
+    }
+
+    .map-button {
+        min-height: 39px;
+        padding: 0 14px;
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .map-button:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .location-map-placeholder {
+        min-height: 250px;
+        border: 1px dashed #cfd6df;
+        border-radius: 8px;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .map-coordinate-display {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        color: #475467;
+    }
+
+        .map-coordinate-display strong {
+            color: #172033;
+        }
+
+        .map-coordinate-display span {
+            font-size: 12px;
+            color: #667085;
+        }
+
+    .map-icon {
+        font-size: 42px;
+        color: #0D5CC1;
+    }
+
+
+    /* ========================================================
+       CURRENT STATE
+    ======================================================== */
+
+    .current-state-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .state-card {
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+        padding: 17px;
+    }
+
+        .state-card strong {
+            display: block;
+            color: #172033;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .state-card small {
+            color: #98a2b3;
+            line-height: 1.4;
+        }
+
+
+    /* ========================================================
+       RELATED TABLES
+    ======================================================== */
+
+    .related-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .related-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+        .related-table th {
+            background: #f8fafc;
+            color: #475467;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 12px;
+            text-align: left;
+            border-top: 1px solid #eaecf0;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .related-table td {
+            padding: 13px 12px;
+            color: #344054;
+            font-size: 13px;
+            border-bottom: 1px solid #eaecf0;
+            vertical-align: top;
+        }
+
+    .wide-cell {
+        min-width: 300px;
+        line-height: 1.5;
+    }
+
+    .asset-small-btn {
+        min-height: 32px;
+        padding: 0 10px;
+        color: #0D5CC1;
+        background: white;
+        border: 1px solid #c7d9f2;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+        .asset-small-btn:hover {
+            background: #eff6ff;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+
+    /* ========================================================
+       EMPTY STATES
+    ======================================================== */
+
+    .empty-related-state {
+        background: #f8fafc;
+        border: 1px dashed #d0d5dd;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .empty-related-state strong {
+            color: #344054;
+            font-size: 14px;
+        }
+
+        .empty-related-state span {
+            color: #667085;
+            font-size: 13px;
+            max-width: 600px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+
+    /* ========================================================
+       HISTORY
+    ======================================================== */
+
+    .history-timeline {
+        border-left: 2px solid #dce3ec;
+        margin-left: 9px;
+        padding-left: 24px;
+    }
+
+    .history-item {
+        position: relative;
+        padding-bottom: 24px;
+    }
+
+    .history-marker {
+        position: absolute;
+        left: -31px;
+        top: 2px;
+        width: 12px;
+        height: 12px;
+        background: #0D5CC1;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px #c7d9f2;
+    }
+
+    .history-content {
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .history-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+        .history-top strong {
+            color: #172033;
+            font-size: 14px;
+        }
+
+        .history-top span {
+            color: #98a2b3;
+            font-size: 12px;
+        }
+
+    .history-content p {
+        color: #475467;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 8px 0;
+    }
+
+    .history-change {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        padding-top: 9px;
+        border-top: 1px solid #eaecf0;
+        color: #667085;
+        font-size: 12px;
+    }
+
+
+    /* ========================================================
+       RESPONSIVE
+    ======================================================== */
+
+    @@media (max-width: 1000px) {
+
+        .information-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .current-state-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .location-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .asset-details-page {
+            padding: 18px;
+        }
+
+        .asset-page-navigation {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .navigation-left,
+        .navigation-right {
+            width: 100%;
+        }
+
+            .navigation-left .asset-nav-btn,
+            .navigation-right .asset-action-btn {
+                flex: 1;
+            }
+
+        .asset-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .asset-hero-status {
+            justify-content: flex-start;
+        }
+
+        .information-grid,
+        .current-state-grid,
+        .coordinates-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-heading {
+            flex-direction: column;
+        }
+
+        .asset-bottom-navigation {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .asset-bottom-navigation > div {
+                display: flex;
+                gap: 8px;
+                flex-direction: column;
+            }
+
+            .asset-bottom-navigation .asset-nav-btn,
+            .asset-bottom-navigation .asset-action-btn {
+                width: 100%;
+            }
+    }
+</style>

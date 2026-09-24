@@ -1,0 +1,728 @@
+﻿@model CommunityServiceProject.Models.Appeal
+
+@{
+    ViewBag.Title = "Appeal Status";
+}
+
+<style>
+
+    /* =========================================================
+       APPEAL STATUS PAGE
+       ========================================================= */
+
+    .appeal-status-page {
+        max-width: 850px;
+        margin: 40px auto 35px;
+        padding: 0 20px;
+    }
+
+    .appeal-status-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .appeal-status-header h1 {
+        margin: 0 0 8px;
+        font-size: 27px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .appeal-status-header p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .appeal-status-header hr {
+        width: 55px;
+        margin: 15px auto 0;
+        border: 0;
+        border-top: 3px solid #333;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .appeal-status-card {
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        border-radius: 10px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+    }
+
+
+    /* =========================================================
+       STATUS HEADER
+       ========================================================= */
+
+    .appeal-status-banner {
+        padding: 22px 25px;
+        background: #f7f7f7;
+        border-bottom: 1px solid #e4e4e4;
+        text-align: center;
+    }
+
+    .appeal-status-banner h2 {
+        margin: 0 0 7px;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .appeal-status-banner p {
+        margin: 0;
+        font-size: 13px;
+        color: #777;
+    }
+
+
+    /* =========================================================
+       STATUS BADGE
+       ========================================================= */
+
+    .appeal-status-badge {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .appeal-status-pending {
+        background: #fff4d6;
+        color: #8a6500;
+    }
+
+    .appeal-status-rejected {
+        background: #fde5e5;
+        color: #a00000;
+    }
+
+    .appeal-status-approved {
+        background: #e6f5ea;
+        color: #1f6b35;
+    }
+
+
+    /* =========================================================
+       CONTENT
+       ========================================================= */
+
+    .appeal-status-content {
+        padding: 25px;
+    }
+
+    .appeal-status-section {
+        margin-bottom: 22px;
+    }
+
+    .appeal-status-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .appeal-status-section h3 {
+        margin: 0 0 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #ededed;
+        font-size: 15px;
+        font-weight: 700;
+        color: #333;
+    }
+
+
+    /* =========================================================
+       DETAILS GRID
+       ========================================================= */
+
+    .appeal-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 25px;
+    }
+
+    .appeal-detail-item {
+        padding: 10px 0;
+    }
+
+    .appeal-detail-label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .appeal-detail-value {
+        font-size: 13px;
+        color: #333;
+    }
+
+
+    /* =========================================================
+       MESSAGE BOX
+       ========================================================= */
+
+    .appeal-message-box {
+        padding: 15px;
+        border: 1px solid #e2e2e2;
+        border-radius: 7px;
+        background: #fafafa;
+        color: #444;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       DECISION BOX
+       ========================================================= */
+
+    .appeal-decision-box {
+        padding: 16px;
+        border-radius: 7px;
+        background: #f8f8f8;
+        border: 1px solid #e0e0e0;
+    }
+
+    .appeal-decision-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+    }
+
+    .appeal-decision-text {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .appeal-status-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e6e6e6;
+    }
+
+    .appeal-status-button {
+        display: inline-block;
+        min-width: 160px;
+        padding: 10px 18px;
+        border-radius: 6px;
+        text-align: center;
+        text-decoration: none !important;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .appeal-primary-button {
+        background: #333;
+        color: #fff !important;
+        border: 1px solid #333;
+    }
+
+    .appeal-primary-button:hover {
+        background: #555;
+        border-color: #555;
+    }
+
+    .appeal-secondary-button {
+        background: #fff;
+        color: #333 !important;
+        border: 1px solid #ccc;
+    }
+
+    .appeal-secondary-button:hover {
+        background: #f5f5f5;
+    }
+
+    .appeal-status-button .glyphicon {
+        margin-right: 6px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 650px) {
+
+        .appeal-status-page {
+            margin-top: 25px;
+            padding: 0 14px;
+        }
+
+        .appeal-status-content {
+            padding: 20px;
+        }
+
+        .appeal-detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .appeal-status-header h1 {
+            font-size: 24px;
+        }
+
+        .appeal-status-button {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<div class="appeal-status-page">
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
+    <div class="appeal-status-header">
+
+        <h1>
+            APPEAL STATUS
+        </h1>
+
+        <p>
+            View the current status and outcome of your account appeal.
+        </p>
+
+        <hr />
+
+    </div>
+
+
+    <!-- =========================================================
+         MAIN CARD
+         ========================================================= -->
+
+    <div class="appeal-status-card">
+
+
+        <!-- =====================================================
+             STATUS BANNER
+             ===================================================== -->
+
+        <div class="appeal-status-banner">
+
+            @if (Model.Status ==
+                CommunityServiceProject.Models.AppealStatus.Pending)
+            {
+                <h2>
+                    Appeal Under Review
+                </h2>
+
+                <p>
+                    Your appeal has been submitted and is awaiting
+                    administrator review.
+                </p>
+
+                <span class="appeal-status-badge appeal-status-pending">
+                    Pending
+                </span>
+            }
+            else if (Model.Status ==
+                CommunityServiceProject.Models.AppealStatus.UnderReview)
+            {
+                <h2>
+                    Appeal Under Review
+                </h2>
+
+                <p>
+                    Your appeal is currently being reviewed by an administrator.
+                </p>
+
+                <span class="appeal-status-badge appeal-status-pending">
+                    Under Review
+                </span>
+            }
+            else if (Model.Status ==
+                CommunityServiceProject.Models.AppealStatus.Rejected)
+            {
+                <h2>
+                    Appeal Rejected
+                </h2>
+
+                <p>
+                    Your appeal has been reviewed and was not approved.
+                </p>
+
+                <span class="appeal-status-badge appeal-status-rejected">
+                    Rejected
+                </span>
+            }
+            else if (Model.Status ==
+                CommunityServiceProject.Models.AppealStatus.Approved)
+            {
+                <h2>
+                    Appeal Approved
+                </h2>
+
+                <p>
+                    Your appeal has been approved and your account has been restored.
+                </p>
+
+                <span class="appeal-status-badge appeal-status-approved">
+                    Approved
+                </span>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+        <div class="appeal-status-content">
+
+
+            <!-- =================================================
+         APPEAL DETAILS
+         ================================================= -->
+
+            <div class="appeal-status-section">
+
+                <h3>
+                    Appeal Details
+                </h3>
+
+                <div class="appeal-detail-grid">
+
+                    <div class="appeal-detail-item">
+
+                        <span class="appeal-detail-label">
+                            Reference Number
+                        </span>
+
+                        <span class="appeal-detail-value">
+                            @Model.ReferenceNumber
+                        </span>
+
+                    </div>
+
+
+                    <div class="appeal-detail-item">
+
+                        <span class="appeal-detail-label">
+                            Date Submitted
+                        </span>
+
+                        <span class="appeal-detail-value">
+                            @Model.DateSubmitted.ToString("dd MMMM yyyy, HH:mm")
+                        </span>
+
+                    </div>
+
+
+                    @if (Model.DateDecision.HasValue)
+                    {
+                        <div class="appeal-detail-item">
+
+                            <span class="appeal-detail-label">
+                                Date Decided
+                            </span>
+
+                            <span class="appeal-detail-value">
+                                @Model.DateDecision.Value.ToString(
+                                    "dd MMMM yyyy, HH:mm"
+                                )
+                            </span>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+         CITIZEN INFORMATION
+         ================================================= -->
+
+            <div class="appeal-status-section">
+
+                <h3>
+                    Account Information
+                </h3>
+
+                <div class="appeal-detail-grid">
+
+                    <div class="appeal-detail-item">
+
+                        <span class="appeal-detail-label">
+                            Citizen
+                        </span>
+
+                        <span class="appeal-detail-value">
+                            @if (Model.Citizen != null)
+                            {
+                                @Model.Citizen.FirstName
+                                <text> </text>
+                                @Model.Citizen.LastName
+                            }
+                        </span>
+
+                    </div>
+
+
+                    <div class="appeal-detail-item">
+
+                        <span class="appeal-detail-label">
+                            Account Status
+                        </span>
+
+                        <span class="appeal-detail-value">
+                            @if (Model.Citizen != null)
+                            {
+                                @Model.Citizen.AccountStatus
+                            }
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+         RESTRICTION INFORMATION
+         ================================================= -->
+
+            @if (Model.Restriction != null)
+            {
+                <div class="appeal-status-section">
+
+                    <h3>
+                        Account Restriction
+                    </h3>
+
+                    <div class="appeal-detail-grid">
+
+                        <div class="appeal-detail-item">
+
+                            <span class="appeal-detail-label">
+                                Restriction Type
+                            </span>
+
+                            <span class="appeal-detail-value">
+                                @Model.Restriction.RestrictionType
+                            </span>
+
+                        </div>
+
+
+                        <div class="appeal-detail-item">
+
+                            <span class="appeal-detail-label">
+                                Date Started
+                            </span>
+
+                            <span class="appeal-detail-value">
+                                @Model.Restriction.DateStarted.ToString(
+                                    "dd MMMM yyyy, HH:mm"
+                                )
+                            </span>
+
+                        </div>
+
+
+                        <div class="appeal-detail-item">
+
+                            <span class="appeal-detail-label">
+                                Restriction Status
+                            </span>
+
+                            <span class="appeal-detail-value">
+                                @(Model.Restriction.IsActive
+                                    ? "Active"
+                                    : "Inactive")
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =================================================
+         CITIZEN REASON
+         ================================================= -->
+
+            <div class="appeal-status-section">
+
+                <h3>
+                    Your Appeal
+                </h3>
+
+                <div class="appeal-message-box">
+
+                    @Model.Reason
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+         ADMINISTRATOR DECISION
+         ================================================= -->
+
+            @if (Model.Status ==
+                    CommunityServiceProject.Models.AppealStatus.Rejected ||
+                Model.Status ==
+                    CommunityServiceProject.Models.AppealStatus.Approved)
+            {
+                <div class="appeal-status-section">
+
+                    <h3>
+                        Administrator Decision
+                    </h3>
+
+                    <div class="appeal-decision-box">
+
+                        <span class="appeal-decision-label">
+                            Decision Message
+                        </span>
+
+                        <div class="appeal-decision-text">
+
+                            @if (!string.IsNullOrWhiteSpace(Model.DecisionReason))
+                            {
+                                @Model.DecisionReason
+                            }
+                            else
+                            {
+                                <span>
+                                    No additional decision message was provided.
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- =========================================================
+    ACTION BUTTONS
+    ========================================================= -->
+
+            <div class="appeal-status-actions">
+
+                <!-- =====================================================
+             PENDING
+             ===================================================== -->
+
+                @if (Model.Status ==
+                    CommunityServiceProject.Models.AppealStatus.Pending)
+                {
+                    <a href="@Url.Action("Index", "Login")"
+                       class="appeal-status-button appeal-secondary-button">
+
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+
+                        Back to Login
+
+                    </a>
+                }
+
+
+                <!-- =====================================================
+             UNDER REVIEW
+             ===================================================== -->
+
+                @if (Model.Status ==
+                    CommunityServiceProject.Models.AppealStatus.UnderReview)
+                {
+                    <a href="@Url.Action("Index", "Login")"
+                       class="appeal-status-button appeal-secondary-button">
+
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+
+                        Back to Login
+
+                    </a>
+                }
+
+
+                <!-- =====================================================
+             REJECTED
+             ===================================================== -->
+
+                @if (Model.Status ==
+                    CommunityServiceProject.Models.AppealStatus.Rejected)
+                {
+                    <a href="@Url.Action("Index", "AppealAccess")"
+                       class="appeal-status-button appeal-primary-button">
+
+                        <span class="glyphicon glyphicon-file"></span>
+
+                        Submit a New Appeal
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "Login")"
+                       class="appeal-status-button appeal-secondary-button">
+
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+
+                        Back to Login
+
+                    </a>
+                }
+
+
+                <!-- =====================================================
+             APPROVED
+             ===================================================== -->
+
+                @if (Model.Status ==
+                    CommunityServiceProject.Models.AppealStatus.Approved)
+                {
+                    <a href="@Url.Action("Index", "Login")"
+                       class="appeal-status-button appeal-primary-button">
+
+                        <span class="glyphicon glyphicon-log-in"></span>
+
+                        Continue to Login
+
+                    </a>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+

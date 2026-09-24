@@ -1,0 +1,749 @@
+﻿@model CommunityServiceProject.Models.MunicipalAsset
+
+@{
+    ViewBag.Title = "Asset Registered Successfully";
+}
+
+<div class="asset-success-page">
+
+    <!-- SUCCESS HEADER -->
+    <div class="success-hero">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <div class="success-hero-content">
+
+            <div class="page-eyebrow">
+                MUNICIPAL ASSET MANAGEMENT
+            </div>
+
+            <h1>Asset Registered Successfully</h1>
+
+            <p>
+                The municipal asset has been successfully added to the
+                central asset register.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN SUCCESS CARD -->
+    <div class="success-card">
+
+        <div class="success-card-header">
+
+            <div>
+                <span class="section-label">
+                    REGISTRATION CONFIRMED
+                </span>
+
+                <h2>
+                    @Model.AssetName
+                </h2>
+
+                <p>
+                    The asset is now available in the municipal asset register.
+                </p>
+            </div>
+
+            <div class="asset-code-display">
+
+                <span>ASSET CODE</span>
+
+                <strong>
+                    @Model.AssetCode
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ASSET SUMMARY -->
+        <div class="asset-summary">
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Asset Type
+                </span>
+
+                <strong>
+                    @Model.AssetType
+                </strong>
+            </div>
+
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Asset Category
+                </span>
+
+                <strong>
+                    @Model.AssetCategory
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Municipal Ward
+                </span>
+
+                <strong>
+                    @if (Model.Ward != null)
+                    {
+                        @:Ward @Model.Ward.WardNumber
+
+
+                        if (!string.IsNullOrWhiteSpace(Model.Ward.WardName))
+                        {
+                            @: – @Model.Ward.WardName
+                        }
+                    }
+                    else
+                    {
+                        @:Ward not specified
+                    }
+                </strong>
+            </div>
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Condition
+                </span>
+
+                <strong class="status-value">
+                    @Model.Condition
+                </strong>
+            </div>
+
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Status
+                </span>
+
+                <strong class="status-value">
+                    @Model.Status
+                </strong>
+            </div>
+
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Date Registered
+                </span>
+
+                <strong>
+                    @Model.DateRegistered.ToString("dd MMMM yyyy")
+                </strong>
+            </div>
+
+
+            <div class="summary-item">
+                <span class="summary-label">
+                    Registered By
+                </span>
+
+                <strong>
+                    @(Model.CreatedByAdministrator != null
+                        ? Model.CreatedByAdministrator.FirstName + " " +
+                          Model.CreatedByAdministrator.LastName
+                        : "Administrator")
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- LOCATION -->
+        <div class="success-section">
+
+            <div class="success-section-header">
+
+                <div class="section-icon">
+                    ⌖
+                </div>
+
+                <div>
+                    <h3>Asset Location</h3>
+
+                    <p>
+                        The physical location recorded for this asset.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="location-summary">
+
+                <div class="location-item">
+
+                    <span class="location-label">
+                        Location Description
+                    </span>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.LocationDescription)
+                            ? "No location description provided"
+                            : Model.LocationDescription)
+                    </strong>
+
+                </div>
+
+
+                <div class="coordinate-row">
+
+                    <div class="coordinate-item">
+
+                        <span>
+                            Latitude
+                        </span>
+
+                        <strong>
+                            @(Model.Latitude.HasValue
+                                ? Model.Latitude.Value.ToString("F6")
+                                : "Not recorded")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="coordinate-item">
+
+                        <span>
+                            Longitude
+                        </span>
+
+                        <strong>
+                            @(Model.Longitude.HasValue
+                                ? Model.Longitude.Value.ToString("F6")
+                                : "Not recorded")
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- WHAT HAPPENS NEXT -->
+        <div class="next-step-notice">
+
+            <div class="next-step-icon">
+                →
+            </div>
+
+            <div>
+
+                <strong>
+                    Registration complete
+                </strong>
+
+                <p>
+                    You can now view the complete asset record, including
+                    inspections, maintenance needs, related service requests,
+                    maintenance history and asset history.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+        <div class="success-actions">
+
+            <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+               class="btn btn-primary">
+
+                View Asset Details
+            </a>
+
+
+            <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+               class="asset-btn asset-btn-secondary">
+                ← Asset Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .asset-success-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px 70px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       SUCCESS HERO
+       ========================================================= */
+
+    .success-hero {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 28px;
+        padding: 30px;
+        border-radius: 18px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+    }
+
+
+    .success-icon {
+        width: 64px;
+        height: 64px;
+        flex: 0 0 64px;
+        border-radius: 50%;
+        background: #16a34a;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 700;
+        box-shadow: 0 8px 20px rgba(22, 163, 74, 0.18);
+    }
+
+
+    .page-eyebrow {
+        margin-bottom: 7px;
+        color: #15803d;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+    }
+
+
+    .success-hero h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        line-height: 1.2;
+        color: #14532d;
+    }
+
+
+    .success-hero p {
+        margin: 0;
+        color: #166534;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       MAIN CARD
+       ========================================================= */
+
+    .success-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+        overflow: hidden;
+    }
+
+
+    .success-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        padding: 30px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    .section-label {
+        display: inline-block;
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+    }
+
+
+    .success-card-header h2 {
+        margin: 0 0 7px;
+        color: #111827;
+        font-size: 26px;
+    }
+
+
+    .success-card-header p {
+        margin: 0;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+
+    .asset-code-display {
+        min-width: 190px;
+        padding: 17px 20px;
+        border-radius: 12px;
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        text-align: center;
+    }
+
+
+    .asset-code-display span {
+        display: block;
+        margin-bottom: 6px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+
+    .asset-code-display strong {
+        color: #0d5cc1;
+        font-size: 21px;
+        letter-spacing: 0.5px;
+    }
+
+
+    /* =========================================================
+       ASSET SUMMARY
+       ========================================================= */
+
+    .asset-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    .summary-item {
+        min-height: 90px;
+        padding: 20px 24px;
+        border-right: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    .summary-item:nth-child(3n) {
+        border-right: none;
+    }
+
+
+    .summary-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    .summary-item strong {
+        color: #111827;
+        font-size: 15px;
+    }
+
+
+    .status-value {
+        color: #166534 !important;
+    }
+
+
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+
+    .success-section {
+        padding: 30px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    .success-section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+
+    .section-icon {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        border-radius: 10px;
+        background: #eff6ff;
+        color: #0d5cc1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+    }
+
+
+    .success-section-header h3 {
+        margin: 0 0 5px;
+        color: #111827;
+        font-size: 18px;
+    }
+
+
+    .success-section-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+
+    .location-summary {
+        padding: 20px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+
+    .location-item {
+        margin-bottom: 18px;
+    }
+
+
+    .location-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    .location-item strong {
+        color: #1f2937;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+
+    .coordinate-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+
+    .coordinate-item {
+        padding: 14px;
+        border-radius: 10px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+    }
+
+
+    .coordinate-item span {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+
+    .coordinate-item strong {
+        color: #0d5cc1;
+        font-size: 14px;
+    }
+
+
+    /* =========================================================
+       NEXT STEP
+       ========================================================= */
+
+    .next-step-notice {
+        display: flex;
+        gap: 15px;
+        margin: 28px 30px 0;
+        padding: 18px 20px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+
+    .next-step-icon {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #0d5cc1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+
+    .next-step-notice strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #1e293b;
+        font-size: 14px;
+    }
+
+
+    .next-step-notice p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .success-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 28px 30px;
+    }
+
+
+    .success-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 22px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+
+    .btn-primary {
+        background: #0d5cc1;
+        color: #ffffff;
+        border: 1px solid #0d5cc1;
+    }
+
+
+    .btn-primary:hover {
+        background: #094a9d;
+        border-color: #094a9d;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+
+    .btn-secondary {
+        background: #ffffff;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+    }
+
+
+    .btn-secondary:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 850px) {
+
+        .success-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .asset-code-display {
+            width: 100%;
+        }
+
+        .asset-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .summary-item:nth-child(3n) {
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .summary-item:nth-child(2n) {
+            border-right: none;
+        }
+    }
+
+
+    @@media (max-width: 600px) {
+
+        .asset-success-page {
+            padding: 24px 15px 50px;
+        }
+
+        .success-hero {
+            padding: 22px;
+            align-items: flex-start;
+        }
+
+        .success-icon {
+            width: 52px;
+            height: 52px;
+            flex-basis: 52px;
+            font-size: 26px;
+        }
+
+        .success-hero h1 {
+            font-size: 24px;
+        }
+
+        .asset-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-item,
+        .summary-item:nth-child(2n),
+        .summary-item:nth-child(3n) {
+            border-right: none;
+        }
+
+        .coordinate-row {
+            grid-template-columns: 1fr;
+        }
+
+        .success-actions {
+            flex-direction: column;
+        }
+
+        .success-actions .btn {
+            width: 100%;
+        }
+    }
+
+</style>

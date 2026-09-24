@@ -1,0 +1,534 @@
+﻿@model CommunityServiceProject.ViewModels.EditTechnicianViewModel
+
+<style>
+    .technician-edit-page {
+        max-width: 1050px;
+        margin: 35px auto;
+        padding: 0 20px 40px;
+    }
+
+    .technician-edit-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+
+    .technician-edit-header {
+        background: #0D5CC1;
+        color: #ffffff;
+        padding: 26px 30px;
+    }
+
+    .technician-edit-header h2 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .technician-edit-header p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.92;
+    }
+
+    .technician-edit-body {
+        padding: 30px;
+    }
+
+    .edit-section {
+        margin-bottom: 30px;
+    }
+
+    .edit-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .edit-section-title {
+        margin: 0 0 18px;
+        color: #0D5CC1;
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .edit-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        border-color: #0D5CC1;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.12);
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 5px;
+        color: #dc3545;
+        font-size: 12px;
+    }
+
+    .validation-summary-errors {
+        background: #fff5f5;
+        border: 1px solid #f1b0b7;
+        border-radius: 6px;
+        padding: 12px 15px;
+        margin-bottom: 22px;
+        color: #dc3545;
+        font-size: 13px;
+    }
+
+    .password-note {
+        margin-top: 6px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .skills-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .skill-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 13px 15px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 7px;
+    }
+
+    .skill-name {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .skill-description {
+        margin-top: 3px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .no-skills {
+        padding: 17px;
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 7px;
+        color: #6b7280;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .add-skill-box {
+        margin-top: 18px;
+        padding: 18px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+
+    .add-skill-box label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .add-skill-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .add-skill-controls select {
+        flex: 1;
+    }
+
+    .edit-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding-top: 22px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .edit-actions-right {
+        display: flex;
+        gap: 10px;
+    }
+
+    .edit-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 6px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .edit-btn:hover {
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .btn-blue {
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .btn-blue:hover {
+        background: #0a4fa8;
+        color: #ffffff;
+    }
+
+    .btn-red {
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+    .btn-red:hover {
+        background: #bb2d3b;
+        color: #ffffff;
+    }
+
+    .btn-light {
+        background: #f1f3f5;
+        color: #374151;
+        border: 1px solid #d6d9dd;
+    }
+
+    .btn-light:hover {
+        background: #e2e6ea;
+        color: #1f2937;
+    }
+
+    .btn-disabled {
+        background: #e5e7eb;
+        color: #6b7280;
+        cursor: not-allowed;
+    }
+
+    .inline-form {
+        margin: 0;
+    }
+
+    @@media (max-width: 768px) {
+
+        .technician-edit-page {
+            margin: 20px auto;
+            padding: 0 12px 30px;
+        }
+
+        .technician-edit-header,
+        .technician-edit-body {
+            padding: 22px;
+        }
+
+        .edit-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .skill-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .add-skill-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .edit-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .edit-actions-right {
+            flex-direction: column;
+        }
+
+        .edit-btn {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+
+
+        <div class="technician-edit-page">
+
+            <div class="technician-edit-card">
+
+                <!-- Header -->
+                <div class="technician-edit-header">
+                    <h2>Edit Technician</h2>
+
+                    <p>
+                        Update technician information and manage assigned skills.
+                    </p>
+                </div>
+
+                <div class="technician-edit-body">
+
+                    @using (Html.BeginForm(
+                        "Edit",
+                        "TechnicianManagement",
+                        FormMethod.Post,
+                        new { id = "editTechnicianForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.HiddenFor(model => model.TechnicianID)
+
+                        @Html.ValidationSummary(
+                            true,
+                            "",
+                            new { @class = "validation-summary-errors" }
+                        )
+
+                        <!-- Technician Information -->
+                        <div class="edit-section">
+
+                            <h3 class="edit-section-title">
+                                Technician Information
+                            </h3>
+
+                            <div class="edit-form-grid">
+
+                                <div class="form-group">
+
+                                    @Html.LabelFor(model => model.FirstName)
+
+                                    @Html.TextBoxFor(
+                                        model => model.FirstName,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            maxlength = "50"
+                                        })
+
+                                    @Html.ValidationMessageFor(
+                                        model => model.FirstName)
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    @Html.LabelFor(model => model.LastName)
+
+                                    @Html.TextBoxFor(
+                                        model => model.LastName,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            maxlength = "50"
+                                        })
+
+                                    @Html.ValidationMessageFor(
+                                        model => model.LastName)
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    @Html.LabelFor(model => model.EmailAddress)
+
+                                    @Html.TextBoxFor(
+                                        model => model.EmailAddress,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            type = "email",
+                                            maxlength = "100"
+                                        })
+
+                                    @Html.ValidationMessageFor(
+                                        model => model.EmailAddress)
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    @Html.LabelFor(model => model.PhoneNumber)
+
+                                    @Html.TextBoxFor(
+                                        model => model.PhoneNumber,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            maxlength = "10",
+                                            inputmode = "numeric"
+                                        })
+
+                                    @Html.ValidationMessageFor(
+                                        model => model.PhoneNumber)
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Assigned Skills -->
+                        <div class="edit-section">
+
+                            <h3 class="edit-section-title">
+                                Assigned Skills
+                            </h3>
+
+                            @if (Model.AssignedSkills != null &&
+                                 Model.AssignedSkills.Any())
+                            {
+                                <div class="skills-list">
+
+                                    @foreach (var skill in Model.AssignedSkills)
+                                    {
+                                        <div class="skill-row">
+                                            <div>
+                                                <div class="skill-name">@skill.SkillName</div>
+
+                                                @if (!string.IsNullOrWhiteSpace(skill.Description))
+                                                {
+                                                    <div class="skill-description">
+                                                        @skill.Description
+                                                    </div>
+                                                }
+                                            </div>
+
+                                            <button type="submit"
+                                                    name="action"
+                                                    value="removeSkill:@skill.SkillID"
+                                                    class="edit-btn btn-red">
+                                                Remove
+                                            </button>
+                                        </div>
+                                    
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="no-skills">
+                                    No skills have been assigned to this technician yet.
+                                </div>
+                            }
+
+
+                            <!-- Add Skill -->
+                            <div class="add-skill-box">
+
+                                <label for="SkillID">
+                                    Add Skill
+                                </label>
+
+                                @if (Model.AvailableSkills != null &&
+                                     Model.AvailableSkills.Any())
+                                {
+                                    <div class="add-skill-controls">
+
+                                        <select id="SkillID"
+                                                name="SkillID"
+                                                class="form-control">
+
+                                            <option value="">
+                                                -- Select a skill --
+                                            </option>
+
+                                            @foreach (var skill in Model.AvailableSkills)
+                                            {
+                                                <option value="@skill.SkillID">
+                                                    @skill.SkillName
+                                                </option>
+                                            }
+
+                                        </select>
+
+                                        <button type="submit"
+                                                name="action"
+                                                value="addSkill"
+                                                class="edit-btn btn-blue">
+                                            Add Skill
+                                        </button>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="no-skills">
+                                        All available skills are already assigned to this technician.
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Actions -->
+                        <div class="edit-actions">
+
+                            @Html.ActionLink(
+                                "Back to Profile",
+                                "Details",
+                                "TechnicianManagement",
+                                new { id = Model.TechnicianID },
+                                new { @class = "edit-btn btn-light" }
+                            )
+
+                            <div class="edit-actions-right">
+
+                                <button type="submit"
+                                        class="edit-btn btn-blue">
+                                    Save Changes
+                                </button>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+     

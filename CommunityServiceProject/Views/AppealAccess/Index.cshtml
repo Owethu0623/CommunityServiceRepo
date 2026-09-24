@@ -1,0 +1,607 @@
+﻿
+@model CommunityServiceProject.Models.AppealAccessViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Account Appeal Access";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Account Appeal Access</title>
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/Login.css")" />
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+
+    <style>
+        /* =========================================================
+           APPEAL ACCESS PAGE
+           ========================================================= */
+
+        body {
+            background: #f4f7fb;
+        }
+
+        .appeal-access-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .appeal-access-container {
+            width: 100%;
+            max-width: 510px;
+        }
+
+        .appeal-access-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .appeal-access-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #eaf2ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2f5bea;
+            font-size: 30px;
+            box-shadow: 0 8px 20px rgba(47, 91, 234, 0.10);
+        }
+
+        .appeal-access-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            letter-spacing: 0.4px;
+        }
+
+        .appeal-access-header p {
+            margin: 10px auto 0;
+            max-width: 430px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .appeal-access-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 34px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.09);
+            border: 1px solid #e6eaf0;
+        }
+
+        .appeal-access-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .appeal-step-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #2f5bea;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 12px;
+        }
+
+        .appeal-step-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .appeal-form-group {
+            margin-bottom: 22px;
+        }
+
+        .appeal-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .appeal-input-wrapper {
+            position: relative;
+        }
+
+        .appeal-input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 15px;
+            z-index: 2;
+        }
+
+        .appeal-input {
+            height: 48px;
+            border: 1px solid #d7dce5;
+            border-radius: 9px;
+            padding-left: 43px;
+            padding-right: 14px;
+            font-size: 14px;
+            box-shadow: none;
+            transition: all 0.2s ease;
+        }
+
+        .appeal-input:focus {
+            border-color: #2f5bea;
+            box-shadow: 0 0 0 3px rgba(47, 91, 234, 0.10);
+        }
+
+        .appeal-otp-input {
+            text-align: center;
+            letter-spacing: 7px;
+            font-size: 21px;
+            font-weight: 700;
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .appeal-validation {
+            margin-bottom: 20px;
+        }
+
+        .appeal-validation ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .appeal-validation li {
+            color: #b42318;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .appeal-field-error {
+            display: block;
+            margin-top: 7px;
+            font-size: 12px;
+            color: #b42318;
+        }
+
+        .appeal-success-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 22px;
+            padding: 14px 15px;
+            border-radius: 9px;
+            background: #ecfdf3;
+            border: 1px solid #b7ebc6;
+            color: #166534;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .appeal-success-message .glyphicon {
+            margin-top: 2px;
+        }
+
+        .appeal-submit-button {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 9px;
+            background: #2f5bea;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: all 0.2s ease;
+            box-shadow: 0 7px 18px rgba(47, 91, 234, 0.20);
+        }
+
+        .appeal-submit-button:hover,
+        .appeal-submit-button:focus {
+            background: #2449c7;
+            color: #ffffff;
+            text-decoration: none;
+            transform: translateY(-1px);
+            box-shadow: 0 9px 22px rgba(47, 91, 234, 0.25);
+        }
+
+        .appeal-submit-button:active {
+            transform: translateY(0);
+        }
+
+        .appeal-information-box {
+            margin-top: 25px;
+            padding: 17px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e7ebf2;
+        }
+
+        .appeal-information-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .appeal-information-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .appeal-information-row .glyphicon {
+            color: #2f5bea;
+            margin-top: 2px;
+        }
+
+        .appeal-return {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .appeal-return a {
+            color: #4b5563;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .appeal-return a:hover {
+            color: #2f5bea;
+            text-decoration: none;
+        }
+
+        .appeal-security-note {
+            text-align: center;
+            margin-top: 20px;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        @@media (max-width: 576px) {
+            .appeal-access-page {
+                padding: 25px 15px;
+            }
+
+            .appeal-access-card {
+                padding: 25px 20px;
+                border-radius: 13px;
+            }
+
+            .appeal-access-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="appeal-access-page">
+
+        <div class="appeal-access-container">
+
+            <!-- =================================================
+                 HEADER
+                 ================================================= -->
+
+            <div class="appeal-access-header">
+
+                <div class="appeal-access-icon">
+                    <span class="glyphicon glyphicon-lock"></span>
+                </div>
+
+                <h1>Account Appeal Access</h1>
+
+                <p>
+                    Verify your registered email address to securely
+                    access the account appeal process.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 MAIN CARD
+                 ================================================= -->
+
+            <div class="appeal-access-card">
+
+                @using (Html.BeginForm(
+                    "Index",
+                    "AppealAccess",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    <!-- =================================================
+                         VALIDATION
+                         ================================================= -->
+
+                    @Html.ValidationSummary(
+                        true,
+                        "",
+                        new { @class = "appeal-validation" }
+                    )
+
+
+                    <!-- =================================================
+                         STEP 1
+                         ================================================= -->
+
+                    <div class="appeal-access-step">
+
+                        <div class="appeal-step-number">
+                            1
+                        </div>
+
+                        <div class="appeal-step-title">
+                            Verify your registered email
+                        </div>
+
+                    </div>
+
+
+                    <div class="appeal-form-group">
+
+                        @Html.LabelFor(
+                            m => m.EmailAddress,
+                            "Registered Email Address"
+                        )
+
+                        <div class="appeal-input-wrapper">
+
+                            <span class="appeal-input-icon">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                            </span>
+
+                            @Html.TextBoxFor(
+                                m => m.EmailAddress,
+                                new
+                                {
+                                    @class = "form-control appeal-input",
+                                    type = "email",
+                                    placeholder = "Enter your registered email address",
+                                    autocomplete = "off"
+                                }
+                            )
+
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.EmailAddress,
+                            "",
+                            new { @class = "appeal-field-error" }
+                        )
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SEND OTP
+                         ================================================= -->
+
+                    if (!Model.OTPsent)
+                    {
+                        <button type="submit"
+                                name="action"
+                                value="SendOTP"
+                                class="appeal-submit-button">
+
+                            <span class="glyphicon glyphicon-send"></span>
+
+                            <span>Send Verification Code</span>
+
+                        </button>
+                    }
+
+
+                    <!-- =================================================
+                         OTP SENT MESSAGE
+                         ================================================= -->
+
+                    if (Model.OTPsent && !Model.OTPVerified)
+                    {
+                        <div class="appeal-success-message">
+
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+
+                            <div>
+                                <strong>Verification code sent.</strong>
+                                <br />
+                                A 6-digit verification code has been sent
+                                to your registered email address.
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             STEP 2
+                             ============================================= -->
+
+                        <div class="appeal-access-step">
+
+                            <div class="appeal-step-number">
+                                2
+                            </div>
+
+                            <div class="appeal-step-title">
+                                Enter your verification code
+                            </div>
+
+                        </div>
+
+
+                        <div class="appeal-form-group">
+
+                            @Html.LabelFor(
+                                m => m.OTP,
+                                "6-Digit Verification Code"
+                            )
+
+                            @Html.TextBoxFor(
+                                m => m.OTP,
+                                new
+                                {
+                                    @class = "form-control appeal-input appeal-otp-input",
+                                    placeholder = "000000",
+                                    maxlength = "6",
+                                    autocomplete = "one-time-code",
+                                    inputmode = "numeric"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.OTP,
+                                "",
+                                new { @class = "appeal-field-error" }
+                            )
+
+                        </div>
+
+
+                        <button type="submit"
+                                name="action"
+                                value="VerifyOTP"
+                                class="appeal-submit-button">
+
+                            <span class="glyphicon glyphicon-check"></span>
+
+                            <span>Verify Code</span>
+
+                        </button>
+                    }
+
+
+                    <!-- =================================================
+                         VERIFIED
+                         ================================================= -->
+
+                    if (Model.OTPVerified)
+                    {
+                        <div class="appeal-success-message">
+
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+
+                            <div>
+                                <strong>Email successfully verified.</strong>
+                                <br />
+                                You may now continue to the account appeal process.
+                            </div>
+
+                        </div>
+                    }
+
+                }
+
+
+                <!-- =================================================
+                     INFORMATION
+                     ================================================= -->
+
+                <div class="appeal-information-box">
+
+                    <div class="appeal-information-row">
+
+                        <span class="glyphicon glyphicon-time"></span>
+
+                        <span>
+                            Your verification code is valid for
+                            <strong>5 minutes</strong>.
+                        </span>
+
+                    </div>
+
+
+                    <div class="appeal-information-row">
+
+                        <span class="glyphicon glyphicon-lock"></span>
+
+                        <span>
+                            The verification code can only be used to
+                            access the account appeal process.
+                        </span>
+
+                    </div>
+
+
+                    <div class="appeal-information-row">
+
+                        <span class="glyphicon glyphicon-envelope"></span>
+
+                        <span>
+                            Check the inbox of your registered email
+                            address for the verification code.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     RETURN TO LOGIN
+                     ================================================= -->
+
+                <div class="appeal-return">
+
+                    <a href="@Url.Action("Index", "Login")">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                        &nbsp;Return to Login
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SECURITY NOTE
+                 ================================================= -->
+
+            <div class="appeal-security-note">
+
+                <span class="glyphicon glyphicon-shield"></span>
+
+                &nbsp;Secure account verification
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+

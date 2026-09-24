@@ -41,6 +41,7 @@ namespace CommunityServiceProject.Models
 
         // System information
         public DateTime DateSubmitted { get; set; }
+        public DateTime? ApprovedDate { get; set; }
 
         public RequestStatus Status { get; set; }
 
@@ -81,6 +82,9 @@ namespace CommunityServiceProject.Models
         // Maintenance work records
         public virtual ICollection<MaintenanceWork> MaintenanceWorks { get; set; }
 
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
+
+
         // Ward relationship
         [Required]
         public int WardID { get; set; }
@@ -115,6 +119,7 @@ namespace CommunityServiceProject.Models
             RequiredSkills = new List<RequestSkill>();
             TechnicianAssignments = new List<TechnicianAssignment>();
             MaintenanceWorks = new List<MaintenanceWork>();
+            Feedbacks = new List<Feedback>();
         }
     }
 }

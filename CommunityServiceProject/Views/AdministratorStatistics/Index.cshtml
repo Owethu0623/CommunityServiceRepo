@@ -1,122 +1,125 @@
 ﻿@{
-    ViewBag.Title = "Statistics";
+    ViewBag.Title = "Service Performance";
+
+    var categoryPerformance =
+        ViewBag.CategoryPerformance as List<Dictionary<string, object>>;
+
+    var wardPerformance =
+        ViewBag.WardPerformance as List<Dictionary<string, object>>;
+
+    var technicianPerformance =
+        ViewBag.TechnicianPerformance as List<Dictionary<string, object>>;
 }
 
-<div class="admin-statistics-page">
+<div class="service-performance-page">
 
-    <div class="admin-statistics-card">
+    <div class="service-performance-card">
 
         <!-- =====================================================
              HEADER
              ===================================================== -->
 
-        <div class="admin-statistics-header">
+        <div class="service-performance-header">
 
-            <h2>Statistics</h2>
+            <div>
+                <h2>Service Performance</h2>
 
-            <p>
-                Overview of community service requests and citizen activity.
-            </p>
+                <p>
+                    Overview of service request performance across
+                    categories, wards and technicians.
+                </p>
+            </div>
 
         </div>
 
 
-        <div class="admin-statistics-content">
+        <div class="service-performance-content">
 
             <!-- =====================================================
-                 REQUEST STATISTICS
+                 OVERALL SERVICE PERFORMANCE
                  ===================================================== -->
 
-            <div class="admin-statistics-section">
+            <div class="service-performance-section">
 
-                <h3>Request Statistics</h3>
+                <h3>Overall Service Performance</h3>
 
-                <div class="admin-statistics-summary-grid">
+                <div class="performance-summary-grid">
 
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
+                    <div class="performance-summary-card">
+                        <span class="performance-summary-label">
                             Total Requests
                         </span>
 
-                        <span class="admin-statistics-summary-number">
+                        <span class="performance-summary-number">
                             @ViewBag.TotalRequests
                         </span>
                     </div>
 
 
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            Pending
+                    <div class="performance-summary-card">
+                        <span class="performance-summary-label">
+                            Completed Requests
                         </span>
 
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.PendingRequests
-                        </span>
-                    </div>
-
-
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            Under Review
-                        </span>
-
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.UnderReviewRequests
-                        </span>
-                    </div>
-
-
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            Approved
-                        </span>
-
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.ApprovedRequests
-                        </span>
-                    </div>
-
-
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            Assigned
-                        </span>
-
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.AssignedRequests
-                        </span>
-                    </div>
-
-
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            In Progress
-                        </span>
-
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.InProgressRequests
-                        </span>
-                    </div>
-
-
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            Completed
-                        </span>
-
-                        <span class="admin-statistics-summary-number">
+                        <span class="performance-summary-number">
                             @ViewBag.CompletedRequests
                         </span>
                     </div>
 
 
-                    <div class="admin-statistics-summary-card">
-                        <span class="admin-statistics-summary-label">
-                            Rejected
+                    <div class="performance-summary-card">
+                        <span class="performance-summary-label">
+                            Average Approval Time
                         </span>
 
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.RejectedRequests
+                        <span class="performance-summary-number">
+                            @if (ViewBag.AverageApprovalTime != null)
+                            {
+                                @(((double)ViewBag.AverageApprovalTime).ToString("0.0"))
+                                <small>Days</small>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </span>
+                    </div>
+
+
+                    <div class="performance-summary-card">
+                        <span class="performance-summary-label">
+                            Average Assignment Time
+                        </span>
+
+                        <span class="performance-summary-number">
+                            @if (ViewBag.AverageAssignmentTime != null)
+                            {
+                                @(((double)ViewBag.AverageAssignmentTime).ToString("0.0"))
+                                <small>Days</small>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </span>
+                    </div>
+
+
+                    <div class="performance-summary-card">
+                        <span class="performance-summary-label">
+                            Average Resolution Time
+                        </span>
+
+                        <span class="performance-summary-number">
+                            @if (ViewBag.AverageResolutionTime != null)
+                            {
+                                @(((double)ViewBag.AverageResolutionTime).ToString("0.0"))
+                                <small>Days</small>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
                         </span>
                     </div>
 
@@ -126,29 +129,92 @@
 
 
             <!-- =====================================================
-                 REQUESTS BY CATEGORY
+                 CATEGORY PERFORMANCE
                  ===================================================== -->
 
-            <div class="admin-statistics-section">
+            <div class="service-performance-section">
 
-                <h3>Requests by Category</h3>
+                <h3>Category Performance</h3>
 
-                <div class="admin-statistics-category-list">
+                <div class="performance-table-wrapper">
 
-                    @foreach (var category in ViewBag.CategoryStatistics)
-                    {
-                        <div class="admin-statistics-category-row">
+                    <table class="performance-table">
 
-                            <span class="admin-statistics-category-name">
-                                @category["CategoryName"]
-                            </span>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Requests</th>
+                                <th>Avg Resolution</th>
+                                <th>Open &gt; 7 Days</th>
+                            </tr>
+                        </thead>
 
-                            <span class="admin-statistics-category-count">
-                                @category["RequestCount"]
-                            </span>
+                        <tbody>
 
-                        </div>
-                    }
+                            @if (categoryPerformance != null &&
+                                 categoryPerformance.Any())
+                            {
+                                foreach (var category in categoryPerformance)
+                                {
+                                    var averageResolution =
+                                        category["AverageResolutionTime"];
+
+                                    var openCount =
+                                        (int)category["OpenMoreThan7Days"];
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                @category["CategoryName"]
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            @category["RequestCount"]
+                                        </td>
+
+                                        <td>
+                                            @if (averageResolution != null)
+                                            {
+                                                @(((double)averageResolution).ToString("0.0"))
+                                                <span>Days</span>
+                                            }
+                                            else
+                                            {
+                                                <span>—</span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @if (openCount > 0)
+                                            {
+                                                <span class="performance-warning">
+                                                    @openCount
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4"
+                                        class="performance-empty">
+                                        No category performance data available.
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
 
                 </div>
 
@@ -156,52 +222,156 @@
 
 
             <!-- =====================================================
-                 CITIZEN OVERVIEW
+                 WARD PERFORMANCE
                  ===================================================== -->
 
-            <div class="admin-statistics-section">
+            <div class="service-performance-section">
 
-                <h3>Citizen Overview</h3>
+                <h3>Ward Performance</h3>
 
-                <div class="admin-statistics-citizen-grid">
+                <div class="performance-table-wrapper">
 
-                    <div class="admin-statistics-citizen-card">
+                    <table class="performance-table">
 
-                        <span class="admin-statistics-summary-label">
-                            Total Citizens
-                        </span>
+                        <thead>
+                            <tr>
+                                <th>Ward</th>
+                                <th>Requests</th>
+                                <th>Completed</th>
+                                <th>Avg Resolution</th>
+                            </tr>
+                        </thead>
 
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.TotalCitizens
-                        </span>
+                        <tbody>
 
-                    </div>
+                            @if (wardPerformance != null &&
+                                 wardPerformance.Any())
+                            {
+                                foreach (var ward in wardPerformance)
+                                {
+                                    var averageResolution =
+                                        ward["AverageResolutionTime"];
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                @ward["WardName"]
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            @ward["RequestCount"]
+                                        </td>
+
+                                        <td>
+                                            @ward["CompletedRequests"]
+                                        </td>
+
+                                        <td>
+                                            @if (averageResolution != null)
+                                            {
+                                                @(((double)averageResolution).ToString("0.0"))
+                                                <span>Days</span>
+                                            }
+                                            else
+                                            {
+                                                <span>—</span>
+                                            }
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4"
+                                        class="performance-empty">
+                                        No ward performance data available.
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
 
 
-                    <div class="admin-statistics-citizen-card">
+            <!-- =====================================================
+                 TECHNICIAN PERFORMANCE
+                 ===================================================== -->
 
-                        <span class="admin-statistics-summary-label">
-                            Active Citizens
-                        </span>
+            <div class="service-performance-section">
 
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.ActiveCitizens
-                        </span>
+                <h3>Technician Performance</h3>
 
-                    </div>
+                <div class="performance-table-wrapper">
 
+                    <table class="performance-table">
 
-                    <div class="admin-statistics-citizen-card">
+                        <thead>
+                            <tr>
+                                <th>Technician</th>
+                                <th>Completed</th>
+                                <th>Avg Resolution</th>
+                            </tr>
+                        </thead>
 
-                        <span class="admin-statistics-summary-label">
-                            Citizens With Requests
-                        </span>
+                        <tbody>
 
-                        <span class="admin-statistics-summary-number">
-                            @ViewBag.CitizensWithRequests
-                        </span>
+                            @if (technicianPerformance != null &&
+                                 technicianPerformance.Any())
+                            {
+                                foreach (var technician in technicianPerformance)
+                                {
+                                    var averageResolution =
+                                        technician["AverageResolutionTime"];
 
-                    </div>
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                @technician["TechnicianName"]
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            @technician["CompletedRequests"]
+                                        </td>
+
+                                        <td>
+                                            @if (averageResolution != null)
+                                            {
+                                                @(((double)averageResolution).ToString("0.0"))
+                                                <span>Days</span>
+                                            }
+                                            else
+                                            {
+                                                <span>—</span>
+                                            }
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3"
+                                        class="performance-empty">
+                                        No technician performance data available.
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
 
                 </div>
 
@@ -212,13 +382,11 @@
                  FOOTER
                  ===================================================== -->
 
-            <div class="admin-statistics-footer">
+            <div class="service-performance-footer">
 
                 <a href="@Url.Action("Index", "AdministratorDashboard")"
                    class="admin-back-button">
-
                     Back to Dashboard
-
                 </a>
 
             </div>
@@ -228,3 +396,204 @@
     </div>
 
 </div>
+
+
+<style>
+
+    .service-performance-page {
+        padding: 30px;
+        background: #F4F7FB;
+        min-height: 100vh;
+    }
+
+    .service-performance-card {
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .service-performance-header {
+        padding: 25px 30px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+        .service-performance-header h2 {
+            margin: 0 0 6px 0;
+            color: #1F2937;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .service-performance-header p {
+            margin: 0;
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+    .service-performance-content {
+        padding: 30px;
+    }
+
+    .service-performance-section {
+        margin-bottom: 35px;
+    }
+
+        .service-performance-section h3 {
+            margin: 0 0 18px 0;
+            color: #1F2937;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+
+    /* =========================================================
+       SUMMARY
+       ========================================================= */
+
+    .performance-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+    }
+
+    .performance-summary-card {
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 20px;
+        background: #FFFFFF;
+    }
+
+    .performance-summary-label {
+        display: block;
+        color: #6B7280;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .performance-summary-number {
+        display: block;
+        color: #0D5CC1;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+        .performance-summary-number small {
+            font-size: 13px;
+            font-weight: 500;
+            color: #6B7280;
+        }
+
+
+    /* =========================================================
+       TABLES
+       ========================================================= */
+
+    .performance-table-wrapper {
+        overflow-x: auto;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+    }
+
+    .performance-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+        .performance-table th {
+            background: #F8FAFC;
+            color: #374151;
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .performance-table td {
+            padding: 15px 16px;
+            color: #4B5563;
+            font-size: 14px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .performance-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .performance-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+    .performance-warning {
+        display: inline-block;
+        padding: 4px 9px;
+        border-radius: 12px;
+        background: #FEF3C7;
+        color: #92400E;
+        font-weight: 700;
+    }
+
+    .performance-empty {
+        text-align: center !important;
+        padding: 25px !important;
+        color: #6B7280 !important;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .service-performance-footer {
+        padding-top: 5px;
+    }
+
+    .admin-back-button {
+        display: inline-block;
+        padding: 10px 18px;
+        background: #0D5CC1;
+        color: #FFFFFF !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+        .admin-back-button:hover {
+            text-decoration: none;
+            opacity: 0.92;
+        }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1100px) {
+
+        .performance-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .service-performance-page {
+            padding: 15px;
+        }
+
+        .service-performance-content {
+            padding: 20px;
+        }
+
+        .performance-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .service-performance-header {
+            padding: 20px;
+        }
+    }
+</style>

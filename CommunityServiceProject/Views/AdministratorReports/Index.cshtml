@@ -1,9 +1,14 @@
-﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+﻿@model CommunityServiceProject.ViewModels.AdministratorReportsViewModel
 
 @using CommunityServiceProject.Models
+@using System
 
 @{
-    ViewBag.Title = "Reports";
+    ViewBag.Title = "Maintenance Reports";
+
+    var selectedReport =
+        Model.SelectedReportOption ??
+        "ServiceResolutionPerformance";
 }
 
 <div class="admin-reports-page">
@@ -16,12 +21,11 @@
 
         <div class="admin-reports-header">
 
-            <h2>
-                Reports
-            </h2>
+            <h2>Maintenance Reports</h2>
 
             <p>
-                Generate and view reports about community service requests.
+                Generate detailed reports on community service requests
+                and maintenance performance.
             </p>
 
         </div>
@@ -29,100 +33,49 @@
 
         <div class="admin-reports-content">
 
-            <!-- =====================================================
+            <!-- =================================================
                  REPORT FILTERS
-                 ===================================================== -->
+                 ================================================= -->
 
-            @using (Html.BeginForm("Index", "AdministratorReports", FormMethod.Get))
-            {
-                <div class="admin-report-filter-section">
+            <div class="admin-report-filter-section">
 
-                    <h3>
-                        Report Filters
-                    </h3>
+                <h3>Report Filters</h3>
 
+                @using (Html.BeginForm(
+                    "Index",
+                    "AdministratorReports",
+                    FormMethod.Get))
+                {
 
                     <div class="admin-report-filters">
 
-                        <!-- Status -->
+                        <!-- STATUS -->
+
                         <div class="admin-report-filter-group">
 
-                            <label for="statusFilter">
+                            <label for="status">
                                 Status
                             </label>
 
-                            <select id="statusFilter"
+                            <select id="status"
                                     name="status"
                                     class="admin-report-select">
 
-                                <option value=""
-                                        @(String.IsNullOrEmpty(ViewBag.SelectedStatus as string) ? "selected" : "")>
-                                    All
+                                <option value="">
+                                    All Statuses
                                 </option>
 
-                                <option value="@((int)RequestStatus.Pending)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Pending).ToString() ? "selected" : "")>
-                                    Pending
-                                </option>
-
-                                <option value="@((int)RequestStatus.UnderReview)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.UnderReview).ToString() ? "selected" : "")>
-                                    Under Review
-                                </option>
-
-                                <option value="@((int)RequestStatus.Approved)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Approved).ToString() ? "selected" : "")>
-                                    Approved
-                                </option>
-
-                                <option value="@((int)RequestStatus.Assigned)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Assigned).ToString() ? "selected" : "")>
-                                    Assigned
-                                </option>
-
-                                <option value="@((int)RequestStatus.InProgress)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.InProgress).ToString() ? "selected" : "")>
-                                    In Progress
-                                </option>
-
-                                <option value="@((int)RequestStatus.Completed)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Completed).ToString() ? "selected" : "")>
-                                    Completed
-                                </option>
-
-                                <option value="@((int)RequestStatus.Rejected)"
-                                        @(ViewBag.SelectedStatus == ((int)RequestStatus.Rejected).ToString() ? "selected" : "")>
-                                    Rejected
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <!-- Category -->
-                        <div class="admin-report-filter-group">
-
-                            <label for="categoryFilter">
-                                Category
-                            </label>
-
-                            <select id="categoryFilter"
-                                    name="categoryId"
-                                    class="admin-report-select">
-
-                                <option value=""
-                                        @(ViewBag.SelectedCategoryId == null ? "selected" : "")>
-                                    All
-                                </option>
-
-                                @foreach (var category in ViewBag.Categories)
+                                @foreach (
+                                    RequestStatus statusValue
+                                    in Enum.GetValues(
+                                        typeof(RequestStatus)))
                                 {
-                                    <option value="@category.CategoryID"
-                                            @(ViewBag.SelectedCategoryId == category.CategoryID ? "selected" : "")>
+                                    var statusValueText =
+                                        statusValue.ToString();
 
-                                        @category.CategoryName
-
+                                    <option value="@statusValueText"
+                                            @(Model.SelectedStatus == statusValueText ? "selected" : "")>
+                                        @statusValueText
                                     </option>
                                 }
 
@@ -131,7 +84,131 @@
                         </div>
 
 
-                        <!-- Date From -->
+                        <!-- CATEGORY -->
+
+                        <div class="admin-report-filter-group">
+
+                            <label for="categoryId">
+                                Category
+                            </label>
+
+                            <select id="categoryId"
+                                    name="categoryId"
+                                    class="admin-report-select">
+
+                                <option value="">
+                                    All Categories
+                                </option>
+
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.CategoryID"
+                                            @(Model.SelectedCategoryId == category.CategoryID ? "selected" : "")>
+                                        @category.CategoryName
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- WARD -->
+
+                        <div class="admin-report-filter-group">
+
+                            <label for="wardId">
+                                Ward
+                            </label>
+
+                            <select id="wardId"
+                                    name="wardId"
+                                    class="admin-report-select">
+
+                                <option value="">
+                                    All Wards
+                                </option>
+
+                                @foreach (var ward in Model.Wards)
+                                {
+                                    <option value="@ward.WardID"
+                                            @(Model.SelectedWardId == ward.WardID ? "selected" : "")>
+                                        Ward @ward.WardNumber - @ward.WardName
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- PRIORITY -->
+
+                        <div class="admin-report-filter-group">
+
+                            <label for="priority">
+                                Priority
+                            </label>
+
+                            <select id="priority"
+                                    name="priority"
+                                    class="admin-report-select">
+
+                                <option value="">
+                                    All Priorities
+                                </option>
+
+                                @foreach (
+                                    Priority priorityValue
+                                    in Enum.GetValues(
+                                        typeof(Priority)))
+                                {
+                                    var priorityText =
+                                        priorityValue.ToString();
+
+                                    <option value="@priorityText"
+                                            @(Model.SelectedPriority == priorityText ? "selected" : "")>
+                                        @priorityText
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- TECHNICIAN -->
+
+                        <div class="admin-report-filter-group">
+
+                            <label for="technicianId">
+                                Technician
+                            </label>
+
+                            <select id="technicianId"
+                                    name="technicianId"
+                                    class="admin-report-select">
+
+                                <option value="">
+                                    All Technicians
+                                </option>
+
+                                @foreach (var technician in Model.Technicians)
+                                {
+                                    <option value="@technician.TechnicianID"
+                                            @(Model.SelectedTechnicianId == technician.TechnicianID ? "selected" : "")>
+                                        @technician.FirstName
+                                        @technician.LastName
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- DATE FROM -->
+
                         <div class="admin-report-filter-group">
 
                             <label for="dateFrom">
@@ -141,13 +218,16 @@
                             <input type="date"
                                    id="dateFrom"
                                    name="dateFrom"
-                                   value="@ViewBag.SelectedDateFrom"
-                                   class="admin-report-input" />
+                                   class="admin-report-input"
+                                   value="@(Model.SelectedDateFrom.HasValue
+                                       ? Model.SelectedDateFrom.Value.ToString("yyyy-MM-dd")
+                                       : "")" />
 
                         </div>
 
 
-                        <!-- Date To -->
+                        <!-- DATE TO -->
+
                         <div class="admin-report-filter-group">
 
                             <label for="dateTo">
@@ -157,57 +237,262 @@
                             <input type="date"
                                    id="dateTo"
                                    name="dateTo"
-                                   value="@ViewBag.SelectedDateTo"
-                                   class="admin-report-input" />
+                                   class="admin-report-input"
+                                   value="@(Model.SelectedDateTo.HasValue
+                                       ? Model.SelectedDateTo.Value.ToString("yyyy-MM-dd")
+                                       : "")" />
 
                         </div>
 
                     </div>
 
 
+                    <!-- =================================================
+                         REPORT SELECTION
+                         ================================================= -->
+
+                    <div class="admin-report-selection">
+
+                        <div class="admin-report-selection-header">
+
+                            <h3>Report to Generate</h3>
+
+                            <p>
+                                Select the type of analysis you want to view.
+                            </p>
+
+                        </div>
+
+
+                        <div class="admin-report-options">
+
+                            <!-- CATEGORY -->
+
+                            <label class="admin-report-option">
+
+                                <input type="radio"
+                                       name="reportOption"
+                                       value="RequestsByCategory"
+                                       class="admin-report-option-input"
+                                       @(selectedReport == "RequestsByCategory" ? "checked" : "") />
+
+                                <span class="admin-report-option-card">
+
+                                    <span class="admin-report-option-content">
+
+                                        <strong>
+                                            Requests by Category
+                                        </strong>
+
+                                        <small>
+                                            Analyse request distribution
+                                            across service categories.
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <!-- WARD -->
+
+                            <label class="admin-report-option">
+
+                                <input type="radio"
+                                       name="reportOption"
+                                       value="RequestsByWard"
+                                       class="admin-report-option-input"
+                                       @(selectedReport == "RequestsByWard" ? "checked" : "") />
+
+                                <span class="admin-report-option-card">
+
+                                    <span class="admin-report-option-content">
+
+                                        <strong>
+                                            Requests by Ward
+                                        </strong>
+
+                                        <small>
+                                            Compare service requests
+                                            across municipal wards.
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <!-- STATUS -->
+
+                            <label class="admin-report-option">
+
+                                <input type="radio"
+                                       name="reportOption"
+                                       value="RequestsByStatus"
+                                       class="admin-report-option-input"
+                                       @(selectedReport == "RequestsByStatus" ? "checked" : "") />
+
+                                <span class="admin-report-option-card">
+
+                                    <span class="admin-report-option-content">
+
+                                        <strong>
+                                            Requests by Status
+                                        </strong>
+
+                                        <small>
+                                            Review the current distribution
+                                            of request statuses.
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <!-- PRIORITY -->
+
+                            <label class="admin-report-option">
+
+                                <input type="radio"
+                                       name="reportOption"
+                                       value="RequestsByPriority"
+                                       class="admin-report-option-input"
+                                       @(selectedReport == "RequestsByPriority" ? "checked" : "") />
+
+                                <span class="admin-report-option-card">
+
+                                    <span class="admin-report-option-content">
+
+                                        <strong>
+                                            Requests by Priority
+                                        </strong>
+
+                                        <small>
+                                            Analyse Low, Medium, High and
+                                            Critical service requests.
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <!-- TECHNICIAN -->
+
+                            <label class="admin-report-option">
+
+                                <input type="radio"
+                                       name="reportOption"
+                                       value="TechnicianPerformance"
+                                       class="admin-report-option-input"
+                                       @(selectedReport == "TechnicianPerformance" ? "checked" : "") />
+
+                                <span class="admin-report-option-card">
+
+                                    <span class="admin-report-option-content">
+
+                                        <strong>
+                                            Technician Performance
+                                        </strong>
+
+                                        <small>
+                                            Compare completed and active
+                                            work by technician.
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <!-- SERVICE RESOLUTION -->
+
+                            <label class="admin-report-option">
+
+                                <input type="radio"
+                                       name="reportOption"
+                                       value="ServiceResolutionPerformance"
+                                       class="admin-report-option-input"
+                                       @(selectedReport == "ServiceResolutionPerformance" ? "checked" : "") />
+
+                                <span class="admin-report-option-card">
+
+                                    <span class="admin-report-option-content">
+
+                                        <strong>
+                                            Service Resolution Performance
+                                        </strong>
+
+                                        <small>
+                                            Measure resolution time,
+                                            completion and service efficiency.
+                                        </small>
+
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         GENERATE BUTTON
+                         ================================================= -->
+
                     <div class="admin-report-actions">
 
                         <button type="submit"
                                 class="admin-report-generate-button">
 
-                            View Report
+                            Generate Report
 
                         </button>
 
                     </div>
 
-                </div>
-            }
+                }
+
+            </div>
 
 
-            <!-- =====================================================
+            <!-- =================================================
                  REPORT SUMMARY
-                 ===================================================== -->
+                 ================================================= -->
 
             <div class="admin-report-summary-section">
 
-                <h3>
-                    Report Summary
-                </h3>
-
+                <h3>Report Summary</h3>
 
                 <div class="admin-report-summary-grid">
 
-                    <!-- Total -->
                     <div class="admin-report-summary-card">
 
                         <span class="admin-report-summary-label">
-                            Matching Requests
+                            Requests in Report
                         </span>
 
                         <span class="admin-report-summary-number">
-                            @ViewBag.ReportTotal
+                            @Model.TotalRequests
                         </span>
 
                     </div>
 
 
-                    <!-- Pending -->
                     <div class="admin-report-summary-card">
 
                         <span class="admin-report-summary-label">
@@ -215,13 +500,12 @@
                         </span>
 
                         <span class="admin-report-summary-number">
-                            @ViewBag.ReportPending
+                            @Model.PendingRequests
                         </span>
 
                     </div>
 
 
-                    <!-- Completed -->
                     <div class="admin-report-summary-card">
 
                         <span class="admin-report-summary-label">
@@ -229,13 +513,12 @@
                         </span>
 
                         <span class="admin-report-summary-number">
-                            @ViewBag.ReportCompleted
+                            @Model.CompletedRequests
                         </span>
 
                     </div>
 
 
-                    <!-- Rejected -->
                     <div class="admin-report-summary-card">
 
                         <span class="admin-report-summary-label">
@@ -243,13 +526,12 @@
                         </span>
 
                         <span class="admin-report-summary-number">
-                            @ViewBag.ReportRejected
+                            @Model.RejectedRequests
                         </span>
 
                     </div>
 
 
-                    <!-- Categories -->
                     <div class="admin-report-summary-card">
 
                         <span class="admin-report-summary-label">
@@ -257,7 +539,7 @@
                         </span>
 
                         <span class="admin-report-summary-number">
-                            @ViewBag.ReportCategories
+                            @Model.CategoryCount
                         </span>
 
                     </div>
@@ -267,128 +549,603 @@
             </div>
 
 
-            <!-- =====================================================
-                 REPORT RESULTS
-                 ===================================================== -->
+            <!-- =================================================
+                 GENERATED REPORT
+                 ================================================= -->
 
             <div class="admin-report-results-section">
 
-                <div class="admin-report-results-header">
 
-                    <div>
+                <!-- =================================================
+                     REQUESTS BY CATEGORY
+                     ================================================= -->
 
-                        <h3>
-                            Report Results
-                        </h3>
+                @if (selectedReport == "RequestsByCategory")
+                {
+                    <div class="admin-report-results-header">
 
-                        <p>
-                            @Model.Count() request(s) found.
-                        </p>
+                        <div>
+
+                            <h3>
+                                Requests by Category
+                            </h3>
+
+                            <p>
+                                Distribution of service requests by category.
+                            </p>
+
+                        </div>
 
                     </div>
 
-                </div>
 
+                    if (!Model.RequestsByCategory.Any())
+                    {
+                        <div class="admin-report-no-results">
 
-                @if (!Model.Any())
-                {
-                    <div class="admin-report-no-results">
+                            <p>
+                                No category data is available for the
+                                selected filters.
+                            </p>
 
-                        <p>
-                            No requests were found matching the selected filters.
-                        </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-report-table-wrapper">
 
-                    </div>
-                }
-                else
-                {
-                    <div class="admin-report-table-wrapper">
+                            <table class="admin-report-table">
 
-                        <table class="admin-report-table">
+                                <thead>
 
-                            <thead>
-
-                                <tr>
-
-                                    <th>
-                                        Request ID
-                                    </th>
-
-                                    <th>
-                                        Title
-                                    </th>
-
-                                    <th>
-                                        Category
-                                    </th>
-
-                                    <th>
-                                        Status
-                                    </th>
-
-                                    <th>
-                                        Citizen
-                                    </th>
-
-                                    <th>
-                                        Date Submitted
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                                @foreach (var request in Model)
-                                {
                                     <tr>
-
-                                        <td>
-                                            @request.RequestID
-                                        </td>
-
-                                        <td>
-                                            @request.Title
-                                        </td>
-
-                                        <td>
-                                            @request.Category.CategoryName
-                                        </td>
-
-                                        <td>
-                                            @request.Status
-                                        </td>
-
-                                        <td>
-                                            @request.Citizen.FirstName
-                                        </td>
-
-                                        <td>
-                                            @request.DateSubmitted.ToString("dd MMM yyyy")
-                                        </td>
-
+                                        <th>Category</th>
+                                        <th>Requests</th>
+                                        <th>Percentage</th>
                                     </tr>
-                                }
 
-                            </tbody>
+                                </thead>
 
-                        </table>
+                                <tbody>
+
+                                    @foreach (
+                                        var item in Model.RequestsByCategory)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                @item.CategoryName
+                                            </td>
+
+                                            <td>
+                                                @item.RequestCount
+                                            </td>
+
+                                            <td>
+                                                @item.Percentage%
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                }
+
+
+                <!-- =================================================
+                     REQUESTS BY WARD
+                     ================================================= -->
+
+                @if (selectedReport == "RequestsByWard")
+                {
+                    <div class="admin-report-results-header">
+
+                        <div>
+
+                            <h3>
+                                Requests by Ward
+                            </h3>
+
+                            <p>
+                                Distribution of service requests across wards.
+                            </p>
+
+                        </div>
 
                     </div>
+
+
+                    if (!Model.RequestsByWard.Any())
+                    {
+                        <div class="admin-report-no-results">
+
+                            <p>
+                                No ward data is available for the
+                                selected filters.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-report-table-wrapper">
+
+                            <table class="admin-report-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Ward</th>
+                                        <th>Ward Name</th>
+                                        <th>Requests</th>
+                                        <th>Percentage</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (
+                                        var item in Model.RequestsByWard)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                Ward @item.WardNumber
+                                            </td>
+
+                                            <td>
+                                                @item.WardName
+                                            </td>
+
+                                            <td>
+                                                @item.RequestCount
+                                            </td>
+
+                                            <td>
+                                                @item.Percentage%
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                }
+
+
+                <!-- =================================================
+                     REQUESTS BY STATUS
+                     ================================================= -->
+
+                @if (selectedReport == "RequestsByStatus")
+                {
+                    <div class="admin-report-results-header">
+
+                        <div>
+
+                            <h3>
+                                Requests by Status
+                            </h3>
+
+                            <p>
+                                Current distribution of service request statuses.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    if (!Model.RequestsByStatus.Any())
+                    {
+                        <div class="admin-report-no-results">
+
+                            <p>
+                                No status data is available for the
+                                selected filters.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-report-table-wrapper">
+
+                            <table class="admin-report-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Requests</th>
+                                        <th>Percentage</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (
+                                        var item in Model.RequestsByStatus)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                @item.Status
+                                            </td>
+
+                                            <td>
+                                                @item.RequestCount
+                                            </td>
+
+                                            <td>
+                                                @item.Percentage%
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                }
+
+
+                <!-- =================================================
+                     REQUESTS BY PRIORITY
+                     ================================================= -->
+
+                @if (selectedReport == "RequestsByPriority")
+                {
+                    <div class="admin-report-results-header">
+
+                        <div>
+
+                            <h3>
+                                Requests by Priority
+                            </h3>
+
+                            <p>
+                                Distribution of requests according to
+                                service priority.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    if (!Model.RequestsByPriority.Any())
+                    {
+                        <div class="admin-report-no-results">
+
+                            <p>
+                                No priority data is available for the
+                                selected filters.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-report-table-wrapper">
+
+                            <table class="admin-report-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Priority</th>
+                                        <th>Requests</th>
+                                        <th>Percentage</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (
+                                        var item in Model.RequestsByPriority)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                @item.Priority
+                                            </td>
+
+                                            <td>
+                                                @item.RequestCount
+                                            </td>
+
+                                            <td>
+                                                @item.Percentage%
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                }
+
+
+                <!-- =================================================
+                     TECHNICIAN PERFORMANCE
+                     ================================================= -->
+
+                @if (selectedReport == "TechnicianPerformance")
+                {
+                    <div class="admin-report-results-header">
+
+                        <div>
+
+                            <h3>
+                                Technician Performance
+                            </h3>
+
+                            <p>
+                                Overview of technician workload and
+                                completion performance.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    if (!Model.TechnicianPerformance.Any())
+                    {
+                        <div class="admin-report-no-results">
+
+                            <p>
+                                No technician performance data is available
+                                for the selected filters.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="admin-report-table-wrapper">
+
+                            <table class="admin-report-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Technician</th>
+                                        <th>Total Requests</th>
+                                        <th>Completed</th>
+                                        <th>Active</th>
+                                        <th>Completion Rate</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (
+                                        var item in Model.TechnicianPerformance)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                @item.TechnicianName
+                                            </td>
+
+                                            <td>
+                                                @item.TotalRequests
+                                            </td>
+
+                                            <td>
+                                                @item.CompletedRequests
+                                            </td>
+
+                                            <td>
+                                                @item.ActiveRequests
+                                            </td>
+
+                                            <td>
+                                                @item.CompletionRate%
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                }
+
+
+                <!-- =================================================
+                     SERVICE RESOLUTION PERFORMANCE
+                     ================================================= -->
+
+                @if (selectedReport == "ServiceResolutionPerformance")
+                {
+                    <div class="admin-report-results-header">
+
+                        <div>
+
+                            <h3>
+                                Service Resolution Performance
+                            </h3>
+
+                            <p>
+                                Measures how efficiently service requests
+                                are resolved.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESOLUTION METRICS -->
+
+                    <div class="admin-resolution-metrics">
+
+                        <div class="admin-resolution-metric">
+
+                            <span class="admin-resolution-metric-label">
+                                Average Resolution Time
+                            </span>
+
+                            <strong>
+                                @Model.AverageResolutionDays days
+                            </strong>
+
+                        </div>
+
+
+                        <div class="admin-resolution-metric">
+
+                            <span class="admin-resolution-metric-label">
+                                Resolved Requests
+                            </span>
+
+                            <strong>
+                                @Model.ResolvedRequests
+                            </strong>
+
+                        </div>
+
+
+                        <div class="admin-resolution-metric">
+
+                            <span class="admin-resolution-metric-label">
+                                Resolution Rate
+                            </span>
+
+                            <strong>
+                                @Model.ResolutionRate%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="admin-resolution-metric">
+
+                            <span class="admin-resolution-metric-label">
+                                Open Over 7 Days
+                            </span>
+
+                            <strong>
+                                @Model.OpenOverSevenDays
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CATEGORY RESOLUTION -->
+
+                    <div class="admin-report-subsection">
+
+                        <h4>
+                            Resolution Performance by Category
+                        </h4>
+
+                        <p>
+                            Average time taken to resolve completed
+                            requests by category.
+                        </p>
+
+
+                        @if (!Model.CategoryResolutionPerformance.Any())
+                        {
+                            <div class="admin-report-no-results">
+
+                                <p>
+                                    No resolution performance data is
+                                    available for the selected filters.
+                                </p>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="admin-report-table-wrapper">
+
+                                <table class="admin-report-table">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Completed Requests</th>
+                                            <th>Average Resolution</th>
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        @foreach (
+                                            var item in Model.CategoryResolutionPerformance)
+                                        {
+                                            <tr>
+
+                                                <td>
+                                                    @item.CategoryName
+                                                </td>
+
+                                                <td>
+                                                    @item.CompletedRequests
+                                                </td>
+
+                                                <td>
+                                                    @item.AverageResolutionDays days
+                                                </td>
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+                        }
+
+                    </div>
+
                 }
 
             </div>
 
 
-            <!-- =====================================================
+            <!-- =================================================
                  FOOTER
-                 ===================================================== -->
+                 ================================================= -->
 
             <div class="admin-reports-footer">
 
-                <a href="@Url.Action("Index", "AdministratorDashboard")"
+                <a href="@Url.Action(
+                    "Index",
+                    "AdministratorDashboard")"
                    class="admin-back-button">
 
                     Back to Dashboard

@@ -1,95 +1,393 @@
-﻿@model CommunityServiceProject.Models.Technician
+﻿@model CommunityServiceProject.ViewModels.TechnicianProfileViewModel
 
 @{
-    ViewBag.Title = "Manage Technician";
+    ViewBag.Title = "Technician Profile";
 }
 
-<div class="admin-technician-details-page">
+<style>
+    .technician-profile-page {
+        max-width: 1100px;
+        margin: 35px auto;
+        padding: 0 20px 40px;
+    }
 
-    <div class="admin-technician-details-card">
+    .technician-profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+    }
 
-        <div class="admin-technician-details-header">
+    .technician-profile-header {
+        background: #0D5CC1;
+        color: #ffffff;
+        padding: 26px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
 
-            <h2>
-                Manage Technician
-            </h2>
+    .technician-profile-header h2 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        font-weight: 600;
+    }
 
-            <p>
-                View and manage this technician's account.
-            </p>
+    .technician-profile-header p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.92;
+    }
+
+    .technician-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 15px;
+        border-radius: 20px;
+        background: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .technician-status-active {
+        color: #198754;
+    }
+
+    .technician-status-suspended {
+        color: #d39e00;
+    }
+
+    .technician-status-inactive {
+        color: #dc3545;
+    }
+
+    .technician-profile-body {
+        padding: 30px;
+    }
+
+    .profile-section {
+        margin-bottom: 30px;
+    }
+
+    .profile-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .profile-section-title {
+        margin: 0 0 18px;
+        color: #0D5CC1;
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .technician-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px 18px;
+    }
+
+    .info-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .info-value {
+        display: block;
+        font-size: 15px;
+        font-weight: 500;
+        color: #1f2937;
+        word-break: break-word;
+    }
+
+    .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .skill-badge {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 20px;
+        background: #e8f1ff;
+        color: #0D5CC1;
+        border: 1px solid #c9ddff;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .no-skills {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        padding: 18px;
+        color: #6b7280;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .activity-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .activity-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 22px;
+        text-align: center;
+        background: #ffffff;
+    }
+
+    .activity-number {
+        display: block;
+        color: #0D5CC1;
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .activity-label {
+        display: block;
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .account-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .profile-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 22px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .profile-actions-right {
+        display: flex;
+        gap: 10px;
+    }
+
+    .profile-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .profile-btn:hover {
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .btn-blue {
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .btn-blue:hover {
+        background: #0a4fa8;
+        color: #ffffff;
+    }
+
+    .btn-green {
+        background: #198754;
+        color: #ffffff;
+    }
+
+    .btn-green:hover {
+        background: #157347;
+        color: #ffffff;
+    }
+
+    .btn-yellow {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-yellow:hover {
+        background: #e0a800;
+        color: #212529;
+    }
+
+    .btn-red {
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+    .btn-red:hover {
+        background: #bb2d3b;
+        color: #ffffff;
+    }
+
+    .btn-light {
+        background: #f1f3f5;
+        color: #374151;
+        border: 1px solid #d6d9dd;
+    }
+
+    .btn-light:hover {
+        background: #e2e6ea;
+        color: #1f2937;
+    }
+
+    .inline-form {
+        margin: 0;
+    }
+
+    @@media (max-width: 768px) {
+
+        .technician-profile-page {
+            margin: 20px auto;
+            padding: 0 12px 30px;
+        }
+
+        .technician-profile-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 22px;
+        }
+
+        .technician-profile-body {
+            padding: 22px;
+        }
+
+        .technician-info-grid,
+        .activity-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .profile-actions-right {
+            flex-direction: column;
+        }
+
+        .profile-btn {
+            text-align: center;
+            width: 100%;
+        }
+
+        .account-actions {
+            flex-direction: column;
+        }
+
+        .account-actions .profile-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="technician-profile-page">
+
+    <div class="technician-profile-card">
+
+        <!-- Header -->
+        <div class="technician-profile-header">
+
+            <div>
+                <h2>Technician Profile</h2>
+                <p>
+                    View technician information, skills and assignment activity.
+                </p>
+            </div>
+
+            @if (Model.Technician.AccountStatus ==
+                CommunityServiceProject.Models.AccountStatus.Active)
+            {
+                <span class="technician-status technician-status-active">
+                    Active
+                </span>
+            }
+            else if (Model.Technician.AccountStatus ==
+                     CommunityServiceProject.Models.AccountStatus.Suspended)
+            {
+                <span class="technician-status technician-status-suspended">
+                    Suspended
+                </span>
+            }
+            else
+            {
+                <span class="technician-status technician-status-inactive">
+                    Inactive
+                </span>
+            }
 
         </div>
 
 
-        <div class="admin-technician-details-content">
+        <div class="technician-profile-body">
 
-            <div class="admin-technician-details-section">
+            <!-- Technician Information -->
+            <div class="profile-section">
 
-                <h3>
+                <h3 class="profile-section-title">
                     Technician Information
                 </h3>
 
+                <div class="technician-info-grid">
 
-                <div class="admin-technician-details-row">
-
-                    <div class="admin-technician-details-label">
-                        Technician ID
+                    <div class="info-box">
+                        <span class="info-label">Technician ID</span>
+                        <span class="info-value">
+                            @Model.Technician.TechnicianID
+                        </span>
                     </div>
 
-                    <div>
-                        @Model.TechnicianID
+                    <div class="info-box">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value">
+                            @Model.Technician.FirstName
+                            @Model.Technician.LastName
+                        </span>
                     </div>
 
-                </div>
-
-
-                <div class="admin-technician-details-row">
-
-                    <div class="admin-technician-details-label">
-                        Full Name
+                    <div class="info-box">
+                        <span class="info-label">Email Address</span>
+                        <span class="info-value">
+                            @Model.Technician.EmailAddress
+                        </span>
                     </div>
 
-                    <div>
-                        @Model.FirstName @Model.LastName
-                    </div>
-
-                </div>
-
-
-                <div class="admin-technician-details-row">
-
-                    <div class="admin-technician-details-label">
-                        Email Address
-                    </div>
-
-                    <div>
-                        @Model.EmailAddress
-                    </div>
-
-                </div>
-
-
-                <div class="admin-technician-details-row">
-
-                    <div class="admin-technician-details-label">
-                        Phone Number
-                    </div>
-
-                    <div>
-                        @Model.PhoneNumber
-                    </div>
-
-                </div>
-
-
-                <div class="admin-technician-details-row">
-
-                    <div class="admin-technician-details-label">
-                        Account Status
-                    </div>
-
-                    <div class="admin-technician-status">
-                        @Model.AccountStatus
+                    <div class="info-box">
+                        <span class="info-label">Phone Number</span>
+                        <span class="info-value">
+                            @Model.Technician.PhoneNumber
+                        </span>
                     </div>
 
                 </div>
@@ -97,87 +395,170 @@
             </div>
 
 
-            <div class="admin-technician-management-section">
+            <!-- Skills -->
+            <div class="profile-section">
 
-                <h3>
+                <h3 class="profile-section-title">
+                    Assigned Skills
+                </h3>
+
+                @if (Model.Skills != null && Model.Skills.Any())
+                {
+                    <div class="skills-container">
+
+                        @foreach (var skill in Model.Skills)
+                        {
+                            <span class="skill-badge">
+                                @skill.SkillName
+                            </span>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <div class="no-skills">
+                        No skills have been assigned to this technician.
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- Request Activity -->
+            <div class="profile-section">
+
+                <h3 class="profile-section-title">
+                    Request Activity
+                </h3>
+
+                <div class="activity-grid">
+
+                    <div class="activity-card">
+
+                        <span class="activity-number">
+                            @Model.CompletedRequestCount
+                        </span>
+
+                        <span class="activity-label">
+                            Completed Requests
+                        </span>
+
+                    </div>
+
+
+                    <div class="activity-card">
+
+                        <span class="activity-number">
+                            @Model.ActiveRequestCount
+                        </span>
+
+                        <span class="activity-label">
+                            Active / Uncompleted Requests
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Account Management -->
+            <div class="profile-section">
+
+                <h3 class="profile-section-title">
                     Account Management
                 </h3>
 
+                <div class="account-actions">
 
-                <div class="admin-technician-management-actions">
+                    @if (Model.Technician.AccountStatus !=
+                        CommunityServiceProject.Models.AccountStatus.Active)
+                    {
+                        using (Html.BeginForm(
+                            "Activate",
+                            "TechnicianManagement",
+                            new { id = Model.Technician.TechnicianID },
+                            FormMethod.Post,
+                            new { @class = "inline-form" }))
+                        {
+                            @Html.AntiForgeryToken()
 
-                    <form action="@Url.Action("Activate", "TechnicianManagement")"
-                          method="post"
-                          class="admin-technician-action-form">
-
-                        @Html.AntiForgeryToken()
-
-                        <input type="hidden"
-                               name="id"
-                               value="@Model.TechnicianID" />
-
-                        <button type="submit"
-                                class="admin-technician-action-button">
-
-                            Activate Account
-
-                        </button>
-
-                    </form>
-
-
-                    <form action="@Url.Action("Suspend", "TechnicianManagement")"
-                          method="post"
-                          class="admin-technician-action-form">
-
-                        @Html.AntiForgeryToken()
-
-                        <input type="hidden"
-                               name="id"
-                               value="@Model.TechnicianID" />
-
-                        <button type="submit"
-                                class="admin-technician-action-button">
-
-                            Suspend Account
-
-                        </button>
-
-                    </form>
+                            <button type="submit"
+                                    class="profile-btn btn-green">
+                                Activate Account
+                            </button>
+                        }
+                    }
 
 
-                    <form action="@Url.Action("Deactivate", "TechnicianManagement")"
-                          method="post"
-                          class="admin-technician-action-form">
+                    @if (Model.Technician.AccountStatus !=
+                        CommunityServiceProject.Models.AccountStatus.Suspended)
+                    {
+                        using (Html.BeginForm(
+                            "Suspend",
+                            "TechnicianManagement",
+                            new { id = Model.Technician.TechnicianID },
+                            FormMethod.Post,
+                            new { @class = "inline-form" }))
+                        {
+                            @Html.AntiForgeryToken()
 
-                        @Html.AntiForgeryToken()
+                            <button type="submit"
+                                    class="profile-btn btn-yellow">
+                                Suspend Account
+                            </button>
+                        }
+                    }
 
-                        <input type="hidden"
-                               name="id"
-                               value="@Model.TechnicianID" />
 
-                        <button type="submit"
-                                class="admin-technician-deactivate-button">
+                    @if (Model.Technician.AccountStatus !=
+                        CommunityServiceProject.Models.AccountStatus.Inactive)
+                    {
+                        using (Html.BeginForm(
+                            "Deactivate",
+                            "TechnicianManagement",
+                            new { id = Model.Technician.TechnicianID },
+                            FormMethod.Post,
+                            new { @class = "inline-form" }))
+                        {
+                            @Html.AntiForgeryToken()
 
-                            Deactivate Account
-
-                        </button>
-
-                    </form>
+                            <button type="submit"
+                                    class="profile-btn btn-red">
+                                Deactivate Account
+                            </button>
+                        }
+                    }
 
                 </div>
 
             </div>
 
 
-            <div class="admin-technician-details-footer">
+            <!-- Bottom Actions -->
+            <div class="profile-actions">
 
-                <a href="@Url.Action("Index", "TechnicianManagement")"
-                   class="admin-back-button">
+                @Html.ActionLink(
+                    "Back to Technicians",
+                    "Index",
+                    "TechnicianManagement",
+                    null,
+                    new { @class = "profile-btn btn-light" }
+                )
 
-                    Back to Technicians
+                <div class="profile-actions-right">
 
-                </a>
+                    @Html.ActionLink(
+                        "Edit Technician",
+                        "Edit",
+                        "TechnicianManagement",
+                        new { id = Model.Technician.TechnicianID },
+                        new { @class = "profile-btn btn-blue" }
+                    )
+
+                </div>
 
             </div>
 
@@ -186,4 +567,3 @@
     </div>
 
 </div>
-

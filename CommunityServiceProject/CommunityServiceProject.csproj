@@ -211,14 +211,80 @@
     <Compile Include="Migrations\202609051653133_MakeRequestReferenceRequiredUnique.Designer.cs">
       <DependentUpon>202609051653133_MakeRequestReferenceRequiredUnique.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202609061152178_AddAppeal.cs" />
+    <Compile Include="Migrations\202609061152178_AddAppeal.Designer.cs">
+      <DependentUpon>202609061152178_AddAppeal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609061339144_RemoveAppealSupportingInformation.cs" />
+    <Compile Include="Migrations\202609061339144_RemoveAppealSupportingInformation.Designer.cs">
+      <DependentUpon>202609061339144_RemoveAppealSupportingInformation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609062205308_AddWardActiveStatus.cs" />
+    <Compile Include="Migrations\202609062205308_AddWardActiveStatus.Designer.cs">
+      <DependentUpon>202609062205308_AddWardActiveStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609071536582_UpdateTechnicianValidation.cs" />
+    <Compile Include="Migrations\202609071536582_UpdateTechnicianValidation.Designer.cs">
+      <DependentUpon>202609071536582_UpdateTechnicianValidation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609111627201_AddApprovedDateToRequest.cs" />
+    <Compile Include="Migrations\202609111627201_AddApprovedDateToRequest.Designer.cs">
+      <DependentUpon>202609111627201_AddApprovedDateToRequest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609120403133_AddFeedback.cs" />
+    <Compile Include="Migrations\202609120403133_AddFeedback.Designer.cs">
+      <DependentUpon>202609120403133_AddFeedback.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609122037048_FixFeedbackRequestRelationship.cs" />
+    <Compile Include="Migrations\202609122037048_FixFeedbackRequestRelationship.Designer.cs">
+      <DependentUpon>202609122037048_FixFeedbackRequestRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609122050416_FixFeedbackIdentity.cs" />
+    <Compile Include="Migrations\202609122050416_FixFeedbackIdentity.Designer.cs">
+      <DependentUpon>202609122050416_FixFeedbackIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609122155120_AddAppealApprovalAcknowledged.cs" />
+    <Compile Include="Migrations\202609122155120_AddAppealApprovalAcknowledged.Designer.cs">
+      <DependentUpon>202609122155120_AddAppealApprovalAcknowledged.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609122230415_AddNotifications.cs" />
+    <Compile Include="Migrations\202609122230415_AddNotifications.Designer.cs">
+      <DependentUpon>202609122230415_AddNotifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609230246335_AddMunicipalAssetManagement.cs" />
+    <Compile Include="Migrations\202609230246335_AddMunicipalAssetManagement.Designer.cs">
+      <DependentUpon>202609230246335_AddMunicipalAssetManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609231434309_ExpandAssetHistoryValues.cs" />
+    <Compile Include="Migrations\202609231434309_ExpandAssetHistoryValues.Designer.cs">
+      <DependentUpon>202609231434309_ExpandAssetHistoryValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609232011052_AddWardToMunicipalAsset.cs" />
+    <Compile Include="Migrations\202609232011052_AddWardToMunicipalAsset.Designer.cs">
+      <DependentUpon>202609232011052_AddWardToMunicipalAsset.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
     <Compile Include="Models\AdministratorForgotPasswordController.cs" />
     <Compile Include="Models\AdministratorReportsController.cs" />
+    <Compile Include="Models\AdministratorReportsViewModel.cs" />
     <Compile Include="Models\AdministratorRequestsController.cs" />
     <Compile Include="Models\AdministratorsController.cs" />
     <Compile Include="Models\AdministratorStatisticsController.cs" />
+    <Compile Include="Models\AdministratorSystemHistoryController.cs" />
+    <Compile Include="Models\Appeal.cs" />
+    <Compile Include="Models\AppealAccessController.cs" />
+    <Compile Include="Models\AppealAccessViewModel.cs" />
+    <Compile Include="Models\AppealsController.cs" />
+    <Compile Include="Models\AppealStatus.cs" />
+    <Compile Include="Models\AssetEnums.cs" />
+    <Compile Include="Models\AssetHistory.cs" />
+    <Compile Include="Models\AssetInspection.cs" />
+    <Compile Include="Models\AssetMaintenance.cs" />
+    <Compile Include="Models\AssetMaintenanceNeeded.cs" />
+    <Compile Include="Models\AssetProject.cs" />
+    <Compile Include="Models\AssetRequest.cs" />
     <Compile Include="Models\AssignmentIssue.cs" />
     <Compile Include="Models\AssignmentIssueStatus.cs" />
     <Compile Include="Models\AssignmentIssueType.cs" />
@@ -227,11 +293,18 @@
     <Compile Include="Models\CategoryManagementController.cs" />
     <Compile Include="Models\CitizenComplianceController.cs" />
     <Compile Include="Models\CitizenManagementController.cs" />
+    <Compile Include="Models\CitizenNotificationController.cs" />
     <Compile Include="Models\CitizenProfileViewModel.cs" />
     <Compile Include="Models\CompletionVerificationStatus.cs" />
     <Compile Include="Models\ComplianceRecord.cs" />
     <Compile Include="Models\ComplianceStatus.cs" />
+    <Compile Include="Models\EditTechnicianViewModel.cs" />
     <Compile Include="Models\EvidenceType.cs" />
+    <Compile Include="Models\Feedback.cs" />
+    <Compile Include="Models\FeedbackController.cs" />
+    <Compile Include="Models\FeedbackManagementController.cs" />
+    <Compile Include="Models\FeedbackResolutionStatus.cs" />
+    <Compile Include="Models\InspectMunicipalAssetViewModel.cs" />
     <Compile Include="Models\LoginController.cs" />
     <Compile Include="Models\MaintenanceCompletion.cs" />
     <Compile Include="Models\MaintenanceEvidence.cs" />
@@ -240,22 +313,33 @@
     <Compile Include="Models\MaintenanceProgress.cs" />
     <Compile Include="Models\MaintenanceWork.cs" />
     <Compile Include="Models\MaintenanceWorkStatus.cs" />
+    <Compile Include="Models\MunicipalAsset.cs" />
+    <Compile Include="Models\MunicipalAssetController.cs" />
+    <Compile Include="Models\MunicipalAssetDashboardViewModel.cs" />
+    <Compile Include="Models\MunicipalAssetEditViewModel.cs" />
+    <Compile Include="Models\MunicipalAssetIndexViewModel.cs" />
+    <Compile Include="Models\MunicipalAssetViewModel.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Priority.cs" />
     <Compile Include="Models\ReassignmentApprovalViewModel.cs" />
     <Compile Include="Models\ReassignmentRequest.cs" />
     <Compile Include="Models\ReassignmentRequestViewModel.cs" />
     <Compile Include="Models\ReassignmentStatus.cs" />
+    <Compile Include="Models\RecordAssetConditionViewModel.cs" />
     <Compile Include="Models\RequestClassificationViewModel.cs" />
     <Compile Include="Models\RequestSkill.cs" />
     <Compile Include="Models\Skill.cs" />
+    <Compile Include="Models\SystemHistoryViewModel.cs" />
     <Compile Include="Models\TechnicianAssignment.cs" />
     <Compile Include="Models\TechnicianAssignmentViewModel.cs" />
     <Compile Include="Models\TechnicianDashboardViewModel.cs" />
     <Compile Include="Models\TechnicianManagementController.cs" />
+    <Compile Include="Models\TechnicianProfileViewModel.cs" />
     <Compile Include="Models\TechniciansController.cs" />
     <Compile Include="Models\TechnicianSkill.cs" />
     <Compile Include="Models\Violation.cs" />
     <Compile Include="Models\Ward.cs" />
+    <Compile Include="Models\WardManagementController.cs" />
     <Compile Include="Models\Warning.cs" />
     <Compile Include="Models\WorkNote.cs" />
     <Compile Include="Scripts\Controllers\HomeController.cs" />
@@ -461,6 +545,40 @@
     <Content Include="Views\AdministratorAssignments\ApproveReassignment.cshtml" />
     <Content Include="Views\CitizenCompliance\Index.cshtml" />
     <Content Include="Views\CitizenCompliance\Details.cshtml" />
+    <Content Include="Views\CitizenManagement\RequestHistory.cshtml" />
+    <Content Include="Views\AdministratorRequests\RecordViolation.cshtml" />
+    <Content Include="Views\CitizenManagement\Compliance.cshtml" />
+    <Content Include="Views\CitizenManagement\IssueWarning.cshtml" />
+    <Content Include="Views\CitizenManagement\ApplyRestriction.cshtml" />
+    <Content Include="Views\Requests\Restricted.cshtml" />
+    <Content Include="Views\CitizenManagement\RemoveRestriction.cshtml" />
+    <Content Include="Views\AppealAccess\Index.cshtml" />
+    <Content Include="Views\Appeals\Create.cshtml" />
+    <Content Include="Views\Appeals\Submitted.cshtml" />
+    <Content Include="Views\Appeals\AdminIndex.cshtml" />
+    <Content Include="Views\Appeals\Review.cshtml" />
+    <Content Include="Views\Appeals\Approved.cshtml" />
+    <Content Include="Views\Appeals\Rejected.cshtml" />
+    <Content Include="Views\Login\AppealStatus.cshtml" />
+    <Content Include="Views\Login\AppealApproved.cshtml" />
+    <Content Include="Views\WardManagement\Index.cshtml" />
+    <Content Include="Views\WardManagement\Create.cshtml" />
+    <Content Include="Views\WardManagement\Edit.cshtml" />
+    <Content Include="Views\TechnicianManagement\Edit.cshtml" />
+    <Content Include="Views\AdministratorSystemHistory\Index.cshtml" />
+    <Content Include="Views\Feedback\Create.cshtml" />
+    <Content Include="Views\FeedbackManagement\Index.cshtml" />
+    <Content Include="Views\FeedbackManagement\Details.cshtml" />
+    <Content Include="Views\Feedback\Submitted.cshtml" />
+    <Content Include="Views\CitizenNotification\Index.cshtml" />
+    <Content Include="Views\MunicipalAsset\Create.cshtml" />
+    <Content Include="Views\MunicipalAsset\SuccessAsset.cshtml" />
+    <Content Include="Views\MunicipalAsset\Dashboard.cshtml" />
+    <Content Include="Views\MunicipalAsset\Index.cshtml" />
+    <Content Include="Views\MunicipalAsset\Details.cshtml" />
+    <Content Include="Views\MunicipalAsset\Edit.cshtml" />
+    <Content Include="Views\MunicipalAsset\RecordCondition.cshtml" />
+    <Content Include="Views\MunicipalAsset\Inspect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -572,6 +690,45 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202609051653133_MakeRequestReferenceRequiredUnique.resx">
       <DependentUpon>202609051653133_MakeRequestReferenceRequiredUnique.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609061152178_AddAppeal.resx">
+      <DependentUpon>202609061152178_AddAppeal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609061339144_RemoveAppealSupportingInformation.resx">
+      <DependentUpon>202609061339144_RemoveAppealSupportingInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609062205308_AddWardActiveStatus.resx">
+      <DependentUpon>202609062205308_AddWardActiveStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609071536582_UpdateTechnicianValidation.resx">
+      <DependentUpon>202609071536582_UpdateTechnicianValidation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609111627201_AddApprovedDateToRequest.resx">
+      <DependentUpon>202609111627201_AddApprovedDateToRequest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609120403133_AddFeedback.resx">
+      <DependentUpon>202609120403133_AddFeedback.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609122037048_FixFeedbackRequestRelationship.resx">
+      <DependentUpon>202609122037048_FixFeedbackRequestRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609122050416_FixFeedbackIdentity.resx">
+      <DependentUpon>202609122050416_FixFeedbackIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609122155120_AddAppealApprovalAcknowledged.resx">
+      <DependentUpon>202609122155120_AddAppealApprovalAcknowledged.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609122230415_AddNotifications.resx">
+      <DependentUpon>202609122230415_AddNotifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609230246335_AddMunicipalAssetManagement.resx">
+      <DependentUpon>202609230246335_AddMunicipalAssetManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609231434309_ExpandAssetHistoryValues.resx">
+      <DependentUpon>202609231434309_ExpandAssetHistoryValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609232011052_AddWardToMunicipalAsset.resx">
+      <DependentUpon>202609232011052_AddWardToMunicipalAsset.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>

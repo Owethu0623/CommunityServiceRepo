@@ -1,0 +1,159 @@
+﻿@model CommunityServiceProject.Models.Citizen
+
+@{
+    ViewBag.Title = "Apply Restriction";
+
+    var complianceRecord =
+        ViewBag.ComplianceRecord as CommunityServiceProject.Models.ComplianceRecord;
+}
+
+<div class="admin-citizen-details-page">
+
+    <div class="admin-citizen-details-card">
+
+        <div class="admin-citizen-details-header">
+            <h2>Apply Account Restriction</h2>
+            <p>
+                Apply a temporary restriction to prevent this citizen from
+                submitting new maintenance requests.
+            </p>
+        </div>
+
+        <div class="admin-citizen-details-content">
+
+            <!-- CITIZEN INFORMATION -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Citizen Information</h3>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Citizen ID
+                    </div>
+
+                    <div>
+                        @Model.CitizenID
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Full Name
+                    </div>
+
+                    <div>
+                        @Model.FirstName @Model.LastName
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Compliance Status
+                    </div>
+
+                    <div class="admin-citizen-status">
+                        @complianceRecord.ComplianceStatus
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RESTRICTION INFORMATION -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Restriction Information</h3>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Restriction Type
+                    </div>
+
+                    <div>
+                        New Request Submission
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Duration
+                    </div>
+
+                    <div>
+                        30 Days
+                    </div>
+                </div>
+
+                <div class="admin-citizen-details-row">
+                    <div class="admin-citizen-details-label">
+                        Effect
+                    </div>
+
+                    <div>
+                        The citizen will not be able to submit new
+                        maintenance requests while the restriction is active.
+                        Existing requests remain available.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RESTRICTION FORM -->
+            <div class="admin-citizen-details-section">
+
+                <h3>Restriction Reason</h3>
+
+                @using (Html.BeginForm(
+                    "ApplyRestriction",
+                    "CitizenManagement",
+                    FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="citizenID"
+                           value="@Model.CitizenID" />
+
+                    <div class="admin-citizen-details-row">
+
+                        <div class="admin-citizen-details-label">
+                            Reason
+                        </div>
+
+                        <div style="width: 100%;">
+
+                            <textarea name="reason"
+                                      rows="6"
+                                      maxlength="2000"
+                                      style="width: 100%;"
+                                      required></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <div class="admin-citizen-management-actions">
+
+                        <button type="submit"
+                                class="admin-citizen-action-button">
+                            Apply Restriction
+                        </button>
+
+                        <a href="@Url.Action(
+                            "Compliance",
+                            "CitizenManagement",
+                            new { id = Model.CitizenID }
+                        )"
+                           class="admin-back-button">
+                            Cancel
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

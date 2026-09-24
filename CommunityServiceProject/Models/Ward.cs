@@ -19,6 +19,7 @@ namespace CommunityServiceProject.Models
         [StringLength(250)]
         public string Description { get; set; }
 
+        public bool IsActive { get; set; }
         public virtual ICollection<Request> Requests { get; set; }
 
         public Ward()

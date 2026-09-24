@@ -4,11 +4,495 @@
     ViewBag.Title = "Login";
 }
 
+<style>
+
+    /* =========================================================
+       COMMUNITY SERVICE LOGIN PAGE
+       ========================================================= */
+
+    .login-page {
+        width: 100%;
+        max-width: 680px;
+        margin: 55px auto 35px;
+        padding: 0 20px;
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+
+    /* =========================================================
+       LOGIN HEADER
+       ========================================================= */
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .login-header h1 {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin: 0 0 10px;
+            color: #0D5CC1;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .login-header hr {
+            width: 65px;
+            margin: 18px auto 0;
+            border: 0;
+            border-top: 4px solid #0D5CC1;
+            border-radius: 5px;
+        }
+
+
+    /* =========================================================
+       LOGIN CARD
+       ========================================================= */
+
+    .login-card {
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 40px 45px 35px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.09);
+    }
+
+
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+
+    .login-validation {
+        margin-bottom: 24px;
+        padding: 14px 16px;
+        border-radius: 9px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .text-danger {
+        display: block;
+        margin-top: 6px;
+        color: #dc2626;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       ACCOUNT APPEAL BOX
+       ========================================================= */
+
+    .account-appeal-box {
+        margin-bottom: 25px;
+        padding: 20px;
+        border: 1px solid #bfdbfe;
+        border-radius: 11px;
+        background: #eff6ff;
+    }
+
+    .account-appeal-message strong {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 17px;
+        font-weight: 700;
+        color: #1e3a8a;
+    }
+
+    .account-appeal-message p {
+        margin: 0 0 16px;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .account-appeal-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 16px;
+        border-radius: 8px;
+        background: #0D5CC1;
+        color: #ffffff !important;
+        text-align: center;
+        text-decoration: none !important;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .account-appeal-button:hover {
+            background: #094a9f;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(13, 92, 193, 0.18);
+        }
+
+        .account-appeal-button .glyphicon {
+            margin-right: 8px;
+        }
+
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .login-form-group {
+        margin-bottom: 23px;
+    }
+
+        .login-form-group label {
+            display: block;
+            margin-bottom: 9px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+
+    /* =========================================================
+       INPUT WRAPPER
+       ========================================================= */
+
+    .login-input-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+
+    /* =========================================================
+       INPUTS
+       ========================================================= */
+
+    .login-input {
+        width: 100%;
+        height: 52px;
+        padding-left: 48px;
+        padding-right: 50px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #1f2937;
+        box-shadow: none;
+        font-size: 16px;
+        line-height: 1.5;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+        .login-input::placeholder {
+            color: #9ca3af;
+            font-size: 15px;
+        }
+
+        .login-input:focus {
+            border-color: #0D5CC1;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.11);
+            outline: none;
+        }
+
+
+    /* =========================================================
+       INPUT ICON
+       ========================================================= */
+
+    .login-input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #8b95a5;
+        z-index: 2;
+        font-size: 16px;
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       PASSWORD TOGGLE
+       ========================================================= */
+
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 0;
+        background: transparent;
+        padding: 7px;
+        cursor: pointer;
+        outline: none;
+    }
+
+        .password-toggle:focus {
+            outline: none;
+        }
+
+    .password-eye {
+        display: block;
+        width: 19px;
+        height: 13px;
+        border: 1.5px solid #9ca3af;
+        border-radius: 70% 40%;
+        transform: rotate(45deg);
+        position: relative;
+        transition: opacity 0.2s ease;
+    }
+
+        .password-eye::after {
+            content: "";
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #9ca3af;
+            border-radius: 50%;
+            top: 2px;
+            left: 5px;
+        }
+
+    .password-eye-visible {
+        opacity: 0.55;
+    }
+
+
+    /* =========================================================
+       FORGOT PASSWORD
+       ========================================================= */
+
+    .forgot-password {
+        text-align: right;
+        margin: -3px 0 22px;
+    }
+
+        .forgot-password a {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0D5CC1;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+            .forgot-password a:hover {
+                color: #094a9f;
+                text-decoration: underline;
+            }
+
+
+    /* =========================================================
+       LOGIN BUTTON
+       ========================================================= */
+
+    .login-submit-button {
+        width: 100%;
+        height: 52px;
+        border: 0;
+        border-radius: 9px;
+        background: #0D5CC1;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.1px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(13, 92, 193, 0.20);
+        transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+        .login-submit-button:hover {
+            background: #094a9f;
+            box-shadow: 0 6px 14px rgba(13, 92, 193, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .login-submit-button:active {
+            transform: translateY(0);
+        }
+
+        .login-submit-button .glyphicon {
+            margin-right: 8px;
+        }
+
+
+    /* =========================================================
+       OR DIVIDER
+       ========================================================= */
+
+    .login-or {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 30px 0 24px;
+    }
+
+        .login-or span {
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .login-or strong {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+        }
+
+
+    /* =========================================================
+       CREATE ACCOUNT
+       ========================================================= */
+
+    .create-account-box {
+        text-align: center;
+    }
+
+        .create-account-box p {
+            margin: 0 0 12px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+    .create-account-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 10px 23px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #0D5CC1;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+        .create-account-button:hover {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            color: #094a9f;
+            text-decoration: none !important;
+            transform: translateY(-1px);
+        }
+
+
+    /* =========================================================
+       BACK HOME
+       ========================================================= */
+
+    .login-home-link {
+        text-align: center;
+        margin: 20px 0 35px;
+    }
+
+        .login-home-link a {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+            .login-home-link a:hover {
+                color: #0D5CC1;
+                text-decoration: none;
+            }
+
+        .login-home-link .glyphicon {
+            margin-right: 6px;
+        }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 700px) {
+
+        .login-page {
+            max-width: 100%;
+            margin-top: 35px;
+            padding: 0 15px;
+        }
+
+        .login-header h1 {
+            font-size: 29px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+        }
+
+        .login-card {
+            padding: 30px 25px 27px;
+            border-radius: 13px;
+        }
+    }
+
+
+    @@media (max-width: 500px) {
+
+        .login-page {
+            margin-top: 25px;
+            padding: 0 10px;
+        }
+
+        .login-header {
+            margin-bottom: 22px;
+        }
+
+            .login-header h1 {
+                font-size: 25px;
+            }
+
+            .login-header p {
+                font-size: 13px;
+            }
+
+        .login-card {
+            padding: 25px 18px 23px;
+        }
+
+        .login-input {
+            height: 50px;
+            font-size: 15px;
+        }
+
+            .login-input::placeholder {
+                font-size: 14px;
+            }
+
+        .login-form-group label {
+            font-size: 14px;
+        }
+
+        .login-submit-button {
+            height: 50px;
+            font-size: 15px;
+        }
+    }
+</style>
 
 
 <div class="login-page">
 
-    <!-- PAGE HEADING -->
+    <!-- =====================================================
+         PAGE HEADING
+         ===================================================== -->
+
     <div class="login-header">
 
         <h1>
@@ -16,7 +500,7 @@
         </h1>
 
         <p>
-            Login to your Community Service Request ad maitece accout account
+            Login to your Community Service Request and Maintenance account
         </p>
 
         <hr />
@@ -24,14 +508,21 @@
     </div>
 
 
-    <!-- LOGIN CARD -->
+    <!-- =====================================================
+         LOGIN CARD
+         ===================================================== -->
+
     <div class="login-card">
 
         @using (Html.BeginForm("Index", "Login", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
 
-            <!-- VALIDATION -->
+
+            <!-- =================================================
+                 VALIDATION
+                 ================================================= -->
+
             @Html.ValidationSummary(
                 true,
                 "",
@@ -39,7 +530,75 @@
             )
 
 
-            <!-- EMAIL -->
+            <!-- =================================================
+                 ACCOUNT RESTRICTION / APPEAL AREA
+                 ================================================= -->
+
+            if (ViewBag.ShowAppealButton != null &&
+                ViewBag.ShowAppealButton == true)
+            {
+
+                <div class="account-appeal-box">
+
+                    <div class="account-appeal-message">
+
+                        <strong>
+                            Account Appeal
+                        </strong>
+
+                        <p>
+                            @ViewBag.AccountStatusMessage
+                        </p>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         NO APPEAL
+                         ========================================= -->
+
+                    @if (ViewBag.AppealButtonAction == "MakeAppeal")
+                    {
+                        <a href="@Url.Action("Index", "AppealAccess")"
+                           class="account-appeal-button">
+
+                            <span class="glyphicon glyphicon-file"></span>
+
+                            Make an Appeal
+
+                        </a>
+                    }
+
+
+                    <!-- =========================================
+                         EXISTING APPEAL
+                         ========================================= -->
+
+                    @if (ViewBag.AppealButtonAction == "ViewStatus")
+                    {
+                        <a href="@Url.Action(
+                            "AppealStatus",
+                            "Login",
+                            new { id = ViewBag.AppealID }
+                        )"
+                           class="account-appeal-button">
+
+                            <span class="glyphicon glyphicon-eye-open"></span>
+
+                            View Appeal Status
+
+                        </a>
+                    }
+
+                </div>
+
+            }
+
+
+            <!-- =================================================
+                 EMAIL
+                 ================================================= -->
+
             <div class="login-form-group">
 
                 @Html.LabelFor(
@@ -74,7 +633,10 @@
             </div>
 
 
-            <!-- PASSWORD -->
+            <!-- =================================================
+                 PASSWORD
+                 ================================================= -->
+
             <div class="login-form-group">
 
                 @Html.LabelFor(
@@ -117,7 +679,12 @@
                 )
 
             </div>
-            <!-- FORGOT PASSWORD -->
+
+
+            <!-- =================================================
+                 FORGOT PASSWORD
+                 ================================================= -->
+
             <div class="forgot-password">
 
                 <a href="@Url.Action("Index", "ForgotPassword")">
@@ -127,7 +694,10 @@
             </div>
 
 
-            <!-- LOGIN BUTTON -->
+            <!-- =================================================
+                 LOGIN BUTTON
+                 ================================================= -->
+
             <button type="submit"
                     class="login-submit-button">
 
@@ -142,7 +712,10 @@
         }
 
 
-        <!-- OR DIVIDER -->
+        <!-- =====================================================
+             OR DIVIDER
+             ===================================================== -->
+
         <div class="login-or">
 
             <span></span>
@@ -154,7 +727,10 @@
         </div>
 
 
-        <!-- CREATE ACCOUNT -->
+        <!-- =====================================================
+             CREATE ACCOUNT
+             ===================================================== -->
+
         <div class="create-account-box">
 
             <p>
@@ -169,42 +745,67 @@
             </a>
 
         </div>
-        </div>
-    </div>
-
-
-    <!-- BACK HOME -->
-    <div class="login-home-link">
-
-        <a href="@Url.Action("Index", "Home")">
-            <span class="glyphicon glyphicon-arrow-left"></span>
-            Back to Home
-        </a>
 
     </div>
 
-    @section Scripts {
+</div>
 
-        @Scripts.Render("~/bundles/jqueryval")
 
-        <script>
-            document.getElementById("passwordToggle").addEventListener("click", function () {
+<!-- =========================================================
+     BACK HOME
+     ========================================================= -->
 
-                var password = document.getElementById("Password");
-                var eye = this.querySelector(".password-eye");
+<div class="login-home-link">
 
-                if (password.type === "password") {
-                    password.type = "text";
-                    eye.classList.add("password-eye-visible");
-                    this.setAttribute("aria-label", "Hide password");
-                }
-                else {
-                    password.type = "password";
-                    eye.classList.remove("password-eye-visible");
-                    this.setAttribute("aria-label", "Show password");
-                }
+    <a href="@Url.Action("Index", "Home")">
 
-            });
-        </script>
+        <span class="glyphicon glyphicon-arrow-left"></span>
 
-    }
+        Back to Home
+
+    </a>
+
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        document.getElementById("passwordToggle").addEventListener("click", function () {
+
+            var password = document.getElementById("Password");
+            var eye = this.querySelector(".password-eye");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                eye.classList.add("password-eye-visible");
+
+                this.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+            }
+            else {
+
+                password.type = "password";
+
+                eye.classList.remove("password-eye-visible");
+
+                this.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+
+            }
+
+        });
+
+    </script>
+
+}

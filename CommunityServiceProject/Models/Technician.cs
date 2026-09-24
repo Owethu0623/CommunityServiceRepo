@@ -10,34 +10,39 @@ namespace CommunityServiceProject.Models
         public int TechnicianID { get; set; }
 
 
-        // ===========================================================
-        // PERSONAL INFORMATION
-        // ===========================================================
-
         [Required(ErrorMessage = "First name is required.")]
-        [StringLength(50)]
+        [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
+        [RegularExpression(
+    @"^[A-Za-z]+(?:[ '-][A-Za-z]+)*$",
+    ErrorMessage = "First name may contain letters, spaces, hyphens and apostrophes only."
+)]
         public string FirstName { get; set; }
 
 
         [Required(ErrorMessage = "Last name is required.")]
-        [StringLength(50)]
+        [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]
+        [RegularExpression(
+    @"^[A-Za-z]+(?:[ '-][A-Za-z]+)*$",
+    ErrorMessage = "Last name may contain letters, spaces, hyphens and apostrophes only."
+)]
         public string LastName { get; set; }
 
 
-        // ===========================================================
-        // CONTACT INFORMATION
-        // ===========================================================
-
-        [Index("IX_Technician_EmailAddress", IsUnique = true)]
         [Required(ErrorMessage = "Email address is required.")]
         [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         [StringLength(100)]
+        [RegularExpression(
+    @"^[A-Za-z0-9._%+-]+@municipality\.co\.za$",
+    ErrorMessage = "Email address must use the @municipality.co.za domain."
+)]
         public string EmailAddress { get; set; }
 
 
         [Required(ErrorMessage = "Phone number is required.")]
-        [Phone(ErrorMessage = "Please enter a valid phone number.")]
-        [StringLength(20)]
+        [RegularExpression(
+     @"^0\d{9}$",
+     ErrorMessage = "Phone number must be exactly 10 digits and start with 0."
+ )]
         public string PhoneNumber { get; set; }
 
 
@@ -66,12 +71,7 @@ namespace CommunityServiceProject.Models
         // technician account. It is NOT stored in the database.
 
         [NotMapped]
-        [Required(ErrorMessage = "Please confirm the password.")]
         [DataType(DataType.Password)]
-        [Compare(
-            "Password",
-            ErrorMessage = "Passwords do not match."
-        )]
         public string ConfirmPassword { get; set; }
 
 

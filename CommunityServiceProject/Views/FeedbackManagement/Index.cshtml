@@ -1,0 +1,611 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Feedback>
+
+@{
+    ViewBag.Title = "Citizen Feedback";
+
+    var selectedRating = ViewBag.SelectedRating as int?;
+    var selectedResolutionStatus =
+        ViewBag.SelectedResolutionStatus as CommunityServiceProject.Models.FeedbackResolutionStatus?;
+
+    var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
+}
+
+<style>
+    .feedback-page {
+        background: #F4F7FB;
+        min-height: 100vh;
+        padding: 30px;
+    }
+
+    .feedback-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .feedback-header {
+        background: white;
+        padding: 24px 28px;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-left: 5px solid #0D5CC1;
+    }
+
+        .feedback-header h2 {
+            margin: 0 0 6px 0;
+            color: #1F2937;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .feedback-header p {
+            margin: 0;
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+    .filter-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .filter-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 18px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .filter-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+    .filter-control {
+        width: 100%;
+        height: 42px;
+        border: 1px solid #D1D5DB;
+        border-radius: 7px;
+        padding: 0 12px;
+        font-size: 14px;
+        color: #374151;
+        background: white;
+        box-sizing: border-box;
+    }
+
+        .filter-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 2px rgba(13,92,193,0.10);
+        }
+
+    .filter-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-primary-custom {
+        background: #0D5CC1;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .btn-primary-custom:hover {
+            background: #094A9E;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary-custom {
+        background: #EEF2F7;
+        color: #374151;
+        border: 1px solid #D1D5DB;
+        padding: 10px 20px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .btn-secondary-custom:hover {
+            background: #E5E7EB;
+            color: #1F2937;
+            text-decoration: none;
+        }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .summary-label {
+        color: #6B7280;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .summary-value {
+        color: #0D5CC1;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .feedback-table-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+        .table-header h3 {
+            margin: 0;
+            color: #1F2937;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .feedback-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .feedback-table th {
+            background: #F8FAFC;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+            padding: 14px 18px;
+            border-bottom: 1px solid #E5E7EB;
+            white-space: nowrap;
+        }
+
+        .feedback-table td {
+            padding: 15px 18px;
+            color: #4B5563;
+            font-size: 14px;
+            border-bottom: 1px solid #F0F2F5;
+            vertical-align: middle;
+        }
+
+        .feedback-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+    .request-reference {
+        color: #0D5CC1;
+        font-weight: 700;
+    }
+
+    .rating {
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .resolution-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .resolution-yes {
+        background: #DCFCE7;
+        color: #166534;
+    }
+
+    .resolution-partially {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+
+    .resolution-no {
+        background: #FEE2E2;
+        color: #991B1B;
+    }
+
+    .view-button {
+        display: inline-block;
+        background: #0D5CC1;
+        color: white;
+        padding: 7px 13px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .view-button:hover {
+            background: #094A9E;
+            color: white;
+            text-decoration: none;
+        }
+
+    .no-results {
+        text-align: center;
+        padding: 45px 20px;
+        color: #6B7280;
+    }
+
+        .no-results strong {
+            display: block;
+            color: #374151;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+    @@media (max-width: 900px) {
+        .filter-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .feedback-page {
+            padding: 15px;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary-custom,
+        .btn-secondary-custom {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="feedback-page">
+
+    <div class="feedback-container">
+
+        <!-- Header -->
+        <div class="feedback-header">
+            <h2>Citizen Feedback</h2>
+            <p>
+                Review feedback submitted by citizens to monitor service quality
+                and citizen satisfaction.
+            </p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-card">
+
+            <div class="filter-title">
+                Filter Feedback
+            </div>
+
+            @using (Html.BeginForm("Index", "FeedbackManagement", FormMethod.Get))
+            {
+                <div class="filter-grid">
+
+                    <!-- Request Reference -->
+                    <div class="filter-group">
+                        <label for="searchReference">
+                            Request Reference
+                        </label>
+
+                        <input type="text"
+                               id="searchReference"
+                               name="searchReference"
+                               class="filter-control"
+                               placeholder="e.g. REQ-2026-000001"
+                               value="@ViewBag.SearchReference" />
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="filter-group">
+                        <label for="rating">
+                            Rating
+                        </label>
+
+                        <select id="rating"
+                                name="rating"
+                                class="filter-control">
+
+                            <option value="">All Ratings</option>
+
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <option value="@i"
+                                        @(selectedRating.HasValue && selectedRating.Value == i ? "selected" : "")>
+                                    @i Star@(i == 1 ? "" : "s")
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <!-- Resolution -->
+                    <div class="filter-group">
+                        <label for="resolutionStatus">
+                            Resolution Status
+                        </label>
+
+                        <select id="resolutionStatus"
+                                name="resolutionStatus"
+                                class="filter-control">
+
+                            <option value="">All Resolution Statuses</option>
+
+                            <option value="Yes"
+                                    @(selectedResolutionStatus.HasValue && selectedResolutionStatus.Value == CommunityServiceProject.Models.FeedbackResolutionStatus.Yes ? "selected" : "")>
+                                Resolved
+                            </option>
+
+                            <option value="Partially"
+                                    @(selectedResolutionStatus.HasValue && selectedResolutionStatus.Value == CommunityServiceProject.Models.FeedbackResolutionStatus.Partially ? "selected" : "")>
+                                Partially Resolved
+                            </option>
+
+                            <option value="No"
+                                    @(selectedResolutionStatus.HasValue && selectedResolutionStatus.Value == CommunityServiceProject.Models.FeedbackResolutionStatus.No ? "selected" : "")>
+                                Not Resolved
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="filter-group">
+                        <label for="categoryId">
+                            Category
+                        </label>
+
+                        @Html.DropDownList(
+                                      "categoryId",
+                                      (SelectList)ViewBag.Categories,
+                                      "All Categories",
+                                      new { @class = "filter-control", id = "categoryId" }
+                                  )
+                    </div>
+
+                    <!-- Date From -->
+                    <div class="filter-group">
+                        <label for="dateFrom">
+                            Date From
+                        </label>
+
+                        <input type="date"
+                               id="dateFrom"
+                               name="dateFrom"
+                               class="filter-control"
+                               value="@(ViewBag.DateFrom != null
+                                    ? ((DateTime)ViewBag.DateFrom).ToString("yyyy-MM-dd")
+                                    : "")" />
+                    </div>
+
+                    <!-- Date To -->
+                    <div class="filter-group">
+                        <label for="dateTo">
+                            Date To
+                        </label>
+
+                        <input type="date"
+                               id="dateTo"
+                               name="dateTo"
+                               class="filter-control"
+                               value="@(ViewBag.DateTo != null
+                                    ? ((DateTime)ViewBag.DateTo).ToString("yyyy-MM-dd")
+                                    : "")" />
+                    </div>
+
+                </div>
+
+                <div class="filter-actions">
+
+                    <button type="submit"
+                            class="btn-primary-custom">
+                        Apply Filters
+                    </button>
+
+                    <a href="@Url.Action("Index", "FeedbackManagement")"
+                       class="btn-secondary-custom">
+                        Clear Filters
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Feedback
+                </div>
+
+                <div class="summary-value">
+                    @ViewBag.TotalFeedback
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Average Rating
+                </div>
+
+                <div class="summary-value">
+                    @String.Format("{0:0.0} / 5", ViewBag.AverageRating)
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Not Fully Resolved
+                </div>
+
+                <div class="summary-value">
+                    @ViewBag.NotFullyResolved
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Feedback Table -->
+        <div class="feedback-table-card">
+
+            <div class="table-header">
+                <h3>Feedback Results</h3>
+            </div>
+
+            <div class="table-wrapper">
+
+                @if (Model != null && Model.Any())
+                {
+                    <table class="feedback-table">
+
+                        <thead>
+                            <tr>
+                                <th>Request</th>
+                                <th>Category</th>
+                                <th>Citizen</th>
+                                <th>Rating</th>
+                                <th>Resolution</th>
+                                <th>Date Submitted</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var feedback in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <span class="request-reference">
+                                            @feedback.Request.ReferenceNumber
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @(feedback.Request.Category != null
+                                            ? feedback.Request.Category.CategoryName
+                                            : "—")
+                                    </td>
+
+                                    <td>
+                                        @(feedback.Citizen != null
+                                            ? feedback.Citizen.FirstName + " " +
+                                              feedback.Citizen.LastName
+                                            : "—")
+                                    </td>
+
+                                    <td>
+                                        <span class="rating">
+                                            @feedback.Rating / 5
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (feedback.ResolutionStatus ==
+                                            CommunityServiceProject.Models.FeedbackResolutionStatus.Yes)
+                                        {
+                                            <span class="resolution-badge resolution-yes">
+                                                Resolved
+                                            </span>
+                                        }
+                                        else if (feedback.ResolutionStatus ==
+                                            CommunityServiceProject.Models.FeedbackResolutionStatus.Partially)
+                                        {
+                                            <span class="resolution-badge resolution-partially">
+                                                Partially Resolved
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="resolution-badge resolution-no">
+                                                Not Resolved
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @feedback.DateSubmitted.ToString("dd MMM yyyy")
+                                    </td>
+
+                                    <td>
+                                        <a href="@Url.Action("Details", "FeedbackManagement",
+                                            new { id = feedback.FeedbackID })"
+                                           class="view-button">
+                                            View Details
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                }
+                else
+                {
+                    <div class="no-results">
+                        <strong>No feedback found</strong>
+                        There are no feedback records matching the selected filters.
+                    </div>
+                }
+
+            </div>
+
+        </div>
+        <a href="@Url.Action("Index", "AdministratorDashboard")"
+           class="back-button">
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+

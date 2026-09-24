@@ -1,0 +1,1008 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalAssetIndexViewModel
+
+@{
+    ViewBag.Title = "Municipal Asset Register";
+
+    var assetTypes =
+        ViewBag.AssetTypes as List<string>
+        ?? new List<string>();
+
+    var assetWards =
+        ViewBag.AssetWards as List<CommunityServiceProject.Models.Ward>
+        ?? new List<CommunityServiceProject.Models.Ward>();
+}
+
+<div class="asset-register-page">
+
+    <!-- =======================================================
+         HEADER
+    ======================================================== -->
+
+    <div class="asset-register-header">
+
+        <div>
+            <div class="asset-breadcrumb">
+                Municipal Operations
+                <span>›</span>
+                Municipal Assets
+            </div>
+
+            <h1>Municipal Asset Register</h1>
+
+            <p>
+                View, search and manage registered municipal assets.
+            </p>
+        </div>
+
+        <div class="asset-header-actions">
+
+            <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+               class="asset-btn asset-btn-secondary">
+                ← Asset Dashboard
+            </a>
+
+            <a href="@Url.Action("Create", "MunicipalAsset")"
+               class="asset-btn asset-btn-primary">
+                + Register New Asset
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         SUMMARY CARDS
+    ======================================================== -->
+
+    <div class="asset-summary-grid">
+
+        <div class="asset-summary-card">
+            <div class="summary-label">
+                Total Assets
+            </div>
+
+            <div class="summary-value">
+                @Model.TotalAssets
+            </div>
+
+            <div class="summary-description">
+                Registered municipal assets
+            </div>
+        </div>
+
+
+        <div class="asset-summary-card">
+            <div class="summary-label">
+                Active
+            </div>
+
+            <div class="summary-value">
+                @Model.ActiveAssets
+            </div>
+
+            <div class="summary-description">
+                Currently operational
+            </div>
+        </div>
+
+
+        <div class="asset-summary-card">
+            <div class="summary-label">
+                Requires Attention
+            </div>
+
+            <div class="summary-value">
+                @Model.AttentionAssets
+            </div>
+
+            <div class="summary-description">
+                Assets requiring review
+            </div>
+        </div>
+
+
+        <div class="asset-summary-card">
+            <div class="summary-label">
+                Under Maintenance
+            </div>
+
+            <div class="summary-value">
+                @Model.UnderMaintenanceAssets
+            </div>
+
+            <div class="summary-description">
+                Currently being maintained
+            </div>
+        </div>
+
+
+        <div class="asset-summary-card">
+            <div class="summary-label">
+                Retired
+            </div>
+
+            <div class="summary-value">
+                @Model.RetiredAssets
+            </div>
+
+            <div class="summary-description">
+                No longer operational
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         FILTERS
+    ======================================================== -->
+
+    <div class="asset-filter-card">
+
+        <div class="filter-heading">
+            <div>
+                <h2>Find Assets</h2>
+
+                <p>
+                    Search and filter the municipal asset register.
+                </p>
+            </div>
+        </div>
+
+        @using (Html.BeginForm(
+            "Index",
+            "MunicipalAsset",
+            FormMethod.Get,
+            new { @class = "asset-filter-form" }))
+        {
+
+            <div class="filter-field search-field">
+
+                <label for="searchTerm">
+                    Search
+                </label>
+
+                <input type="text"
+                       id="searchTerm"
+                       name="searchTerm"
+                       value="@Model.SearchTerm"
+                       class="asset-input"
+                       placeholder="Asset code, name or location..." />
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label for="selectedType">
+                    Asset Type
+                </label>
+
+                <select id="selectedType"
+                        name="selectedType"
+                        class="asset-input">
+
+                    <option value="">
+                        All Types
+                    </option>
+
+                    @foreach (var type in assetTypes)
+                    {
+                        <option value="@type"
+                                @(Model.SelectedType == type ? "selected" : "")>
+                            @type
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+            <div class="filter-field">
+
+                <label for="selectedWard">
+                    Ward
+                </label>
+
+                <select id="selectedWard"
+                        name="selectedWard"
+                        class="asset-input">
+
+                    <option value="">
+                        All Wards
+                    </option>
+
+                    @foreach (var ward in assetWards)
+                    {
+                        <option value="@ward.WardID"
+                                @(Model.SelectedWard == ward.WardID.ToString() ? "selected" : "")>
+
+                            Ward @ward.WardNumber – @ward.WardName
+
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+            <div class="filter-field">
+
+                <label for="selectedCondition">
+                    Condition
+                </label>
+
+                <select id="selectedCondition"
+                        name="selectedCondition"
+                        class="asset-input">
+
+                    <option value="">
+                        All Conditions
+                    </option>
+
+                    @foreach (var condition in Enum.GetValues(
+                        typeof(CommunityServiceProject.Models.AssetCondition)))
+                    {
+                        <option value="@condition"
+                                @(Model.SelectedCondition == condition.ToString() ? "selected" : "")>
+                            @condition
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label for="selectedStatus">
+                    Status
+                </label>
+
+                <select id="selectedStatus"
+                        name="selectedStatus"
+                        class="asset-input">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    @foreach (var status in Enum.GetValues(
+                        typeof(CommunityServiceProject.Models.AssetStatus)))
+                    {
+                        <option value="@status"
+                                @(Model.SelectedStatus == status.ToString() ? "selected" : "")>
+                            @status
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="asset-btn asset-btn-primary">
+                    Search
+                </button>
+
+                <a href="@Url.Action("Index", "MunicipalAsset")"
+                   class="asset-btn asset-btn-light">
+                    Clear
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =======================================================
+         REGISTER TABLE
+    ======================================================== -->
+
+    <div class="asset-table-card">
+
+        <div class="asset-table-header">
+
+            <div>
+                <h2>Registered Assets</h2>
+
+                <p>
+                    @Model.Assets.Count asset(s) displayed
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.Assets.Any())
+        {
+
+            <div class="asset-table-wrapper">
+
+                <table class="asset-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Asset</th>
+                            <th>Type</th>
+                            <th>Ward</th>
+                            <th>Location</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th class="action-column">
+                                Action
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var asset in Model.Assets)
+                        {
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="asset-identity">
+
+                                        <strong>
+                                            @asset.AssetCode
+                                        </strong>
+
+                                        <span>
+                                            @asset.AssetName
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    @asset.AssetType
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        asset.AssetCategory))
+                                    {
+                                        <small>
+                                            @asset.AssetCategory
+                                        </small>
+                                    }
+                                </td>
+
+                                <td>
+
+                                    @if (asset.Ward != null)
+                                    {
+                                        <div class="asset-ward">
+
+                                            <strong>
+                                                Ward @asset.Ward.WardNumber
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(asset.Ward.WardName))
+                                            {
+                                                <small>
+                                                    @asset.Ward.WardName
+                                                </small>
+                                            }
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted">
+                                            Ward not specified
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="asset-location">
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            asset.LocationDescription))
+                                        {
+                                            @asset.LocationDescription
+                                        }
+                                        else
+                                        {
+                                            <span class="muted">
+                                                Location not specified
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="asset-condition-badge
+                                        condition-@asset.Condition">
+                                        @asset.Condition
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="asset-status-badge
+                                        status-@asset.Status">
+                                        @asset.Status
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    @asset.DateRegistered.ToString("dd MMM yyyy")
+                                </td>
+
+
+                                <td class="asset-actions">
+
+                                    <a href="@Url.Action(
+                                        "Details",
+                                        "MunicipalAsset",
+                                        new { id = asset.AssetID })"
+                                       class="asset-view-btn">
+                                        View Details
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        }
+        else
+        {
+
+            <div class="asset-empty-state">
+
+                <div class="empty-icon">
+                    🏢
+                </div>
+
+                <h3>No Assets Found</h3>
+
+                <p>
+                    No municipal assets match the current
+                    search or filter criteria.
+                </p>
+
+                <div class="empty-actions">
+
+                    <a href="@Url.Action("Index", "MunicipalAsset")"
+                       class="asset-btn asset-btn-light">
+                        Clear Filters
+                    </a>
+
+                    <a href="@Url.Action("Create", "MunicipalAsset")"
+                       class="asset-btn asset-btn-primary">
+                        Register New Asset
+                    </a>
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+
+    <!-- =======================================================
+         BOTTOM NAVIGATION
+    ======================================================== -->
+
+    <div class="asset-bottom-navigation">
+
+        <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+           class="asset-btn asset-btn-secondary">
+            ← Back to Asset Dashboard
+        </a>
+
+        <a href="@Url.Action("Create", "MunicipalAsset")"
+           class="asset-btn asset-btn-primary">
+            + Register New Asset
+        </a>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .asset-register-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 30px;
+        font-family: Arial, sans-serif;
+    }
+
+    .asset-register-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 28px;
+    }
+
+    .asset-breadcrumb {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+        .asset-breadcrumb span {
+            margin: 0 6px;
+        }
+
+    .asset-register-header h1 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 30px;
+    }
+
+    .asset-register-header p {
+        margin: 0;
+        color: #6b7280;
+    }
+
+    .asset-header-actions,
+    .filter-actions,
+    .empty-actions,
+    .asset-bottom-navigation {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .asset-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 7px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .asset-btn-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .asset-btn-primary:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .asset-btn-secondary {
+        background: white;
+        color: #172033;
+        border-color: #d7dce5;
+    }
+
+        .asset-btn-secondary:hover {
+            background: #f4f6f8;
+            color: #172033;
+            text-decoration: none;
+        }
+
+    .asset-btn-light {
+        background: #f4f6f8;
+        color: #344054;
+        border-color: #e1e5eb;
+    }
+
+        .asset-btn-light:hover {
+            background: #e9edf2;
+            color: #172033;
+            text-decoration: none;
+        }
+
+
+    /* ========================================================
+       SUMMARY
+    ======================================================== */
+
+    .asset-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .asset-summary-card {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .summary-label {
+        font-size: 13px;
+        color: #667085;
+        font-weight: 600;
+    }
+
+    .summary-value {
+        margin-top: 8px;
+        font-size: 30px;
+        font-weight: 700;
+        color: #172033;
+    }
+
+    .summary-description {
+        margin-top: 5px;
+        font-size: 12px;
+        color: #98a2b3;
+    }
+
+
+    /* ========================================================
+       FILTERS
+    ======================================================== */
+
+    .asset-filter-card {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        padding: 22px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .filter-heading h2,
+    .asset-table-header h2 {
+        margin: 0;
+        font-size: 19px;
+        color: #172033;
+    }
+
+    .filter-heading p,
+    .asset-table-header p {
+        margin: 5px 0 18px;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .asset-filter-form {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .filter-field label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #344054;
+    }
+
+    .asset-input {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #d0d5dd;
+        border-radius: 6px;
+        padding: 0 11px;
+        font-size: 14px;
+        box-sizing: border-box;
+        background: white;
+    }
+
+        .asset-input:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 2px rgba(13,92,193,.1);
+        }
+
+    .filter-actions {
+        align-self: end;
+    }
+
+
+    /* ========================================================
+       TABLE
+    ======================================================== */
+
+    .asset-table-card {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .asset-table-header {
+        padding: 22px 22px 4px;
+    }
+
+    .asset-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .asset-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1050px;
+    }
+
+        .asset-table th {
+            background: #f8fafc;
+            color: #475467;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            padding: 13px 15px;
+            text-align: left;
+            border-top: 1px solid #eaecf0;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .asset-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #eaecf0;
+            color: #344054;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .asset-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+    .asset-identity {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 230px;
+    }
+
+        .asset-identity strong {
+            color: #0D5CC1;
+            font-size: 13px;
+        }
+
+        .asset-identity span {
+            color: #172033;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+    .asset-table td small {
+        display: block;
+        margin-top: 4px;
+        color: #98a2b3;
+    }
+    .asset-ward {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 100px;
+    }
+
+        .asset-ward strong {
+            color: #172033;
+            font-size: 13px;
+        }
+
+        .asset-ward small {
+            color: #667085;
+            font-size: 11px;
+        }
+
+    .asset-location {
+        max-width: 280px;
+        line-height: 1.5;
+    }
+
+    .muted {
+        color: #98a2b3;
+    }
+
+    .asset-condition-badge,
+    .asset-status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .condition-Excellent {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .condition-Good {
+        background: #eff8ff;
+        color: #175cd3;
+    }
+
+    .condition-Fair {
+        background: #fffaeb;
+        color: #b54708;
+    }
+
+    .condition-Poor,
+    .condition-Critical {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+    .status-Active {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .status-UnderMaintenance {
+        background: #fff6ed;
+        color: #c4320a;
+    }
+
+    .status-RequiresAttention {
+        background: #fffaeb;
+        color: #b54708;
+    }
+
+    .status-Inactive {
+        background: #f2f4f7;
+        color: #475467;
+    }
+
+    .status-Retired {
+        background: #f2f4f7;
+        color: #667085;
+    }
+
+    .asset-view-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border-radius: 6px;
+        border: 1px solid #d0d5dd;
+        color: #0D5CC1;
+        background: white;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+        .asset-view-btn:hover {
+            background: #eff8ff;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+
+    /* ========================================================
+       EMPTY STATE
+    ======================================================== */
+
+    .asset-empty-state {
+        text-align: center;
+        padding: 65px 25px;
+        border-top: 1px solid #eaecf0;
+    }
+
+    .empty-icon {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+    .asset-empty-state h3 {
+        margin: 0 0 7px;
+        color: #172033;
+    }
+
+    .asset-empty-state p {
+        margin: 0 auto 20px;
+        color: #667085;
+        max-width: 500px;
+    }
+
+    .empty-actions {
+        justify-content: center;
+    }
+
+
+    /* ========================================================
+       BOTTOM NAVIGATION
+    ======================================================== */
+
+    .asset-bottom-navigation {
+        justify-content: space-between;
+        margin-top: 22px;
+    }
+
+
+    /* ========================================================
+       RESPONSIVE
+    ======================================================== */
+
+    @@media (max-width: 1100px) {
+
+        .asset-summary-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .asset-filter-form {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .asset-register-page {
+            padding: 18px;
+        }
+
+        .asset-register-header {
+            flex-direction: column;
+        }
+
+        .asset-header-actions {
+            width: 100%;
+        }
+
+            .asset-header-actions .asset-btn {
+                flex: 1;
+            }
+
+        .asset-summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .asset-filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .asset-bottom-navigation {
+            flex-direction: column;
+        }
+
+            .asset-bottom-navigation .asset-btn {
+                width: 100%;
+            }
+    }
+</style>
+

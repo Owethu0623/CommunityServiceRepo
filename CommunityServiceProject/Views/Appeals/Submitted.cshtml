@@ -1,0 +1,342 @@
+﻿@model CommunityServiceProject.Models.Appeal
+@{
+    Layout = null;
+    ViewBag.Title = "Appeal Submitted";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Appeal Submitted</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+
+    <style>
+        body {
+            margin: 0;
+            background: #f4f7fb;
+            color: #1f2937;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .submitted-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .submitted-container {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .submitted-card {
+            background: #ffffff;
+            border: 1px solid #e2e7ee;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 16px 42px rgba(15, 23, 42, 0.09);
+        }
+
+        .submitted-icon {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 22px;
+            border-radius: 50%;
+            background: #ecfdf3;
+            color: #198754;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+        }
+
+        .submitted-card h1 {
+            margin: 0 0 10px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .submitted-message {
+            margin: 0 auto 28px;
+            max-width: 440px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .reference-box {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #e4e9f0;
+            border-radius: 11px;
+        }
+
+        .reference-label {
+            margin-bottom: 8px;
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .reference-number {
+            color: #2f5bea;
+            font-size: 25px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .appeal-details {
+            margin-bottom: 28px;
+            text-align: left;
+            border-top: 1px solid #edf0f4;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 13px;
+        }
+
+        .detail-label {
+            color: #6b7280;
+        }
+
+        .detail-value {
+            color: #1f2937;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #fff4db;
+            color: #946200;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .next-step-box {
+            margin-bottom: 25px;
+            padding: 15px 17px;
+            text-align: left;
+            background: #f8fafc;
+            border-radius: 9px;
+            color: #6b7280;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .next-step-box strong {
+            color: #374151;
+        }
+
+        .return-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 46px;
+            border-radius: 9px;
+            background: #2f5bea;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 7px 18px rgba(47, 91, 234, 0.19);
+        }
+
+        .return-button:hover,
+        .return-button:focus {
+            background: #2449c7;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            transform: translateY(-1px);
+        }
+
+        .security-note {
+            margin-top: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        @@media (max-width: 576px) {
+            .submitted-page {
+                padding: 25px 15px;
+            }
+
+            .submitted-card {
+                padding: 28px 20px;
+            }
+
+            .submitted-card h1 {
+                font-size: 24px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="submitted-page">
+
+        <div class="submitted-container">
+
+            <div class="submitted-card">
+
+                <!-- =================================================
+                     SUCCESS ICON
+                     ================================================= -->
+
+                <div class="submitted-icon">
+                    <span class="glyphicon glyphicon-ok"></span>
+                </div>
+
+
+                <!-- =================================================
+                     SUCCESS MESSAGE
+                     ================================================= -->
+
+                <h1>Appeal Submitted</h1>
+
+                <p class="submitted-message">
+                    Your account appeal has been successfully submitted
+                    for administrator review.
+                </p>
+
+
+                <!-- =================================================
+                     APPEAL REFERENCE
+                     ================================================= -->
+
+                <div class="reference-box">
+
+                    <div class="reference-label">
+                        Appeal Reference
+                    </div>
+
+                    <div class="reference-number">
+                        @Model.ReferenceNumber
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     APPEAL DETAILS
+                     ================================================= -->
+
+                <div class="appeal-details">
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Submitted
+                        </span>
+
+                        <span class="detail-value">
+                            @Model.DateSubmitted.ToString("dd MMM yyyy, HH:mm")
+                        </span>
+
+                    </div>
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Status
+                        </span>
+
+                        <span class="detail-value">
+                            <span class="status-badge">
+                                @Model.Status
+                            </span>
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     NEXT STEP
+                     ================================================= -->
+
+                <div class="next-step-box">
+
+                    <strong>What happens next?</strong>
+                    <br />
+
+                    Your appeal will be reviewed by a municipality
+                    administrator. You can use your appeal reference
+                    number to identify your appeal when checking its status.
+
+                </div>
+
+
+                <!-- =================================================
+                     RETURN BUTTON
+                     ================================================= -->
+
+                <a href="@Url.Action("Index", "Login")"
+                   class="return-button">
+
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+
+                    Return to Login
+
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 SECURITY NOTE
+                 ================================================= -->
+
+            <div class="security-note">
+
+                <span class="glyphicon glyphicon-lock"></span>
+
+                &nbsp;Community Service Request System
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+

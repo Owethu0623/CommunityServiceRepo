@@ -1,0 +1,355 @@
+﻿
+@model IEnumerable<CommunityServiceProject.Models.Appeal>
+
+@{
+    ViewBag.Title = "Account Appeals";
+}
+
+<div class="admin-appeals-page">
+
+    <div class="admin-appeals-header">
+        <h2>ACCOUNT APPEALS</h2>
+        <p>Review and manage citizen account appeals.</p>
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH + STATUS FILTER
+         ===================================================== -->
+
+    <div class="admin-appeals-filter-card">
+
+        @using (Html.BeginForm(
+            "AdminIndex",
+            "Appeals",
+            FormMethod.Get))
+        {
+            <div class="filter-group">
+
+                <label>
+                    Search
+                </label>
+
+                <input type="text"
+                       name="search"
+                       value="@ViewBag.Search"
+                       class="form-control"
+                       placeholder="Appeal reference or citizen name" />
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label>
+                    Status
+                </label>
+
+                @Html.DropDownList(
+                    "status",
+                    new SelectList(
+                        Enum.GetValues(
+                            typeof(CommunityServiceProject.Models.AppealStatus)
+                        ),
+                        ViewBag.SelectedStatus
+                    ),
+                    "All",
+                    new { @class = "form-control" }
+                )
+
+            </div>
+
+
+            <div class="filter-action">
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    <span class="glyphicon glyphicon-search"></span>
+                    Search
+
+                </button>
+
+                <a href="@Url.Action("AdminIndex", "Appeals")"
+                   class="btn btn-default">
+
+                    Clear
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         APPEALS TABLE
+         ===================================================== -->
+
+    <div class="admin-appeals-card">
+
+        <div class="table-responsive">
+
+            <table class="table admin-appeals-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Appeal</th>
+                        <th>Citizen</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Days Open</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var appeal in Model)
+                        {
+                            int daysOpen = 0;
+
+                            if (appeal.DateDecision.HasValue)
+                            {
+                                daysOpen =
+                                    (appeal.DateDecision.Value -
+                                     appeal.DateSubmitted).Days;
+                            }
+                            else
+                            {
+                                daysOpen =
+                                    (DateTime.Now -
+                                     appeal.DateSubmitted).Days;
+                            }
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        @appeal.ReferenceNumber
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @(appeal.Citizen != null
+                                        ? appeal.Citizen.FirstName + " " +
+                                          appeal.Citizen.LastName
+                                        : "Unknown Citizen")
+                                </td>
+
+                                <td>
+
+                                    <span class="appeal-status appeal-status-@appeal.Status">
+                                        @appeal.Status
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @appeal.DateSubmitted.ToString("dd/MM/yyyy")
+                                </td>
+
+                                <td>
+                                    @daysOpen
+                                </td>
+
+                                <td>
+
+                                    <a href="@Url.Action(
+                                        "Review",
+                                        "Appeals",
+                                        new { id = appeal.AppealID })"
+                                       class="btn btn-sm btn-primary">
+
+                                        Review Appeal
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="6"
+                                class="no-appeals">
+
+                                No account appeals were found.
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<a href="@Url.Action(
+    "Index",
+    "AdministratorDashboard")"
+   class="navigation-button secondary">
+
+    <span class="glyphicon glyphicon-home"></span>
+
+    Back to Dashboard
+
+</a>
+
+<style>
+
+    .admin-appeals-page {
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .admin-appeals-header {
+        margin-bottom: 25px;
+    }
+
+    .admin-appeals-header h2 {
+        margin-bottom: 7px;
+        font-weight: 700;
+    }
+
+    .admin-appeals-header p {
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .admin-appeals-filter-card {
+        background: #ffffff;
+        border: 1px solid #e3e7ed;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .admin-appeals-filter-card form {
+        display: flex;
+        align-items: flex-end;
+        gap: 15px;
+    }
+
+    .filter-group {
+        flex: 1;
+    }
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .filter-action {
+        display: flex;
+        gap: 8px;
+    }
+
+    .admin-appeals-card {
+        background: #ffffff;
+        border: 1px solid #e3e7ed;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .admin-appeals-table {
+        margin-bottom: 0;
+    }
+
+    .admin-appeals-table thead {
+        background: #f8fafc;
+    }
+
+    .admin-appeals-table th {
+        padding: 15px;
+        border-bottom: 1px solid #e3e7ed;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #6b7280;
+    }
+
+    .admin-appeals-table td {
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    .appeal-status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .appeal-status-Pending {
+        background: #fff4db;
+        color: #946200;
+    }
+
+    .appeal-status-UnderReview {
+        background: #eaf2ff;
+        color: #2451b2;
+    }
+
+    .appeal-status-AdditionalInformationRequired {
+        background: #f5edff;
+        color: #7048a8;
+    }
+
+    .appeal-status-Approved {
+        background: #ecfdf3;
+        color: #167044;
+    }
+
+    .appeal-status-Rejected {
+        background: #fff1f0;
+        color: #b42318;
+    }
+
+    .no-appeals {
+        text-align: center;
+        padding: 45px !important;
+        color: #8b93a1;
+    }
+
+    @@media (max-width: 768px) {
+
+        .admin-appeals-page {
+            padding: 20px 15px;
+        }
+
+        .admin-appeals-filter-card form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-action {
+            width: 100%;
+        }
+
+        .filter-action .btn {
+            flex: 1;
+        }
+    }
+
+</style>

@@ -1,0 +1,197 @@
+﻿@model CommunityServiceProject.Models.Request
+
+@{
+    ViewBag.Title = "Record Violation";
+}
+
+<div class="admin-review-page">
+
+    <div class="admin-review-card">
+
+        <div class="admin-review-header">
+            <h2>Record Violation</h2>
+
+            <p>
+                Review and record a confirmed violation for
+                @Model.ReferenceNumber
+            </p>
+        </div>
+
+        <div class="admin-review-content">
+
+            <div class="admin-review-section">
+
+                <h3>Request Information</h3>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Request Reference
+                    </span>
+
+                    <span>
+                        @Model.ReferenceNumber
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Citizen
+                    </span>
+
+                    <span>
+                        @Model.Citizen.FirstName @Model.Citizen.LastName
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Request Title
+                    </span>
+
+                    <span>
+                        @Model.Title
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Category
+                    </span>
+
+                    <span>
+                        @(Model.Category != null
+                            ? Model.Category.CategoryName
+                            : "Unknown")
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Description
+                    </span>
+
+                    <span>
+                        @Model.Description
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Location
+                    </span>
+
+                    <span>
+                        @Model.ProblemLocation
+                    </span>
+                </div>
+
+                <div class="admin-review-row">
+                    <span class="admin-review-label">
+                        Date Submitted
+                    </span>
+
+                    <span>
+                        @Model.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="admin-review-section">
+
+                <h3>Confirm Violation</h3>
+
+                @Html.ValidationSummary(
+                    false,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+                <p>
+                    If this request represents a confirmed violation,
+                    provide the relevant violation information below.
+                </p>
+                <form action="@Url.Action(
+                                "RecordViolation",
+                                "AdministratorRequests"
+                             )"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="requestID"
+                           value="@Model.RequestID" />
+
+                    <div class="form-group">
+
+                        <label for="violationType">
+                            Violation Type
+                        </label>
+
+                        <input type="text"
+                               id="violationType"
+                               name="violationType"
+                               class="form-control"
+                               maxlength="100"
+                               value="@Request.Form["violationType"]"
+                               required />
+
+                        @Html.ValidationMessage(
+                            "violationType",
+                            "",
+                            new { @class = "text-danger" }
+                        )
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Reason / Description
+                        </label>
+
+                        <textarea id="description"
+                                  name="description"
+                                  class="form-control"
+                                  rows="5"
+                                  maxlength="1000"
+                                  required>@Request.Form["description"]</textarea>
+
+                        @Html.ValidationMessage(
+                            "description",
+                            "",
+                            new { @class = "text-danger" }
+                        )
+
+                    </div>
+
+                    <div class="admin-citizen-management-actions">
+
+                        <button type="submit"
+                                class="admin-approve-button">
+                            Confirm Violation
+                        </button>
+
+                        <a href="@Url.Action(
+                                    "Details",
+                                    "AdministratorRequests",
+                                    new { id = Model.RequestID }
+                                 )"
+                           class="admin-back-button">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

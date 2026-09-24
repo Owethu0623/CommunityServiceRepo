@@ -1,0 +1,1686 @@
+﻿@model CommunityServiceProject.ViewModels.InspectMunicipalAssetViewModel
+
+@{
+    ViewBag.Title = "Inspect Municipal Asset";
+}
+
+<div class="asset-inspection-page">
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+    <div class="inspection-header">
+
+        <div class="inspection-header-content">
+
+            <div class="inspection-header-copy">
+
+                <div class="inspection-eyebrow">
+                    MUNICIPAL ASSET MANAGEMENT
+                </div>
+
+                <h1>Inspect Municipal Asset</h1>
+
+                <p>
+                    Complete a formal inspection record to document the
+                    current condition and operational observations of this asset.
+                </p>
+
+            </div>
+
+            <div class="inspection-header-actions">
+
+                @Html.ActionLink(
+                    "← Back to Asset Details",
+                    "Details",
+                    "MunicipalAsset",
+                    new { id = Model.AssetID },
+                    new { @class = "header-back-button" }
+                )
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         INFORMATION NOTICE
+         ========================================================= -->
+    <div class="inspection-container">
+
+        <div class="inspection-info-notice">
+
+            <div class="notice-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <strong>Formal Asset Inspection</strong>
+
+                <p>
+                    Record the condition observed during the inspection,
+                    document your findings, and identify any recommended
+                    follow-up action.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             VALIDATION SUMMARY
+             ===================================================== -->
+        @Html.ValidationSummary(
+            true,
+            "",
+            new { @class = "inspection-validation-summary" }
+        )
+
+
+        @using (Html.BeginForm(
+            "Inspect",
+            "MunicipalAsset",
+            FormMethod.Post,
+            new { @class = "inspection-form", id = "inspectionForm" }
+        ))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(m => m.AssetID)
+
+
+            <!-- =================================================
+                 SECTION 01 — ASSET INFORMATION
+                 ================================================= -->
+            <section class="inspection-section">
+
+                <div class="section-heading">
+
+                    <div class="section-number">
+                        01
+                    </div>
+
+                    <div>
+
+                        <h2>Asset Information</h2>
+
+                        <p>
+                            Confirm the asset you are formally inspecting.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="asset-information-grid">
+
+                    <div class="inspection-field">
+
+                        <span class="field-label">
+                            Asset Code
+                        </span>
+
+                        <div class="readonly-value asset-code-value">
+                            @Model.AssetCode
+                        </div>
+
+                    </div>
+
+
+                    <div class="inspection-field">
+
+                        <span class="field-label">
+                            Asset Name
+                        </span>
+
+                        <div class="readonly-value">
+                            @Model.AssetName
+                        </div>
+
+                    </div>
+
+
+                    <div class="inspection-field">
+
+                        <span class="field-label">
+                            Asset Type
+                        </span>
+
+                        <div class="readonly-value">
+                            @Model.AssetType
+                        </div>
+
+                    </div>
+
+
+                    <div class="inspection-field">
+
+                        <span class="field-label">
+                            Asset Category
+                        </span>
+
+                        <div class="readonly-value">
+                            @Model.AssetCategory
+                        </div>
+
+                    </div>
+
+
+                    <div class="inspection-field">
+
+                        <span class="field-label">
+                            Municipal Ward
+                        </span>
+
+                        <div class="readonly-value">
+                            @Model.WardName
+                        </div>
+
+                    </div>
+
+
+                    <div class="inspection-field">
+
+                        <span class="field-label">
+                            Current Recorded Condition
+                        </span>
+
+                        <div class="condition-badge condition-@Model.CurrentCondition.ToString().ToLowerInvariant()">
+                            @Model.CurrentCondition
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SECTION 02 — INSPECTION DETAILS
+                 ================================================= -->
+            <section class="inspection-section">
+
+                <div class="section-heading">
+
+                    <div class="section-number">
+                        02
+                    </div>
+
+                    <div>
+
+                        <h2>Inspection Details</h2>
+
+                        <p>
+                            Record when the inspection took place and the
+                            condition observed at the time.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid two-column">
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.InspectionDate,
+                            new { @class = "form-label" }
+                        )
+
+                        <span class="required-mark">*</span>
+
+                        @Html.TextBoxFor(
+                            m => m.InspectionDate,
+                            "{0:yyyy-MM-dd}",
+                            new
+                            {
+                                @class = "form-control",
+                                type = "date",
+                                id = "InspectionDate"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.InspectionDate,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                        <small class="field-help">
+                            The inspection date cannot be in the future.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.ConditionObserved,
+                            new { @class = "form-label" }
+                        )
+
+                        <span class="required-mark">*</span>
+
+                        @Html.EnumDropDownListFor(
+                            m => m.ConditionObserved,
+                            "Select condition observed",
+                            new
+                            {
+                                @class = "form-control",
+                                id = "ConditionObserved"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.ConditionObserved,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                        <small class="field-help">
+                            Select the physical condition observed during this inspection.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="inspection-comparison">
+
+                    <div class="comparison-item">
+
+                        <span>
+                            Current recorded condition
+                        </span>
+
+                        <strong>
+                            @Model.CurrentCondition
+                        </strong>
+
+                    </div>
+
+
+                    <div class="comparison-arrow">
+                        →
+                    </div>
+
+
+                    <div class="comparison-item">
+
+                        <span>
+                            Inspection condition
+                        </span>
+
+                        <strong id="conditionSummary">
+                            @Model.ConditionObserved
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SECTION 03 — INSPECTION FINDINGS
+                 ================================================= -->
+            <section class="inspection-section">
+
+                <div class="section-heading">
+
+                    <div class="section-number">
+                        03
+                    </div>
+
+                    <div>
+
+                        <h2>Inspection Findings</h2>
+
+                        <p>
+                            Document the physical condition, defects,
+                            observations, and relevant inspection details.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <div class="label-row">
+
+                        <div>
+
+                            @Html.LabelFor(
+                                m => m.Findings,
+                                new { @class = "form-label" }
+                            )
+
+                            <span class="required-mark">*</span>
+
+                        </div>
+
+                        <span class="character-count">
+                            <span id="findingsCount">0</span> / 2000
+                        </span>
+
+                    </div>
+
+
+                    @Html.TextAreaFor(
+                        m => m.Findings,
+                        new
+                        {
+                            @class = "form-control textarea-large",
+                            id = "Findings",
+                            rows = "8",
+                            maxlength = "2000",
+                            placeholder = "Describe the condition observed, defects identified, deterioration, damage, or other relevant findings..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Findings,
+                        "",
+                        new { @class = "field-validation" }
+                    )
+
+                    <small class="field-help">
+                        Provide clear and factual findings that can support
+                        future maintenance or inspection decisions.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <div class="label-row">
+
+                        @Html.LabelFor(
+                            m => m.InspectorNotes,
+                            new { @class = "form-label" }
+                        )
+
+                        <span class="optional-label">
+                            Optional
+                        </span>
+
+                    </div>
+
+
+                    @Html.TextAreaFor(
+                        m => m.InspectorNotes,
+                        new
+                        {
+                            @class = "form-control textarea-medium",
+                            id = "InspectorNotes",
+                            rows = "5",
+                            maxlength = "2000",
+                            placeholder = "Add any additional observations, context, or notes relevant to the inspection..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.InspectorNotes,
+                        "",
+                        new { @class = "field-validation" }
+                    )
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SECTION 04 — RECOMMENDED FOLLOW-UP
+                 ================================================= -->
+            <section class="inspection-section">
+
+                <div class="section-heading">
+
+                    <div class="section-number">
+                        04
+                    </div>
+
+                    <div>
+
+                        <h2>Recommended Follow-up</h2>
+
+                        <p>
+                            Record any action that should be considered
+                            following this inspection.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid two-column">
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.RecommendedAction,
+                            new { @class = "form-label" }
+                        )
+
+                        <span class="optional-label">
+                            Optional
+                        </span>
+
+                        @Html.TextBoxFor(
+                            m => m.RecommendedAction,
+                            new
+                            {
+                                @class = "form-control",
+                                id = "RecommendedAction",
+                                maxlength = "100",
+                                placeholder = "e.g. Schedule repairs"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.RecommendedAction,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                        <small class="field-help">
+                            Briefly state the recommended action.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NextInspectionDate,
+                            new { @class = "form-label" }
+                        )
+
+                        <span class="optional-label">
+                            Optional
+                        </span>
+
+                        @Html.TextBoxFor(
+                            m => m.NextInspectionDate,
+                            "{0:yyyy-MM-dd}",
+                            new
+                            {
+                                @class = "form-control",
+                                type = "date",
+                                id = "NextInspectionDate"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.NextInspectionDate,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                        <small class="field-help">
+                            Schedule the next inspection when follow-up monitoring is required.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="follow-up-notice">
+
+                    <span class="follow-up-icon">
+                        i
+                    </span>
+
+                    <div>
+
+                        <strong>Inspection follow-up</strong>
+
+                        <p>
+                            Recommended actions and the next inspection date
+                            are recorded as part of this inspection record.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SECTION 05 — INSPECTION SUMMARY
+                 ================================================= -->
+            <section class="inspection-section summary-section">
+
+                <div class="section-heading">
+
+                    <div class="section-number">
+                        05
+                    </div>
+
+                    <div>
+
+                        <h2>Inspection Summary</h2>
+
+                        <p>
+                            Review the inspection information before saving
+                            the official inspection record.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="inspection-summary-card">
+
+                    <div class="summary-row">
+
+                        <span>
+                            Asset
+                        </span>
+
+                        <strong>
+                            @Model.AssetCode
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Inspection Date
+                        </span>
+
+                        <strong id="summaryInspectionDate">
+                            @(Model.InspectionDate.HasValue
+                                ? Model.InspectionDate.Value.ToString("dd MMM yyyy")
+                                : "Not specified")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Condition Observed
+                        </span>
+
+                        <strong id="summaryCondition">
+                            @Model.ConditionObserved
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Next Inspection
+                        </span>
+
+                        <strong id="summaryNextInspection">
+                            @(Model.NextInspectionDate.HasValue
+                                ? Model.NextInspectionDate.Value.ToString("dd MMM yyyy")
+                                : "Not scheduled")
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="recording-notice">
+
+                    <div class="recording-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            What happens when you record this inspection?
+                        </strong>
+
+                        <p>
+                            The inspection will be permanently recorded against
+                            this municipal asset. The system will also update
+                            the asset's last inspection date and create an
+                            asset history entry for traceability.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+                 ================================================= -->
+            <div class="inspection-actions">
+
+                <div class="actions-left">
+
+                    @Html.ActionLink(
+                        "Cancel",
+                        "Details",
+                        "MunicipalAsset",
+                        new { id = Model.AssetID },
+                        new { @class = "btn-cancel" }
+                    )
+
+                </div>
+
+
+                <div class="actions-right">
+
+                    @Html.ActionLink(
+                        "View Asset Details",
+                        "Details",
+                        "MunicipalAsset",
+                        new { id = Model.AssetID },
+                        new { @class = "btn-secondary" }
+                    )
+
+                    <button type="submit"
+                            class="btn-primary"
+                            id="recordInspectionButton">
+
+                        Record Inspection
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .asset-inspection-page {
+        background: #f6f8fb;
+        min-height: 100vh;
+        padding-bottom: 60px;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .inspection-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e9f0;
+    }
+
+    .inspection-header-content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 38px 24px 34px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .inspection-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #0d5cc1;
+        margin-bottom: 10px;
+    }
+
+    .inspection-header h1 {
+        margin: 0;
+        color: #172033;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .inspection-header p {
+        margin: 10px 0 0;
+        max-width: 700px;
+        color: #687386;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .inspection-header-actions {
+        padding-top: 8px;
+    }
+
+    .header-back-button {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 16px;
+        border: 1px solid #d9e0ea;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #344054;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .header-back-button:hover {
+        background: #f5f8fc;
+        border-color: #bfc9d8;
+        color: #172033;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       CONTAINER
+       ========================================================= */
+
+    .inspection-container {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 24px;
+    }
+
+
+    /* =========================================================
+       NOTICE
+       ========================================================= */
+
+    .inspection-info-notice {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: #eef5ff;
+        border: 1px solid #cfe1fb;
+        border-radius: 9px;
+        padding: 17px 19px;
+        margin-bottom: 24px;
+    }
+
+    .notice-icon {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #0d5cc1;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .inspection-info-notice strong {
+        display: block;
+        color: #183b6b;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .inspection-info-notice p {
+        margin: 0;
+        color: #4c6380;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+
+    .inspection-validation-summary {
+        margin-bottom: 20px;
+        padding: 14px 17px;
+        border: 1px solid #f1c5c5;
+        border-radius: 8px;
+        background: #fff5f5;
+        color: #a32929;
+    }
+
+    .inspection-validation-summary:empty {
+        display: none;
+    }
+
+    .field-validation {
+        display: block;
+        margin-top: 6px;
+        color: #b42318;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+
+    .inspection-section {
+        background: #ffffff;
+        border: 1px solid #e3e8ef;
+        border-radius: 10px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+    }
+
+    .section-heading {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+
+    .section-number {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #eef5ff;
+        color: #0d5cc1;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .section-heading h2 {
+        margin: 2px 0 4px;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 700;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #7a8495;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       ASSET INFORMATION
+       ========================================================= */
+
+    .asset-information-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .inspection-field {
+        min-width: 0;
+    }
+
+    .field-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #667085;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.55px;
+    }
+
+    .readonly-value {
+        min-height: 43px;
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border: 1px solid #e2e7ee;
+        border-radius: 7px;
+        background: #f8fafc;
+        color: #344054;
+        font-size: 14px;
+        line-height: 1.4;
+        word-break: break-word;
+    }
+
+    .asset-code-value {
+        color: #0d5cc1;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       CONDITION BADGES
+       ========================================================= */
+
+    .condition-badge {
+        min-height: 43px;
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 7px;
+        background: #f8fafc;
+        border: 1px solid #e2e7ee;
+        color: #344054;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       FORM GRID
+       ========================================================= */
+
+    .form-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    .two-column {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: inline-block;
+        margin-bottom: 7px;
+        color: #344054;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .required-mark {
+        color: #b42318;
+        font-weight: 700;
+        margin-left: 2px;
+    }
+
+    .optional-label {
+        display: inline-block;
+        margin-left: 7px;
+        color: #98a2b3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 43px;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #cfd6e1;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #172033;
+        font-size: 14px;
+        transition: border-color 0.2s ease,
+                    box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0d5cc1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .textarea-large {
+        min-height: 175px;
+    }
+
+    .textarea-medium {
+        min-height: 120px;
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        color: #8a94a6;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 7px;
+    }
+
+    .label-row .form-label {
+        margin-bottom: 0;
+    }
+
+    .character-count {
+        color: #98a2b3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       CONDITION COMPARISON
+       ========================================================= */
+
+    .inspection-comparison {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-top: 24px;
+        padding: 17px;
+        border: 1px solid #e5e9f0;
+        border-radius: 8px;
+        background: #f8fafc;
+    }
+
+    .comparison-item {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .comparison-item span {
+        display: block;
+        margin-bottom: 5px;
+        color: #7a8495;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .comparison-item strong {
+        color: #172033;
+        font-size: 15px;
+    }
+
+    .comparison-arrow {
+        color: #0d5cc1;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       FOLLOW-UP
+       ========================================================= */
+
+    .follow-up-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 22px;
+        padding: 14px 16px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid #e4e8ee;
+    }
+
+    .follow-up-icon {
+        width: 24px;
+        height: 24px;
+        flex: 0 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #e9eef5;
+        color: #526173;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .follow-up-notice strong {
+        display: block;
+        color: #344054;
+        font-size: 13px;
+        margin-bottom: 3px;
+    }
+
+    .follow-up-notice p {
+        margin: 0;
+        color: #7a8495;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       SUMMARY
+       ========================================================= */
+
+    .summary-section {
+        background: #fbfcfe;
+    }
+
+    .inspection-summary-card {
+        border: 1px solid #e0e6ee;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 14px 16px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .summary-row:last-child {
+        border-bottom: 0;
+    }
+
+    .summary-row span {
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .summary-row strong {
+        color: #172033;
+        font-size: 13px;
+        text-align: right;
+    }
+
+    .recording-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 18px;
+        padding: 16px;
+        border: 1px solid #dce7f5;
+        border-radius: 8px;
+        background: #f4f8fd;
+    }
+
+    .recording-icon {
+        width: 27px;
+        height: 27px;
+        flex: 0 0 27px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #0d5cc1;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .recording-notice strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #183b6b;
+        font-size: 13px;
+    }
+
+    .recording-notice p {
+        margin: 0;
+        color: #5e7088;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .inspection-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 22px 0 4px;
+    }
+
+    .actions-left,
+    .actions-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 17px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        border: 1px solid #0d5cc1;
+        background: #0d5cc1;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background: #0a4fa8;
+        border-color: #0a4fa8;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        border: 1px solid #cfd6e1;
+        background: #ffffff;
+        color: #344054;
+    }
+
+    .btn-secondary:hover {
+        background: #f5f7fa;
+        border-color: #bfc8d5;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .btn-cancel {
+        border: 1px solid transparent;
+        background: transparent;
+        color: #667085;
+    }
+
+    .btn-cancel:hover {
+        background: #f0f2f5;
+        color: #344054;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 900px) {
+
+        .inspection-header-content {
+            flex-direction: column;
+        }
+
+        .inspection-header-actions {
+            padding-top: 0;
+        }
+
+        .asset-information-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+
+    @@media (max-width: 680px) {
+
+        .inspection-header-content {
+            padding: 28px 18px;
+        }
+
+        .inspection-container {
+            padding: 20px 14px;
+        }
+
+        .inspection-section {
+            padding: 20px;
+        }
+
+        .asset-information-grid,
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+
+        .inspection-comparison {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .comparison-arrow {
+            text-align: center;
+            transform: rotate(90deg);
+        }
+
+        .inspection-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .actions-left,
+        .actions-right {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary,
+        .btn-cancel {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var findings = document.getElementById("Findings");
+        var findingsCount = document.getElementById("findingsCount");
+
+        var conditionSelect =
+            document.getElementById("ConditionObserved");
+
+        var conditionSummary =
+            document.getElementById("conditionSummary");
+
+        var summaryCondition =
+            document.getElementById("summaryCondition");
+
+        var inspectionDate =
+            document.getElementById("InspectionDate");
+
+        var summaryInspectionDate =
+            document.getElementById("summaryInspectionDate");
+
+        var nextInspectionDate =
+            document.getElementById("NextInspectionDate");
+
+        var summaryNextInspection =
+            document.getElementById("summaryNextInspection");
+
+        var form =
+            document.getElementById("inspectionForm");
+
+
+        /* =====================================================
+           FINDINGS CHARACTER COUNT
+           ===================================================== */
+
+        function updateFindingsCount() {
+
+            if (!findings || !findingsCount) {
+                return;
+            }
+
+            findingsCount.textContent =
+                findings.value.length;
+        }
+
+
+        if (findings) {
+
+            findings.addEventListener(
+                "input",
+                updateFindingsCount
+            );
+
+            updateFindingsCount();
+        }
+
+
+        /* =====================================================
+           CONDITION SUMMARY
+           ===================================================== */
+
+        function updateConditionSummary() {
+
+            if (!conditionSelect) {
+                return;
+            }
+
+            var selectedText =
+                conditionSelect.options[
+                    conditionSelect.selectedIndex
+                ].text;
+
+            if (conditionSummary) {
+                conditionSummary.textContent =
+                    selectedText === "Select condition observed"
+                        ? "Not selected"
+                        : selectedText;
+            }
+
+            if (summaryCondition) {
+                summaryCondition.textContent =
+                    selectedText === "Select condition observed"
+                        ? "Not selected"
+                        : selectedText;
+            }
+        }
+
+
+        if (conditionSelect) {
+
+            conditionSelect.addEventListener(
+                "change",
+                updateConditionSummary
+            );
+
+            updateConditionSummary();
+        }
+
+
+        /* =====================================================
+           INSPECTION DATE SUMMARY
+           ===================================================== */
+
+        function updateInspectionDateSummary() {
+
+            if (!inspectionDate ||
+                !summaryInspectionDate) {
+
+                return;
+            }
+
+            if (!inspectionDate.value) {
+
+                summaryInspectionDate.textContent =
+                    "Not specified";
+
+                return;
+            }
+
+            var parts =
+                inspectionDate.value.split("-");
+
+            if (parts.length !== 3) {
+                return;
+            }
+
+            var date =
+                new Date(
+                    parseInt(parts[0], 10),
+                    parseInt(parts[1], 10) - 1,
+                    parseInt(parts[2], 10)
+                );
+
+            summaryInspectionDate.textContent =
+                date.toLocaleDateString(
+                    "en-GB",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    }
+                );
+        }
+
+
+        if (inspectionDate) {
+
+            inspectionDate.addEventListener(
+                "change",
+                updateInspectionDateSummary
+            );
+
+            updateInspectionDateSummary();
+        }
+
+
+        /* =====================================================
+           NEXT INSPECTION SUMMARY
+           ===================================================== */
+
+        function updateNextInspectionSummary() {
+
+            if (!nextInspectionDate ||
+                !summaryNextInspection) {
+
+                return;
+            }
+
+            if (!nextInspectionDate.value) {
+
+                summaryNextInspection.textContent =
+                    "Not scheduled";
+
+                return;
+            }
+
+            var parts =
+                nextInspectionDate.value.split("-");
+
+            if (parts.length !== 3) {
+                return;
+            }
+
+            var date =
+                new Date(
+                    parseInt(parts[0], 10),
+                    parseInt(parts[1], 10) - 1,
+                    parseInt(parts[2], 10)
+                );
+
+            summaryNextInspection.textContent =
+                date.toLocaleDateString(
+                    "en-GB",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    }
+                );
+        }
+
+
+        if (nextInspectionDate) {
+
+            nextInspectionDate.addEventListener(
+                "change",
+                updateNextInspectionSummary
+            );
+
+            updateNextInspectionSummary();
+        }
+
+
+        /* =====================================================
+           SUBMISSION CONFIRMATION
+           ===================================================== */
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    var findingsValue =
+                        findings
+                            ? findings.value.trim()
+                            : "";
+
+                    var conditionSelected =
+                        conditionSelect &&
+                        conditionSelect.value !== "";
+
+                    if (!conditionSelected) {
+
+                        return;
+                    }
+
+                    if (findingsValue.length < 5) {
+
+                        return;
+                    }
+
+                    var selectedCondition =
+                        conditionSelect.options[
+                            conditionSelect.selectedIndex
+                        ].text;
+
+                    var confirmed =
+                        window.confirm(
+                            "Record this formal asset inspection?\n\n" +
+                            "Asset: @Html.Raw(HttpUtility.JavaScriptStringEncode(Model.AssetCode))\n" +
+                            "Condition observed: " +
+                            selectedCondition +
+                            "\n\n" +
+                            "The inspection will be saved to the asset's official inspection history."
+                        );
+
+                    if (!confirmed) {
+
+                        event.preventDefault();
+
+                    }
+
+                }
+            );
+
+        }
+
+    });
+
+</script>

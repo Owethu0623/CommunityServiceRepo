@@ -1,0 +1,406 @@
+﻿@model CommunityServiceProject.Models.Feedback
+
+@{
+    ViewBag.Title = "Feedback Details";
+}
+
+<style>
+    .feedback-details-page {
+        background: #F4F7FB;
+        min-height: 100vh;
+        padding: 30px;
+    }
+
+    .feedback-details-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .feedback-details-header {
+        background: white;
+        padding: 24px 28px;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-left: 5px solid #0D5CC1;
+    }
+
+        .feedback-details-header h2 {
+            margin: 0 0 6px 0;
+            color: #1F2937;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .feedback-details-header p {
+            margin: 0;
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+    .details-card {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+
+    .details-card-header {
+        padding: 18px 24px;
+        background: #F8FAFC;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+        .details-card-header h3 {
+            margin: 0;
+            color: #1F2937;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+    .details-card-body {
+        padding: 24px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 30px;
+    }
+
+    .detail-item label {
+        display: block;
+        color: #6B7280;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .detail-item span {
+        display: block;
+        color: #1F2937;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .request-reference {
+        color: #0D5CC1 !important;
+        font-weight: 700 !important;
+    }
+
+    .rating-display {
+        color: #0D5CC1 !important;
+        font-weight: 700 !important;
+        font-size: 18px !important;
+    }
+
+    .resolution-badge {
+        display: inline-block !important;
+        width: fit-content;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+    }
+
+    .resolution-yes {
+        background: #DCFCE7;
+        color: #166534 !important;
+    }
+
+    .resolution-partially {
+        background: #FEF3C7;
+        color: #92400E !important;
+    }
+
+    .resolution-no {
+        background: #FEE2E2;
+        color: #991B1B !important;
+    }
+
+    .comment-box {
+        background: #F8FAFC;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 18px;
+        color: #374151;
+        font-size: 14px;
+        line-height: 1.6;
+        min-height: 70px;
+        white-space: pre-wrap;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 5px;
+    }
+
+    .back-button {
+        display: inline-block;
+        background: #EEF2F7;
+        color: #374151;
+        border: 1px solid #D1D5DB;
+        padding: 10px 20px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .back-button:hover {
+            background: #E5E7EB;
+            color: #1F2937;
+            text-decoration: none;
+        }
+
+    .review-note {
+        color: #6B7280;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 700px) {
+        .feedback-details-page {
+            padding: 15px;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: auto;
+        }
+
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .back-button {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="feedback-details-page">
+
+    <div class="feedback-details-container">
+
+        <!-- Header -->
+        <div class="feedback-details-header">
+            <h2>Feedback Details</h2>
+            <p>
+                Review the feedback submitted by the citizen for this completed request.
+            </p>
+        </div>
+
+        <!-- Request Information -->
+        <div class="details-card">
+
+            <div class="details-card-header">
+                <h3>Request Information</h3>
+            </div>
+
+            <div class="details-card-body">
+
+                <div class="details-grid">
+
+                    <div class="detail-item">
+                        <label>Reference Number</label>
+
+                        <span class="request-reference">
+                            @Model.Request.ReferenceNumber
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Request Title</label>
+
+                        <span>
+                            @Model.Request.Title
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Category</label>
+
+                        <span>
+                            @(Model.Request.Category != null
+                                ? Model.Request.Category.CategoryName
+                                : "—")
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Ward</label>
+
+                        <span>
+                            @(Model.Request.Ward != null
+                                ? Model.Request.Ward.WardName
+                                : "—")
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Citizen Information -->
+        <div class="details-card">
+
+            <div class="details-card-header">
+                <h3>Citizen Information</h3>
+            </div>
+
+            <div class="details-card-body">
+
+                <div class="details-grid">
+
+                    <div class="detail-item">
+                        <label>Citizen</label>
+
+                        <span>
+                            @(Model.Citizen != null
+                                ? Model.Citizen.FirstName + " " + Model.Citizen.LastName
+                                : "—")
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Feedback Date</label>
+
+                        <span>
+                            @Model.DateSubmitted.ToString("dd MMMM yyyy, HH:mm")
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Citizen Feedback -->
+        <div class="details-card">
+
+            <div class="details-card-header">
+                <h3>Citizen Feedback</h3>
+            </div>
+
+            <div class="details-card-body">
+
+                <div class="details-grid">
+
+                    <div class="detail-item">
+                        <label>Rating</label>
+
+                        <span class="rating-display">
+                            @Model.Rating / 5
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Resolution Status</label>
+
+                        @if (Model.ResolutionStatus ==
+                            CommunityServiceProject.Models.FeedbackResolutionStatus.Yes)
+                        {
+                            <span class="resolution-badge resolution-yes">
+                                Resolved
+                            </span>
+                        }
+                        else if (Model.ResolutionStatus ==
+                            CommunityServiceProject.Models.FeedbackResolutionStatus.Partially)
+                        {
+                            <span class="resolution-badge resolution-partially">
+                                Partially Resolved
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="resolution-badge resolution-no">
+                                Not Resolved
+                            </span>
+                        }
+                    </div>
+
+                    <div class="detail-item full-width">
+                        <label>Citizen Comment</label>
+
+                        <div class="comment-box">
+                            @(string.IsNullOrWhiteSpace(Model.Comment)
+                                ? "No comment was provided."
+                                : Model.Comment)
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Completion Information -->
+        <div class="details-card">
+
+            <div class="details-card-header">
+                <h3>Completion Information</h3>
+            </div>
+
+            <div class="details-card-body">
+
+                <div class="details-grid">
+
+                    <div class="detail-item">
+                        <label>Technician</label>
+
+                        <span>
+                            @(Model.Request.Technician != null
+                                ? Model.Request.Technician.FirstName + " " +
+                                  Model.Request.Technician.LastName
+                                : "—")
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Request Status</label>
+
+                        <span>
+                            @Model.Request.Status
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="action-bar">
+
+            <span class="review-note">
+                This feedback is read-only and is provided for service quality monitoring.
+            </span>
+
+            <a href="@Url.Action("Index", "FeedbackManagement")"
+               class="back-button">
+                Back to Feedback
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

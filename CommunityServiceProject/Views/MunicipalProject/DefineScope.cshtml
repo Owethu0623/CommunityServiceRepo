@@ -1,0 +1,610 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectScopeViewModel
+
+@{
+    ViewBag.Title = "Define Project Scope";
+}
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .project-scope-page {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 30px 60px;
+        box-sizing: border-box;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       BACK NAVIGATION
+       ========================================================= */
+
+    .scope-back-navigation {
+        margin-bottom: 20px;
+    }
+
+    .btn-back-projects {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 17px;
+        border: 1px solid #cfd5dc;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #374151 !important;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none !important;
+        transition: background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+
+        .btn-back-projects:hover {
+            background: #f7f9fb;
+            border-color: #0D5CC1;
+            color: #0D5CC1 !important;
+            text-decoration: none !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .scope-header {
+        margin-bottom: 25px;
+    }
+
+    .scope-eyebrow {
+        display: block;
+        margin-bottom: 8px;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+    }
+
+    .scope-header h1 {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .scope-header p {
+        max-width: 760px;
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       PROJECT INFORMATION
+       ========================================================= */
+
+    .project-reference-card {
+        margin-bottom: 20px;
+        padding: 20px 22px;
+        border: 1px solid #dfe4e9;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+    .project-reference-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #6b7280;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+    }
+
+    .project-reference-name {
+        margin: 0;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .project-reference-code {
+        margin-top: 5px;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       FORM CARD
+       ========================================================= */
+
+    .scope-card {
+        border: 1px solid #e1e5ea;
+        border-radius: 11px;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .035);
+    }
+
+    .scope-card-header {
+        padding: 22px 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .scope-card-header h2 {
+            margin: 0 0 5px;
+            color: #111827;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .scope-card-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .scope-form {
+        padding: 25px;
+    }
+
+
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+
+    .validation-summary {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border: 1px solid #fecaca;
+        border-radius: 7px;
+        background: #fff5f5;
+        color: #b91c1c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 7px;
+        color: #b91c1c;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       TEXTAREA
+       ========================================================= */
+
+    .scope-form-group {
+        margin-bottom: 0;
+    }
+
+        .scope-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+    .scope-required {
+        color: #dc2626;
+    }
+
+    .scope-textarea {
+        width: 100%;
+        min-height: 280px;
+        padding: 14px 15px;
+        box-sizing: border-box;
+        resize: vertical;
+        border: 1px solid #cfd5dc;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1f2937;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.6;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .scope-textarea:hover {
+            border-color: #aeb7c2;
+        }
+
+        .scope-textarea:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
+        }
+
+    .scope-help {
+        margin-top: 8px;
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       CHARACTER COUNT
+       ========================================================= */
+
+    .scope-character-count {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 6px;
+        color: #8b95a1;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .scope-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #edf0f3;
+    }
+
+    .btn-cancel-scope,
+    .btn-save-scope {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 43px;
+        padding: 0 20px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none !important;
+        transition: .2s ease;
+    }
+
+    .btn-cancel-scope {
+        border: 1px solid #cfd5dc;
+        background: #ffffff;
+        color: #374151 !important;
+    }
+
+        .btn-cancel-scope:hover {
+            background: #f8fafc;
+            border-color: #aeb7c2;
+            color: #111827 !important;
+        }
+
+    .btn-save-scope {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff !important;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(13, 92, 193, .16);
+    }
+
+        .btn-save-scope:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff !important;
+            box-shadow: 0 4px 8px rgba(13, 92, 193, .22);
+        }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 768px) {
+
+        .project-scope-page {
+            padding: 22px 15px 45px;
+        }
+
+        .scope-form {
+            padding: 20px;
+        }
+
+        .scope-card-header {
+            padding: 20px;
+        }
+
+        .scope-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .btn-cancel-scope,
+        .btn-save-scope {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="project-scope-page">
+
+    <!-- =====================================================
+         BACK NAVIGATION
+         ===================================================== -->
+
+    <div class="scope-back-navigation">
+
+        @Html.ActionLink(
+            "Back to Project Details",
+            "Details",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-back-projects" }
+        )
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="scope-header">
+
+        <span class="scope-eyebrow">
+            Project Management
+        </span>
+
+        <h1>
+            Define Project Scope
+        </h1>
+
+        <p>
+            Clearly document the intended work, boundaries, and activities
+            that form part of this municipal project.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT REFERENCE
+         ===================================================== -->
+
+    <div class="project-reference-card">
+
+        <span class="project-reference-label">
+            Project
+        </span>
+
+        <h2 class="project-reference-name">
+            @Model.ProjectName
+        </h2>
+
+        <div class="project-reference-code">
+            @Model.ProjectCode
+            ·
+            @Model.ProjectType
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SCOPE FORM
+         ===================================================== -->
+
+    <div class="scope-card">
+
+        <div class="scope-card-header">
+
+            <h2>
+                Project Scope
+            </h2>
+
+            <p>
+                Describe what the project will include and clearly define
+                the work that falls within the project's boundaries.
+            </p>
+
+        </div>
+
+
+        @using (Html.BeginForm(
+            "DefineScope",
+            "MunicipalProject",
+            FormMethod.Post,
+            new { @class = "scope-form", id = "projectScopeForm" }))
+        {
+
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(model => model.ProjectID)
+
+
+            if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-summary">
+
+                    @Html.ValidationSummary(
+                        true,
+                        "Please correct the following before saving the project scope."
+                    )
+
+                </div>
+            }
+
+
+            <div class="scope-form-group">
+
+                @Html.LabelFor(
+                    model => model.ProjectScope,
+                    new { @class = "scope-label" }
+                )
+
+                <span class="scope-required">
+                    *
+                </span>
+
+                @Html.TextAreaFor(
+                    model => model.ProjectScope,
+                    new
+                    {
+                        @class = "scope-textarea",
+                        id = "ProjectScope",
+                        maxlength = "4000",
+                        placeholder = "Describe the work, activities, boundaries, deliverables, and areas covered by this project."
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.ProjectScope,
+                    "",
+                    new { @class = "field-validation-error" }
+                )
+
+                <div class="scope-help">
+                    A clear scope should explain what work is included in the
+                    project and establish its intended boundaries.
+                </div>
+
+                <div class="scope-character-count">
+                    <span id="scopeCharacterCount">0</span>&nbsp;/&nbsp;4000
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="scope-actions">
+
+                @Html.ActionLink(
+                    "Cancel",
+                    "Details",
+                    "MunicipalProject",
+                    new { id = Model.ProjectID },
+                    new { @class = "btn-cancel-scope" }
+                )
+
+                <button type="submit"
+                        class="btn-save-scope"
+                        id="saveScopeButton">
+                    Save Project Scope
+                </button>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+<script>
+
+    (function () {
+
+        var scopeTextArea =
+            document.getElementById("ProjectScope");
+
+        var characterCount =
+            document.getElementById("scopeCharacterCount");
+
+        var scopeForm =
+            document.getElementById("projectScopeForm");
+
+        var saveButton =
+            document.getElementById("saveScopeButton");
+
+
+        function updateCharacterCount() {
+
+            if (!scopeTextArea || !characterCount) {
+                return;
+            }
+
+            characterCount.textContent =
+                scopeTextArea.value.length;
+        }
+
+
+        if (scopeTextArea) {
+
+            scopeTextArea.addEventListener(
+                "input",
+                updateCharacterCount
+            );
+
+            updateCharacterCount();
+        }
+
+
+        if (scopeForm) {
+
+            scopeForm.addEventListener(
+                "submit",
+                function (event) {
+
+                    var scope =
+                        scopeTextArea
+                            ? scopeTextArea.value.trim()
+                            : "";
+
+                    if (scope.length < 20) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please provide a meaningful project scope of at least 20 characters."
+                        );
+
+                        if (scopeTextArea) {
+                            scopeTextArea.focus();
+                        }
+
+                        return;
+                    }
+
+
+                    var confirmed =
+                        window.confirm(
+                            "Are you sure you want to save the project scope?"
+                        );
+
+                    if (!confirmed) {
+
+                        event.preventDefault();
+
+                        return;
+                    }
+
+
+                    if (saveButton) {
+
+                        saveButton.disabled = true;
+                        saveButton.textContent = "Saving...";
+                    }
+
+                }
+            );
+        }
+
+    })();
+
+</script>

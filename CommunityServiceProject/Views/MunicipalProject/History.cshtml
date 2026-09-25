@@ -1,0 +1,860 @@
+﻿
+@model CommunityServiceProject.ViewModels.MunicipalProjectHistoryViewModel
+
+@{
+    ViewBag.Title = "Project History";
+}
+
+<div class="project-history-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="project-history-header">
+
+        <div class="header-content">
+
+            <span class="page-label">
+                MUNICIPAL PROJECT MANAGEMENT
+            </span>
+
+            <h1>
+                Project History
+            </h1>
+
+            <p>
+                Review the recorded activities and lifecycle history of this project.
+            </p>
+
+        </div>
+
+        <div class="project-reference">
+
+            <strong>
+                @Model.ProjectCode
+            </strong>
+
+            <span>
+                @Model.ProjectType
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NAVIGATION
+         ===================================================== -->
+
+    <div class="history-navigation">
+
+        @Html.ActionLink(
+            "Back to Project",
+            "Details",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+        @Html.ActionLink(
+            "Monitor Milestones",
+            "MonitorMilestones",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT INFORMATION
+         ===================================================== -->
+
+    <section class="history-card">
+
+        <div class="card-heading">
+
+            <h2>
+                Project Information
+            </h2>
+
+        </div>
+
+        <div class="information-grid">
+
+            <div class="information-item">
+
+                <span>
+                    Project Name
+                </span>
+
+                <strong>
+                    @Model.ProjectName
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Project Code
+                </span>
+
+                <strong>
+                    @Model.ProjectCode
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Project Type
+                </span>
+
+                <strong>
+                    @Model.ProjectType
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Ward
+                </span>
+
+                <strong>
+                    @Model.WardName
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Location
+                </span>
+
+                <strong>
+                    @Model.ProjectLocation
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Priority
+                </span>
+
+                <strong>
+                    @Model.Priority
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Current Status
+                </span>
+
+                <strong class="current-status">
+                    @Model.CurrentStatus
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    History Records
+                </span>
+
+                <strong>
+                    @Model.TotalHistoryRecords
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HISTORY
+         ===================================================== -->
+
+    <section class="history-card">
+
+        <div class="card-heading history-heading">
+
+            <div>
+
+                <h2>
+                    Activity History
+                </h2>
+
+                <p>
+                    Recorded project actions are shown from newest to oldest.
+                </p>
+
+            </div>
+
+            <div class="history-count">
+
+                @Model.TotalHistoryRecords
+                record@(Model.TotalHistoryRecords == 1 ? "" : "s")
+
+            </div>
+
+        </div>
+
+
+        @if (Model.HistoryRecords == null ||
+             Model.HistoryRecords.Count == 0)
+        {
+            <div class="empty-history">
+
+                <h3>
+                    No history recorded
+                </h3>
+
+                <p>
+                    No project history records are currently available.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="history-list">
+
+                @foreach (var history in Model.HistoryRecords)
+                {
+                    <div class="history-record">
+
+                        <div class="history-date">
+
+                            <strong>
+                                @history.ActionDate.ToString("dd MMM yyyy")
+                            </strong>
+
+                            <span>
+                                @history.ActionDate.ToString("HH:mm")
+                            </span>
+
+                        </div>
+
+
+                        <div class="history-content">
+
+                            <div class="history-top-row">
+
+                                <div>
+
+                                    <h3>
+                                        @history.ActionType
+                                    </h3>
+
+                                    <span class="performed-by">
+                                        Performed by:
+                                        @history.PerformedByAdministratorName
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="history-description">
+
+                                @history.Description
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                history.PreviousStatus)
+                                ||
+                                !string.IsNullOrWhiteSpace(
+                                    history.NewStatus))
+                            {
+                                <div class="status-transition">
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        history.PreviousStatus))
+                                    {
+                                        <span class="status-box previous-status">
+
+                                            <small>
+                                                Previous Status
+                                            </small>
+
+                                            <strong>
+                                                @history.PreviousStatus
+                                            </strong>
+
+                                        </span>
+                                    }
+
+
+                                    <span class="transition-arrow">
+                                        →
+                                    </span>
+
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        history.NewStatus))
+                                    {
+                                        <span class="status-box new-status">
+
+                                            <small>
+                                                New Status
+                                            </small>
+
+                                            <strong>
+                                                @history.NewStatus
+                                            </strong>
+
+                                        </span>
+                                    }
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =====================================================
+         BOTTOM NAVIGATION
+         ===================================================== -->
+
+    <div class="bottom-navigation">
+
+        @Html.ActionLink(
+            "Back to Project",
+            "Details",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =====================================================
+       PAGE
+       ===================================================== */
+
+    .project-history-page {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px 50px;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .project-history-header {
+        background: #0D5CC1;
+        color: white;
+
+        padding: 30px;
+
+        border-radius: 12px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 25px;
+    }
+
+    .header-content {
+        min-width: 0;
+    }
+
+    .page-label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: white;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        letter-spacing: 1px;
+
+        opacity: 0.9;
+    }
+
+    .project-history-header h1 {
+        margin: 0 0 8px;
+
+        color: white;
+
+        font-size: 30px;
+    }
+
+    .project-history-header p {
+        margin: 0;
+
+        color: white;
+
+        opacity: 0.92;
+    }
+
+    .project-reference {
+        min-width: 190px;
+
+        text-align: right;
+    }
+
+    .project-reference strong {
+        display: block;
+
+        color: white;
+
+        font-size: 22px;
+    }
+
+    .project-reference span {
+        display: block;
+
+        margin-top: 5px;
+
+        color: white;
+
+        opacity: 0.9;
+    }
+
+
+    /* =====================================================
+       NAVIGATION
+       ===================================================== */
+
+    .history-navigation,
+    .bottom-navigation {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+        margin: 20px 0;
+    }
+
+    .btn-secondary {
+        display: inline-block;
+
+        padding: 10px 17px;
+
+        background: #f1f3f5;
+
+        color: #333;
+
+        border: 1px solid #d7dce1;
+
+        border-radius: 7px;
+
+        text-decoration: none;
+
+        font-weight: 600;
+    }
+
+    .btn-secondary:hover {
+        background: #e7eaee;
+
+        color: #222;
+
+        text-decoration: none;
+    }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .history-card {
+        margin-bottom: 20px;
+
+        padding: 25px;
+
+        background: white;
+
+        border: 1px solid #e1e5e9;
+
+        border-radius: 12px;
+
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-heading {
+        margin-bottom: 20px;
+    }
+
+    .card-heading h2 {
+        margin: 0;
+
+        color: #1d2733;
+
+        font-size: 21px;
+    }
+
+    .card-heading p {
+        margin: 7px 0 0;
+
+        color: #69737d;
+    }
+
+
+    /* =====================================================
+       PROJECT INFORMATION
+       ===================================================== */
+
+    .information-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 16px;
+    }
+
+    .information-item {
+        padding: 15px;
+
+        background: #f8f9fa;
+
+        border-radius: 8px;
+    }
+
+    .information-item span {
+        display: block;
+
+        margin-bottom: 5px;
+
+        color: #6c757d;
+
+        font-size: 12px;
+    }
+
+    .information-item strong {
+        display: block;
+
+        color: #202832;
+    }
+
+    .current-status {
+        color: #198754 !important;
+    }
+
+
+    /* =====================================================
+       HISTORY HEADING
+       ===================================================== */
+
+    .history-heading {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        gap: 20px;
+    }
+
+    .history-count {
+        padding: 8px 14px;
+
+        background: #eef5ff;
+
+        color: #0D5CC1;
+
+        border-radius: 20px;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       HISTORY LIST
+       ===================================================== */
+
+    .history-list {
+        border-top: 1px solid #e4e8ec;
+    }
+
+    .history-record {
+        display: grid;
+
+        grid-template-columns: 150px minmax(0, 1fr);
+
+        gap: 25px;
+
+        padding: 25px 0;
+
+        border-bottom: 1px solid #e4e8ec;
+    }
+
+    .history-record:last-child {
+        border-bottom: none;
+    }
+
+
+    /* =====================================================
+       DATE
+       ===================================================== */
+
+    .history-date {
+        padding-top: 2px;
+    }
+
+    .history-date strong {
+        display: block;
+
+        color: #202832;
+
+        font-size: 14px;
+    }
+
+    .history-date span {
+        display: block;
+
+        margin-top: 5px;
+
+        color: #6c757d;
+
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+
+    .history-content {
+        min-width: 0;
+    }
+
+    .history-top-row h3 {
+        margin: 0;
+
+        color: #0D5CC1;
+
+        font-size: 18px;
+    }
+
+    .performed-by {
+        display: block;
+
+        margin-top: 5px;
+
+        color: #6c757d;
+
+        font-size: 13px;
+    }
+
+    .history-description {
+        margin-top: 15px;
+
+        padding: 14px 16px;
+
+        background: #f8f9fa;
+
+        border-radius: 8px;
+
+        color: #39434d;
+
+        line-height: 1.6;
+
+        white-space: pre-line;
+    }
+
+
+    /* =====================================================
+       STATUS TRANSITION
+       ===================================================== */
+
+    .status-transition {
+        display: flex;
+
+        align-items: center;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+        margin-top: 15px;
+    }
+
+    .status-box {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 3px;
+
+        min-width: 130px;
+
+        padding: 10px 12px;
+
+        border-radius: 7px;
+    }
+
+    .status-box small {
+        font-size: 11px;
+
+        color: #6c757d;
+    }
+
+    .status-box strong {
+        color: #202832;
+
+        font-size: 13px;
+    }
+
+    .previous-status {
+        background: #f1f3f5;
+
+        border: 1px solid #d7dce1;
+    }
+
+    .new-status {
+        background: #eef8f2;
+
+        border: 1px solid #b8dfc5;
+    }
+
+    .new-status strong {
+        color: #198754;
+    }
+
+    .transition-arrow {
+        color: #6c757d;
+
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       EMPTY STATE
+       ===================================================== */
+
+    .empty-history {
+        padding: 50px 20px;
+
+        text-align: center;
+
+        background: #f8f9fa;
+
+        border-radius: 8px;
+    }
+
+    .empty-history h3 {
+        margin: 0 0 8px;
+
+        color: #303943;
+    }
+
+    .empty-history p {
+        margin: 0;
+
+        color: #6c757d;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @@media (max-width: 800px) {
+
+        .project-history-header {
+            flex-direction: column;
+
+            align-items: flex-start;
+        }
+
+        .project-reference {
+            text-align: left;
+        }
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .history-record {
+            grid-template-columns: 1fr;
+
+            gap: 10px;
+        }
+
+        .history-date {
+            padding: 0;
+        }
+
+    }
+
+
+    @@media (max-width: 500px) {
+
+        .history-heading {
+            flex-direction: column;
+
+            align-items: flex-start;
+        }
+
+        .status-transition {
+            align-items: flex-start;
+
+            flex-direction: column;
+        }
+
+        .transition-arrow {
+            transform: rotate(90deg);
+        }
+
+        .status-box {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+    }
+
+</style>
+

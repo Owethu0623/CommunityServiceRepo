@@ -26,6 +26,11 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Project Type")]
         public string ProjectType { get; set; }
 
+
+        [StringLength(4000)]
+        [Display(Name = "Project Scope")]
+        public string ProjectScope { get; set; }
+
         [StringLength(2000)]
         [Display(Name = "Description")]
         public string Description { get; set; }
@@ -41,6 +46,10 @@ namespace CommunityServiceProject.Models
         [Range(-180, 180)]
         [Display(Name = "Longitude")]
         public double? Longitude { get; set; }
+
+        [StringLength(500)]
+        [Display(Name = "Location Description")]
+        public string LocationDescription { get; set; }
 
         [Required]
         [Display(Name = "Ward")]
@@ -103,9 +112,34 @@ namespace CommunityServiceProject.Models
          */
 
         public virtual ICollection<AssetProject> AssetProjects { get; set; }
+        public virtual ICollection<ProjectObjective> ProjectObjectives { get; set; }
+
+        public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; }
+
+        public virtual ICollection<ProjectProgress> ProjectProgressRecords { get; set; }
+
+        public virtual ICollection<ProjectEvidence> ProjectEvidenceRecords { get; set; }
+
+        public virtual ICollection<ProjectHistory> ProjectHistoryRecords { get; set; }
+
+        public virtual ICollection<ProjectRequest> ProjectRequests { get; set; }
+
 
         public MunicipalProject()
         {
+            AssetProjects = new HashSet<AssetProject>();
+            ProjectObjectives = new HashSet<ProjectObjective>();
+
+            ProjectMilestones = new HashSet<ProjectMilestone>();
+
+            ProjectProgressRecords = new HashSet<ProjectProgress>();
+
+            ProjectEvidenceRecords = new HashSet<ProjectEvidence>();
+
+            ProjectHistoryRecords = new HashSet<ProjectHistory>();
+
+            ProjectRequests = new HashSet<ProjectRequest>();
+
             AssetProjects = new HashSet<AssetProject>();
         }
     }

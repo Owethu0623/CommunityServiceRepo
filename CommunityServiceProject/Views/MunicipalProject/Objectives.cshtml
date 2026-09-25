@@ -1,0 +1,614 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectObjectivesViewModel
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Project Objectives";
+}
+
+<div class="project-objectives-page">
+
+    <div class="page-header">
+        <div>
+            <span class="page-eyebrow">PROJECT OBJECTIVES</span>
+
+            <h1>@Model.ProjectName</h1>
+
+            <p>
+                @Model.ProjectCode
+                <span class="header-divider">|</span>
+                @Model.ProjectType
+            </p>
+        </div>
+
+        <div class="header-actions">
+            @Html.ActionLink(
+                "Back to Project Details",
+                "Details",
+                "MunicipalProject",
+                new { id = Model.ProjectID },
+                new { @class = "btn-back" }
+            )
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="success-message">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="objectives-layout">
+
+        <section class="objective-form-card">
+
+            <div class="section-heading">
+                <span>01</span>
+                <div>
+                    <h2>Add Project Objective</h2>
+                    <p>Define a measurable outcome the project is intended to achieve.</p>
+                </div>
+            </div>
+
+            @using (Html.BeginForm(
+                "AddObjective",
+                "MunicipalProject",
+                FormMethod.Post,
+                new { id = "objectiveForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.ProjectID)
+
+                <div class="form-group">
+                    <label>Objective Title</label>
+
+                    <input type="text"
+                           name="objective.ObjectiveTitle"
+                           class="form-control"
+                           maxlength="200"
+                           required
+                           placeholder="Enter objective title" />
+
+                    <div class="validation-message">
+                        @Html.ValidationMessage("objective.ObjectiveTitle")
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Objective Description</label>
+
+                    <textarea name="objective.ObjectiveDescription"
+                              class="form-control objective-description"
+                              maxlength="2000"
+                              required
+                              placeholder="Describe the intended outcome of this objective"></textarea>
+
+                    <div class="character-count">
+                        <span id="descriptionCount">0</span> / 2000
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Priority</label>
+
+                        <select name="objective.Priority"
+                                class="form-control">
+
+                            @foreach (MunicipalProjectPriority priority
+                                in Enum.GetValues(typeof(MunicipalProjectPriority)))
+                            {
+                                <option value="@priority">
+                                    @priority
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Date</label>
+
+                        <input type="date"
+                               name="objective.TargetDate"
+                               class="form-control" />
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+
+                    <select name="objective.Status"
+                            class="form-control">
+
+                        @foreach (ProjectObjectiveStatus status
+                            in Enum.GetValues(typeof(ProjectObjectiveStatus)))
+                        {
+                            <option value="@status">
+                                @status
+                            </option>
+                        }
+
+                    </select>
+                </div>
+
+                <div class="form-actions">
+
+                    <button type="submit"
+                            class="btn-primary">
+                        Add Objective
+                    </button>
+
+                    @Html.ActionLink(
+                        "Cancel",
+                        "Details",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID },
+                        new { @class = "btn-secondary" }
+                    )
+
+                </div>
+            }
+
+        </section>
+
+        <section class="objectives-list-card">
+
+            <div class="section-heading">
+                <span>02</span>
+
+                <div>
+                    <h2>Defined Objectives</h2>
+
+                    <p>
+                        @Model.Objectives.Count objective(s) currently recorded.
+                    </p>
+                </div>
+            </div>
+
+            @if (Model.Objectives.Any())
+            {
+                foreach (var objective in Model.Objectives)
+                {
+                    <article class="objective-item">
+
+                        <div class="objective-top">
+
+                            <div>
+                                <h3>@objective.ObjectiveTitle</h3>
+
+                                <div class="objective-meta">
+                                    <span class="priority-label">
+                                        @objective.Priority Priority
+                                    </span>
+
+                                    <span>
+                                        Status: @objective.Status
+                                    </span>
+
+                                    @if (objective.TargetDate.HasValue)
+                                    {
+                                        <span>
+                                            Target:
+                                            @objective.TargetDate.Value.ToString("dd MMM yyyy")
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="objective-description-display">
+                            @objective.ObjectiveDescription
+                        </p>
+
+                        <div class="objective-footer">
+
+                            <span>
+                                @objective.Status
+                            </span>
+
+                            @using (Html.BeginForm(
+                                "DeleteObjective",
+                                "MunicipalProject",
+                                FormMethod.Post,
+                                new { @class = "delete-objective-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@objective.ProjectObjectiveID" />
+
+                                <input type="hidden"
+                                       name="projectID"
+                                       value="@Model.ProjectID" />
+
+                                <button type="submit"
+                                        class="btn-delete">
+                                    Remove
+                                </button>
+                            }
+
+                        </div>
+
+                    </article>
+                }
+            }
+            else
+            {
+                <div class="empty-objectives">
+                    <strong>No project objectives defined.</strong>
+
+                    <p>
+                        Add objectives to formally document the intended
+                        outcomes of this project.
+                    </p>
+                </div>
+            }
+
+        </section>
+
+    </div>
+
+</div>
+
+<style>
+    .project-objectives-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 35px 30px 65px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .page-eyebrow {
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
+
+    .page-header h1 {
+        margin: 7px 0 5px;
+        color: #18212f;
+        font-size: 32px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #ffffff;
+    }
+
+    .header-divider {
+        margin: 0 8px;
+        color: #c5ccd5;
+    }
+
+    .btn-back,
+    .btn-secondary {
+        display: inline-block;
+        padding: 11px 18px;
+        border: 1px solid #d3d9e1;
+        border-radius: 7px;
+        background: white;
+        color: #344054;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .success-message {
+        margin-bottom: 25px;
+        padding: 14px 18px;
+        border: 1px solid #b9dfc5;
+        border-radius: 7px;
+        background: #edf8f0;
+        color: #246b38;
+        font-weight: 600;
+    }
+
+    .objectives-layout {
+        display: grid;
+        grid-template-columns: minmax(350px, 0.85fr) minmax(500px, 1.15fr);
+        gap: 25px;
+        align-items: start;
+    }
+
+    .objective-form-card,
+    .objectives-list-card {
+        background: #fff;
+        border: 1px solid #e0e5eb;
+        border-radius: 10px;
+        padding: 28px;
+        box-shadow: 0 3px 12px rgba(20, 35, 55, 0.04);
+    }
+
+    .section-heading {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 25px;
+    }
+
+        .section-heading > span {
+            color: #0D5CC1;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            color: #1c2735;
+            font-size: 20px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #778294;
+            font-size: 14px;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #344054;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 13px;
+        border: 1px solid #cbd3dd;
+        border-radius: 6px;
+        background: #fff;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.1);
+        }
+
+    .objective-description {
+        min-height: 145px;
+        resize: vertical;
+    }
+
+    .character-count {
+        margin-top: 5px;
+        color: #7b8491;
+        font-size: 12px;
+        text-align: right;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .btn-primary {
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 6px;
+        background: #0D5CC1;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+        }
+
+    .objective-item {
+        padding: 22px 0;
+        border-bottom: 1px solid #e8ebef;
+    }
+
+        .objective-item:first-of-type {
+            padding-top: 0;
+        }
+
+        .objective-item:last-child {
+            border-bottom: 0;
+        }
+
+    .objective-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+        .objective-top h3 {
+            margin: 0 0 9px;
+            color: #1d2939;
+            font-size: 17px;
+        }
+
+    .objective-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        color: #687386;
+        font-size: 12px;
+    }
+
+    .priority-label {
+        font-weight: 700;
+        color: #0D5CC1;
+    }
+
+    .objective-description-display {
+        margin: 14px 0;
+        color: #536071;
+        line-height: 1.65;
+        white-space: pre-line;
+    }
+
+    .objective-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #7a8492;
+        font-size: 12px;
+    }
+
+    .delete-objective-form {
+        margin: 0;
+    }
+
+    .btn-delete {
+        padding: 7px 13px;
+        border: 1px solid #e0b8b8;
+        border-radius: 5px;
+        background: #fff;
+        color: #a33a3a;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .empty-objectives {
+        padding: 35px 20px;
+        border: 1px dashed #ccd4de;
+        border-radius: 7px;
+        text-align: center;
+        color: #667085;
+    }
+
+        .empty-objectives strong {
+            color: #344054;
+        }
+
+        .empty-objectives p {
+            margin-bottom: 0;
+        }
+
+    @@media (max-width: 950px) {
+        .objectives-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .project-objectives-page {
+            padding: 25px 15px 50px;
+        }
+
+        .objective-form-card,
+        .objectives-list-card {
+            padding: 20px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var description =
+            document.querySelector(".objective-description");
+
+        var counter =
+            document.getElementById("descriptionCount");
+
+        if (description && counter) {
+
+            function updateCounter() {
+                counter.textContent = description.value.length;
+            }
+
+            description.addEventListener(
+                "input",
+                updateCounter
+            );
+
+            updateCounter();
+        }
+
+        document.querySelectorAll(
+            ".delete-objective-form"
+        ).forEach(function (form) {
+
+            form.addEventListener("submit", function (event) {
+
+                var confirmed = confirm(
+                    "Are you sure you want to remove this project objective?"
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        var objectiveForm =
+            document.getElementById("objectiveForm");
+
+        if (objectiveForm) {
+
+            objectiveForm.addEventListener("submit", function (event) {
+
+                var title =
+                    objectiveForm.querySelector(
+                        '[name="objective.ObjectiveTitle"]'
+                    );
+
+                var description =
+                    objectiveForm.querySelector(
+                        '[name="objective.ObjectiveDescription"]'
+                    );
+
+                if (!title.value.trim() ||
+                    !description.value.trim()) {
+
+                    return;
+                }
+
+                var confirmed = confirm(
+                    "Add this objective to the project?"
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        }
+
+    });
+</script>
+

@@ -1,0 +1,996 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianOpportunityDetailsViewModel
+
+@{
+    ViewBag.Title = "Opportunity Details";
+}
+
+<div class="opportunity-details-page">
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+
+    <div class="opportunity-details-header">
+
+        <div class="header-main">
+
+            <div class="header-eyebrow">
+                TECHNICIAN OPPORTUNITY
+            </div>
+
+            <div class="header-code">
+                @Model.OpportunityCode
+            </div>
+
+            <h1>
+                @Model.Title
+            </h1>
+
+            <p>
+                Review the opportunity details, requirements,
+                responsibilities and application period below.
+            </p>
+
+        </div>
+
+        <div class="header-status">
+
+            @if (Model.IsOpenForApplications)
+            {
+                <div class="status-badge status-open">
+                    Applications Open
+                </div>
+            }
+            else if (DateTime.Today < Model.ApplicationStartDate.Date)
+            {
+                <div class="status-badge status-upcoming">
+                    Applications Not Yet Open
+                </div>
+            }
+            else
+            {
+                <div class="status-badge status-closed">
+                    Applications Closed
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         NAVIGATION
+         ============================================================ -->
+
+    <div class="details-navigation">
+
+        @Html.ActionLink(
+            "Back to Opportunities",
+            "Index",
+            "TechnicianOpportunity",
+            null,
+            new { @class = "btn-secondary" }
+        )
+
+        @if (Model.IsOpenForApplications)
+        {
+            @Html.ActionLink(
+                "Apply",
+                "Create",
+                "TechnicianApplication",
+                new
+                {
+                    opportunityID =
+                        Model.OpportunityID
+                },
+                new
+                {
+                    @class = "btn-primary"
+                }
+            )
+        }
+        else
+        {
+            <span class="application-unavailable">
+                Applications are not currently open.
+            </span>
+        }
+
+    </div>
+
+
+    <!-- ============================================================
+         QUICK INFORMATION
+         ============================================================ -->
+
+    <div class="opportunity-summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Employment Type
+            </div>
+
+            <div class="summary-value">
+                @Model.EmploymentType
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Positions Available
+            </div>
+
+            <div class="summary-value">
+
+                @if (Model.NumberOfPositions.HasValue)
+                {
+                    @Model.NumberOfPositions
+                }
+                else
+                {
+                    <span>Not specified</span>
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Applications Open
+            </div>
+
+            <div class="summary-value">
+                @Model.ApplicationStartDate
+                .ToString("dd MMM yyyy")
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Application Deadline
+            </div>
+
+            <div class="summary-value deadline-value">
+                @Model.ApplicationDeadline
+                .ToString("dd MMM yyyy")
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         APPLICATION PERIOD NOTICE
+         ============================================================ -->
+
+    @if (Model.IsOpenForApplications)
+    {
+        <div class="application-open-notice">
+
+            <div>
+                <strong>
+                    Applications are currently open.
+                </strong>
+
+                <span>
+                    @Model.DaysRemaining
+                    day@(Model.DaysRemaining == 1 ? "" : "s")
+                    remaining before the application deadline.
+                </span>
+            </div>
+
+            @Html.ActionLink(
+                "Apply Now",
+                "Create",
+                "TechnicianApplication",
+                new
+                {
+                    opportunityID = Model.OpportunityID
+                },
+                new
+                {
+                    @class = "btn-primary notice-button"
+                }
+            )
+
+        </div>
+    }
+    else if (DateTime.Today < Model.ApplicationStartDate.Date)
+    {
+        <div class="application-upcoming-notice">
+
+            <strong>
+                Applications have not opened yet.
+            </strong>
+
+            <span>
+                Applications will open on
+                @Model.ApplicationStartDate.ToString("dd MMM yyyy").
+            </span>
+
+        </div>
+    }
+    else
+    {
+        <div class="application-closed-notice">
+
+            <strong>
+                Applications are closed.
+            </strong>
+
+            <span>
+                The application deadline was
+                @Model.ApplicationDeadline.ToString("dd MMM yyyy").
+            </span>
+
+        </div>
+    }
+
+
+    <!-- ============================================================
+         OPPORTUNITY INFORMATION
+         ============================================================ -->
+
+    <div class="details-content-grid">
+
+        <main class="details-main-content">
+
+            <!-- DESCRIPTION -->
+
+            <section class="details-section">
+
+                <div class="section-heading">
+                    <h2>Opportunity Overview</h2>
+                </div>
+
+                <div class="section-body">
+                    @Html.Raw(
+                        HttpUtility.HtmlEncode(
+                            Model.Description
+                        ).Replace(
+                            Environment.NewLine,
+                            "<br />"
+                        )
+                    )
+                </div>
+
+            </section>
+
+
+            <!-- RESPONSIBILITIES -->
+
+            <section class="details-section">
+
+                <div class="section-heading">
+                    <h2>Responsibilities</h2>
+                </div>
+
+                <div class="section-body">
+                    @Html.Raw(
+                        HttpUtility.HtmlEncode(
+                            Model.Responsibilities
+                        ).Replace(
+                            Environment.NewLine,
+                            "<br />"
+                        )
+                    )
+                </div>
+
+            </section>
+
+
+            <!-- REQUIREMENTS -->
+
+            <section class="details-section">
+
+                <div class="section-heading">
+                    <h2>Requirements</h2>
+                </div>
+
+                <div class="section-body">
+                    @Html.Raw(
+                        HttpUtility.HtmlEncode(
+                            Model.Requirements
+                        ).Replace(
+                            Environment.NewLine,
+                            "<br />"
+                        )
+                    )
+                </div>
+
+            </section>
+
+
+            <!-- QUALIFICATIONS -->
+
+            <section class="details-section">
+
+                <div class="section-heading">
+                    <h2>Required Qualifications</h2>
+                </div>
+
+                <div class="section-body">
+                    @Html.Raw(
+                        HttpUtility.HtmlEncode(
+                            Model.RequiredQualifications
+                        ).Replace(
+                            Environment.NewLine,
+                            "<br />"
+                        )
+                    )
+                </div>
+
+            </section>
+
+
+            <!-- EXPERIENCE -->
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.RequiredExperience))
+            {
+                <section class="details-section">
+
+                    <div class="section-heading">
+                        <h2>Required Experience</h2>
+                    </div>
+
+                    <div class="section-body">
+                        @Html.Raw(
+                            HttpUtility.HtmlEncode(
+                                Model.RequiredExperience
+                            ).Replace(
+                                Environment.NewLine,
+                                "<br />"
+                            )
+                        )
+                    </div>
+
+                </section>
+            }
+
+
+            <!-- APPLICATION INSTRUCTIONS -->
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.ApplicationInstructions))
+            {
+                <section class="details-section">
+
+                    <div class="section-heading">
+                        <h2>Application Instructions</h2>
+                    </div>
+
+                    <div class="section-body">
+                        @Html.Raw(
+                            HttpUtility.HtmlEncode(
+                                Model.ApplicationInstructions
+                            ).Replace(
+                                Environment.NewLine,
+                                "<br />"
+                            )
+                        )
+                    </div>
+
+                </section>
+            }
+
+        </main>
+
+
+        <!-- ========================================================
+             SIDEBAR
+             ======================================================== -->
+
+        <aside class="details-sidebar">
+
+            <div class="sidebar-card">
+
+                <h2>Application Period</h2>
+
+                <div class="sidebar-row">
+
+                    <span>
+                        Opens
+                    </span>
+
+                    <strong>
+                        @Model.ApplicationStartDate
+                        .ToString("dd MMM yyyy")
+                    </strong>
+
+                </div>
+
+                <div class="sidebar-row">
+
+                    <span>
+                        Closes
+                    </span>
+
+                    <strong>
+                        @Model.ApplicationDeadline
+                        .ToString("dd MMM yyyy")
+                    </strong>
+
+                </div>
+
+                <div class="sidebar-row">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong>
+
+                        @if (Model.IsOpenForApplications)
+                        {
+                            <span class="text-open">
+                                Open
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-closed">
+                                Closed
+                            </span>
+                        }
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-card">
+
+                <h2>Opportunity Information</h2>
+
+                <div class="sidebar-row">
+
+                    <span>
+                        Opportunity Code
+                    </span>
+
+                    <strong>
+                        @Model.OpportunityCode
+                    </strong>
+
+                </div>
+
+                <div class="sidebar-row">
+
+                    <span>
+                        Employment Type
+                    </span>
+
+                    <strong>
+                        @Model.EmploymentType
+                    </strong>
+
+                </div>
+
+                @if (Model.NumberOfPositions.HasValue)
+                {
+                    <div class="sidebar-row">
+
+                        <span>
+                            Positions
+                        </span>
+
+                        <strong>
+                            @Model.NumberOfPositions
+                        </strong>
+
+                    </div>
+                }
+
+            </div>
+
+
+            @if (Model.IsOpenForApplications)
+            {
+                <div class="sidebar-apply-card">
+
+                    <h2>
+                        Interested in this opportunity?
+                    </h2>
+
+                    <p>
+                        Make sure you meet the requirements before
+                        submitting your application.
+                    </p>
+
+                    @Html.ActionLink(
+                        "Apply for Opportunity",
+                        "Create",
+                        "TechnicianApplication",
+                        new
+                        {
+                            opportunityID =
+                                Model.OpportunityID
+                        },
+                        new
+                        {
+                            @class =
+                                "btn-primary sidebar-apply-button"
+                        }
+                    )
+
+                </div>
+            }
+
+        </aside>
+
+    </div>
+
+
+    <!-- ============================================================
+         FOOTER NAVIGATION
+         ============================================================ -->
+
+    <div class="details-footer-navigation">
+
+        @Html.ActionLink(
+            "Back to Opportunities",
+            "Index",
+            "TechnicianOpportunity",
+            null,
+            new { @class = "btn-secondary" }
+        )
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .opportunity-details-page {
+        max-width: 1200px;
+        margin: 30px auto 60px;
+        padding: 0 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263238;
+    }
+
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+
+    .opportunity-details-header {
+        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        color: white;
+        border-radius: 12px;
+        padding: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .header-main {
+        max-width: 850px;
+    }
+
+    .header-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.3px;
+        margin-bottom: 8px;
+        opacity: 0.9;
+    }
+
+    .header-code {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 7px;
+        color: white;
+    }
+
+    .opportunity-details-header h1 {
+        margin: 0 0 10px;
+        font-size: 30px;
+        line-height: 1.25;
+        color: white;
+    }
+
+    .opportunity-details-header p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.6;
+        color: white;
+        opacity: 0.94;
+    }
+
+
+    /* ============================================================
+       STATUS
+       ============================================================ */
+
+    .header-status {
+        flex-shrink: 0;
+    }
+
+    .status-badge {
+        padding: 9px 13px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-open {
+        background: #e8f7ee;
+        color: #187a43;
+        border: 1px solid #bde4ca;
+    }
+
+    .status-upcoming {
+        background: #eef5ff;
+        color: #0D5CC1;
+        border: 1px solid #c7dbf5;
+    }
+
+    .status-closed {
+        background: #f2f4f6;
+        color: #596773;
+        border: 1px solid #d7dde3;
+    }
+
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+
+    .details-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin: 18px 0;
+    }
+
+
+    /* ============================================================
+       SUMMARY
+       ============================================================ */
+
+    .opportunity-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 18px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #71808e;
+        margin-bottom: 8px;
+    }
+
+    .summary-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: #263b50;
+    }
+
+    .deadline-value {
+        color: #a76400;
+    }
+
+
+    /* ============================================================
+       APPLICATION NOTICES
+       ============================================================ */
+
+    .application-open-notice,
+    .application-upcoming-notice,
+    .application-closed-notice {
+        border-radius: 9px;
+        padding: 17px 20px;
+        margin-bottom: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+    }
+
+    .application-open-notice {
+        background: #edf9f1;
+        border: 1px solid #c4e6cf;
+        color: #25643c;
+    }
+
+    .application-upcoming-notice {
+        background: #eef5ff;
+        border: 1px solid #c8dcf5;
+        color: #24578f;
+    }
+
+    .application-closed-notice {
+        background: #f5f6f7;
+        border: 1px solid #dce1e5;
+        color: #5c6872;
+    }
+
+        .application-open-notice strong,
+        .application-upcoming-notice strong,
+        .application-closed-notice strong {
+            margin-right: 6px;
+        }
+
+    .notice-button {
+        flex-shrink: 0;
+    }
+
+
+    /* ============================================================
+       CONTENT
+       ============================================================ */
+
+    .details-content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 310px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .details-main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .details-section {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .section-heading {
+        background: #f6f8fb;
+        border-bottom: 1px solid #e3e8ee;
+        padding: 15px 19px;
+    }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 17px;
+            color: #263b50;
+        }
+
+    .section-body {
+        padding: 19px;
+        font-size: 14px;
+        line-height: 1.75;
+        color: #526170;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+
+    /* ============================================================
+       SIDEBAR
+       ============================================================ */
+
+    .details-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 17px;
+    }
+
+    .sidebar-card,
+    .sidebar-apply-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+
+        .sidebar-card h2,
+        .sidebar-apply-card h2 {
+            margin: 0 0 15px;
+            font-size: 17px;
+            color: #263b50;
+        }
+
+    .sidebar-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 11px 0;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+        .sidebar-row:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-row span {
+            font-size: 12px;
+            color: #7a8792;
+        }
+
+        .sidebar-row strong {
+            font-size: 13px;
+            color: #34495a;
+        }
+
+    .text-open {
+        color: #187a43;
+    }
+
+    .text-closed {
+        color: #687580;
+    }
+
+    .sidebar-apply-card {
+        background: #f7faff;
+        border-color: #cbdcf1;
+    }
+
+        .sidebar-apply-card p {
+            margin: 0 0 17px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #657381;
+        }
+
+    .sidebar-apply-button {
+        width: 100%;
+    }
+
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 16px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        white-space: nowrap;
+        transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: white;
+        border-color: #0D5CC1;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: #394957;
+        border-color: #cbd5df;
+    }
+
+        .btn-secondary:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+
+    .details-footer-navigation {
+        margin-top: 22px;
+        padding-top: 20px;
+        border-top: 1px solid #e3e8ee;
+    }
+
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @@media (max-width: 900px) {
+
+        .opportunity-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .details-content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .details-sidebar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+
+    @@media (max-width: 650px) {
+
+        .opportunity-details-page {
+            padding: 0 12px;
+            margin-top: 18px;
+        }
+
+        .opportunity-details-header {
+            flex-direction: column;
+            padding: 23px;
+        }
+
+            .opportunity-details-header h1 {
+                font-size: 24px;
+            }
+
+        .details-navigation {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .details-navigation .btn-primary,
+            .details-navigation .btn-secondary {
+                width: 100%;
+            }
+
+        .opportunity-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .application-open-notice,
+        .application-upcoming-notice,
+        .application-closed-notice {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .notice-button {
+            width: 100%;
+        }
+
+        .details-sidebar {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

@@ -1,0 +1,568 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationDetailsViewModel
+
+@{
+    ViewBag.Title = "Application Status";
+}
+
+<div class="application-details-page">
+
+    <div class="details-header">
+
+        <div>
+
+            <div class="details-eyebrow">
+                TECHNICIAN APPLICATION
+            </div>
+
+            <h1>
+                @Model.OpportunityTitle
+            </h1>
+
+            <p>
+                Application reference:
+                <strong>
+                    @Model.ApplicationReference
+                </strong>
+            </p>
+
+        </div>
+
+        <div>
+
+            <span class="status-badge status-@Model.Status.ToString().ToLower()">
+                @Model.Status
+            </span>
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+
+    @if (Model.IsSuccessful)
+    {
+        <div class="decision-message success">
+
+            <h2>Application Progressed</h2>
+
+            <p>
+                Your application has progressed in the recruitment process.
+                Please continue to monitor your application status for
+                further onboarding information.
+            </p>
+
+        </div>
+    }
+    else if (Model.IsUnsuccessful)
+    {
+        <div class="decision-message unsuccessful">
+
+            <h2>Application Not Selected</h2>
+
+            <p>
+                Your application was not selected for this opportunity.
+                Thank you for your interest in working with the municipality.
+            </p>
+
+        </div>
+    }
+
+
+    <div class="details-grid">
+
+        <div class="details-main">
+
+            <div class="content-card">
+
+                <div class="card-header">
+                    <h2>Application Information</h2>
+                </div>
+
+                <div class="information-grid">
+
+                    <div>
+                        <span>Application Reference</span>
+                        <strong>
+                            @Model.ApplicationReference
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Opportunity Code</span>
+                        <strong>
+                            @Model.OpportunityCode
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Employment Type</span>
+                        <strong>
+                            @Model.EmploymentType
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Positions</span>
+                        <strong>
+                            @(Model.NumberOfPositions.HasValue
+                                ? Model.NumberOfPositions.ToString()
+                                : "Not specified")
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Application Date</span>
+                        <strong>
+                            @Model.ApplicationDate.ToString("dd MMM yyyy HH:mm")
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Application Deadline</span>
+                        <strong>
+                            @Model.ApplicationDeadline.ToString("dd MMM yyyy")
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Last Updated</span>
+                        <strong>
+                            @(Model.LastUpdatedDate.HasValue
+                                ? Model.LastUpdatedDate.Value.ToString("dd MMM yyyy HH:mm")
+                                : "Not updated")
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="content-card">
+
+                <div class="card-header">
+                    <h2>Submitted Cover Letter</h2>
+                </div>
+
+                <div class="cover-letter-content">
+
+                    @Html.Raw(
+                        HttpUtility.HtmlEncode(Model.CoverLetter)
+                            .Replace("\r\n", "<br />")
+                            .Replace("\n", "<br />")
+                    )
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <aside class="details-sidebar">
+
+            <div class="sidebar-card">
+
+                <h2>Application Status</h2>
+
+                <div class="current-status">
+
+                    <span class="status-badge status-@Model.Status.ToString().ToLower()">
+                        @Model.Status
+                    </span>
+
+                </div>
+
+                <p>
+                    Your application status will change as the
+                    recruitment process progresses.
+                </p>
+
+            </div>
+
+
+            <div class="sidebar-card">
+
+                <h2>Opportunity</h2>
+
+                <p class="sidebar-opportunity-title">
+                    @Model.OpportunityTitle
+                </p>
+
+                @Html.ActionLink(
+                    "View Opportunity",
+                    "Details",
+                    "TechnicianOpportunity",
+                    new
+                    {
+                        id = Model.OpportunityID
+                    },
+                    new
+                    {
+                        @class = "sidebar-link"
+                    }
+                )
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <div class="page-navigation">
+
+        @Html.ActionLink(
+            "Back to My Applications",
+            "Index",
+            "TechnicianApplication",
+            null,
+            new
+            {
+                @class = "btn-secondary"
+            }
+        )
+
+        @Html.ActionLink(
+            "View Opportunities",
+            "Index",
+            "TechnicianOpportunity",
+            null,
+            new
+            {
+                @class = "btn-primary"
+            }
+        )
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .application-details-page {
+        max-width: 1100px;
+        margin: 30px auto 60px;
+        padding: 0 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263238;
+    }
+
+    .details-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .details-eyebrow {
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
+
+    .details-header h1 {
+        color: white;
+        margin: 0 0 8px;
+        font-size: 27px;
+    }
+
+    .details-header p {
+        color: white;
+        margin: 0;
+        font-size: 13px;
+    }
+
+    .details-header strong {
+        color: white;
+    }
+
+    .status-badge {
+        display: inline-block;
+        border-radius: 5px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        white-space: nowrap;
+    }
+
+    .status-submitted,
+    .status-underreview,
+    .status-screening,
+    .status-documentspending,
+    .status-documentsverified,
+    .status-assessmentscheduled,
+    .status-assessed,
+    .status-interviewscheduled,
+    .status-interviewed,
+    .status-finalverification {
+        background: #edf4ff;
+        color: #0D5CC1;
+        border-color: #cbdcf4;
+    }
+
+    .status-shortlisted,
+    .status-selected,
+    .status-approvedforonboarding {
+        background: #eaf7ef;
+        color: #187a43;
+        border-color: #bfe2ca;
+    }
+
+    .status-onboarded {
+        background: #e5f4ec;
+        color: #126334;
+        border-color: #b7ddc4;
+    }
+
+    .status-notselected {
+        background: #fff0f0;
+        color: #b42318;
+        border-color: #efc4c4;
+    }
+
+    .status-withdrawn {
+        background: #f1f3f5;
+        color: #596773;
+        border-color: #d8dee3;
+    }
+
+    .alert {
+        padding: 13px 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .alert-success {
+        background: #edf9f1;
+        border: 1px solid #c4e6cf;
+        color: #25643c;
+    }
+
+    .decision-message {
+        border-radius: 9px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+    }
+
+        .decision-message h2 {
+            margin: 0 0 7px;
+            font-size: 17px;
+        }
+
+        .decision-message p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .decision-message.success {
+            background: #edf9f1;
+            border: 1px solid #c4e6cf;
+            color: #25643c;
+        }
+
+        .decision-message.unsuccessful {
+            background: #fff5f5;
+            border: 1px solid #efc4c4;
+            color: #8e2424;
+        }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 290px;
+        gap: 20px;
+    }
+
+    .content-card,
+    .sidebar-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+    .content-card {
+        margin-bottom: 18px;
+    }
+
+    .card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+        .card-header h2 {
+            margin: 0;
+            color: #263b50;
+            font-size: 17px;
+        }
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+        .information-grid > div {
+            padding: 17px 20px;
+            border-bottom: 1px solid #edf0f3;
+        }
+
+        .information-grid span {
+            display: block;
+            color: #7b8792;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .information-grid strong {
+            color: #344454;
+            font-size: 13px;
+        }
+
+    .cover-letter-content {
+        padding: 20px;
+        color: #536271;
+        font-size: 13px;
+        line-height: 1.75;
+        white-space: normal;
+    }
+
+    .sidebar-card {
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+        .sidebar-card h2 {
+            margin: 0 0 12px;
+            color: #263b50;
+            font-size: 16px;
+        }
+
+        .sidebar-card p {
+            margin: 10px 0 0;
+            color: #71808e;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+    .current-status {
+        margin-bottom: 10px;
+    }
+
+    .sidebar-opportunity-title {
+        color: #344454 !important;
+        font-weight: 700;
+    }
+
+    .sidebar-link {
+        display: inline-block;
+        margin-top: 14px;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .sidebar-link:hover {
+            color: #094b9f;
+            text-decoration: underline;
+        }
+
+    .page-navigation {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        border: 1px solid #cbd5df;
+        color: #394957;
+    }
+
+        .btn-secondary:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+    @@media (max-width: 800px) {
+
+        .application-details-page {
+            padding: 0 12px;
+        }
+
+        .details-header {
+            flex-direction: column;
+            padding: 23px;
+        }
+
+            .details-header h1 {
+                font-size: 23px;
+            }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-navigation {
+            flex-direction: column;
+        }
+
+            .page-navigation .btn-primary,
+            .page-navigation .btn-secondary {
+                width: 100%;
+            }
+    }
+</style>

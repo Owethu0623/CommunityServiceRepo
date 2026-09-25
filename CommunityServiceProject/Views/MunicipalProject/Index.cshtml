@@ -1,0 +1,1446 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectIndexViewModel
+
+@{
+    ViewBag.Title = "Municipal Projects";
+}
+
+<div class="project-index-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-back-navigation">
+        @Html.ActionLink(
+            "Back to Administrator Dashboard",
+            "Index",
+            "AdministratorDashboard",
+            null,
+            new { @class = "btn-back-dashboard" }
+        )
+    </div>
+
+
+
+    <div class="page-header">
+
+        <div class="page-header-content">
+
+            <span class="page-eyebrow">
+                MUNICIPAL PROJECT MANAGEMENT
+            </span>
+
+            <h1>
+                Municipal Projects
+            </h1>
+
+            <p>
+                View and monitor registered municipal projects,
+                their current status, priority, location and schedule.
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            @Html.ActionLink(
+     "Back to AdministratorDashboard",
+     "Index",
+      "AdministratorDashboard",
+     null,
+     new { @class = "btn-register-project" }
+ )
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card total">
+
+            <span class="summary-label">
+                Total Projects
+            </span>
+
+            <strong>
+                @Model.TotalProjects
+            </strong>
+
+            <span class="summary-description">
+                Registered projects
+            </span>
+
+        </div>
+
+
+        <div class="summary-card planned">
+
+            <span class="summary-label">
+                Planned
+            </span>
+
+            <strong>
+                @Model.PlannedProjects
+            </strong>
+
+            <span class="summary-description">
+                Awaiting progression
+            </span>
+
+        </div>
+
+
+        <div class="summary-card approved">
+
+            <span class="summary-label">
+                Approved
+            </span>
+
+            <strong>
+                @Model.ApprovedProjects
+            </strong>
+
+            <span class="summary-description">
+                Approved projects
+            </span>
+
+        </div>
+
+
+        <div class="summary-card progress">
+
+            <span class="summary-label">
+                In Progress
+            </span>
+
+            <strong>
+                @Model.InProgressProjects
+            </strong>
+
+            <span class="summary-description">
+                Currently underway
+            </span>
+
+        </div>
+
+
+        <div class="summary-card hold">
+
+            <span class="summary-label">
+                On Hold
+            </span>
+
+            <strong>
+                @Model.OnHoldProjects
+            </strong>
+
+            <span class="summary-description">
+                Temporarily paused
+            </span>
+
+        </div>
+
+
+        <div class="summary-card completed">
+
+            <span class="summary-label">
+                Completed
+            </span>
+
+            <strong>
+                @Model.CompletedProjects
+            </strong>
+
+            <span class="summary-description">
+                Successfully completed
+            </span>
+
+        </div>
+
+
+        <div class="summary-card cancelled">
+
+            <span class="summary-label">
+                Cancelled
+            </span>
+
+            <strong>
+                @Model.CancelledProjects
+            </strong>
+
+            <span class="summary-description">
+                No longer proceeding
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTERS
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        <div class="section-heading">
+
+            <div class="section-number">
+                01
+            </div>
+
+            <div>
+
+                <h2>
+                    Find Projects
+                </h2>
+
+                <p>
+                    Search or filter registered municipal projects.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @using (Html.BeginForm(
+            "Index",
+            "MunicipalProject",
+            FormMethod.Get,
+            new { @class = "filter-form" }
+        ))
+        {
+            <div class="filter-grid">
+
+                <!-- SEARCH -->
+
+                <div class="form-group search-field">
+
+                    <label for="searchTerm">
+                        Search
+                    </label>
+
+                    <input type="text"
+                           id="searchTerm"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="form-control"
+                           placeholder="Project code, name, type or location..." />
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select id="status"
+                            name="status"
+                            class="form-control">
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        @foreach (var option in Model.StatusOptions)
+                        {
+                            <option value="@option"
+                                    @(Model.SelectedStatus == option ? "selected" : "")>
+                                @option
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- PRIORITY -->
+
+                <div class="form-group">
+
+                    <label for="priority">
+                        Priority
+                    </label>
+
+                    <select id="priority"
+                            name="priority"
+                            class="form-control">
+
+                        <option value="">
+                            All priorities
+                        </option>
+
+                        @foreach (var option in Model.PriorityOptions)
+                        {
+                            <option value="@option"
+                                    @(Model.SelectedPriority == option ? "selected" : "")>
+                                @option
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- PROJECT TYPE -->
+
+                <div class="form-group">
+
+                    <label for="projectType">
+                        Project Type
+                    </label>
+
+                    <select id="projectType"
+                            name="projectType"
+                            class="form-control">
+
+                        <option value="">
+                            All project types
+                        </option>
+
+                        @foreach (var option in Model.ProjectTypeOptions)
+                        {
+                            <option value="@option"
+                                    @(Model.SelectedProjectType == option ? "selected" : "")>
+                                @option
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- WARD -->
+
+                <div class="form-group">
+
+                    <label for="ward">
+                        Municipal Ward
+                    </label>
+
+                    <select id="ward"
+                            name="ward"
+                            class="form-control">
+
+                        <option value="">
+                            All wards
+                        </option>
+
+                        @foreach (var option in Model.WardOptions)
+                        {
+                            <option value="@option"
+                                    @(Model.SelectedWard == option ? "selected" : "")>
+                                @option
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="btn-apply-filters">
+                    Apply Filters
+                </button>
+
+                @Html.ActionLink(
+                    "Clear Filters",
+                    "Index",
+                    "MunicipalProject",
+                    null,
+                    new { @class = "btn-clear-filters" }
+                )
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         PROJECT TABLE
+         ========================================================= -->
+
+    <div class="projects-card">
+
+        <div class="results-header">
+
+            <div class="results-heading">
+
+                <div class="section-number">
+                    02
+                </div>
+
+                <div>
+
+                    <h2>
+                        Registered Projects
+                    </h2>
+
+                    <p>
+                        @Model.Projects.Count project(s) match the current filters.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Projects.Any())
+        {
+            <div class="table-wrapper">
+
+                <table class="project-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="project-column">
+                                Project
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Ward
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Priority
+                            </th>
+
+                            <th>
+                                Schedule
+                            </th>
+
+                            <th>
+                                Responsible Administrator
+                            </th>
+
+                            <th class="action-column">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var project in Model.Projects)
+                        {
+                            <tr>
+
+                                <!-- PROJECT -->
+
+                                <td>
+
+                                    <div class="project-identity">
+
+                                        <strong>
+                                            @project.ProjectCode
+                                        </strong>
+
+                                        <span>
+                                            @project.ProjectName
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- TYPE -->
+
+                                <td>
+
+                                    <span class="type-value">
+                                        @project.ProjectType
+                                    </span>
+
+                                </td>
+
+
+                                <!-- WARD -->
+
+                                <td>
+
+                                    <span class="ward-value">
+                                        @project.WardName
+                                    </span>
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span class="status-badge status-@project.Status">
+                                        @project.Status
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PRIORITY -->
+
+                                <td>
+
+                                    <span class="priority-badge priority-@project.Priority">
+                                        @project.Priority
+                                    </span>
+
+                                </td>
+
+
+                                <!-- SCHEDULE -->
+
+                                <td>
+
+                                    <div class="schedule-cell">
+
+                                        <strong>
+                                            @project.StartDate.ToString("dd MMM yyyy")
+                                        </strong>
+
+                                        @if (project.ExpectedCompletionDate.HasValue)
+                                        {
+                                            <span>
+                                                Expected:
+                                                @project.ExpectedCompletionDate.Value.ToString("dd MMM yyyy")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                Completion date not set
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ADMINISTRATOR -->
+
+                                <td>
+
+                                    <span class="administrator-name">
+                                        @project.ResponsibleAdministratorName
+                                    </span>
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td class="action-cell">
+
+                                    @Html.ActionLink(
+                                        "View Details",
+                                        "Details",
+                                        "MunicipalProject",
+                                        new { id = project.ProjectID },
+                                        new { @class = "view-project-button" }
+                                    )
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <h3>
+                    No municipal projects found
+                </h3>
+
+                <p>
+                    No projects match the selected search criteria.
+                </p>
+
+                @Html.ActionLink(
+                    "Register First Project",
+                    "Create",
+                    "MunicipalProject",
+                    null,
+                    new { @class = "btn-register-project" }
+                )
+
+            </div>
+        }
+
+    </div>
+
+</div>
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .project-index-page {
+        width: 100%;
+        max-width: 1650px;
+        margin: 0 auto;
+        padding: 32px 30px 65px;
+        box-sizing: border-box;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 35px;
+        margin-bottom: 30px;
+    }
+
+    .page-header-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .page-eyebrow {
+        display: block;
+        margin-bottom: 8px;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.4px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .page-header p {
+        max-width: 820px;
+        margin: 0;
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .header-actions {
+        flex-shrink: 0;
+    }
+
+
+    /* =========================================================
+       REGISTER PROJECT BUTTON
+       ========================================================= */
+
+    .btn-register-project {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 175px;
+        min-height: 48px;
+        padding: 0 24px;
+        border: 1px solid #0D5CC1;
+        border-radius: 8px;
+        background: #0D5CC1;
+        color: #ffffff !important;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none !important;
+        box-shadow: 0 3px 8px rgba(13, 92, 193, .18);
+        transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+        .btn-register-project:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            box-shadow: 0 5px 12px rgba(13, 92, 193, .24);
+            transform: translateY(-1px);
+        }
+
+        .btn-register-project:active {
+            transform: translateY(0);
+        }
+
+
+    /* =========================================================
+       SUMMARY GRID
+       ========================================================= */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(145px, 1fr));
+        gap: 15px;
+        width: 100%;
+        margin-bottom: 28px;
+    }
+
+
+    /* =========================================================
+       SUMMARY CARD
+       ========================================================= */
+
+    .summary-card {
+        position: relative;
+        min-width: 0;
+        min-height: 135px;
+        padding: 20px 18px 18px;
+        box-sizing: border-box;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e1e5ea;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .035);
+        text-align: center;
+    }
+
+        .summary-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #d1d5db;
+        }
+
+        .summary-card.total::before {
+            background: #0D5CC1;
+        }
+
+        .summary-card.planned::before {
+            background: #6b7280;
+        }
+
+        .summary-card.approved::before {
+            background: #2563eb;
+        }
+
+        .summary-card.progress::before {
+            background: #1d4ed8;
+        }
+
+        .summary-card.hold::before {
+            background: #d97706;
+        }
+
+        .summary-card.completed::before {
+            background: #059669;
+        }
+
+        .summary-card.cancelled::before {
+            background: #dc2626;
+        }
+
+
+    /* =========================================================
+       SUMMARY CONTENT
+       IMPORTANT: FORCES VERTICAL ALIGNMENT
+       ========================================================= */
+
+    .summary-label {
+        display: block;
+        width: 100%;
+        margin: 0 0 10px;
+        color: #6b7280;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.3;
+        letter-spacing: .65px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .summary-card strong {
+        display: block;
+        width: 100%;
+        margin: 0;
+        color: #111827;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    .summary-description {
+        display: block;
+        width: 100%;
+        margin: 9px 0 0;
+        color: #8b95a1;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.35;
+        text-align: center;
+    }
+
+
+    /* =========================================================
+       FILTER / TABLE CARDS
+       ========================================================= */
+
+    .filter-card,
+    .projects-card {
+        width: 100%;
+        margin-bottom: 25px;
+        border: 1px solid #e1e5ea;
+        border-radius: 11px;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .035);
+        box-sizing: border-box;
+    }
+
+    .filter-card {
+        padding: 27px;
+    }
+
+
+    /* =========================================================
+       SECTION HEADINGS
+       ========================================================= */
+
+    .section-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 23px;
+    }
+
+    .section-number {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 7px;
+        background: #edf4ff;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .section-heading h2,
+    .results-heading h2 {
+        margin: 0 0 4px;
+        color: #111827;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .section-heading p,
+    .results-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       FILTERS
+       ========================================================= */
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: minmax(260px, 2fr) repeat(4, minmax(145px, 1fr));
+        gap: 16px;
+        width: 100%;
+    }
+
+    .form-group {
+        min-width: 0;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #374151;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+    .form-control {
+        width: 100%;
+        height: 44px;
+        padding: 0 12px;
+        box-sizing: border-box;
+        border: 1px solid #cfd5dc;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #1f2937;
+        font-size: 13px;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .form-control:hover {
+            border-color: #aeb7c2;
+        }
+
+        .form-control:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 19px;
+        border-top: 1px solid #edf0f3;
+    }
+
+    .btn-apply-filters,
+    .btn-clear-filters {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 19px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .btn-apply-filters {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+        .btn-apply-filters:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff;
+        }
+
+    .btn-clear-filters {
+        border: 1px solid #cfd5dc;
+        background: #ffffff;
+        color: #374151;
+    }
+
+        .btn-clear-filters:hover {
+            border-color: #aeb7c2;
+            background: #f8fafc;
+            color: #111827;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       RESULTS HEADER
+       ========================================================= */
+
+    .results-header {
+        padding: 24px 27px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #ffffff;
+        border-radius: 11px 11px 0 0;
+    }
+
+    .results-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .project-table {
+        width: 100%;
+        min-width: 1400px;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .project-table th {
+            padding: 14px 17px;
+            border-bottom: 1px solid #dfe4e9;
+            background: #f7f9fb;
+            color: #5b6572;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .55px;
+            text-align: left;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+            .project-table th:first-child {
+                padding-left: 22px;
+            }
+
+            .project-table th:last-child {
+                padding-right: 22px;
+            }
+
+        .project-table td {
+            padding: 18px 17px;
+            border-bottom: 1px solid #edf0f3;
+            vertical-align: middle;
+            color: #374151;
+            font-size: 13px;
+            background: #ffffff;
+        }
+
+            .project-table td:first-child {
+                padding-left: 22px;
+            }
+
+            .project-table td:last-child {
+                padding-right: 22px;
+            }
+
+        .project-table tbody tr {
+            transition: background .15s ease;
+        }
+
+            .project-table tbody tr:hover td {
+                background: #f8fbff;
+            }
+
+            .project-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+
+    /* =========================================================
+       PROJECT COLUMN
+       ========================================================= */
+
+    .project-column {
+        min-width: 260px;
+    }
+
+    .project-identity strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .project-identity span {
+        display: block;
+        max-width: 290px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.45;
+    }
+
+
+    /* =========================================================
+       TYPE / WARD / ADMIN
+       ========================================================= */
+
+    .type-value {
+        display: block;
+        max-width: 190px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .ward-value {
+        display: inline-block;
+        min-width: 115px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .administrator-name {
+        display: block;
+        max-width: 200px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+
+    /* =========================================================
+       SCHEDULE
+       ========================================================= */
+
+    .schedule-cell {
+        min-width: 140px;
+    }
+
+        .schedule-cell strong {
+            display: block;
+            color: #374151;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .schedule-cell span {
+            display: block;
+            margin-top: 4px;
+            color: #6b7280;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+
+    /* =========================================================
+       STATUS / PRIORITY BADGES
+       ========================================================= */
+
+    .status-badge,
+    .priority-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 88px;
+        min-height: 30px;
+        padding: 0 12px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+
+
+    /* STATUS */
+
+    .status-Planned {
+        border-color: #d1d5db;
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .status-Approved {
+        border-color: #bfdbfe;
+        background: #eaf3ff;
+        color: #1d4ed8;
+    }
+
+    .status-InProgress {
+        border-color: #93c5fd;
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .status-OnHold {
+        border-color: #fed7aa;
+        background: #fff4e6;
+        color: #c2410c;
+    }
+
+    .status-Completed {
+        border-color: #a7f3d0;
+        background: #e8faf3;
+        color: #047857;
+    }
+
+    .status-Cancelled {
+        border-color: #fecaca;
+        background: #fff0f0;
+        color: #b91c1c;
+    }
+
+
+    /* PRIORITY */
+
+    .priority-Low {
+        border-color: #d1d5db;
+        background: #f5f6f7;
+        color: #4b5563;
+    }
+
+    .priority-Medium {
+        border-color: #bfdbfe;
+        background: #edf5ff;
+        color: #1d4ed8;
+    }
+
+    .priority-High {
+        border-color: #fed7aa;
+        background: #fff4e6;
+        color: #c2410c;
+    }
+
+    .priority-Critical {
+        border-color: #fecaca;
+        background: #fff0f0;
+        color: #b91c1c;
+    }
+
+
+    /* =========================================================
+       ACTION COLUMN
+       ========================================================= */
+
+    .action-column {
+        width: 140px;
+        text-align: center !important;
+    }
+
+    .action-cell {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .view-project-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 105px;
+        min-height: 38px;
+        padding: 0 15px;
+        border: 1px solid #0D5CC1;
+        border-radius: 7px;
+        background: #0D5CC1;
+        color: #ffffff !important;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none !important;
+        box-shadow: 0 2px 5px rgba(13, 92, 193, .16);
+        transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .view-project-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            box-shadow: 0 4px 8px rgba(13, 92, 193, .22);
+        }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 70px 25px;
+        text-align: center;
+    }
+
+        .empty-state h3 {
+            margin: 0 0 8px;
+            color: #111827;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .empty-state p {
+            margin: 0 auto 22px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+    /* =========================================================
+       LARGE DESKTOP
+       ========================================================= */
+
+    @@media (min-width: 1651px) {
+
+        .project-index-page {
+            max-width: 1750px;
+            padding-left: 35px;
+            padding-right: 35px;
+        }
+
+        .summary-grid {
+            gap: 17px;
+        }
+
+        .project-table {
+            min-width: 0;
+        }
+    }
+
+
+    /* =========================================================
+       MEDIUM DESKTOP
+       ========================================================= */
+
+    @@media (max-width: 1350px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(4, minmax(150px, 1fr));
+        }
+
+        .filter-grid {
+            grid-template-columns: repeat(2, minmax(200px, 1fr));
+        }
+    }
+
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @@media (max-width: 900px) {
+
+        .project-index-page {
+            padding: 25px 20px 50px;
+        }
+
+        .page-header {
+            align-items: flex-start;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(150px, 1fr));
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @@media (max-width: 768px) {
+
+        .project-index-page {
+            padding: 20px 15px 40px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 20px;
+        }
+
+        .header-actions,
+        .btn-register-project {
+            width: 100%;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .summary-card {
+            min-height: 125px;
+        }
+
+        .filter-card {
+            padding: 20px;
+        }
+
+        .results-header {
+            padding: 20px;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .btn-apply-filters,
+        .btn-clear-filters {
+            width: 100%;
+        }
+
+        .project-table {
+            min-width: 1200px;
+        }
+        .page-back-navigation {
+            margin-bottom: 18px;
+
+            .btn-back-dashboard {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 40px;
+                padding: 0 16px;
+                border: 1px solid #cfd5dc;
+                border-radius: 7px;
+                background: #ffffff;
+                color: #374151 !important;
+                font-size: 12px;
+                font-weight: 800;
+                text-decoration: none !important;
+                transition: background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+            }
+
+                .btn-back-dashboard:hover {
+                    background: #f7f9fb;
+                    border-color: #0D5CC1;
+                    color: #0D5CC1 !important;
+                    text-decoration: none !important;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+                }
+        }
+}
+</style>
+

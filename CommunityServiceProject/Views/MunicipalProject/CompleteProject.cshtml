@@ -1,0 +1,784 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectCompletionViewModel
+
+@{
+    ViewBag.Title = "Complete Municipal Project";
+}
+
+<div class="project-completion-page">
+
+    <div class="project-completion-header">
+
+        <div>
+
+            <span class="page-label">
+                MUNICIPAL PROJECT MANAGEMENT
+            </span>
+
+            <h1>
+                Complete Project
+            </h1>
+
+            <p>
+                Review the project information and formally record its completion.
+            </p>
+
+        </div>
+
+        <div class="project-reference">
+
+            <strong>
+                @Model.ProjectCode
+            </strong>
+
+            <span>
+                @Model.ProjectType
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="completion-navigation">
+
+        @Html.ActionLink(
+            "Back to Project",
+            "Details",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+        @Html.ActionLink(
+            "Monitor Milestones",
+            "MonitorMilestones",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+    </div>
+
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="validation-summary">
+
+            @Html.ValidationSummary(
+                true,
+                "Please correct the following:"
+            )
+
+        </div>
+    }
+
+
+    <div class="completion-grid">
+
+        <!-- Project Information -->
+
+        <section class="completion-card">
+
+            <div class="card-heading">
+
+                <h2>
+                    Project Information
+                </h2>
+
+            </div>
+
+            <div class="information-grid">
+
+                <div class="information-item">
+                    <span>Project Name</span>
+                    <strong>@Model.ProjectName</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Project Type</span>
+                    <strong>@Model.ProjectType</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Location</span>
+                    <strong>@Model.ProjectLocation</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Ward</span>
+                    <strong>@Model.WardName</strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Current Status</span>
+                    <strong class="status-in-progress">
+                        @Model.CurrentStatus
+                    </strong>
+                </div>
+
+                <div class="information-item">
+                    <span>Priority</span>
+                    <strong>@Model.Priority</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Milestone Summary -->
+
+        <section class="completion-card">
+
+            <div class="card-heading">
+
+                <h2>
+                    Milestone Summary
+                </h2>
+
+                <p>
+                    Review the current milestone position before completing the project.
+                </p>
+
+            </div>
+
+            <div class="milestone-summary-grid">
+
+                <div class="summary-item">
+                    <span>Total</span>
+                    <strong>@Model.TotalMilestones</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Completed</span>
+                    <strong class="summary-completed">
+                        @Model.CompletedMilestones
+                    </strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Incomplete</span>
+                    <strong class="summary-incomplete">
+                        @Model.IncompleteMilestones
+                    </strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Overall Progress</span>
+                    <strong>
+                        @Model.OverallProgress%
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Completion Form -->
+
+        <section class="completion-card completion-form-card">
+
+            <div class="card-heading">
+
+                <h2>
+                    Completion Details
+                </h2>
+
+                <p>
+                    Record the official completion information for this project.
+                </p>
+
+            </div>
+
+            @using (Html.BeginForm(
+                "CompleteProject",
+                "MunicipalProject",
+                FormMethod.Post,
+                new
+                {
+                    id = "completeProjectForm"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(
+                    model => model.ProjectID
+                )
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.ActualCompletionDate
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.ActualCompletionDate,
+                        "{0:yyyy-MM-dd}",
+                        new
+                        {
+                            @class = "form-control",
+                            type = "date"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.ActualCompletionDate,
+                        "",
+                        new
+                        {
+                            @class = "field-validation"
+                        }
+                    )
+
+                </div>
+
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.CompletionSummary
+                    )
+
+                    @Html.TextAreaFor(
+                        model => model.CompletionSummary,
+                        new
+                        {
+                            @class = "form-control completion-summary",
+                            rows = 7,
+                            placeholder =
+                                "Describe the work completed, final outcome, and any relevant completion information..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.CompletionSummary,
+                        "",
+                        new
+                        {
+                            @class = "field-validation"
+                        }
+                    )
+
+                    <div class="character-guidance">
+                        Minimum 10 characters. Maximum 2000 characters.
+                    </div>
+
+                </div>
+
+
+                <div class="completion-warning">
+
+                    <strong>
+                        Confirm project completion
+                    </strong>
+
+                    <p>
+                        Marking this project as completed will update its official
+                        project status and record the completion in project history.
+                    </p>
+
+                </div>
+
+
+                <button type="button"
+                        id="openCompletionConfirmation"
+                        class="btn-complete-project">
+
+                    Complete Project
+
+                </button>
+
+            }
+
+        </section>
+
+    </div>
+
+
+    <!-- Confirmation Modal -->
+
+    <div id="completionConfirmation"
+         class="confirmation-overlay"
+         style="display:none;">
+
+        <div class="confirmation-dialog">
+
+            <h2>
+                Confirm Project Completion
+            </h2>
+
+            <p>
+                Are you sure you want to mark
+                <strong>@Model.ProjectCode</strong>
+                as completed?
+            </p>
+
+            <p>
+                This action will change the project status to
+                <strong>Completed</strong>
+                and record the completion in project history.
+            </p>
+
+            <div class="confirmation-actions">
+
+                <button type="button"
+                        id="cancelCompletion"
+                        class="btn-secondary">
+
+                    Cancel
+
+                </button>
+
+                <button type="button"
+                        id="confirmCompletion"
+                        class="btn-confirm-completion">
+
+                    Confirm Completion
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .project-completion-page {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px 50px;
+    }
+
+    .project-completion-header {
+        background: #0D5CC1;
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 25px;
+        align-items: center;
+    }
+
+    .page-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        opacity: 0.9;
+    }
+
+    .project-completion-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+    }
+
+    .project-completion-header p {
+        margin: 0;
+        opacity: 0.92;
+    }
+
+    .project-reference {
+        text-align: right;
+        min-width: 180px;
+    }
+
+    .project-reference strong {
+        display: block;
+        color: white;
+        font-size: 22px;
+    }
+
+    .project-reference span {
+        display: block;
+        color: white;
+        margin-top: 5px;
+        opacity: 0.9;
+    }
+
+    .completion-navigation {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+        display: inline-block;
+        padding: 10px 17px;
+        background: #f1f3f5;
+        color: #333;
+        border: 1px solid #d7dce1;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .btn-secondary:hover {
+        background: #e7eaee;
+        text-decoration: none;
+    }
+
+    .validation-summary {
+        background: #fff4f4;
+        border: 1px solid #e1a5a5;
+        color: #9b2226;
+        padding: 15px 18px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .completion-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    .completion-card {
+        background: white;
+        border: 1px solid #e1e5e9;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .card-heading {
+        margin-bottom: 20px;
+    }
+
+    .card-heading h2 {
+        margin: 0;
+        color: #1d2733;
+        font-size: 21px;
+    }
+
+    .card-heading p {
+        margin: 7px 0 0;
+        color: #69737d;
+    }
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .information-item {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .information-item span {
+        display: block;
+        font-size: 12px;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .information-item strong {
+        display: block;
+        color: #202832;
+    }
+
+    .status-in-progress {
+        color: #0D5CC1 !important;
+    }
+
+    .milestone-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+
+    .summary-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .summary-item span {
+        display: block;
+        color: #6c757d;
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+
+    .summary-item strong {
+        font-size: 24px;
+        color: #202832;
+    }
+
+    .summary-completed {
+        color: #198754 !important;
+    }
+
+    .summary-incomplete {
+        color: #c77700 !important;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #303943;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cfd5db;
+        border-radius: 7px;
+        padding: 11px 12px;
+        font-size: 14px;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,0.10);
+    }
+
+    .completion-summary {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .field-validation {
+        display: block;
+        color: #b42318;
+        margin-top: 6px;
+        font-size: 13px;
+    }
+
+    .character-guidance {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .completion-warning {
+        margin: 25px 0 20px;
+        padding: 17px;
+        background: #fff8e6;
+        border: 1px solid #efd58a;
+        border-radius: 8px;
+    }
+
+    .completion-warning strong {
+        color: #7a5b00;
+    }
+
+    .completion-warning p {
+        margin: 6px 0 0;
+        color: #665000;
+    }
+
+    .btn-complete-project {
+        width: 100%;
+        border: none;
+        border-radius: 7px;
+        padding: 13px 20px;
+        background: #198754;
+        color: white;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    .btn-complete-project:hover {
+        background: #157347;
+    }
+
+    .confirmation-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .confirmation-dialog {
+        background: white;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 12px;
+        padding: 28px;
+        box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+    }
+
+    .confirmation-dialog h2 {
+        margin-top: 0;
+        color: #1d2733;
+    }
+
+    .confirmation-dialog p {
+        color: #555f68;
+        line-height: 1.6;
+    }
+
+    .confirmation-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    .btn-confirm-completion {
+        border: none;
+        border-radius: 7px;
+        padding: 11px 18px;
+        background: #198754;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .btn-confirm-completion:hover {
+        background: #157347;
+    }
+
+    .btn-confirm-completion:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    @@media (max-width: 800px) {
+
+        .project-completion-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .project-reference {
+            text-align: left;
+        }
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .milestone-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 500px) {
+
+        .milestone-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .confirmation-actions {
+            flex-direction: column;
+        }
+
+        .confirmation-actions button {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var overlay =
+                document.getElementById(
+                    "completionConfirmation"
+                );
+
+            var openButton =
+                document.getElementById(
+                    "openCompletionConfirmation"
+                );
+
+            var cancelButton =
+                document.getElementById(
+                    "cancelCompletion"
+                );
+
+            var confirmButton =
+                document.getElementById(
+                    "confirmCompletion"
+                );
+
+            var form =
+                document.getElementById(
+                    "completeProjectForm"
+                );
+
+            openButton.addEventListener(
+                "click",
+                function () {
+
+                    if (!form.checkValidity()) {
+
+                        form.reportValidity();
+
+                        return;
+                    }
+
+                    overlay.style.display =
+                        "flex";
+                }
+            );
+
+            cancelButton.addEventListener(
+                "click",
+                function () {
+
+                    overlay.style.display =
+                        "none";
+                }
+            );
+
+            confirmButton.addEventListener(
+                "click",
+                function () {
+
+                    confirmButton.disabled =
+                        true;
+
+                    confirmButton.textContent =
+                        "Completing Project...";
+
+                    form.submit();
+                }
+            );
+
+            overlay.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === overlay) {
+
+                        overlay.style.display =
+                            "none";
+                    }
+
+                }
+            );
+
+        }
+    );
+
+</script>

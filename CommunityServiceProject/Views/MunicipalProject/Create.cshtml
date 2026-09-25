@@ -1,0 +1,2421 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectCreateViewModel
+
+@{
+    ViewBag.Title = "Register Municipal Project";
+}
+
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIhIhmNHrzRC9tD/miZyoHS5obTRR9BMY="
+      crossorigin="" />
+
+<div class="project-create-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="page-header">
+
+        <div>
+            <span class="page-eyebrow">
+                MUNICIPAL PROJECT MANAGEMENT
+            </span>
+
+            <h1>Register Municipal Project</h1>
+
+            <p>
+                Create a central municipal record for an infrastructure,
+                facility, development, or rehabilitation project.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            @Html.ActionLink(
+                "Back to Projects",
+                "Index",
+                "MunicipalProject",
+                null,
+                new { @class = "btn-secondary" }
+            )
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION
+         ===================================================== -->
+
+    <div class="info-banner">
+
+        <div class="info-icon">
+            i
+        </div>
+
+        <div>
+
+            <strong>Project registration</strong>
+
+            <p>
+                Provide accurate project information and select the
+                project location before registering it.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    @using (Html.BeginForm(
+        "Create",
+        "MunicipalProject",
+        FormMethod.Post,
+        new
+        {
+            @class = "project-form",
+            id = "projectForm"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <!-- =================================================
+             SERVER VALIDATION
+             Only displayed when actual validation errors exist.
+             ================================================= -->
+
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary">
+
+                <strong>
+                    Please correct the highlighted information.
+                </strong>
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "validation-summary-list" }
+                )
+
+            </div>
+        }
+
+
+        <!-- =====================================================
+             SECTION 01 — PROJECT INFORMATION
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">
+                    01
+                </div>
+
+                <div>
+                    <h2>Project Information</h2>
+
+                    <p>
+                        Define the project's identity and purpose.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <!-- PROJECT NAME -->
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(m => m.ProjectName)
+
+                    @Html.TextBoxFor(
+                        m => m.ProjectName,
+                        new
+                        {
+                            @class = "form-control",
+                            maxlength = "200",
+                            placeholder = "e.g. Umlazi Road Rehabilitation Project"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ProjectName,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <!-- PROJECT TYPE -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(m => m.ProjectType)
+
+                    @Html.DropDownListFor(
+                        m => m.ProjectType,
+                        Model.ProjectTypeOptions,
+                        "Select project type",
+                        new { @class = "form-control" }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ProjectType,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <!-- PRIORITY -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(m => m.Priority)
+
+                    @Html.DropDownListFor(
+                        m => m.Priority,
+                        Model.PriorityOptions,
+                        "Select priority",
+                        new { @class = "form-control" }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Priority,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(m => m.Description)
+
+                    @Html.TextAreaFor(
+                        m => m.Description,
+                        new
+                        {
+                            @class = "form-control textarea",
+                            rows = "5",
+                            maxlength = "2000",
+                            placeholder = "Describe the purpose, scope, or expected outcome of the project..."
+                        }
+                    )
+
+                    <span class="field-hint">
+                        Maximum 2000 characters.
+                    </span>
+
+                    @Html.ValidationMessageFor(
+                        m => m.Description,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECTION 02 — PROJECT LOCATION
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">
+                    02
+                </div>
+
+                <div>
+
+                    <h2>Project Location</h2>
+
+                    <p>
+                        Record where the municipal project is physically located.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- WARD -->
+
+            <div class="form-group">
+
+                @Html.LabelFor(m => m.WardID)
+
+                @Html.DropDownListFor(
+                    m => m.WardID,
+                    Model.WardOptions,
+                    "Select ward",
+                    new { @class = "form-control" }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.WardID,
+                    "",
+                    new { @class = "field-error" }
+                )
+
+                <span class="field-hint">
+                    Select the municipal ward in which the project is located.
+                </span>
+
+            </div>
+
+
+            <div class="location-section">
+
+
+                <!-- LOCATION NOTICE -->
+
+                <div class="location-notice">
+
+                    <div class="location-notice-icon">
+                        ⌖
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Select the project location
+                        </strong>
+
+                        <p>
+                            Search for an address or click directly on the map.
+                            You can also drag the marker to refine the location.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADDRESS SEARCH -->
+
+                <div class="address-search-section">
+
+                    <label class="form-label"
+                           for="addressSearch">
+                        Search for an Address
+                    </label>
+
+                    <div class="address-search-row">
+
+                        <input type="text"
+                               id="addressSearch"
+                               class="form-control"
+                               maxlength="200"
+                               autocomplete="off"
+                               placeholder="e.g. Main Road, Umlazi, Durban" />
+
+                        <button type="button"
+                                id="searchAddressButton"
+                                class="btn-map-search">
+                            Search Address
+                        </button>
+
+                    </div>
+
+                    <div id="searchStatus"
+                         class="location-status"
+                         aria-live="polite">
+                    </div>
+
+                    <div id="searchResults"
+                         class="location-search-results">
+                    </div>
+
+                </div>
+
+
+                <!-- MAP -->
+
+                <div class="map-container">
+
+                    <div id="projectMap"></div>
+
+                </div>
+
+                <div class="map-help">
+                    Click the map or drag the marker to select the project location.
+                </div>
+
+
+                <!-- SELECT MAP CENTRE -->
+
+                <div class="map-centre-row">
+
+                    <button type="button"
+                            id="selectMapCentre"
+                            class="btn-map-centre">
+                        Select Map Centre
+                    </button>
+
+                    <span id="locationStatus"
+                          class="location-status"
+                          aria-live="polite">
+                    </span>
+
+                </div>
+
+
+                <!-- SELECTED LOCATION -->
+
+                <div class="selected-location-panel">
+
+                    <div class="selected-location-header">
+
+                        <div class="selected-location-title">
+
+                            <span class="selected-location-icon">
+                                ✓
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Selected Location
+                                </strong>
+
+                                <small>
+                                    Coordinates selected for this project
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="coordinate-grid">
+
+                        <div class="coordinate-box">
+
+                            <span class="coordinate-label">
+                                Latitude
+                            </span>
+
+                            <strong id="latitudeDisplay">
+                                Not selected
+                            </strong>
+
+                        </div>
+
+
+                        <div class="coordinate-box">
+
+                            <span class="coordinate-label">
+                                Longitude
+                            </span>
+
+                            <strong id="longitudeDisplay">
+                                Not selected
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROJECT LOCATION -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        m => m.ProjectLocation,
+                        new { @class = "form-label" }
+                    )
+
+                    @Html.TextBoxFor(
+                        m => m.ProjectLocation,
+                        new
+                        {
+                            @class = "form-control",
+                            id = "ProjectLocation",
+                            maxlength = "500",
+                            placeholder = "e.g. Umlazi Main Road corridor"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ProjectLocation,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                    <span class="field-hint">
+                        The selected address may be populated automatically,
+                        or you can edit it manually.
+                    </span>
+
+                </div>
+
+
+                <!-- LOCATION DESCRIPTION -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        m => m.LocationDescription,
+                        new { @class = "form-label" }
+                    )
+
+                    @Html.TextBoxFor(
+                        m => m.LocationDescription,
+                        new
+                        {
+                            @class = "form-control",
+                            id = "LocationDescription",
+                            maxlength = "500",
+                            placeholder = "e.g. Near the community centre"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.LocationDescription,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                    <span class="field-hint">
+                        Add a useful landmark, road section, facility,
+                        or other physical location information.
+                    </span>
+
+                </div>
+
+
+                <!-- HIDDEN COORDINATES -->
+
+                @Html.Hidden(
+                    "Latitude",
+                    Model.Latitude,
+                    new
+                    {
+                        id = "ProjectLatitude"
+                    }
+                )
+
+                @Html.Hidden(
+                    "Longitude",
+                    Model.Longitude,
+                    new
+                    {
+                        id = "ProjectLongitude"
+                    }
+                )
+
+
+                <!-- COORDINATE ERROR -->
+
+                <div id="coordinateError"
+                     class="coordinate-error"
+                     style="display:none;">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECTION 03 — PROJECT SCHEDULE
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">
+                    03
+                </div>
+
+                <div>
+
+                    <h2>Project Schedule</h2>
+
+                    <p>
+                        Define the planned project timeframe.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <!-- START DATE -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(m => m.StartDate)
+
+                    @Html.TextBoxFor(
+                        m => m.StartDate,
+                        "{0:yyyy-MM-dd}",
+                        new
+                        {
+                            @class = "form-control",
+                            type = "date"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.StartDate,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <!-- EXPECTED COMPLETION -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(m => m.ExpectedCompletionDate)
+
+                    @Html.TextBoxFor(
+                        m => m.ExpectedCompletionDate,
+                        "{0:yyyy-MM-dd}",
+                        new
+                        {
+                            @class = "form-control",
+                            type = "date"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ExpectedCompletionDate,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                    <span class="field-hint">
+                        Leave blank if the completion date has not yet been determined.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECTION 04 — FINANCIAL INFORMATION
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">
+                    04
+                </div>
+
+                <div>
+
+                    <h2>Financial Information</h2>
+
+                    <p>
+                        Record the estimated financial requirement.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    @Html.LabelFor(m => m.EstimatedBudget)
+
+                    <div class="currency-input">
+
+                        <span>R</span>
+
+                        @Html.TextBoxFor(
+                            m => m.EstimatedBudget,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                min = "0",
+                                step = "0.01",
+                                placeholder = "0.00"
+                            }
+                        )
+
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.EstimatedBudget,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                    <span class="field-hint">
+                        Enter the estimated project budget in South African Rand.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECTION 05 — RESPONSIBILITY
+             ===================================================== -->
+
+        <div class="form-card">
+
+            <div class="section-heading">
+
+                <div class="section-number">
+                    05
+                </div>
+
+                <div>
+
+                    <h2>Project Responsibility</h2>
+
+                    <p>
+                        Assign an active administrator responsible for the project.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                @Html.LabelFor(m => m.ResponsibleAdministratorID)
+
+                @Html.DropDownListFor(
+                    m => m.ResponsibleAdministratorID,
+                    Model.AdministratorOptions,
+                    "Select responsible administrator",
+                    new { @class = "form-control" }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.ResponsibleAdministratorID,
+                    "",
+                    new { @class = "field-error" }
+                )
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECTION 06 — SYSTEM INFORMATION
+             ===================================================== -->
+
+        <div class="form-card system-information">
+
+            <div class="section-heading">
+
+                <div class="section-number">
+                    06
+                </div>
+
+                <div>
+
+                    <h2>System Registration</h2>
+
+                    <p>
+                        The following information is generated automatically.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="system-grid">
+
+                <div class="system-item">
+
+                    <span>
+                        Project Code
+                    </span>
+
+                    <strong>
+                        Generated after registration
+                    </strong>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <span>
+                        Initial Status
+                    </span>
+
+                    <strong>
+                        Planned
+                    </strong>
+
+                </div>
+
+
+                <div class="system-item">
+
+                    <span>
+                        Registration Date
+                    </span>
+
+                    <strong>
+                        Automatically recorded
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ACTIONS
+             ===================================================== -->
+
+        <div class="form-actions">
+
+            @Html.ActionLink(
+                "Cancel",
+                "Index",
+                "MunicipalProject",
+                null,
+                new { @class = "btn-secondary" }
+            )
+
+            <button type="submit"
+                    class="btn-primary"
+                    id="registerProjectButton">
+
+                Register Project
+
+            </button>
+
+        </div>
+
+    }
+
+</div>
+
+
+<!-- =========================================================
+     LEAFLET
+     ========================================================= -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="">
+</script>
+
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    function initialiseProjectMap() {
+
+        var mapElement =
+            document.getElementById("projectMap");
+
+
+        if (!mapElement) {
+            return;
+        }
+
+
+        if (typeof L === "undefined") {
+
+            mapElement.innerHTML =
+                "<div class='map-load-error'>" +
+                "The map could not be loaded. Please refresh the page." +
+                "</div>";
+
+            return;
+        }
+
+
+        /* =====================================================
+           ELEMENTS
+           ===================================================== */
+
+        var latitudeInput =
+            document.getElementById("ProjectLatitude");
+
+        var longitudeInput =
+            document.getElementById("ProjectLongitude");
+
+        var latitudeDisplay =
+            document.getElementById("latitudeDisplay");
+
+        var longitudeDisplay =
+            document.getElementById("longitudeDisplay");
+
+        var projectLocation =
+            document.getElementById("ProjectLocation");
+
+        var locationDescription =
+            document.getElementById("LocationDescription");
+
+        var addressSearch =
+            document.getElementById("addressSearch");
+
+        var searchButton =
+            document.getElementById("searchAddressButton");
+
+        var searchStatus =
+            document.getElementById("searchStatus");
+
+        var searchResults =
+            document.getElementById("searchResults");
+
+        var locationStatus =
+            document.getElementById("locationStatus");
+
+        var selectMapCentre =
+            document.getElementById("selectMapCentre");
+
+        var registrationForm =
+            document.getElementById("projectForm");
+
+        var registerButton =
+            document.getElementById("registerProjectButton");
+
+        var coordinateError =
+            document.getElementById("coordinateError");
+
+
+        /* =====================================================
+           MAP
+           ===================================================== */
+
+        var defaultLatitude = -29.8587;
+        var defaultLongitude = 31.0218;
+
+
+        var map =
+            L.map(
+                "projectMap",
+                {
+                    zoomControl: true
+                }
+            );
+
+
+        map.setView(
+            [
+                defaultLatitude,
+                defaultLongitude
+            ],
+            12
+        );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+        var marker = null;
+
+
+        /* =====================================================
+           STATUS
+           ===================================================== */
+
+        function setLocationStatus(
+            message,
+            type
+        ) {
+
+            locationStatus.textContent =
+                message;
+
+            locationStatus.className =
+                "location-status";
+
+            if (type) {
+                locationStatus.classList.add(type);
+            }
+        }
+
+
+        function setSearchStatus(
+            message,
+            type
+        ) {
+
+            searchStatus.textContent =
+                message;
+
+            searchStatus.className =
+                "location-status";
+
+            if (type) {
+                searchStatus.classList.add(type);
+            }
+        }
+
+
+        /* =====================================================
+           COORDINATES
+           ===================================================== */
+
+        function updateCoordinates(
+            latitude,
+            longitude
+        ) {
+
+            var lat =
+                parseFloat(latitude);
+
+            var lon =
+                parseFloat(longitude);
+
+
+            if (
+                isNaN(lat) ||
+                isNaN(lon)
+            ) {
+                return false;
+            }
+
+
+            latitudeInput.value =
+                lat.toFixed(6);
+
+            longitudeInput.value =
+                lon.toFixed(6);
+
+
+            latitudeDisplay.textContent =
+                lat.toFixed(6);
+
+            longitudeDisplay.textContent =
+                lon.toFixed(6);
+
+
+            return true;
+        }
+
+
+        /* =====================================================
+           SELECT LOCATION
+           ===================================================== */
+
+        function selectLocation(
+            latitude,
+            longitude,
+            reverseGeocode
+        ) {
+
+            var lat =
+                parseFloat(latitude);
+
+            var lon =
+                parseFloat(longitude);
+
+
+            if (
+                isNaN(lat) ||
+                isNaN(lon)
+            ) {
+
+                setLocationStatus(
+                    "The selected coordinates are invalid.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (
+                lat < -90 ||
+                lat > 90 ||
+                lon < -180 ||
+                lon > 180
+            ) {
+
+                setLocationStatus(
+                    "The selected coordinates are outside the valid range.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (
+                Math.abs(lat) < 0.000001 &&
+                Math.abs(lon) < 0.000001
+            ) {
+
+                setLocationStatus(
+                    "Please select a valid project location.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            updateCoordinates(
+                lat,
+                lon
+            );
+
+
+            /* CREATE OR MOVE MARKER */
+
+            if (marker === null) {
+
+                marker =
+                    L.marker(
+                        [lat, lon],
+                        {
+                            draggable: true
+                        }
+                    ).addTo(map);
+
+
+                marker.on(
+                    "dragend",
+                    function () {
+
+                        var position =
+                            marker.getLatLng();
+
+                        selectLocation(
+                            position.lat,
+                            position.lng,
+                            true
+                        );
+
+                    }
+                );
+
+            }
+            else {
+
+                marker.setLatLng(
+                    [lat, lon]
+                );
+
+            }
+
+
+            map.setView(
+                [lat, lon],
+                Math.max(
+                    map.getZoom(),
+                    15
+                )
+            );
+
+
+            setLocationStatus(
+                "Location selected.",
+                "success"
+            );
+
+
+            if (reverseGeocode) {
+
+                performReverseGeocode(
+                    lat,
+                    lon
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           REVERSE GEOCODING
+           ===================================================== */
+
+        function performReverseGeocode(
+            latitude,
+            longitude
+        ) {
+
+            var url =
+                "@Url.Action("ReverseGeocode", "MunicipalProject")";
+
+
+            url +=
+                "?lat=" +
+                encodeURIComponent(latitude) +
+                "&lon=" +
+                encodeURIComponent(longitude);
+
+
+            fetch(url)
+                .then(function (response) {
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Reverse geocoding failed."
+                        );
+                    }
+
+                    return response.json();
+
+                })
+                .then(function (data) {
+
+                    if (
+                        data &&
+                        data.display_name
+                    ) {
+
+                        if (
+                            !projectLocation.value.trim()
+                        ) {
+
+                            projectLocation.value =
+                                data.display_name;
+
+                        }
+
+
+                        if (
+                            !locationDescription.value.trim()
+                        ) {
+
+                            locationDescription.value =
+                                data.display_name;
+
+                        }
+
+
+                        setLocationStatus(
+                            "Location identified successfully.",
+                            "success"
+                        );
+
+                    }
+
+                })
+                .catch(function () {
+
+                    setLocationStatus(
+                        "Coordinates selected. Location details may be entered manually.",
+                        "success"
+                    );
+
+                });
+
+        }
+
+
+        /* =====================================================
+           MAP CLICK
+           ===================================================== */
+
+        map.on(
+            "click",
+            function (event) {
+
+                selectLocation(
+                    event.latlng.lat,
+                    event.latlng.lng,
+                    true
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           SELECT MAP CENTRE
+           ===================================================== */
+
+        selectMapCentre.addEventListener(
+            "click",
+            function () {
+
+                var centre =
+                    map.getCenter();
+
+
+                selectLocation(
+                    centre.lat,
+                    centre.lng,
+                    true
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           ADDRESS SEARCH
+           ===================================================== */
+
+        searchButton.addEventListener(
+            "click",
+            function () {
+
+                var query =
+                    addressSearch.value.trim();
+
+
+                if (!query) {
+
+                    setSearchStatus(
+                        "Please enter an address or location.",
+                        "error"
+                    );
+
+                    addressSearch.focus();
+
+                    return;
+                }
+
+
+                searchButton.disabled =
+                    true;
+
+                searchResults.innerHTML =
+                    "";
+
+
+                setSearchStatus(
+                    "Searching for locations...",
+                    "warning"
+                );
+
+
+                var url =
+                    "@Url.Action("SearchAddress", "MunicipalProject")";
+
+
+                url +=
+                    "?query=" +
+                    encodeURIComponent(query);
+
+
+                fetch(url)
+                    .then(function (response) {
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Search failed."
+                            );
+                        }
+
+                        return response.json();
+
+                    })
+                    .then(function (data) {
+
+                        searchResults.innerHTML =
+                            "";
+
+
+                        if (
+                            data &&
+                            data.success === false
+                        ) {
+
+                            setSearchStatus(
+                                data.message ||
+                                "Unable to search for the location.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        if (!Array.isArray(data)) {
+
+                            setSearchStatus(
+                                "The location search returned an unexpected response.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+
+                        if (data.length === 0) {
+
+                            setSearchStatus(
+                                "No matching locations were found.",
+                                "warning"
+                            );
+
+                            return;
+                        }
+
+
+                        setSearchStatus(
+                            data.length +
+                            " location(s) found. Select a result below.",
+                            "success"
+                        );
+
+
+                        data.forEach(
+                            function (result) {
+
+                                if (
+                                    !result.lat ||
+                                    !result.lon
+                                ) {
+                                    return;
+                                }
+
+
+                                var button =
+                                    document.createElement(
+                                        "button"
+                                    );
+
+
+                                button.type =
+                                    "button";
+
+                                button.className =
+                                    "location-search-result";
+
+                                button.textContent =
+                                    result.display_name ||
+                                    "Location";
+
+
+                                button.addEventListener(
+                                    "click",
+                                    function () {
+
+                                        var lat =
+                                            parseFloat(
+                                                result.lat
+                                            );
+
+                                        var lon =
+                                            parseFloat(
+                                                result.lon
+                                            );
+
+
+                                        selectLocation(
+                                            lat,
+                                            lon,
+                                            false
+                                        );
+
+
+                                        projectLocation.value =
+                                            result.display_name ||
+                                            "";
+
+
+                                        locationDescription.value =
+                                            result.display_name ||
+                                            "";
+
+
+                                        searchResults.innerHTML =
+                                            "";
+
+
+                                        setSearchStatus(
+                                            "Location selected.",
+                                            "success"
+                                        );
+
+                                    }
+                                );
+
+
+                                searchResults.appendChild(
+                                    button
+                                );
+
+                            }
+                        );
+
+                    })
+                    .catch(function () {
+
+                        setSearchStatus(
+                            "Unable to search for the requested location. Please try again.",
+                            "error"
+                        );
+
+                    })
+                    .finally(function () {
+
+                        searchButton.disabled =
+                            false;
+
+                    });
+
+            }
+        );
+
+
+        /* =====================================================
+           ENTER TO SEARCH
+           ===================================================== */
+
+        addressSearch.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    searchButton.click();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           RESTORE EXISTING COORDINATES
+           ===================================================== */
+
+        var existingLatitude =
+            parseFloat(
+                latitudeInput.value
+            );
+
+        var existingLongitude =
+            parseFloat(
+                longitudeInput.value
+            );
+
+
+        if (
+            !isNaN(existingLatitude) &&
+            !isNaN(existingLongitude)
+        ) {
+
+            selectLocation(
+                existingLatitude,
+                existingLongitude,
+                false
+            );
+
+        }
+
+
+        /* =====================================================
+           FORM SUBMISSION
+           ===================================================== */
+
+        registrationForm.addEventListener(
+            "submit",
+            function (event) {
+
+                var latitude =
+                    parseFloat(
+                        latitudeInput.value
+                    );
+
+                var longitude =
+                    parseFloat(
+                        longitudeInput.value
+                    );
+
+
+                /* CLEAR COORDINATE ERROR */
+
+                coordinateError.style.display =
+                    "none";
+
+                coordinateError.textContent =
+                    "";
+
+
+                /* VALIDATE COORDINATES */
+
+                if (
+                    isNaN(latitude) ||
+                    isNaN(longitude)
+                ) {
+
+                    event.preventDefault();
+
+
+                    coordinateError.textContent =
+                        "Please select the project location on the map.";
+
+                    coordinateError.style.display =
+                        "block";
+
+
+                    setLocationStatus(
+                        "Project location is required.",
+                        "error"
+                    );
+
+
+                    document.getElementById(
+                        "projectMap"
+                    ).scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+
+                    return;
+                }
+
+
+                /* NORMALISE */
+
+                latitudeInput.value =
+                    latitude.toFixed(6);
+
+                longitudeInput.value =
+                    longitude.toFixed(6);
+
+
+                /* CONFIRM */
+
+                var confirmed =
+                    window.confirm(
+                        "Are you sure you want to register this municipal project?"
+                    );
+
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+
+                /* PREVENT DUPLICATE SUBMISSION */
+
+                registerButton.disabled =
+                    true;
+
+                registerButton.innerText =
+                    "Registering Project...";
+
+            }
+        );
+
+
+        /* =====================================================
+           MAP RESIZE
+           ===================================================== */
+
+        setTimeout(
+            function () {
+
+                map.invalidateSize();
+
+            },
+            300
+        );
+
+
+        setTimeout(
+            function () {
+
+                map.invalidateSize();
+
+            },
+            1000
+        );
+
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                map.invalidateSize();
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       START MAP AFTER DOM LOAD
+       ========================================================= */
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialiseProjectMap
+        );
+
+    }
+    else {
+
+        initialiseProjectMap();
+
+    }
+
+})();
+
+</script>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .project-create-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+    .page-eyebrow {
+        display: block;
+        margin-bottom: 8px;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .page-header p {
+        max-width: 700px;
+        margin: 0;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .btn-primary {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            color: #fff;
+        }
+
+        .btn-primary:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
+
+    .btn-secondary {
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+    }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            color: #111827;
+        }
+
+
+    /* =========================================================
+       INFO
+       ========================================================= */
+
+    .info-banner {
+        display: flex;
+        gap: 14px;
+        padding: 18px 20px;
+        margin-bottom: 25px;
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+        background: #eff6ff;
+    }
+
+    .info-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .info-banner strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #174a86;
+    }
+
+    .info-banner p {
+        margin: 0;
+        color: #374151;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+
+    .validation-summary {
+        margin-bottom: 20px;
+        padding: 15px 18px;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #991b1b;
+    }
+
+    .validation-summary-list {
+        margin-top: 8px;
+    }
+
+        .validation-summary-list ul {
+            margin: 7px 0 0;
+            padding-left: 20px;
+        }
+
+
+    /* =========================================================
+       FORM CARDS
+       ========================================================= */
+
+    .form-card {
+        margin-bottom: 20px;
+        padding: 25px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+    }
+
+
+    /* =========================================================
+       SECTION HEADING
+       ========================================================= */
+
+    .section-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .section-number {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 4px;
+        color: #111827;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label,
+        .form-label {
+            display: block;
+            margin-bottom: 7px;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+    .form-control {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #fff;
+        color: #1f2937;
+        font-size: 14px;
+        outline: none;
+    }
+
+        .form-control:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .field-hint {
+        display: block;
+        margin-top: 6px;
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .field-error {
+        display: block;
+        margin-top: 6px;
+        color: #b91c1c;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       LOCATION
+       ========================================================= */
+
+    .location-notice {
+        display: flex;
+        gap: 12px;
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #f8fafc;
+    }
+
+    .location-notice-icon {
+        color: #0D5CC1;
+        font-size: 21px;
+    }
+
+    .location-notice strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #1f2937;
+    }
+
+    .location-notice p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       ADDRESS SEARCH
+       ========================================================= */
+
+    .address-search-section {
+        margin-bottom: 18px;
+    }
+
+    .address-search-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-map-search {
+        min-width: 155px;
+        padding: 0 17px;
+        border: 1px solid #0D5CC1;
+        border-radius: 8px;
+        background: #0D5CC1;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .btn-map-search:hover {
+            background: #094b9f;
+        }
+
+        .btn-map-search:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
+
+
+    /* =========================================================
+       LOCATION STATUS
+       ========================================================= */
+
+    .location-status {
+        min-height: 18px;
+        margin-top: 8px;
+        font-size: 13px;
+    }
+
+        .location-status.success {
+            color: #18794e;
+        }
+
+        .location-status.error {
+            color: #b42318;
+        }
+
+        .location-status.warning {
+            color: #946200;
+        }
+
+
+    /* =========================================================
+       SEARCH RESULTS
+       ========================================================= */
+
+    .location-search-results {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-top: 10px;
+    }
+
+    .location-search-result {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #dbe3ec;
+        border-radius: 7px;
+        background: #fff;
+        color: #374151;
+        text-align: left;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+        .location-search-result:hover {
+            border-color: #0D5CC1;
+            background: #f5f9ff;
+            color: #0D5CC1;
+        }
+
+
+    /* =========================================================
+       MAP
+       ========================================================= */
+
+    .map-container {
+        overflow: hidden;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        background: #f3f4f6;
+    }
+
+    #projectMap {
+        width: 100%;
+        height: 430px;
+        min-height: 430px;
+        z-index: 1;
+    }
+
+    .map-load-error {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 430px;
+        padding: 30px;
+        background: #fff5f5;
+        color: #b42318;
+        text-align: center;
+    }
+
+    .map-help {
+        padding: 9px 0;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       MAP CENTRE
+       ========================================================= */
+
+    .map-centre-row {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin: 7px 0 20px;
+    }
+
+    .btn-map-centre {
+        padding: 10px 15px;
+        border: 1px solid #c9ddfa;
+        border-radius: 8px;
+        background: #eef5ff;
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .btn-map-centre:hover {
+            background: #e1edff;
+        }
+
+
+    /* =========================================================
+       SELECTED LOCATION
+       ========================================================= */
+
+    .selected-location-panel {
+        padding: 16px;
+        margin-bottom: 20px;
+        border: 1px solid #c9ddfa;
+        border-radius: 10px;
+        background: #f6faff;
+    }
+
+    .selected-location-header {
+        margin-bottom: 15px;
+    }
+
+    .selected-location-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .selected-location-icon {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .selected-location-header strong {
+        display: block;
+        color: #16447a;
+        font-size: 14px;
+    }
+
+    .selected-location-header small {
+        display: block;
+        margin-top: 2px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       COORDINATES
+       ========================================================= */
+
+    .coordinate-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .coordinate-box {
+        padding: 12px;
+        border: 1px solid #dbe3ec;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .coordinate-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .coordinate-box strong {
+        color: #1f2937;
+        font-family: Consolas, monospace;
+        font-size: 14px;
+    }
+
+    .coordinate-error {
+        display: block;
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid #fecaca;
+        border-radius: 7px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       CURRENCY
+       ========================================================= */
+
+    .currency-input {
+        position: relative;
+    }
+
+        .currency-input > span {
+            position: absolute;
+            top: 50%;
+            left: 13px;
+            z-index: 2;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .currency-input .form-control {
+            padding-left: 32px;
+        }
+
+
+    /* =========================================================
+       SYSTEM INFORMATION
+       ========================================================= */
+
+    .system-information {
+        background: #f9fafb;
+    }
+
+    .system-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .system-item {
+        padding: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        background: #fff;
+    }
+
+        .system-item span {
+            display: block;
+            margin-bottom: 5px;
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .system-item strong {
+            color: #374151;
+            font-size: 13px;
+        }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 5px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 768px) {
+
+        .project-create-page {
+            padding: 20px 15px 40px;
+        }
+
+        .page-header {
+            flex-direction: column;
+        }
+
+        .header-actions,
+        .header-actions .btn-secondary {
+            width: 100%;
+        }
+
+        .form-grid,
+        .system-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: auto;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+            .form-actions .btn-primary,
+            .form-actions .btn-secondary {
+                width: 100%;
+            }
+    }
+
+
+    @@media (max-width: 700px) {
+
+        .address-search-row {
+            flex-direction: column;
+        }
+
+        .btn-map-search {
+            width: 100%;
+            min-height: 44px;
+        }
+
+        .coordinate-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .map-centre-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        #projectMap {
+            height: 350px;
+            min-height: 350px;
+        }
+    }
+</style>

@@ -7,7 +7,8 @@
         InProgress,
         OnHold,
         Completed,
-        Cancelled
+        Cancelled,
+        Closed
     }
 
     public enum MunicipalProjectPriority
@@ -17,4 +18,5 @@
         High,
         Critical
     }
+
 }

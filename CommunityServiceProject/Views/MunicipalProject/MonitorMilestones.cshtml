@@ -1,0 +1,1752 @@
+﻿```cshtml
+@model CommunityServiceProject.ViewModels.MunicipalProjectMilestoneMonitoringViewModel
+
+@{
+    ViewBag.Title = "Monitor Project Milestones";
+}
+
+<div class="milestone-monitor-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="milestone-monitor-header">
+
+        <div class="milestone-header-inner">
+
+            <div class="header-information">
+
+                <div class="header-label">
+                    MUNICIPAL PROJECT MANAGEMENT
+                </div>
+
+                <h1>Monitor Project Milestones</h1>
+
+                <div class="project-reference">
+                    <span class="project-code">
+                        @Model.ProjectCode
+                    </span>
+
+                    <span class="reference-divider">|</span>
+
+                    <span class="project-type">
+                        @Model.ProjectType
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="header-actions">
+
+                @Html.ActionLink(
+                    "Back to Project",
+                    "Details",
+                    "MunicipalProject",
+                    new { id = Model.ProjectID },
+                    new { @class = "header-button secondary" }
+                )
+
+                @Html.ActionLink(
+                    "View Milestones",
+                    "Milestones",
+                    "MunicipalProject",
+                    new { id = Model.ProjectID },
+                    new { @class = "header-button" }
+                )
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MAIN CONTENT
+         ========================================================= -->
+
+    <div class="milestone-monitor-container">
+
+
+        <!-- =====================================================
+             PROJECT INFORMATION
+             ===================================================== -->
+
+        <div class="project-information-card">
+
+            <div class="project-information-main">
+
+                <div>
+
+                    <div class="section-label">
+                        PROJECT
+                    </div>
+
+                    <h2>
+                        @Model.ProjectName
+                    </h2>
+
+                    <p>
+                        @Model.ProjectLocation
+                        <span class="separator">|</span>
+                        @Model.WardName
+                    </p>
+
+                </div>
+
+                <div class="project-status-block">
+
+                    <span class="status-label">
+                        Project Status
+                    </span>
+
+                    <span class="project-status-badge
+                        status-@Model.ProjectStatus.ToLowerInvariant().Replace(" ", "-")">
+                        @Model.ProjectStatus
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MONITORING OVERVIEW
+             ===================================================== -->
+
+        <div class="section-title">
+
+            <div>
+                <h2>Milestone Monitoring Overview</h2>
+
+                <p>
+                    Review milestone progress, deadlines and activities
+                    requiring attention.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="monitoring-summary-grid">
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    Total Milestones
+                </span>
+
+                <strong class="summary-value">
+                    @Model.TotalMilestones
+                </strong>
+
+                <span class="summary-description">
+                    Recorded for this project
+                </span>
+
+            </div>
+
+
+            <div class="summary-card completed-card">
+
+                <span class="summary-label">
+                    Completed
+                </span>
+
+                <strong class="summary-value">
+                    @Model.CompletedMilestones
+                </strong>
+
+                <span class="summary-description">
+                    Successfully completed
+                </span>
+
+            </div>
+
+
+            <div class="summary-card progress-card">
+
+                <span class="summary-label">
+                    In Progress
+                </span>
+
+                <strong class="summary-value">
+                    @Model.InProgressMilestones
+                </strong>
+
+                <span class="summary-description">
+                    Currently being worked on
+                </span>
+
+            </div>
+
+
+            <div class="summary-card delayed-card">
+
+                <span class="summary-label">
+                    Delayed
+                </span>
+
+                <strong class="summary-value">
+                    @Model.DelayedMilestones
+                </strong>
+
+                <span class="summary-description">
+                    Marked as delayed
+                </span>
+
+            </div>
+
+
+            <div class="summary-card overdue-card">
+
+                <span class="summary-label">
+                    Overdue
+                </span>
+
+                <strong class="summary-value">
+                    @Model.OverdueMilestones
+                </strong>
+
+                <span class="summary-description">
+                    Planned date has passed
+                </span>
+
+            </div>
+
+
+            <div class="summary-card incomplete-card">
+
+                <span class="summary-label">
+                    Incomplete
+                </span>
+
+                <strong class="summary-value">
+                    @Model.IncompleteMilestones
+                </strong>
+
+                <span class="summary-description">
+                    Not yet completed
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             OVERALL PROGRESS
+             ===================================================== -->
+
+        <div class="overall-progress-card">
+
+            <div class="progress-heading">
+
+                <div>
+
+                    <h2>Overall Milestone Progress</h2>
+
+                    <p>
+                        Average recorded progress across the project's
+                        milestones.
+                    </p>
+
+                </div>
+
+                <div class="overall-progress-value">
+                    @Model.OverallProgress.ToString("0.0")%
+                </div>
+
+            </div>
+
+
+            <div class="overall-progress-track">
+
+                <div class="overall-progress-fill"
+                     style="width:@Model.OverallProgress.ToString(
+                         System.Globalization.CultureInfo.InvariantCulture
+                     )"%;">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ATTENTION REQUIRED
+             ===================================================== -->
+
+        @{
+            var attentionMilestones =
+                Model.Milestones
+                    .Where(m =>
+                        m.IsOverdue ||
+                        m.Status == "Delayed")
+                    .ToList();
+        }
+
+        @if (attentionMilestones.Any())
+        {
+            <div class="attention-card">
+
+                <div class="attention-heading">
+
+                    <div>
+
+                        <h2>Milestones Requiring Attention</h2>
+
+                        <p>
+                            These milestones have been identified as delayed
+                            or overdue based on their current records.
+                        </p>
+
+                    </div>
+
+                    <span class="attention-count">
+                        @attentionMilestones.Count
+                    </span>
+
+                </div>
+
+
+                <div class="attention-list">
+
+                    @foreach (var milestone in attentionMilestones)
+                    {
+                        <div class="attention-item">
+
+                            <div class="attention-item-main">
+
+                                <div class="attention-item-title">
+                                    @milestone.SequenceNumber.
+                                    @milestone.MilestoneName
+                                </div>
+
+                                <div class="attention-item-details">
+
+                                    <span>
+                                        Planned completion:
+                                        @milestone.PlannedCompletionDate
+                                        .ToString("dd MMM yyyy")
+                                    </span>
+
+                                    <span>
+                                        Progress:
+                                        @milestone.ProgressPercentage%
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="attention-item-status">
+
+                                <span class="monitoring-badge
+                                    monitoring-@milestone.MonitoringStatus.ToLowerInvariant().Replace(" ", "-")">
+                                    @milestone.MonitoringStatus
+                                </span>
+
+                                @if (milestone.DaysOverdue > 0)
+                                {
+                                    <span class="overdue-days">
+                                        @milestone.DaysOverdue day(s) overdue
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        }
+
+
+        <!-- =====================================================
+             MILESTONE MONITORING TABLE
+             ===================================================== -->
+
+        <div class="milestone-monitor-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>Milestone Status and Progress</h2>
+
+                    <p>
+                        Detailed monitoring information for each project
+                        milestone.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            @if (!Model.Milestones.Any())
+            {
+                <div class="empty-state">
+
+                    <h3>No Milestones Available</h3>
+
+                    <p>
+                        No milestones have been recorded for this project.
+                    </p>
+
+                    @Html.ActionLink(
+                        "View Project",
+                        "Details",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID },
+                        new { @class = "empty-button" }
+                    )
+
+                </div>
+            }
+            else
+            {
+                <div class="milestone-table-wrapper">
+
+                    <table class="milestone-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Milestone
+                                </th>
+
+                                <th>
+                                    Priority
+                                </th>
+
+                                <th>
+                                    Planned Dates
+                                </th>
+
+                                <th>
+                                    Completion
+                                </th>
+
+                                <th>
+                                    Progress
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Monitoring
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var milestone in Model.Milestones)
+                            {
+                                <tr>
+
+                                    <!-- Milestone -->
+
+                                    <td>
+
+                                        <div class="milestone-title">
+
+                                            @milestone.SequenceNumber.
+                                            @milestone.MilestoneName
+
+                                        </div>
+
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            milestone.Description))
+                                        {
+                                            <div class="milestone-description">
+
+                                                @milestone.Description
+
+                                            </div>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Priority -->
+
+                                    <td>
+
+                                        <span class="priority-badge
+                                            priority-@milestone.Priority.ToLowerInvariant()">
+
+                                            @milestone.Priority
+
+                                        </span>
+
+                                    </td>
+
+
+                                    
+                                    <!-- Planned Dates -->
+
+                                    <td>
+
+                                        <div class="date-information">
+
+                                            <strong>
+                                                @milestone.PlannedStartDate.ToString("dd MMM yyyy")
+                                            </strong>
+
+                                            <span>
+                                                to
+                                            </span>
+
+                                            <strong>
+                                                @milestone.PlannedCompletionDate.ToString("dd MMM yyyy")
+                                            </strong>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Completion -->
+
+                                    <td>
+
+                                        @if (milestone.ActualCompletionDate.HasValue)
+                                        {
+                                            <div class="completion-recorded">
+
+                                                <strong>
+                                                    @milestone.ActualCompletionDate.Value.ToString("dd MMM yyyy")
+                                                </strong>
+
+                                                <span>
+                                                    Completed
+                                                </span>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="not-recorded">
+                                                Not completed
+                                            </span>
+                                        }
+
+                                    </td>
+                                   
+
+
+
+                                    <!-- Progress -->
+
+                                    <td>
+
+                                        <div class="progress-cell">
+
+                                            <div class="progress-bar-wrapper">
+
+                                                <div class="progress-bar">
+
+                                                    <div class="progress-bar-fill"
+                                                         style="width:@milestone.ProgressPercentage" %;">
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <strong>
+                                                @milestone.ProgressPercentage%
+                                            </strong>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        <span class="status-badge
+                                            status-@milestone.Status.ToLowerInvariant().Replace(" ", "-")">
+
+                                            @milestone.Status
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Monitoring -->
+
+                                    <td>
+
+                                        <span class="monitoring-badge
+                                            monitoring-@milestone.MonitoringStatus.ToLowerInvariant().Replace(" ", "-")">
+
+                                            @milestone.MonitoringStatus
+
+                                        </span>
+
+
+                                        @if (milestone.IsOverdue)
+                                        {
+                                            <div class="monitoring-message overdue-message">
+
+                                                @milestone.DaysOverdue
+                                                day(s) overdue
+
+                                            </div>
+                                        }
+                                        else if (
+                                            milestone.IsIncomplete &&
+                                            milestone.DaysRemaining > 0)
+                                        {
+                                            <div class="monitoring-message remaining-message">
+
+                                                @milestone.DaysRemaining
+                                                day(s) remaining
+
+                                            </div>
+                                        }
+                                        else if (
+                                            milestone.Status == "Completed")
+                                        {
+                                            <div class="monitoring-message completed-message">
+
+                                                Milestone completed
+
+                                            </div>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             BOTTOM NAVIGATION
+             ===================================================== -->
+
+        <div class="bottom-navigation">
+
+            @Html.ActionLink(
+                "Back to Project Details",
+                "Details",
+                "MunicipalProject",
+                new { id = Model.ProjectID },
+                new { @class = "bottom-button secondary" }
+            )
+
+            @Html.ActionLink(
+                "View Milestones",
+                "Milestones",
+                "MunicipalProject",
+                new { id = Model.ProjectID },
+                new { @class = "bottom-button primary" }
+            )
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .milestone-monitor-page {
+        min-height: 100vh;
+        background: #f4f7fb;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .milestone-monitor-header {
+        background: #0D5CC1;
+        color: #fff;
+        padding: 34px 40px;
+    }
+
+    .milestone-header-inner {
+        max-width: 1450px;
+        margin: 0 auto;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 30px;
+    }
+
+    .header-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        opacity: .85;
+
+        margin-bottom: 8px;
+    }
+
+    .milestone-monitor-header h1 {
+        margin: 0;
+
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 700;
+    }
+
+    .project-reference {
+        margin-top: 10px;
+
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .project-code,
+    .project-type {
+        color: #fff;
+    }
+
+    .reference-divider {
+        margin: 0 8px;
+        opacity: .7;
+    }
+
+
+    /* =========================================================
+       HEADER BUTTONS
+       ========================================================= */
+
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .header-button {
+        display: inline-block;
+
+        padding: 11px 17px;
+
+        border: 1px solid rgba(255,255,255,.85);
+        border-radius: 6px;
+
+        color: #fff;
+        background: transparent;
+
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .header-button:hover {
+        color: #fff;
+        background: rgba(255,255,255,.12);
+        text-decoration: none;
+    }
+
+    .header-button.secondary {
+        background: #fff;
+        color: #0D5CC1;
+    }
+
+    .header-button.secondary:hover {
+        background: #f3f7ff;
+        color: #094b9f;
+    }
+
+
+    /* =========================================================
+       CONTAINER
+       ========================================================= */
+
+    .milestone-monitor-container {
+        max-width: 1450px;
+
+        margin: 0 auto;
+
+        padding: 30px 40px 50px;
+    }
+
+
+    /* =========================================================
+       PROJECT INFORMATION
+       ========================================================= */
+
+    .project-information-card {
+        background: #fff;
+
+        border: 1px solid #e1e7ef;
+        border-radius: 10px;
+
+        box-shadow: 0 2px 8px rgba(20,40,70,.05);
+
+        padding: 24px 28px;
+
+        margin-bottom: 30px;
+    }
+
+    .project-information-main {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 25px;
+    }
+
+    .section-label {
+        color: #667085;
+
+        font-size: 11px;
+        font-weight: 700;
+
+        letter-spacing: .8px;
+
+        margin-bottom: 6px;
+    }
+
+    .project-information-card h2 {
+        margin: 0 0 7px;
+
+        color: #172b4d;
+
+        font-size: 23px;
+    }
+
+    .project-information-card p {
+        margin: 0;
+
+        color: #667085;
+
+        font-size: 14px;
+    }
+
+    .separator {
+        margin: 0 7px;
+
+        color: #b5becb;
+    }
+
+    .project-status-block {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-end;
+
+        gap: 7px;
+    }
+
+    .status-label {
+        color: #667085;
+
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .project-status-badge {
+        display: inline-block;
+
+        padding: 8px 14px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-planned,
+    .status-approved,
+    .status-notstarted {
+        background: #eef2f6;
+        color: #475467;
+    }
+
+    .status-inprogress {
+        background: #eaf2ff;
+        color: #0D5CC1;
+    }
+
+    .status-completed {
+        background: #e9f7ef;
+        color: #176b3a;
+    }
+
+    .status-onhold,
+    .status-delayed {
+        background: #fff3df;
+        color: #a15c00;
+    }
+
+    .status-cancelled,
+    .status-closed {
+        background: #f2f4f7;
+        color: #667085;
+    }
+
+
+    /* =========================================================
+       SECTION TITLE
+       ========================================================= */
+
+    .section-title {
+        margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+        margin: 0 0 5px;
+
+        color: #172b4d;
+
+        font-size: 20px;
+    }
+
+    .section-title p {
+        margin: 0;
+
+        color: #667085;
+
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       SUMMARY CARDS
+       ========================================================= */
+
+    .monitoring-summary-grid {
+        display: grid;
+
+        grid-template-columns: repeat(6, 1fr);
+
+        gap: 14px;
+
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        background: #fff;
+
+        border: 1px solid #e1e7ef;
+        border-radius: 9px;
+
+        padding: 20px;
+
+        box-shadow: 0 2px 7px rgba(20,40,70,.04);
+
+        border-top: 3px solid #d0d5dd;
+    }
+
+    .summary-card.completed-card {
+        border-top-color: #2e8b57;
+    }
+
+    .summary-card.progress-card {
+        border-top-color: #0D5CC1;
+    }
+
+    .summary-card.delayed-card {
+        border-top-color: #d97706;
+    }
+
+    .summary-card.overdue-card {
+        border-top-color: #c62828;
+    }
+
+    .summary-card.incomplete-card {
+        border-top-color: #667085;
+    }
+
+    .summary-label {
+        display: block;
+
+        color: #667085;
+
+        font-size: 12px;
+        font-weight: 600;
+
+        margin-bottom: 8px;
+    }
+
+    .summary-value {
+        display: block;
+
+        color: #172b4d;
+
+        font-size: 29px;
+        line-height: 1;
+
+        margin-bottom: 8px;
+    }
+
+    .summary-description {
+        display: block;
+
+        color: #98a2b3;
+
+        font-size: 11px;
+    }
+
+
+    /* =========================================================
+       OVERALL PROGRESS
+       ========================================================= */
+
+    .overall-progress-card {
+        background: #fff;
+
+        border: 1px solid #e1e7ef;
+        border-radius: 10px;
+
+        box-shadow: 0 2px 8px rgba(20,40,70,.05);
+
+        padding: 24px 28px;
+
+        margin-bottom: 22px;
+    }
+
+    .progress-heading {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 20px;
+
+        margin-bottom: 16px;
+    }
+
+    .progress-heading h2 {
+        margin: 0 0 5px;
+
+        color: #172b4d;
+
+        font-size: 19px;
+    }
+
+    .progress-heading p {
+        margin: 0;
+
+        color: #667085;
+
+        font-size: 13px;
+    }
+
+    .overall-progress-value {
+        color: #0D5CC1;
+
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .overall-progress-track {
+        width: 100%;
+        height: 12px;
+
+        background: #e7edf5;
+
+        border-radius: 10px;
+
+        overflow: hidden;
+    }
+
+    .overall-progress-fill {
+        height: 100%;
+
+        background: #0D5CC1;
+
+        border-radius: 10px;
+
+        transition: width .3s ease;
+    }
+
+
+    /* =========================================================
+       ATTENTION CARD
+       ========================================================= */
+
+    .attention-card {
+        background: #fff;
+
+        border: 1px solid #f1d4b3;
+        border-left: 4px solid #d97706;
+
+        border-radius: 10px;
+
+        padding: 24px 28px;
+
+        margin-bottom: 22px;
+    }
+
+    .attention-heading {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 20px;
+
+        margin-bottom: 18px;
+    }
+
+    .attention-heading h2 {
+        margin: 0 0 5px;
+
+        color: #172b4d;
+
+        font-size: 19px;
+    }
+
+    .attention-heading p {
+        margin: 0;
+
+        color: #667085;
+
+        font-size: 13px;
+    }
+
+    .attention-count {
+        min-width: 34px;
+        height: 34px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        background: #fff3df;
+        color: #a15c00;
+
+        border-radius: 50%;
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .attention-list {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .attention-item {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 20px;
+
+        padding: 14px 16px;
+
+        background: #fffaf3;
+
+        border: 1px solid #f3dfc6;
+
+        border-radius: 7px;
+    }
+
+    .attention-item-title {
+        color: #172b4d;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        margin-bottom: 5px;
+    }
+
+    .attention-item-details {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 14px;
+
+        color: #667085;
+
+        font-size: 12px;
+    }
+
+    .attention-item-status {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: flex-end;
+
+        gap: 5px;
+    }
+
+    .overdue-days {
+        color: #b42318;
+
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       MAIN MONITORING CARD
+       ========================================================= */
+
+    .milestone-monitor-card {
+        background: #fff;
+
+        border: 1px solid #e1e7ef;
+        border-radius: 10px;
+
+        box-shadow: 0 2px 8px rgba(20,40,70,.05);
+
+        padding: 28px;
+    }
+
+    .card-heading {
+        margin-bottom: 22px;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 5px;
+
+        color: #172b4d;
+
+        font-size: 20px;
+    }
+
+    .card-heading p {
+        margin: 0;
+
+        color: #667085;
+
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .milestone-table-wrapper {
+        width: 100%;
+
+        overflow-x: auto;
+    }
+
+    .milestone-table {
+        width: 100%;
+
+        min-width: 1150px;
+
+        border-collapse: collapse;
+    }
+
+    .milestone-table th {
+        padding: 13px 14px;
+
+        background: #f7f9fc;
+
+        color: #475467;
+
+        border-bottom: 1px solid #dfe5ed;
+
+        text-align: left;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .milestone-table td {
+        padding: 16px 14px;
+
+        color: #344054;
+
+        border-bottom: 1px solid #edf0f4;
+
+        font-size: 13px;
+
+        vertical-align: top;
+    }
+
+    .milestone-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+
+    /* =========================================================
+       MILESTONE
+       ========================================================= */
+
+    .milestone-title {
+        color: #172b4d;
+
+        font-weight: 700;
+
+        margin-bottom: 6px;
+    }
+
+    .milestone-description {
+        max-width: 280px;
+
+        color: #667085;
+
+        font-size: 12px;
+
+        line-height: 1.45;
+    }
+
+
+    /* =========================================================
+       PRIORITY
+       ========================================================= */
+
+    .priority-badge {
+        display: inline-block;
+
+        padding: 5px 9px;
+
+        border-radius: 5px;
+
+        font-size: 11px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .priority-low {
+        background: #eef2f6;
+        color: #475467;
+    }
+
+    .priority-medium {
+        background: #eaf2ff;
+        color: #0D5CC1;
+    }
+
+    .priority-high {
+        background: #fff3df;
+        color: #a15c00;
+    }
+
+    .priority-critical {
+        background: #fdeaea;
+        color: #b42318;
+    }
+
+
+    /* =========================================================
+       DATES
+       ========================================================= */
+
+    .date-information {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 3px;
+
+        color: #475467;
+
+        white-space: nowrap;
+    }
+
+    .date-information span {
+        color: #98a2b3;
+
+        font-size: 11px;
+    }
+
+    .completion-recorded {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 3px;
+
+        color: #176b3a;
+    }
+
+    .completion-recorded span {
+        font-size: 11px;
+    }
+
+    .not-recorded {
+        color: #98a2b3;
+
+        font-style: italic;
+    }
+
+
+    /* =========================================================
+       PROGRESS
+       ========================================================= */
+
+    .progress-cell {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        min-width: 125px;
+    }
+
+    .progress-bar-wrapper {
+        width: 80px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 7px;
+
+        background: #e7edf5;
+
+        border-radius: 8px;
+
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+
+        background: #0D5CC1;
+
+        border-radius: 8px;
+    }
+
+    .progress-cell strong {
+        color: #344054;
+
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge,
+    .monitoring-badge {
+        display: inline-block;
+
+        padding: 5px 9px;
+
+        border-radius: 5px;
+
+        font-size: 11px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .status-notstarted,
+    .monitoring-not-started {
+        background: #eef2f6;
+        color: #475467;
+    }
+
+    .status-inprogress,
+    .monitoring-on-track {
+        background: #eaf2ff;
+        color: #0D5CC1;
+    }
+
+    .status-completed,
+    .monitoring-completed {
+        background: #e9f7ef;
+        color: #176b3a;
+    }
+
+    .status-delayed,
+    .monitoring-delayed {
+        background: #fff3df;
+        color: #a15c00;
+    }
+
+    .status-cancelled,
+    .monitoring-cancelled {
+        background: #f2f4f7;
+        color: #667085;
+    }
+
+    .monitoring-overdue {
+        background: #fdeaea;
+        color: #b42318;
+    }
+
+
+    /* =========================================================
+       MONITORING MESSAGE
+       ========================================================= */
+
+    .monitoring-message {
+        margin-top: 7px;
+
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .overdue-message {
+        color: #b42318;
+    }
+
+    .remaining-message {
+        color: #667085;
+    }
+
+    .completed-message {
+        color: #176b3a;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 55px 20px;
+
+        text-align: center;
+
+        background: #fafbfd;
+
+        border: 1px dashed #ccd5e1;
+        border-radius: 8px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 8px;
+
+        color: #172b4d;
+
+        font-size: 18px;
+    }
+
+    .empty-state p {
+        margin: 0 0 20px;
+
+        color: #667085;
+
+        font-size: 13px;
+    }
+
+    .empty-button {
+        display: inline-block;
+
+        padding: 11px 18px;
+
+        background: #0D5CC1;
+        color: #fff;
+
+        border-radius: 6px;
+
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .empty-button:hover {
+        background: #094b9f;
+
+        color: #fff;
+
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       BOTTOM NAVIGATION
+       ========================================================= */
+
+    .bottom-navigation {
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        margin-top: 24px;
+    }
+
+    .bottom-button {
+        display: inline-block;
+
+        padding: 12px 18px;
+
+        border-radius: 6px;
+
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .bottom-button.primary {
+        background: #0D5CC1;
+        color: #fff;
+    }
+
+    .bottom-button.primary:hover {
+        background: #094b9f;
+        color: #fff;
+
+        text-decoration: none;
+    }
+
+    .bottom-button.secondary {
+        background: #fff;
+
+        color: #344054;
+
+        border: 1px solid #d0d5dd;
+    }
+
+    .bottom-button.secondary:hover {
+        background: #f7f9fc;
+
+        color: #344054;
+
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1200px) {
+
+        .monitoring-summary-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+    }
+
+
+    @@media (max-width: 768px) {
+
+        .milestone-monitor-header {
+            padding: 26px 20px;
+        }
+
+        .milestone-header-inner {
+            flex-direction: column;
+
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .header-button {
+            text-align: center;
+        }
+
+        .milestone-monitor-container {
+            padding: 20px;
+        }
+
+        .project-information-main {
+            flex-direction: column;
+
+            align-items: flex-start;
+        }
+
+        .project-status-block {
+            align-items: flex-start;
+        }
+
+        .monitoring-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .progress-heading {
+            flex-direction: column;
+
+            align-items: flex-start;
+        }
+
+        .attention-heading {
+            align-items: flex-start;
+        }
+
+        .attention-item {
+            flex-direction: column;
+
+            align-items: flex-start;
+        }
+
+        .attention-item-status {
+            align-items: flex-start;
+        }
+
+        .bottom-navigation {
+            flex-direction: column;
+        }
+
+        .bottom-button {
+            text-align: center;
+        }
+
+    }
+
+
+    @@media (max-width: 480px) {
+
+        .monitoring-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .milestone-monitor-card,
+        .overall-progress-card,
+        .project-information-card,
+        .attention-card {
+            padding: 20px;
+        }
+
+        .milestone-monitor-header h1 {
+            font-size: 25px;
+        }
+
+    }
+
+</style>

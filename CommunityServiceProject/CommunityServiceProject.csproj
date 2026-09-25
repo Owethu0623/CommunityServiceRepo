@@ -127,6 +127,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202608102230389_UpdateRequestGPS12.cs" />
     <Compile Include="Migrations\202608102230389_UpdateRequestGPS12.Designer.cs">
       <DependentUpon>202608102230389_UpdateRequestGPS12.cs</DependentUpon>
@@ -263,6 +266,38 @@
     <Compile Include="Migrations\202609232011052_AddWardToMunicipalAsset.Designer.cs">
       <DependentUpon>202609232011052_AddWardToMunicipalAsset.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202609241309063_AddMunicipalProjectManagement.cs" />
+    <Compile Include="Migrations\202609241309063_AddMunicipalProjectManagement.Designer.cs">
+      <DependentUpon>202609241309063_AddMunicipalProjectManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609241501398_AddMunicipalProjectLocationCoordinates.cs" />
+    <Compile Include="Migrations\202609241501398_AddMunicipalProjectLocationCoordinates.Designer.cs">
+      <DependentUpon>202609241501398_AddMunicipalProjectLocationCoordinates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609241804043_AddProjectScopeToMunicipalProject.cs" />
+    <Compile Include="Migrations\202609241804043_AddProjectScopeToMunicipalProject.Designer.cs">
+      <DependentUpon>202609241804043_AddProjectScopeToMunicipalProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609241907305_FinalizeMunicipalProjectDatabase.cs" />
+    <Compile Include="Migrations\202609241907305_FinalizeMunicipalProjectDatabase.Designer.cs">
+      <DependentUpon>202609241907305_FinalizeMunicipalProjectDatabase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609250404342_AddTechnicianOpportunity.cs" />
+    <Compile Include="Migrations\202609250404342_AddTechnicianOpportunity.Designer.cs">
+      <DependentUpon>202609250404342_AddTechnicianOpportunity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609250435322_MakeTechnicianOpportunityCodeUnique.cs" />
+    <Compile Include="Migrations\202609250435322_MakeTechnicianOpportunityCodeUnique.Designer.cs">
+      <DependentUpon>202609250435322_MakeTechnicianOpportunityCodeUnique.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609250503172_AddTechnicianApplication.cs" />
+    <Compile Include="Migrations\202609250503172_AddTechnicianApplication.Designer.cs">
+      <DependentUpon>202609250503172_AddTechnicianApplication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609250518160_AddTechnicianApplication1.cs" />
+    <Compile Include="Migrations\202609250518160_AddTechnicianApplication1.Designer.cs">
+      <DependentUpon>202609250518160_AddTechnicianApplication1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
@@ -325,10 +360,33 @@
     <Compile Include="Models\MunicipalAssetEditViewModel.cs" />
     <Compile Include="Models\MunicipalAssetIndexViewModel.cs" />
     <Compile Include="Models\MunicipalAssetViewModel.cs" />
+    <Compile Include="Models\MunicipalEvidenceViewModel.cs" />
     <Compile Include="Models\MunicipalProject.cs" />
+    <Compile Include="Models\MunicipalProjectAssetsViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectClosureViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectCompletionViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectController.cs" />
+    <Compile Include="Models\MunicipalProjectCreateViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectDetailsViewModel.cs" />
     <Compile Include="Models\MunicipalProjectEnums.cs" />
+    <Compile Include="Models\MunicipalProjectHistoryViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectIndexViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectMilestoneMonitoringViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectMilestoneViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectObjectivesViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectProgressViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectRequestsViewmodel.cs" />
+    <Compile Include="Models\MunicipalProjectScopeViewModel.cs" />
+    <Compile Include="Models\MunicipalProjectStatusViewModel.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Priority.cs" />
+    <Compile Include="Models\ProjectEvidence.cs" />
+    <Compile Include="Models\ProjectHistory.cs" />
+    <Compile Include="Models\ProjectMilestone.cs" />
+    <Compile Include="Models\ProjectObjective.cs" />
+    <Compile Include="Models\ProjectProgress.cs" />
+    <Compile Include="Models\ProjectProgressEntryViewModel.cs" />
+    <Compile Include="Models\ProjectRequest.cs" />
     <Compile Include="Models\ReassignmentApprovalViewModel.cs" />
     <Compile Include="Models\ReassignmentRequest.cs" />
     <Compile Include="Models\ReassignmentRequestViewModel.cs" />
@@ -339,10 +397,22 @@
     <Compile Include="Models\RetireMunicipalAssetViewModel.cs" />
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\SystemHistoryViewModel.cs" />
+    <Compile Include="Models\TechhnicianApplicationCreateViewModel.cs" />
+    <Compile Include="Models\TechnicianApplication.cs" />
+    <Compile Include="Models\TechnicianApplicationController.cs" />
+    <Compile Include="Models\TechnicianApplicationDetailsViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationStatus.cs" />
+    <Compile Include="Models\TechnicianApplicationStatusViewModel.cs" />
     <Compile Include="Models\TechnicianAssignment.cs" />
     <Compile Include="Models\TechnicianAssignmentViewModel.cs" />
     <Compile Include="Models\TechnicianDashboardViewModel.cs" />
     <Compile Include="Models\TechnicianManagementController.cs" />
+    <Compile Include="Models\TechnicianOpportunity.cs" />
+    <Compile Include="Models\TechnicianOpportunityController.cs" />
+    <Compile Include="Models\TechnicianOpportunityCreateViewModel.cs" />
+    <Compile Include="Models\TechnicianOpportunityDetailsViewModel.cs" />
+    <Compile Include="Models\TechnicianOpportunityListViewModel.cs" />
+    <Compile Include="Models\TechnicianOpportunityManagementViewModel.cs" />
     <Compile Include="Models\TechnicianProfileViewModel.cs" />
     <Compile Include="Models\TechniciansController.cs" />
     <Compile Include="Models\TechnicianSkill.cs" />
@@ -353,9 +423,6 @@
     <Compile Include="Models\Warning.cs" />
     <Compile Include="Models\WorkNote.cs" />
     <Compile Include="Scripts\Controllers\HomeController.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\202608102100498_UpdateRequestGPS7.cs" />
     <Compile Include="Migrations\202608102100498_UpdateRequestGPS7.Designer.cs">
       <DependentUpon>202608102100498_UpdateRequestGPS7.cs</DependentUpon>
@@ -459,8 +526,8 @@
     <Content Include="Content\Images\logo.png" />
     <Content Include="Content\login.css" />
     <Content Include="Content\TechnicianDashboard.css" />
-    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Views\favicon.ico" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -597,6 +664,28 @@
     <Content Include="Views\MunicipalAsset\AssetHistory.cshtml" />
     <Content Include="Views\MunicipalAsset\StatusMonitoring.cshtml" />
     <Content Include="Views\MunicipalAsset\Retire.cshtml" />
+    <Content Include="Views\MunicipalProject\Create.cshtml" />
+    <Content Include="Views\MunicipalProject\Index.cshtml" />
+    <Content Include="Views\MunicipalProject\Details.cshtml" />
+    <Content Include="Views\MunicipalProject\DefineScope.cshtml" />
+    <Content Include="Views\MunicipalProject\Objectives.cshtml" />
+    <Content Include="Views\MunicipalProject\Requests.cshtml" />
+    <Content Include="Views\MunicipalProject\Assets.cshtml" />
+    <Content Include="Views\MunicipalProject\Milestones.cshtml" />
+    <Content Include="Views\MunicipalProject\Progress.cshtml" />
+    <Content Include="Views\MunicipalProject\UpdateStatus.cshtml" />
+    <Content Include="Views\MunicipalProject\RecordEvidence.cshtml" />
+    <Content Include="Views\MunicipalProject\MonitorMilestones.cshtml" />
+    <Content Include="Views\MunicipalProject\CompleteProject.cshtml" />
+    <Content Include="Views\MunicipalProject\CloseProject.cshtml" />
+    <Content Include="Views\MunicipalProject\History.cshtml" />
+    <Content Include="Views\TechnicianOpportunity\Index.cshtml" />
+    <Content Include="Views\TechnicianOpportunity\Details.cshtml" />
+    <Content Include="Views\TechnicianOpportunity\Create.cshtml" />
+    <Content Include="Views\TechnicianOpportunity\Manage.cshtml" />
+    <Content Include="Views\TechnicianApplication\Create.cshtml" />
+    <Content Include="Views\TechnicianApplication\Index.cshtml" />
+    <Content Include="Views\TechnicianApplication\Status.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -747,6 +836,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202609232011052_AddWardToMunicipalAsset.resx">
       <DependentUpon>202609232011052_AddWardToMunicipalAsset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609241309063_AddMunicipalProjectManagement.resx">
+      <DependentUpon>202609241309063_AddMunicipalProjectManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609241501398_AddMunicipalProjectLocationCoordinates.resx">
+      <DependentUpon>202609241501398_AddMunicipalProjectLocationCoordinates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609241804043_AddProjectScopeToMunicipalProject.resx">
+      <DependentUpon>202609241804043_AddProjectScopeToMunicipalProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609241907305_FinalizeMunicipalProjectDatabase.resx">
+      <DependentUpon>202609241907305_FinalizeMunicipalProjectDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609250404342_AddTechnicianOpportunity.resx">
+      <DependentUpon>202609250404342_AddTechnicianOpportunity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609250435322_MakeTechnicianOpportunityCodeUnique.resx">
+      <DependentUpon>202609250435322_MakeTechnicianOpportunityCodeUnique.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609250503172_AddTechnicianApplication.resx">
+      <DependentUpon>202609250503172_AddTechnicianApplication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609250518160_AddTechnicianApplication1.resx">
+      <DependentUpon>202609250518160_AddTechnicianApplication1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>

@@ -1,0 +1,1741 @@
+﻿```cshtml
+@model CommunityServiceProject.ViewModels.MunicipalProjectStatusViewModel
+
+@{
+    ViewBag.Title = "Update Project Status";
+}
+
+<div class="project-status-page">
+
+    <!-- ============================================================
+         PAGE HEADER
+    ============================================================ -->
+    <div class="project-status-header">
+
+        <div class="project-status-header-content">
+
+            <div>
+                <div class="project-status-eyebrow">
+                    MUNICIPAL PROJECT MANAGEMENT
+                </div>
+
+                <h1>Update Project Status</h1>
+
+                <p>
+                    Update the current lifecycle status of this municipal
+                    project and record the reason for the change.
+                </p>
+            </div>
+
+            <div class="project-header-reference">
+
+                <div class="project-code">
+                    @Model.ProjectCode
+                </div>
+
+                <div class="project-type">
+                    @Model.ProjectType
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         MAIN CONTENT
+    ============================================================ -->
+    <div class="project-status-container">
+
+        <!-- ========================================================
+             PROJECT SUMMARY
+        ========================================================= -->
+        <div class="project-summary-card">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Project Information</h2>
+                    <p>
+                        Review the project details before changing its status.
+                    </p>
+                </div>
+            </div>
+
+            <div class="project-summary-grid">
+
+                <div class="summary-item">
+                    <span class="summary-label">Project Name</span>
+                    <span class="summary-value">
+                        @Model.ProjectName
+                    </span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Project Code</span>
+                    <span class="summary-value">
+                        @Model.ProjectCode
+                    </span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Project Type</span>
+                    <span class="summary-value">
+                        @Model.ProjectType
+                    </span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Ward</span>
+                    <span class="summary-value">
+                        @Model.WardName
+                    </span>
+                </div>
+
+                <div class="summary-item summary-item-wide">
+                    <span class="summary-label">Project Location</span>
+                    <span class="summary-value">
+                        @Model.ProjectLocation
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             CURRENT STATUS
+        ========================================================= -->
+        <div class="current-status-card">
+
+            <div class="current-status-content">
+
+                <div>
+                    <div class="status-label">
+                        CURRENT PROJECT STATUS
+                    </div>
+
+                    <div class="current-status-name">
+                        @Model.CurrentStatus.ToString()
+                    </div>
+
+                    <p class="current-status-description">
+                        This is the project's status currently recorded
+                        in the municipal project management system.
+                    </p>
+                </div>
+
+                <div class="current-status-badge"
+                     id="currentStatusBadge">
+                    @Model.CurrentStatus.ToString()
+                </div>
+
+            </div>
+
+            @if (Model.LastUpdatedDate.HasValue)
+            {
+                <div class="last-updated-information">
+
+                    <span>
+                        Last updated:
+                        <strong>
+                            @Model.LastUpdatedDate.Value.ToString("dd MMM yyyy HH:mm")
+                        </strong>
+                    </span>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.LastUpdatedByAdministratorName))
+                    {
+                        <span>
+                            By:
+                            <strong>
+                                @Model.LastUpdatedByAdministratorName
+                            </strong>
+                        </span>
+                    }
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- ========================================================
+             STATUS UPDATE FORM
+        ========================================================= -->
+        @using (Html.BeginForm(
+            "UpdateStatus",
+            "MunicipalProject",
+            FormMethod.Post,
+            new { id = "updateStatusForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(model => model.ProjectID)
+
+
+            <!-- ====================================================
+                 STATUS CHANGE
+            ==================================================== -->
+            <div class="status-change-card">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>Change Project Status</h2>
+
+                        <p>
+                            Select one of the valid statuses available
+                            for the project's current lifecycle stage.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                @if (Model.AvailableStatuses != null &&
+                     Model.AvailableStatuses.Any())
+                {
+                    <div class="status-options">
+
+                        @foreach (var option in Model.AvailableStatuses)
+                        {
+                            <label class="status-option">
+
+                                <input type="radio"
+                                       name="NewStatus"
+                                       value="@((int)option.Status)"
+                                       class="status-radio"
+                                       data-status="@option.DisplayName"
+                                       data-description="@option.Description" />
+
+                                <span class="status-option-content">
+
+                                    <span class="status-option-top">
+
+                                        <span class="status-option-name">
+                                            @option.DisplayName
+                                        </span>
+
+                                        <span class="status-option-selector"></span>
+
+                                    </span>
+
+                                    <span class="status-option-description">
+                                        @option.Description
+                                    </span>
+
+                                </span>
+
+                            </label>
+                        }
+
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        model => model.NewStatus,
+                        "",
+                        new { @class = "field-validation" }
+                    )
+                }
+                else
+                {
+                    <div class="no-status-options">
+
+                        <strong>
+                            No further status changes are available.
+                        </strong>
+
+                        <p>
+                            The current project status does not allow
+                            another status update through this function.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- ====================================================
+                 REASON FOR CHANGE
+            ==================================================== -->
+            if (Model.AvailableStatuses != null &&
+                 Model.AvailableStatuses.Any())
+            {
+                <div class="reason-card">
+
+                    <div class="section-heading">
+
+                        <div>
+                            <h2>Reason for Status Change</h2>
+
+                            <p>
+                                Record the reason or justification for
+                                changing the project's status.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-field">
+
+                        @Html.LabelFor(
+                            model => model.StatusChangeReason,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            model => model.StatusChangeReason,
+                            new
+                            {
+                                @class = "form-textarea",
+                                id = "statusChangeReason",
+                                rows = 7,
+                                maxlength = 2000,
+                                placeholder = "Enter the reason for this status change..."
+                            }
+                        )
+
+                        <div class="field-help-row">
+
+                            <span>
+                                Minimum 10 characters.
+                            </span>
+
+                            <span id="reasonCounter">
+                                0 / 2000
+                            </span>
+
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            model => model.StatusChangeReason,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- ====================================================
+                 INFORMATION NOTICE
+            ==================================================== -->
+            if (Model.AvailableStatuses != null &&
+                 Model.AvailableStatuses.Any())
+            {
+                <div class="status-information-card">
+
+                    <div class="information-title">
+                        Status Update Information
+                    </div>
+
+                    <p>
+                        Updating the project status will immediately change
+                        the project's lifecycle status. The system will also
+                        record the previous status, new status, reason,
+                        date and administrator responsible for the change
+                        in the project history.
+                    </p>
+
+                    <p>
+                        Only valid lifecycle transitions are available.
+                        Completed and Closed projects cannot be changed
+                        using this function.
+                    </p>
+
+                </div>
+            }
+
+
+            <!-- ====================================================
+                 ACTION BUTTONS
+            ==================================================== -->
+            <div class="status-actions">
+
+                @Html.ActionLink(
+                    "Back to Project Details",
+                    "Details",
+                    "MunicipalProject",
+                    new { id = Model.ProjectID },
+                    new { @class = "status-btn status-btn-secondary" }
+                )
+
+                @Html.ActionLink(
+                    "Back to Projects",
+                    "Index",
+                    "MunicipalProject",
+                    null,
+                    new { @class = "status-btn status-btn-outline" }
+                )
+
+                @if (Model.AvailableStatuses != null &&
+                     Model.AvailableStatuses.Any())
+                {
+                    <button type="button"
+                            id="openStatusConfirmation"
+                            class="status-btn status-btn-primary">
+                        Update Project Status
+                    </button>
+                }
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+<!-- ================================================================
+     CONFIRMATION MODAL
+================================================================ -->
+<div id="statusConfirmationModal"
+     class="status-modal"
+     aria-hidden="true">
+
+    <div class="status-modal-overlay"
+         id="statusModalOverlay"></div>
+
+    <div class="status-modal-dialog"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="statusModalTitle">
+
+        <div class="status-modal-header">
+
+            <div>
+                <div class="status-modal-eyebrow">
+                    CONFIRM STATUS UPDATE
+                </div>
+
+                <h2 id="statusModalTitle">
+                    Confirm Project Status Change
+                </h2>
+            </div>
+
+            <button type="button"
+                    id="closeStatusConfirmation"
+                    class="modal-close-button"
+                    aria-label="Close">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="status-modal-body">
+
+            <p class="confirmation-introduction">
+                Please review the proposed change before confirming.
+            </p>
+
+            <div class="confirmation-status-flow">
+
+                <div class="confirmation-status-box">
+
+                    <span class="confirmation-label">
+                        CURRENT STATUS
+                    </span>
+
+                    <strong>
+                        @Model.CurrentStatus.ToString()
+                    </strong>
+
+                </div>
+
+                <div class="confirmation-arrow">
+                    →
+                </div>
+
+                <div class="confirmation-status-box confirmation-new-status">
+
+                    <span class="confirmation-label">
+                        NEW STATUS
+                    </span>
+
+                    <strong id="confirmationNewStatus">
+                        Not selected
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="confirmation-reason">
+
+                <span class="confirmation-label">
+                    REASON
+                </span>
+
+                <p id="confirmationReason">
+                    No reason provided.
+                </p>
+
+            </div>
+
+
+            <div class="confirmation-warning">
+
+                <strong>
+                    Confirm this status update?
+                </strong>
+
+                <p>
+                    This change will be saved to the project and recorded
+                    in the project history.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status-modal-actions">
+
+            <button type="button"
+                    id="cancelStatusConfirmation"
+                    class="status-btn status-btn-secondary">
+                Cancel
+            </button>
+
+            <button type="button"
+                    id="confirmStatusUpdate"
+                    class="status-btn status-btn-primary">
+                Confirm Status Update
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* ============================================================
+       PAGE
+    ============================================================ */
+
+    .project-status-page {
+        min-height: 100vh;
+        background: #f4f7fb;
+        padding-bottom: 50px;
+        color: #26364a;
+    }
+
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+
+    .project-status-header {
+        background: linear-gradient(
+            135deg,
+            #0D5CC1,
+            #094b9f
+        );
+        color: #ffffff;
+        padding: 42px 30px;
+    }
+
+    .project-status-header-content {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+    }
+
+    .project-status-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        opacity: 0.9;
+        margin-bottom: 10px;
+    }
+
+    .project-status-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .project-status-header p {
+        margin: 10px 0 0;
+        max-width: 700px;
+        line-height: 1.6;
+        color: #ffffff;
+        opacity: 0.94;
+    }
+
+    .project-header-reference {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .project-code {
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+
+    .project-type {
+        margin-top: 6px;
+        color: #ffffff;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+
+
+    /* ============================================================
+       CONTAINER
+    ============================================================ */
+
+    .project-status-container {
+        max-width: 1180px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+
+    /* ============================================================
+       GENERAL CARDS
+    ============================================================ */
+
+    .project-summary-card,
+    .current-status-card,
+    .status-change-card,
+    .reason-card,
+    .status-information-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(20, 42, 70, 0.05);
+        margin-bottom: 22px;
+    }
+
+    .project-summary-card,
+    .status-change-card,
+    .reason-card {
+        padding: 28px;
+    }
+
+    .section-heading {
+        margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        color: #17324d;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .section-heading p {
+        margin: 7px 0 0;
+        color: #6d7b8c;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+
+    /* ============================================================
+       PROJECT SUMMARY
+    ============================================================ */
+
+    .project-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .summary-item {
+        padding: 16px;
+        background: #f7f9fc;
+        border: 1px solid #e5eaf0;
+        border-radius: 8px;
+        min-width: 0;
+    }
+
+    .summary-item-wide {
+        grid-column: span 2;
+    }
+
+    .summary-label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 700;
+        color: #788697;
+        margin-bottom: 7px;
+    }
+
+    .summary-value {
+        display: block;
+        font-size: 15px;
+        font-weight: 600;
+        color: #26364a;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+
+    /* ============================================================
+       CURRENT STATUS
+    ============================================================ */
+
+    .current-status-card {
+        padding: 25px 28px;
+        background: #f9fbfe;
+    }
+
+    .current-status-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .status-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #718094;
+        margin-bottom: 6px;
+    }
+
+    .current-status-name {
+        font-size: 27px;
+        font-weight: 700;
+        color: #0D5CC1;
+    }
+
+    .current-status-description {
+        margin: 7px 0 0;
+        color: #6d7b8c;
+        font-size: 14px;
+    }
+
+    .current-status-badge {
+        padding: 10px 18px;
+        border-radius: 30px;
+        background: #e7f0ff;
+        border: 1px solid #c8dcfa;
+        color: #0D5CC1;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .last-updated-information {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 20px;
+        padding-top: 17px;
+        border-top: 1px solid #e3e9f1;
+        color: #758395;
+        font-size: 13px;
+    }
+
+    .last-updated-information strong {
+        color: #35465a;
+    }
+
+
+    /* ============================================================
+       STATUS OPTIONS
+    ============================================================ */
+
+    .status-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .status-option {
+        position: relative;
+        display: block;
+        cursor: pointer;
+    }
+
+    .status-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .status-option-content {
+        display: block;
+        height: 100%;
+        padding: 20px;
+        border: 1px solid #dce4ed;
+        border-radius: 10px;
+        background: #ffffff;
+        transition: all 0.18s ease;
+    }
+
+    .status-option:hover .status-option-content {
+        border-color: #8db6ea;
+        box-shadow: 0 4px 14px rgba(13, 92, 193, 0.08);
+    }
+
+    .status-option input:checked + .status-option-content {
+        border-color: #0D5CC1;
+        background: #f2f7ff;
+        box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.08);
+    }
+
+    .status-option-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .status-option-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #20364e;
+    }
+
+    .status-option-selector {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #aab8c7;
+        border-radius: 50%;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .status-option input:checked + .status-option-content
+        .status-option-selector {
+        border-color: #0D5CC1;
+    }
+
+    .status-option input:checked + .status-option-content
+        .status-option-selector::after {
+        content: "";
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: #0D5CC1;
+        border-radius: 50%;
+        top: 3px;
+        left: 3px;
+    }
+
+    .status-option-description {
+        display: block;
+        margin-top: 11px;
+        color: #6d7b8c;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* ============================================================
+       REASON
+    ============================================================ */
+
+    .form-field {
+        width: 100%;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 9px;
+        color: #33465a;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 14px 15px;
+        border: 1px solid #cfd9e5;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #26364a;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.6;
+        resize: vertical;
+        box-sizing: border-box;
+        transition: border-color 0.18s ease,
+                    box-shadow 0.18s ease;
+    }
+
+    .form-textarea:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.1);
+    }
+
+    .field-help-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 7px;
+        color: #7b8897;
+        font-size: 12px;
+    }
+
+    #reasonCounter {
+        font-weight: 600;
+    }
+
+
+    /* ============================================================
+       VALIDATION
+    ============================================================ */
+
+    .field-validation {
+        display: block;
+        margin-top: 8px;
+        color: #c0392b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .input-validation-error {
+        border-color: #c0392b !important;
+        background: #fffafa;
+    }
+
+    .validation-summary-errors {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: 8px;
+        background: #fff4f3;
+        border: 1px solid #f0c6c2;
+        color: #a93226;
+    }
+
+
+    /* ============================================================
+       NO OPTIONS
+    ============================================================ */
+
+    .no-status-options {
+        padding: 22px;
+        border-radius: 9px;
+        border: 1px solid #e0e5eb;
+        background: #f7f9fb;
+        color: #526274;
+    }
+
+    .no-status-options strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #30445a;
+    }
+
+    .no-status-options p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+
+    /* ============================================================
+       INFORMATION CARD
+    ============================================================ */
+
+    .status-information-card {
+        padding: 20px 24px;
+        border-left: 4px solid #0D5CC1;
+        background: #f5f9ff;
+    }
+
+    .information-title {
+        margin-bottom: 8px;
+        color: #173e6e;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .status-information-card p {
+        margin: 7px 0 0;
+        color: #56677b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* ============================================================
+       ACTION BUTTONS
+    ============================================================ */
+
+    .status-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .status-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 11px 20px;
+        border-radius: 7px;
+        border: 1px solid transparent;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        box-sizing: border-box;
+    }
+
+    .status-btn-primary {
+        background: #0D5CC1;
+        border-color: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .status-btn-primary:hover {
+        background: #094b9f;
+        border-color: #094b9f;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .status-btn-secondary {
+        background: #ffffff;
+        border-color: #cfd8e3;
+        color: #44566b;
+    }
+
+    .status-btn-secondary:hover {
+        background: #f2f5f8;
+        color: #26364a;
+        text-decoration: none;
+    }
+
+    .status-btn-outline {
+        background: transparent;
+        border-color: #0D5CC1;
+        color: #0D5CC1;
+    }
+
+    .status-btn-outline:hover {
+        background: #edf4ff;
+        color: #094b9f;
+        text-decoration: none;
+    }
+
+    .status-btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+
+    .status-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+    }
+
+    .status-modal.is-open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .status-modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(16, 30, 48, 0.62);
+    }
+
+    .status-modal-dialog {
+        position: relative;
+        width: 100%;
+        max-width: 620px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    .status-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 25px 28px;
+        border-bottom: 1px solid #e4e9ef;
+    }
+
+    .status-modal-eyebrow {
+        margin-bottom: 7px;
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+    }
+
+    .status-modal-header h2 {
+        margin: 0;
+        color: #20364e;
+        font-size: 21px;
+    }
+
+    .modal-close-button {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #f0f3f7;
+        color: #596a7d;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .modal-close-button:hover {
+        background: #e3e8ee;
+        color: #26364a;
+    }
+
+    .status-modal-body {
+        padding: 26px 28px;
+    }
+
+    .confirmation-introduction {
+        margin: 0 0 20px;
+        color: #657487;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .confirmation-status-flow {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .confirmation-status-box {
+        padding: 17px;
+        border: 1px solid #dce4ed;
+        border-radius: 9px;
+        background: #f8fafc;
+        text-align: center;
+    }
+
+    .confirmation-status-box strong {
+        display: block;
+        margin-top: 7px;
+        color: #34485d;
+        font-size: 16px;
+    }
+
+    .confirmation-new-status {
+        background: #f1f7ff;
+        border-color: #c9ddf8;
+    }
+
+    .confirmation-new-status strong {
+        color: #0D5CC1;
+    }
+
+    .confirmation-arrow {
+        color: #0D5CC1;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .confirmation-label {
+        display: block;
+        color: #788696;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+    }
+
+    .confirmation-reason {
+        padding: 17px;
+        border-radius: 9px;
+        background: #f7f9fb;
+        border: 1px solid #e2e7ed;
+        margin-bottom: 18px;
+    }
+
+    .confirmation-reason p {
+        margin: 8px 0 0;
+        color: #405267;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .confirmation-warning {
+        padding: 16px 17px;
+        border-left: 4px solid #e39a22;
+        background: #fff9ef;
+        border-radius: 6px;
+    }
+
+    .confirmation-warning strong {
+        color: #82590d;
+        font-size: 14px;
+    }
+
+    .confirmation-warning p {
+        margin: 6px 0 0;
+        color: #806b48;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .status-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px 28px;
+        border-top: 1px solid #e4e9ef;
+        background: #fafbfd;
+    }
+
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @@media (max-width: 900px) {
+
+        .project-status-header-content {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .project-header-reference {
+            text-align: left;
+        }
+
+        .project-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .summary-item-wide {
+            grid-column: span 2;
+        }
+
+        .status-options {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @@media (max-width: 650px) {
+
+        .project-status-header {
+            padding: 30px 20px;
+        }
+
+        .project-status-header h1 {
+            font-size: 26px;
+        }
+
+        .project-status-container {
+            margin-top: 20px;
+            padding: 0 12px;
+        }
+
+        .project-summary-card,
+        .status-change-card,
+        .reason-card {
+            padding: 20px;
+        }
+
+        .project-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-item-wide {
+            grid-column: span 1;
+        }
+
+        .current-status-content {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .last-updated-information {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .status-actions {
+            flex-direction: column;
+        }
+
+        .status-actions .status-btn {
+            width: 100%;
+        }
+
+        .confirmation-status-flow {
+            grid-template-columns: 1fr;
+        }
+
+        .confirmation-arrow {
+            text-align: center;
+            transform: rotate(90deg);
+        }
+
+        .status-modal-header,
+        .status-modal-body,
+        .status-modal-actions {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .status-modal-actions {
+            flex-direction: column-reverse;
+        }
+
+        .status-modal-actions .status-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            /* ========================================================
+               ELEMENTS
+            ======================================================== */
+
+            var updateStatusForm =
+                document.getElementById(
+                    "updateStatusForm"
+                );
+
+            var openConfirmation =
+                document.getElementById(
+                    "openStatusConfirmation"
+                );
+
+            var confirmationModal =
+                document.getElementById(
+                    "statusConfirmationModal"
+                );
+
+            var closeConfirmation =
+                document.getElementById(
+                    "closeStatusConfirmation"
+                );
+
+            var cancelConfirmation =
+                document.getElementById(
+                    "cancelStatusConfirmation"
+                );
+
+            var confirmUpdate =
+                document.getElementById(
+                    "confirmStatusUpdate"
+                );
+
+            var modalOverlay =
+                document.getElementById(
+                    "statusModalOverlay"
+                );
+
+            var reasonInput =
+                document.getElementById(
+                    "statusChangeReason"
+                );
+
+            var reasonCounter =
+                document.getElementById(
+                    "reasonCounter"
+                );
+
+            var confirmationNewStatus =
+                document.getElementById(
+                    "confirmationNewStatus"
+                );
+
+            var confirmationReason =
+                document.getElementById(
+                    "confirmationReason"
+                );
+
+            var statusRadios =
+                document.querySelectorAll(
+                    ".status-radio"
+                );
+
+
+            /* ========================================================
+               REASON COUNTER
+            ======================================================== */
+
+            function updateReasonCounter() {
+
+                if (!reasonInput || !reasonCounter)
+                    return;
+
+                var length =
+                    reasonInput.value.length;
+
+                reasonCounter.textContent =
+                    length + " / 2000";
+
+            }
+
+
+            if (reasonInput) {
+
+                reasonInput.addEventListener(
+                    "input",
+                    updateReasonCounter
+                );
+
+                updateReasonCounter();
+
+            }
+
+
+            /* ========================================================
+               GET SELECTED STATUS
+            ======================================================== */
+
+            function getSelectedStatus() {
+
+                for (
+                    var i = 0;
+                    i < statusRadios.length;
+                    i++
+                ) {
+
+                    if (statusRadios[i].checked) {
+                        return statusRadios[i];
+                    }
+
+                }
+
+                return null;
+
+            }
+
+
+            /* ========================================================
+               OPEN MODAL
+            ======================================================== */
+
+            function openModal() {
+
+                if (!confirmationModal)
+                    return;
+
+                var selectedStatus =
+                    getSelectedStatus();
+
+                if (!selectedStatus) {
+
+                    alert(
+                        "Please select a new project status before continuing."
+                    );
+
+                    return;
+
+                }
+
+
+                var reason =
+                    reasonInput
+                        ? reasonInput.value.trim()
+                        : "";
+
+
+                if (reason.length < 10) {
+
+                    alert(
+                        "Please provide a reason of at least 10 characters for the status change."
+                    );
+
+                    if (reasonInput) {
+                        reasonInput.focus();
+                    }
+
+                    return;
+
+                }
+
+
+                var statusName =
+                    selectedStatus.getAttribute(
+                        "data-status"
+                    );
+
+
+                if (confirmationNewStatus) {
+
+                    confirmationNewStatus.textContent =
+                        statusName;
+
+                }
+
+
+                if (confirmationReason) {
+
+                    confirmationReason.textContent =
+                        reason;
+
+                }
+
+
+                confirmationModal.classList.add(
+                    "is-open"
+                );
+
+                confirmationModal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+
+            }
+
+
+            /* ========================================================
+               CLOSE MODAL
+            ======================================================== */
+
+            function closeModal() {
+
+                if (!confirmationModal)
+                    return;
+
+                confirmationModal.classList.remove(
+                    "is-open"
+                );
+
+                confirmationModal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                document.body.style.overflow =
+                    "";
+
+            }
+
+
+            /* ========================================================
+               OPEN BUTTON
+            ======================================================== */
+
+            if (openConfirmation) {
+
+                openConfirmation.addEventListener(
+                    "click",
+                    function () {
+
+                        openModal();
+
+                    }
+                );
+
+            }
+
+
+            /* ========================================================
+               CLOSE BUTTONS
+            ======================================================== */
+
+            if (closeConfirmation) {
+
+                closeConfirmation.addEventListener(
+                    "click",
+                    function () {
+
+                        closeModal();
+
+                    }
+                );
+
+            }
+
+
+            if (cancelConfirmation) {
+
+                cancelConfirmation.addEventListener(
+                    "click",
+                    function () {
+
+                        closeModal();
+
+                    }
+                );
+
+            }
+
+
+            if (modalOverlay) {
+
+                modalOverlay.addEventListener(
+                    "click",
+                    function () {
+
+                        closeModal();
+
+                    }
+                );
+
+            }
+
+
+            /* ========================================================
+               ESCAPE KEY
+            ======================================================== */
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Escape" &&
+                        confirmationModal &&
+                        confirmationModal.classList.contains(
+                            "is-open"
+                        )
+                    ) {
+
+                        closeModal();
+
+                    }
+
+                }
+            );
+
+
+            /* ========================================================
+               FINAL CONFIRMATION
+            ======================================================== */
+
+            if (confirmUpdate) {
+
+                confirmUpdate.addEventListener(
+                    "click",
+                    function () {
+
+                        if (!updateStatusForm) {
+
+                            alert(
+                                "The status update form could not be found. Please refresh the page and try again."
+                            );
+
+                            return;
+
+                        }
+
+
+                        var selectedStatus =
+                            getSelectedStatus();
+
+                        if (!selectedStatus) {
+
+                            closeModal();
+
+                            alert(
+                                "Please select a new project status."
+                            );
+
+                            return;
+
+                        }
+
+
+                        var reason =
+                            reasonInput
+                                ? reasonInput.value.trim()
+                                : "";
+
+
+                        if (reason.length < 10) {
+
+                            closeModal();
+
+                            alert(
+                                "Please provide a reason of at least 10 characters."
+                            );
+
+                            if (reasonInput) {
+                                reasonInput.focus();
+                            }
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * Disable the button so the administrator
+                         * cannot accidentally submit the same
+                         * status change multiple times.
+                         */
+
+                        confirmUpdate.disabled =
+                            true;
+
+                        confirmUpdate.textContent =
+                            "Updating Status...";
+
+
+                        /*
+                         * Submit the actual MVC form.
+                         */
+
+                        updateStatusForm.submit();
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+

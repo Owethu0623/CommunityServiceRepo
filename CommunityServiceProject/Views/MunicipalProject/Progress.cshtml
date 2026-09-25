@@ -1,0 +1,1886 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectProgressViewModel
+
+@{
+    ViewBag.Title = "Record Project Progress";
+
+    var isLocked =
+        Model.Status == "Completed" ||
+        Model.Status == "Closed" ||
+        Model.Status == "Cancelled";
+
+    var progressPercentage = Model.CurrentProgressPercentage;
+
+    var progressDateText =
+        Model.LatestProgressDate.HasValue
+            ? Model.LatestProgressDate.Value.ToString("dd MMM yyyy")
+            : "No progress recorded";
+
+    var statusClass =
+        Model.Status != null
+            ? Model.Status.Replace(" ", "-")
+            : "Unknown";
+
+    var priorityClass =
+        Model.Priority != null
+            ? Model.Priority.Replace(" ", "-")
+            : "Unknown";
+}
+
+<div class="project-progress-page">
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
+    <div class="project-progress-header">
+
+        <div class="project-progress-header-content">
+
+            <div class="project-progress-eyebrow">
+                MUNICIPAL PROJECT MANAGEMENT
+            </div>
+
+            <div class="project-progress-title-row">
+                <h1>@Model.ProjectName</h1>
+
+                <span class="project-progress-separator">|</span>
+
+                <span class="project-progress-code">
+                    @Model.ProjectCode
+                </span>
+
+                <span class="project-progress-separator">|</span>
+
+                <span class="project-progress-type">
+                    @Model.ProjectType
+                </span>
+            </div>
+
+            <p class="project-progress-subtitle">
+                Record, monitor and review official project progress updates.
+            </p>
+
+        </div>
+
+        <div class="project-progress-header-actions">
+
+            <a href="@Url.Action(
+                "Details",
+                "MunicipalProject",
+                new { id = Model.ProjectID })"
+               class="progress-header-btn secondary">
+                Back to Project Details
+            </a>
+
+            <a href="@Url.Action(
+                "Index",
+                "MunicipalProject")"
+               class="progress-header-btn primary">
+                Municipal Projects
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         ALERTS
+         ========================================================= -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="progress-alert progress-alert-success">
+            <strong>Success</strong>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="progress-alert progress-alert-error">
+
+            <strong>Please review the following:</strong>
+
+            <div class="progress-validation-list">
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "validation-summary" }
+                )
+            </div>
+
+        </div>
+    }
+
+
+    <!-- =========================================================
+         PROJECT OVERVIEW
+         ========================================================= -->
+
+    <section class="progress-card">
+
+        <div class="progress-card-header">
+
+            <div>
+                <span class="progress-section-label">
+                    PROJECT OVERVIEW
+                </span>
+
+                <h2>Project Information</h2>
+            </div>
+
+            <div class="project-status-group">
+
+                <span class="project-status-pill @statusClass">
+                    @Model.Status
+                </span>
+
+                <span class="project-priority-pill @priorityClass">
+                    @Model.Priority Priority
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="project-overview-grid">
+
+            <div class="overview-item">
+                <span class="overview-label">Project Code</span>
+                <span class="overview-value">@Model.ProjectCode</span>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-label">Project Type</span>
+                <span class="overview-value">@Model.ProjectType</span>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-label">Ward</span>
+                <span class="overview-value">
+                    @(String.IsNullOrWhiteSpace(Model.WardName)
+                        ? "Not specified"
+                        : Model.WardName)
+                </span>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-label">Location</span>
+                <span class="overview-value">
+                    @Model.ProjectLocation
+                </span>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-label">Project Start</span>
+                <span class="overview-value">
+                    @Model.StartDate.ToString("dd MMM yyyy")
+                </span>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-label">Expected Completion</span>
+                <span class="overview-value">
+                    @(Model.ExpectedCompletionDate.HasValue
+                        ? Model.ExpectedCompletionDate.Value.ToString("dd MMM yyyy")
+                        : "Not specified")
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         CURRENT PROGRESS
+         ========================================================= -->
+
+    <section class="progress-card current-progress-card">
+
+        <div class="progress-card-header">
+
+            <div>
+                <span class="progress-section-label">
+                    CURRENT PROJECT PROGRESS
+                </span>
+
+                <h2>Latest Recorded Progress</h2>
+            </div>
+
+            @if (Model.LatestProgressDate.HasValue)
+            {
+                <span class="latest-update-label">
+                    Updated @Model.LatestProgressDate.Value.ToString("dd MMM yyyy")
+                </span>
+            }
+
+        </div>
+
+
+        <div class="current-progress-layout">
+
+            <div class="progress-percentage-display">
+                <span class="progress-percentage-number">
+                    @progressPercentage%
+                </span>
+
+                <span class="progress-percentage-caption">
+                    Current recorded progress
+                </span>
+            </div>
+
+
+            <div class="progress-bar-section">
+
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill"
+                         style="width: @progressPercentage"%;">
+                    </div>
+                </div>
+
+                <div class="progress-bar-scale">
+                    <span>0%</span>
+                    <span>25%</span>
+                    <span>50%</span>
+                    <span>75%</span>
+                    <span>100%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.LatestProgressDate.HasValue)
+        {
+            <div class="latest-progress-details">
+
+                @if (!String.IsNullOrWhiteSpace(Model.LatestProgressSummary))
+                {
+                    <div class="latest-progress-detail">
+                        <span class="latest-detail-label">
+                            Progress Summary
+                        </span>
+
+                        <p>
+                            @Model.LatestProgressSummary
+                        </p>
+                    </div>
+                }
+
+                @if (!String.IsNullOrWhiteSpace(Model.LatestCurrentActivity))
+                {
+                    <div class="latest-progress-detail">
+                        <span class="latest-detail-label">
+                            Current Activity
+                        </span>
+
+                        <p>
+                            @Model.LatestCurrentActivity
+                        </p>
+                    </div>
+                }
+
+                @if (!String.IsNullOrWhiteSpace(Model.LatestNextPlannedActivity))
+                {
+                    <div class="latest-progress-detail">
+                        <span class="latest-detail-label">
+                            Next Planned Activity
+                        </span>
+
+                        <p>
+                            @Model.LatestNextPlannedActivity
+                        </p>
+                    </div>
+                }
+
+                @if (!String.IsNullOrWhiteSpace(Model.LatestRecordedBy))
+                {
+                    <div class="latest-recorded-by">
+                        Recorded by
+                        <strong>@Model.LatestRecordedBy</strong>
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="progress-empty-current">
+                No project progress has been recorded yet.
+                The first progress update can be recorded below.
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =========================================================
+         RECORD NEW PROGRESS
+         ========================================================= -->
+
+    <section class="progress-card record-progress-card">
+
+        <div class="progress-card-header">
+
+            <div>
+                <span class="progress-section-label">
+                    US98
+                </span>
+
+                <h2>Record New Project Progress</h2>
+
+                <p class="progress-card-description">
+                    Record the latest verified project progress information
+                    received through municipal project monitoring activities.
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (isLocked)
+        {
+            <div class="progress-locked-message">
+
+                <strong>Progress recording unavailable</strong>
+
+                <p>
+                    This project is currently
+                    <strong>@Model.Status</strong>.
+                    New progress updates cannot be recorded for a
+                    completed, closed or cancelled project.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            using (Html.BeginForm(
+                "RecordProgress",
+                "MunicipalProject",
+                FormMethod.Post,
+                new { id = "recordProgressForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.ProjectID)
+
+
+                <div class="progress-form-grid">
+
+                    <!-- Progress Percentage -->
+
+                    <div class="form-field progress-percentage-field">
+
+                        @Html.LabelFor(
+                            m => m.Entry.ProgressPercentage,
+                            new { @class = "progress-form-label" })
+
+                        <div class="percentage-input-wrapper">
+
+                            <input type="range"
+                                   id="progressSlider"
+                                   min="0"
+                                   max="100"
+                                   step="1"
+                                   value="@Model.Entry.ProgressPercentage"
+                                   class="progress-slider" />
+
+                            @Html.TextBoxFor(
+                                m => m.Entry.ProgressPercentage,
+                                new
+                                {
+                                    @class = "progress-number-input",
+                                    id = "progressPercentageInput",
+                                    type = "number",
+                                    min = "0",
+                                    max = "100",
+                                    step = "1"
+                                })
+
+                            <span class="percentage-symbol">%</span>
+
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.Entry.ProgressPercentage,
+                            "",
+                            new { @class = "field-validation-error" })
+
+                        <div class="progress-field-hint">
+                            Current recorded progress:
+                            <strong>@Model.CurrentProgressPercentage%</strong>.
+                            New progress cannot be lower than the current recorded percentage.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Progress Date -->
+
+                    <div class="form-field">
+
+                        @Html.LabelFor(
+                            m => m.Entry.ProgressDate,
+                            new { @class = "progress-form-label" })
+
+                        @Html.TextBoxFor(
+                            m => m.Entry.ProgressDate,
+                            "{0:yyyy-MM-dd}",
+                            new
+                            {
+                                @class = "progress-form-input",
+                                type = "date",
+                                id = "progressDateInput"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Entry.ProgressDate,
+                            "",
+                            new { @class = "field-validation-error" })
+
+                        <div class="progress-field-hint">
+                            The date must be on or after the project start date
+                            and cannot be in the future.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Progress Summary -->
+
+                    <div class="form-field full-width">
+
+                        @Html.LabelFor(
+                            m => m.Entry.ProgressSummary,
+                            new { @class = "progress-form-label" })
+
+                        @Html.TextAreaFor(
+                            m => m.Entry.ProgressSummary,
+                            new
+                            {
+                                @class = "progress-form-textarea",
+                                rows = "5",
+                                maxlength = "4000",
+                                id = "progressSummary",
+                                placeholder = "Describe the work completed, current progress and significant developments."
+                            })
+
+                        <div class="textarea-footer">
+
+                            @Html.ValidationMessageFor(
+                                m => m.Entry.ProgressSummary,
+                                "",
+                                new { @class = "field-validation-error" })
+
+                            <span class="character-counter"
+                                  id="progressSummaryCounter">
+                                0 / 4000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Current Activity -->
+
+                    <div class="form-field">
+
+                        @Html.LabelFor(
+                            m => m.Entry.CurrentActivity,
+                            new { @class = "progress-form-label" })
+
+                        @Html.TextAreaFor(
+                            m => m.Entry.CurrentActivity,
+                            new
+                            {
+                                @class = "progress-form-textarea",
+                                rows = "4",
+                                maxlength = "1000",
+                                id = "currentActivity",
+                                placeholder = "Describe the main activity currently underway."
+                            })
+
+                        <div class="textarea-footer">
+
+                            @Html.ValidationMessageFor(
+                                m => m.Entry.CurrentActivity,
+                                "",
+                                new { @class = "field-validation-error" })
+
+                            <span class="character-counter"
+                                  id="currentActivityCounter">
+                                0 / 1000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Next Planned Activity -->
+
+                    <div class="form-field">
+
+                        @Html.LabelFor(
+                            m => m.Entry.NextPlannedActivity,
+                            new { @class = "progress-form-label" })
+
+                        @Html.TextAreaFor(
+                            m => m.Entry.NextPlannedActivity,
+                            new
+                            {
+                                @class = "progress-form-textarea",
+                                rows = "4",
+                                maxlength = "2000",
+                                id = "nextPlannedActivity",
+                                placeholder = "Describe the next planned project activity."
+                            })
+
+                        <div class="textarea-footer">
+
+                            @Html.ValidationMessageFor(
+                                m => m.Entry.NextPlannedActivity,
+                                "",
+                                new { @class = "field-validation-error" })
+
+                            <span class="character-counter"
+                                  id="nextPlannedActivityCounter">
+                                0 / 2000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Issues -->
+
+                    <div class="form-field full-width">
+
+                        @Html.LabelFor(
+                            m => m.Entry.IssuesEncountered,
+                            new { @class = "progress-form-label" })
+
+                        @Html.TextAreaFor(
+                            m => m.Entry.IssuesEncountered,
+                            new
+                            {
+                                @class = "progress-form-textarea",
+                                rows = "4",
+                                maxlength = "2000",
+                                id = "issuesEncountered",
+                                placeholder = "Record delays, constraints, risks or other issues affecting progress. Leave blank if none."
+                            })
+
+                        <div class="textarea-footer">
+
+                            @Html.ValidationMessageFor(
+                                m => m.Entry.IssuesEncountered,
+                                "",
+                                new { @class = "field-validation-error" })
+
+                            <span class="character-counter"
+                                  id="issuesCounter">
+                                0 / 2000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Guidance -->
+
+                <div class="progress-guidance">
+
+                    <div class="progress-guidance-content">
+
+                        <strong>Progress recording guidance</strong>
+
+                        <p>
+                            Progress should reflect the latest information available
+                            through project monitoring, such as project-team or
+                            contractor updates, site inspections and supporting
+                            project documentation.
+                        </p>
+
+                        <p>
+                            Progress percentages are recorded as a historical
+                            sequence. A new progress percentage cannot be lower
+                            than the project's previous recorded percentage.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Form Actions -->
+
+                <div class="progress-form-actions">
+
+                    <a href="@Url.Action(
+                        "Details",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID })"
+                       class="progress-cancel-btn">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="progress-submit-btn">
+                        Record Project Progress
+                    </button>
+
+                </div>
+            }
+        }
+
+    </section>
+
+
+    <!-- =========================================================
+         PROGRESS HISTORY
+         ========================================================= -->
+
+    <section class="progress-card history-card">
+
+        <div class="progress-card-header">
+
+            <div>
+                <span class="progress-section-label">
+                    PROJECT HISTORY
+                </span>
+
+                <h2>Progress History</h2>
+
+                <p class="progress-card-description">
+                    A chronological record of project progress updates.
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.ProgressRecords != null &&
+             Model.ProgressRecords.Any())
+        {
+            <div class="progress-history-list">
+
+                @foreach (var record in Model.ProgressRecords)
+                {
+                    <article class="progress-history-item">
+
+                        <div class="history-progress-column">
+
+                            <div class="history-percentage">
+                                @record.ProgressPercentage%
+                            </div>
+
+                            <div class="history-mini-bar">
+                                <div class="history-mini-fill"
+                                     style="width: @record.ProgressPercentage"%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="history-main">
+
+                            <div class="history-top-row">
+
+                                <div>
+
+                                    <span class="history-date">
+                                        @record.ProgressDate.ToString("dd MMM yyyy")
+                                    </span>
+
+                                    <span class="history-recorded-date">
+                                        Recorded
+                                        @record.DateRecorded.ToString("dd MMM yyyy HH:mm")
+                                    </span>
+
+                                </div>
+
+                                <span class="history-administrator">
+                                    @record.RecordedByAdministratorName
+                                </span>
+
+                            </div>
+
+
+                            <div class="history-summary">
+
+                                <span class="history-label">
+                                    Progress Summary
+                                </span>
+
+                                <p>
+                                    @record.ProgressSummary
+                                </p>
+
+                            </div>
+
+
+                            <div class="history-detail-grid">
+
+                                @if (!String.IsNullOrWhiteSpace(
+                                    record.CurrentActivity))
+                                {
+                                    <div class="history-detail">
+
+                                        <span class="history-label">
+                                            Current Activity
+                                        </span>
+
+                                        <p>
+                                            @record.CurrentActivity
+                                        </p>
+
+                                    </div>
+                                }
+
+
+                                @if (!String.IsNullOrWhiteSpace(
+                                    record.NextPlannedActivity))
+                                {
+                                    <div class="history-detail">
+
+                                        <span class="history-label">
+                                            Next Planned Activity
+                                        </span>
+
+                                        <p>
+                                            @record.NextPlannedActivity
+                                        </p>
+
+                                    </div>
+                                }
+
+                            </div>
+
+
+                            @if (!String.IsNullOrWhiteSpace(
+                                record.IssuesEncountered))
+                            {
+                                <div class="history-issues">
+
+                                    <span class="history-label">
+                                        Issues Encountered
+                                    </span>
+
+                                    <p>
+                                        @record.IssuesEncountered
+                                    </p>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </article>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="progress-history-empty">
+
+                <h3>No progress history yet</h3>
+
+                <p>
+                    No project progress updates have been recorded.
+                    Once the first update is submitted, it will appear here
+                    as part of the project's progress history.
+                </p>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =========================================================
+         INFORMATION NOTE
+         ========================================================= -->
+
+    <div class="progress-information-note">
+
+        <strong>About project progress</strong>
+
+        <p>
+            Project progress is recorded by the responsible administrator
+            based on information obtained through municipal project monitoring
+            activities. Recording a progress percentage does not automatically
+            change the project's lifecycle status.
+        </p>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .project-progress-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 30px 34px 60px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .project-progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        padding: 32px 36px;
+        margin-bottom: 24px;
+        border-radius: 14px;
+        background: linear-gradient(
+            135deg,
+            #0D5CC1 0%,
+            #094b9f 100%
+        );
+        color: white;
+        box-shadow: 0 8px 24px rgba(13, 92, 193, 0.16);
+    }
+
+    .project-progress-header-content {
+        min-width: 0;
+    }
+
+    .project-progress-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        margin-bottom: 10px;
+        opacity: 0.85;
+    }
+
+    .project-progress-title-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 11px;
+    }
+
+    .project-progress-title-row h1 {
+        margin: 0;
+        color: white;
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 700;
+    }
+
+    .project-progress-code,
+    .project-progress-type {
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .project-progress-separator {
+        color: rgba(255,255,255,0.65);
+        font-size: 18px;
+    }
+
+    .project-progress-subtitle {
+        margin: 10px 0 0;
+        color: rgba(255,255,255,0.86);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .project-progress-header-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .progress-header-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .progress-header-btn.primary {
+        background: white;
+        color: #0D5CC1;
+    }
+
+    .progress-header-btn.secondary {
+        border: 1px solid rgba(255,255,255,0.65);
+        color: white;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .progress-header-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       ALERTS
+       ========================================================= */
+
+    .progress-alert {
+        padding: 15px 18px;
+        margin-bottom: 20px;
+        border-radius: 9px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .progress-alert-success {
+        background: #edf9f1;
+        border: 1px solid #b8e4c5;
+        color: #23663a;
+    }
+
+    .progress-alert-error {
+        background: #fff2f2;
+        border: 1px solid #efb8b8;
+        color: #8b2525;
+    }
+
+    .progress-alert strong {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .progress-validation-list ul {
+        margin: 6px 0 0 18px;
+        padding: 0;
+    }
+
+
+    /* =========================================================
+       CARDS
+       ========================================================= */
+
+    .progress-card {
+        background: white;
+        border: 1px solid #e3e8ef;
+        border-radius: 13px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.045);
+    }
+
+    .progress-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 24px 26px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .progress-section-label {
+        display: block;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        margin-bottom: 5px;
+    }
+
+    .progress-card-header h2 {
+        margin: 0;
+        font-size: 21px;
+        color: #182230;
+    }
+
+    .progress-card-description {
+        margin: 7px 0 0;
+        color: #687586;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       PROJECT OVERVIEW
+       ========================================================= */
+
+    .project-status-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .project-status-pill,
+    .project-priority-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 29px;
+        padding: 0 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .project-status-pill {
+        background: #edf4ff;
+        color: #0D5CC1;
+    }
+
+    .project-status-pill.Completed {
+        background: #edf9f1;
+        color: #23733d;
+    }
+
+    .project-status-pill.Closed {
+        background: #eef1f4;
+        color: #56616d;
+    }
+
+    .project-status-pill.Cancelled {
+        background: #fff0f0;
+        color: #a52b2b;
+    }
+
+    .project-status-pill.InProgress {
+        background: #edf4ff;
+        color: #0D5CC1;
+    }
+
+    .project-status-pill.OnHold {
+        background: #fff7e8;
+        color: #996515;
+    }
+
+    .project-priority-pill {
+        background: #f1f3f6;
+        color: #4b5563;
+    }
+
+    .project-priority-pill.High {
+        background: #fff5e8;
+        color: #a15b00;
+    }
+
+    .project-priority-pill.Critical {
+        background: #fff0f0;
+        color: #a52b2b;
+    }
+
+    .project-overview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .overview-item {
+        padding: 20px 25px;
+        border-right: 1px solid #edf0f3;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .overview-item:nth-child(3n) {
+        border-right: none;
+    }
+
+    .overview-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #7b8795;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .overview-value {
+        display: block;
+        color: #202b38;
+        font-size: 14px;
+        line-height: 1.5;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       CURRENT PROGRESS
+       ========================================================= */
+
+    .latest-update-label {
+        color: #687586;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .current-progress-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        align-items: center;
+        gap: 35px;
+        padding: 30px 28px 24px;
+    }
+
+    .progress-percentage-display {
+        text-align: center;
+    }
+
+    .progress-percentage-number {
+        display: block;
+        color: #0D5CC1;
+        font-size: 48px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .progress-percentage-caption {
+        display: block;
+        margin-top: 8px;
+        color: #788494;
+        font-size: 12px;
+    }
+
+    .progress-bar-track {
+        width: 100%;
+        height: 18px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #e8edf3;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        min-width: 0;
+        border-radius: 20px;
+        background: linear-gradient(
+            90deg,
+            #0D5CC1,
+            #2878df
+        );
+        transition: width 0.3s ease;
+    }
+
+    .progress-bar-scale {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        color: #8a95a3;
+        font-size: 11px;
+    }
+
+    .latest-progress-details {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin: 0 28px 26px;
+        padding-top: 20px;
+        border-top: 1px solid #edf0f3;
+    }
+
+    .latest-progress-detail {
+        min-width: 0;
+    }
+
+    .latest-detail-label,
+    .history-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #778493;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+    }
+
+    .latest-progress-detail p {
+        margin: 0;
+        color: #3b4653;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .latest-recorded-by {
+        grid-column: 1 / -1;
+        padding-top: 14px;
+        border-top: 1px solid #edf0f3;
+        color: #778493;
+        font-size: 12px;
+    }
+
+    .latest-recorded-by strong {
+        color: #313c49;
+    }
+
+    .progress-empty-current {
+        margin: 0 28px 28px;
+        padding: 18px;
+        border: 1px dashed #ccd5df;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #6d7886;
+        font-size: 13px;
+        text-align: center;
+    }
+
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .progress-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 27px 28px 10px;
+    }
+
+    .form-field.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .progress-form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #273443;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .progress-form-input,
+    .progress-form-textarea,
+    .progress-number-input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd4de;
+        border-radius: 7px;
+        background: white;
+        color: #273443;
+        font-family: inherit;
+        font-size: 13px;
+        transition: border-color 0.2s ease,
+                    box-shadow 0.2s ease;
+    }
+
+    .progress-form-input {
+        height: 44px;
+        padding: 0 12px;
+    }
+
+    .progress-form-textarea {
+        min-height: 110px;
+        padding: 12px;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .progress-form-input:focus,
+    .progress-form-textarea:focus,
+    .progress-number-input:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,0.10);
+    }
+
+    .percentage-input-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 92px 25px;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .progress-slider {
+        width: 100%;
+        accent-color: #0D5CC1;
+        cursor: pointer;
+    }
+
+    .progress-number-input {
+        height: 44px;
+        padding: 0 10px;
+    }
+
+    .percentage-symbol {
+        color: #4f5c6b;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .progress-field-hint {
+        margin-top: 7px;
+        color: #7b8795;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .progress-field-hint strong {
+        color: #0D5CC1;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 6px;
+        color: #a52b2b;
+        font-size: 11px;
+    }
+
+    .textarea-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .textarea-footer .field-validation-error {
+        flex: 1;
+    }
+
+    .character-counter {
+        margin-top: 6px;
+        color: #8994a2;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       GUIDANCE
+       ========================================================= */
+
+    .progress-guidance {
+        margin: 18px 28px 0;
+        padding: 18px 20px;
+        border-left: 4px solid #0D5CC1;
+        background: #f3f7fc;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .progress-guidance-content strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #263547;
+        font-size: 13px;
+    }
+
+    .progress-guidance-content p {
+        margin: 5px 0;
+        color: #647181;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       LOCKED MESSAGE
+       ========================================================= */
+
+    .progress-locked-message {
+        margin: 25px 28px;
+        padding: 20px;
+        border: 1px solid #e6c4c4;
+        border-radius: 9px;
+        background: #fff5f5;
+        color: #713131;
+    }
+
+    .progress-locked-message strong {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .progress-locked-message p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       FORM ACTIONS
+       ========================================================= */
+
+    .progress-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 24px 28px 27px;
+        margin-top: 20px;
+        border-top: 1px solid #e7ebf0;
+    }
+
+    .progress-cancel-btn,
+    .progress-submit-btn {
+        min-height: 43px;
+        padding: 0 19px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .progress-cancel-btn {
+        border: 1px solid #cbd4de;
+        background: white;
+        color: #4b5563;
+    }
+
+    .progress-submit-btn {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .progress-cancel-btn:hover,
+    .progress-submit-btn:hover {
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .progress-submit-btn:hover {
+        background: #094b9f;
+        border-color: #094b9f;
+    }
+
+
+    /* =========================================================
+       HISTORY
+       ========================================================= */
+
+    .progress-history-list {
+        padding: 8px 28px 25px;
+    }
+
+    .progress-history-item {
+        display: grid;
+        grid-template-columns: 145px 1fr;
+        gap: 24px;
+        padding: 25px 0;
+        border-bottom: 1px solid #e9edf2;
+    }
+
+    .progress-history-item:last-child {
+        border-bottom: none;
+    }
+
+    .history-progress-column {
+        padding-top: 3px;
+    }
+
+    .history-percentage {
+        color: #0D5CC1;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .history-mini-bar {
+        width: 100%;
+        height: 7px;
+        margin-top: 9px;
+        overflow: hidden;
+        border-radius: 10px;
+        background: #e8edf3;
+    }
+
+    .history-mini-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: #0D5CC1;
+    }
+
+    .history-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .history-date {
+        display: inline-block;
+        color: #273443;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .history-recorded-date {
+        display: inline-block;
+        margin-left: 10px;
+        color: #8994a2;
+        font-size: 11px;
+    }
+
+    .history-administrator {
+        color: #536171;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .history-summary {
+        margin-top: 17px;
+    }
+
+    .history-summary p,
+    .history-detail p,
+    .history-issues p {
+        margin: 0;
+        color: #485564;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .history-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin-top: 18px;
+    }
+
+    .history-issues {
+        margin-top: 18px;
+        padding: 13px 15px;
+        border-radius: 7px;
+        background: #fff8ec;
+        border: 1px solid #f0dfbf;
+    }
+
+    .history-issues p {
+        color: #76551e;
+    }
+
+    .progress-history-empty {
+        margin: 20px 28px 28px;
+        padding: 38px 25px;
+        border: 1px dashed #ccd5df;
+        border-radius: 9px;
+        background: #fafbfc;
+        text-align: center;
+    }
+
+    .progress-history-empty h3 {
+        margin: 0 0 7px;
+        color: #344150;
+        font-size: 16px;
+    }
+
+    .progress-history-empty p {
+        max-width: 600px;
+        margin: 0 auto;
+        color: #788493;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       INFORMATION NOTE
+       ========================================================= */
+
+    .progress-information-note {
+        padding: 18px 21px;
+        border: 1px solid #d9e4f1;
+        border-radius: 9px;
+        background: #f7faff;
+        color: #526274;
+    }
+
+    .progress-information-note strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #263b52;
+        font-size: 13px;
+    }
+
+    .progress-information-note p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1050px) {
+
+        .project-progress-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .project-progress-header-actions {
+            width: 100%;
+        }
+
+        .progress-header-btn {
+            flex: 1;
+        }
+
+        .project-overview-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .overview-item:nth-child(3n) {
+            border-right: 1px solid #edf0f3;
+        }
+
+        .overview-item:nth-child(2n) {
+            border-right: none;
+        }
+
+        .latest-progress-details {
+            grid-template-columns: 1fr 1fr;
+        }
+
+    }
+
+
+    @@media (max-width: 760px) {
+
+        .project-progress-page {
+            padding: 20px 15px 40px;
+        }
+
+        .project-progress-header {
+            padding: 25px 21px;
+        }
+
+        .project-progress-title-row h1 {
+            font-size: 23px;
+        }
+
+        .project-progress-header-actions {
+            flex-direction: column;
+        }
+
+        .progress-header-btn {
+            width: 100%;
+        }
+
+        .project-overview-grid,
+        .progress-form-grid,
+        .latest-progress-details,
+        .history-detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .overview-item,
+        .overview-item:nth-child(2n),
+        .overview-item:nth-child(3n) {
+            border-right: none;
+        }
+
+        .current-progress-layout {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .progress-history-item {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .history-top-row {
+            flex-direction: column;
+        }
+
+        .history-administrator {
+            text-align: left;
+        }
+
+        .history-recorded-date {
+            display: block;
+            margin: 5px 0 0;
+        }
+
+        .percentage-input-wrapper {
+            grid-template-columns: 1fr 75px 20px;
+        }
+
+        .progress-form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .progress-cancel-btn,
+        .progress-submit-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        /* =====================================================
+           PROGRESS SLIDER / NUMBER INPUT
+           ===================================================== */
+
+        var slider =
+            document.getElementById("progressSlider");
+
+        var numberInput =
+            document.getElementById("progressPercentageInput");
+
+        if (slider && numberInput) {
+
+            slider.addEventListener("input", function () {
+                numberInput.value = slider.value;
+            });
+
+            numberInput.addEventListener("input", function () {
+
+                var value =
+                    parseInt(numberInput.value);
+
+                if (isNaN(value)) {
+                    return;
+                }
+
+                if (value < 0) {
+                    value = 0;
+                }
+
+                if (value > 100) {
+                    value = 100;
+                }
+
+                slider.value = value;
+            });
+        }
+
+
+        /* =====================================================
+           CHARACTER COUNTERS
+           ===================================================== */
+
+        function setupCounter(
+            textareaId,
+            counterId,
+            maximum
+        ) {
+
+            var textarea =
+                document.getElementById(textareaId);
+
+            var counter =
+                document.getElementById(counterId);
+
+            if (!textarea || !counter) {
+                return;
+            }
+
+            function updateCounter() {
+
+                var length =
+                    textarea.value.length;
+
+                counter.textContent =
+                    length + " / " + maximum;
+            }
+
+            textarea.addEventListener(
+                "input",
+                updateCounter
+            );
+
+            updateCounter();
+        }
+
+
+        setupCounter(
+            "progressSummary",
+            "progressSummaryCounter",
+            4000
+        );
+
+        setupCounter(
+            "currentActivity",
+            "currentActivityCounter",
+            1000
+        );
+
+        setupCounter(
+            "nextPlannedActivity",
+            "nextPlannedActivityCounter",
+            2000
+        );
+
+        setupCounter(
+            "issuesEncountered",
+            "issuesCounter",
+            2000
+        );
+
+
+        /* =====================================================
+           FORM CONFIRMATION
+           ===================================================== */
+
+        var form =
+            document.getElementById("recordProgressForm");
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    var progress =
+                        document.getElementById(
+                            "progressPercentageInput"
+                        );
+
+                    var progressValue =
+                        progress
+                            ? progress.value
+                            : "";
+
+                    var confirmed =
+                        window.confirm(
+                            "Are you sure you want to record this project progress update at "
+                            + progressValue
+                            + "%?"
+                        );
+
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                }
+            );
+        }
+
+    });
+
+</script>

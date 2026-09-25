@@ -1,0 +1,1679 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectMilestonesViewModel
+
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Project Milestones";
+}
+
+<div class="municipal-project-milestones-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="milestones-header">
+
+        <div class="milestones-header-left">
+
+            <div class="milestones-eyebrow">
+                MUNICIPAL PROJECT MANAGEMENT
+            </div>
+
+            <h1>
+                Project Milestones
+            </h1>
+
+            <div class="milestones-project-identity">
+                <span>@Model.ProjectCode</span>
+                <span class="identity-separator">|</span>
+                <span>@Model.ProjectType</span>
+            </div>
+
+            <p class="milestones-subtitle">
+                Define and organise the key stages required to deliver
+                <strong>@Model.ProjectName</strong>.
+            </p>
+
+        </div>
+
+
+        <div class="milestones-header-actions">
+
+            <a href="@Url.Action("Details", "MunicipalProject", new { id = Model.ProjectID })"
+               class="btn-secondary">
+                Back to Project
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROJECT CONTEXT
+         ===================================================== -->
+
+    <div class="project-context-card">
+
+        <div class="context-main">
+
+            <div class="context-label">
+                PROJECT
+            </div>
+
+            <div class="context-title">
+                @Model.ProjectName
+            </div>
+
+            <div class="context-meta">
+                @Model.ProjectCode
+                <span>|</span>
+                @Model.WardName
+                <span>|</span>
+                @Model.ProjectLocation
+            </div>
+
+        </div>
+
+
+        <div class="context-schedule">
+
+            <div class="schedule-item">
+
+                <span class="schedule-label">
+                    Project Start
+                </span>
+
+                <strong>
+                    @Model.ProjectStartDate.ToString("dd MMM yyyy")
+                </strong>
+
+            </div>
+
+
+            <div class="schedule-item">
+
+                <span class="schedule-label">
+                    Expected Completion
+                </span>
+
+                <strong>
+                    @(Model.ExpectedCompletionDate.HasValue
+                        ? Model.ExpectedCompletionDate.Value.ToString("dd MMM yyyy")
+                        : "Not specified")
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ALERTS
+         ===================================================== -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="milestone-alert milestone-alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="milestone-alert milestone-alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    <div class="milestone-summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Total Milestones
+            </span>
+
+            <strong>
+                @Model.MilestoneCount
+            </strong>
+
+            <span class="summary-description">
+                Defined for this project
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                In Progress
+            </span>
+
+            <strong>
+                @Model.InProgressMilestoneCount
+            </strong>
+
+            <span class="summary-description">
+                Currently underway
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Completed
+            </span>
+
+            <strong>
+                @Model.CompletedMilestoneCount
+            </strong>
+
+            <span class="summary-description">
+                Successfully completed
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Delayed
+            </span>
+
+            <strong>
+                @Model.DelayedMilestoneCount
+            </strong>
+
+            <span class="summary-description">
+                Require attention
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <div class="milestone-layout">
+
+        <!-- =================================================
+             ADD MILESTONE
+             ================================================= -->
+
+        <section class="milestone-form-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-eyebrow">
+                        MILESTONE PLANNING
+                    </span>
+
+                    <h2>
+                        Define New Milestone
+                    </h2>
+
+                    <p>
+                        Record an important project stage, its planned
+                        schedule, priority and current state.
+                    </p>
+                </div>
+
+            </div>
+
+
+            @using (Html.BeginForm(
+                "AddMilestone",
+                "MunicipalProject",
+                FormMethod.Post,
+                new { @class = "milestone-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.ProjectID)
+
+
+                <div class="form-grid">
+
+                    <div class="form-group form-group-full">
+
+                        @Html.Label(
+                            "MilestoneName",
+                            "Milestone Name")
+
+                        <input type="text"
+                               name="milestone.MilestoneName"
+                               class="form-control"
+                               maxlength="200"
+                               placeholder="e.g. Complete stormwater drainage installation"
+                               required />
+
+                        <div class="field-help">
+                            Use a clear, specific name that identifies the
+                            stage of work.
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group form-group-full">
+
+                        @Html.Label(
+                            "Description",
+                            "Description")
+
+                        <textarea name="milestone.Description"
+                                  class="form-control milestone-textarea"
+                                  maxlength="2000"
+                                  rows="5"
+                                  placeholder="Describe the work or outcome that must be achieved for this milestone."></textarea>
+
+                        <div class="field-footer">
+                            <span>
+                                Optional but recommended
+                            </span>
+
+                            <span id="milestoneDescriptionCounter">
+                                0 / 2000
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.Label(
+                            "PlannedStartDate",
+                            "Planned Start Date")
+
+                        <input type="date"
+                               name="milestone.PlannedStartDate"
+                               class="form-control"
+                               min="@Model.ProjectStartDate.ToString("yyyy-MM-dd")"
+                               max="@(Model.ExpectedCompletionDate.HasValue
+                                    ? Model.ExpectedCompletionDate.Value.ToString("yyyy-MM-dd")
+                                    : "")"
+                               value="@Model.ProjectStartDate.ToString("yyyy-MM-dd")"
+                               required />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.Label(
+                            "PlannedCompletionDate",
+                            "Planned Completion Date")
+
+                        <input type="date"
+                               name="milestone.PlannedCompletionDate"
+                               class="form-control"
+                               min="@Model.ProjectStartDate.ToString("yyyy-MM-dd")"
+                               max="@(Model.ExpectedCompletionDate.HasValue
+                                    ? Model.ExpectedCompletionDate.Value.ToString("yyyy-MM-dd")
+                                    : "")"
+                               value="@(Model.ExpectedCompletionDate.HasValue
+                                    ? Model.ExpectedCompletionDate.Value.ToString("yyyy-MM-dd")
+                                    : Model.ProjectStartDate.ToString("yyyy-MM-dd"))"
+                               required />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.Label(
+                            "Priority",
+                            "Priority")
+
+                        <select name="milestone.Priority"
+                                class="form-control">
+
+                            @foreach (
+                                MunicipalProjectPriority priority
+                                in Enum.GetValues(
+                                    typeof(MunicipalProjectPriority)))
+                            {
+                                <option value="@priority">
+                                    @priority
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.Label(
+                            "Status",
+                            "Status")
+
+                        <select name="milestone.Status"
+                                id="milestoneStatus"
+                                class="form-control">
+
+                            @foreach (
+                                ProjectMilestoneStatus status
+                                in Enum.GetValues(
+                                    typeof(ProjectMilestoneStatus)))
+                            {
+                                <option value="@status">
+                                    @status
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.Label(
+                            "ProgressPercentage",
+                            "Progress")
+
+                        <div class="progress-input-wrapper">
+
+                            <input type="number"
+                                   name="milestone.ProgressPercentage"
+                                   id="milestoneProgress"
+                                   class="form-control"
+                                   min="0"
+                                   max="100"
+                                   value="0"
+                                   required />
+
+                            <span>%</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.Label(
+                            "SequenceNumber",
+                            "Sequence Number")
+
+                        <input type="number"
+                               name="milestone.SequenceNumber"
+                               class="form-control"
+                               min="1"
+                               max="9999"
+                               value="@(Model.MilestoneCount + 1)"
+                               required />
+
+                        <div class="field-help">
+                            Controls the order in which milestones appear.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button type="submit"
+                            class="btn-primary">
+                        Add Milestone
+                    </button>
+
+                    <a href="@Url.Action("Details", "MunicipalProject", new { id = Model.ProjectID })"
+                       class="btn-form-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            }
+
+        </section>
+
+
+        <!-- =================================================
+             MILESTONE LIST
+             ================================================= -->
+
+        <section class="milestone-list-card">
+
+            <div class="section-heading milestone-list-heading">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        PROJECT PLAN
+                    </span>
+
+                    <h2>
+                        Defined Milestones
+                    </h2>
+
+                    <p>
+                        Milestones are displayed in their planned sequence.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            @if (Model.Milestones != null &&
+                 Model.Milestones.Any())
+            {
+                <div class="milestone-list">
+
+                    @foreach (var milestone in Model.Milestones)
+                    {
+                        <article class="milestone-item">
+
+                            <div class="milestone-sequence">
+                                @milestone.SequenceNumber
+                            </div>
+
+
+                            <div class="milestone-content">
+
+                                <div class="milestone-topline">
+
+                                    <div>
+
+                                        <h3>
+                                            @milestone.MilestoneName
+                                        </h3>
+
+                                        <div class="milestone-dates">
+
+                                            @milestone.PlannedStartDate.ToString("dd MMM yyyy")
+
+                                            <span>→</span>
+
+                                            @milestone.PlannedCompletionDate.ToString("dd MMM yyyy")
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="milestone-badges">
+
+                                        <span class="milestone-priority milestone-priority-@milestone.Priority.ToString().ToLowerInvariant()">
+                                            @milestone.Priority
+                                        </span>
+
+                                        <span class="milestone-status milestone-status-@milestone.Status.ToString().ToLowerInvariant()">
+                                            @milestone.Status
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    milestone.Description))
+                                {
+                                    <p class="milestone-description">
+                                        @milestone.Description
+                                    </p>
+                                }
+
+
+                                <div class="milestone-progress-section">
+
+                                    <div class="progress-header">
+
+                                        <span>
+                                            Progress
+                                        </span>
+
+                                        <strong>
+                                            @milestone.ProgressPercentage%
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="progress-track">
+
+                                        <div class="progress-fill"
+                                             style="width:@milestone.ProgressPercentage"%;">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                @if (milestone.ActualCompletionDate.HasValue)
+                                {
+                                    <div class="actual-completion">
+
+                                        Actual completion:
+                                        <strong>
+                                            @milestone.ActualCompletionDate.Value.ToString("dd MMM yyyy")
+                                        </strong>
+
+                                    </div>
+                                }
+
+
+                                <div class="milestone-actions">
+
+                                    <button type="button"
+                                            class="btn-small btn-edit"
+                                            onclick="openEditMilestone(@milestone.ProjectMilestoneID)">
+                                        Edit
+                                    </button>
+
+
+                                    @using (Html.BeginForm(
+                                        "DeleteMilestone",
+                                        "MunicipalProject",
+                                        FormMethod.Post,
+                                        new { @class = "delete-milestone-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@milestone.ProjectMilestoneID" />
+
+                                        <input type="hidden"
+                                               name="projectID"
+                                               value="@Model.ProjectID" />
+
+                                        <button type="submit"
+                                                class="btn-small btn-danger">
+                                            Remove
+                                        </button>
+                                    }
+
+                                </div>
+
+
+                                <!-- EDIT PANEL -->
+
+                                <div id="editMilestone-@milestone.ProjectMilestoneID"
+                                     class="edit-milestone-panel">
+
+                                    @using (Html.BeginForm(
+                                        "EditMilestone",
+                                        "MunicipalProject",
+                                        FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="ProjectID"
+                                               value="@Model.ProjectID" />
+
+                                        <input type="hidden"
+                                               name="milestone.ProjectMilestoneID"
+                                               value="@milestone.ProjectMilestoneID" />
+
+
+                                        <div class="edit-grid">
+
+                                            <div class="form-group form-group-full">
+
+                                                <label>
+                                                    Milestone Name
+                                                </label>
+
+                                                <input type="text"
+                                                       name="milestone.MilestoneName"
+                                                       class="form-control"
+                                                       maxlength="200"
+                                                       value="@milestone.MilestoneName"
+                                                       required />
+
+                                            </div>
+
+
+                                            <div class="form-group form-group-full">
+
+                                                <label>
+                                                    Description
+                                                </label>
+
+                                                <textarea name="milestone.Description"
+                                                          class="form-control"
+                                                          maxlength="2000"
+                                                          rows="4">@milestone.Description</textarea>
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Planned Start
+                                                </label>
+
+                                                <input type="date"
+                                                       name="milestone.PlannedStartDate"
+                                                       class="form-control"
+                                                       value="@milestone.PlannedStartDate.ToString("yyyy-MM-dd")"
+                                                       required />
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Planned Completion
+                                                </label>
+
+                                                <input type="date"
+                                                       name="milestone.PlannedCompletionDate"
+                                                       class="form-control"
+                                                       value="@milestone.PlannedCompletionDate.ToString("yyyy-MM-dd")"
+                                                       required />
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Actual Completion
+                                                </label>
+
+                                                <input type="date"
+                                                       name="milestone.ActualCompletionDate"
+                                                       class="form-control"
+                                                       value="@(milestone.ActualCompletionDate.HasValue
+                                                            ? milestone.ActualCompletionDate.Value.ToString("yyyy-MM-dd")
+                                                            : "")" />
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Priority
+                                                </label>
+
+                                                <select name="milestone.Priority"
+                                                        class="form-control">
+
+                                                    @foreach (
+                                                        MunicipalProjectPriority priority
+                                                        in Enum.GetValues(
+                                                            typeof(MunicipalProjectPriority)))
+                                                    {
+                                                        <option value="@priority"
+                                                                @(milestone.Priority == priority ? "selected" : "")>
+                                                            @priority
+                                                        </option>
+                                                    }
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Status
+                                                </label>
+
+                                                <select name="milestone.Status"
+                                                        class="form-control">
+
+                                                    @foreach (
+                                                        ProjectMilestoneStatus status
+                                                        in Enum.GetValues(
+                                                            typeof(ProjectMilestoneStatus)))
+                                                    {
+                                                        <option value="@status"
+                                                                @(milestone.Status == status ? "selected" : "")>
+                                                            @status
+                                                        </option>
+                                                    }
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Progress
+                                                </label>
+
+                                                <input type="number"
+                                                       name="milestone.ProgressPercentage"
+                                                       class="form-control"
+                                                       min="0"
+                                                       max="100"
+                                                       value="@milestone.ProgressPercentage"
+                                                       required />
+
+                                            </div>
+
+
+                                            <div class="form-group">
+
+                                                <label>
+                                                    Sequence Number
+                                                </label>
+
+                                                <input type="number"
+                                                       name="milestone.SequenceNumber"
+                                                       class="form-control"
+                                                       min="1"
+                                                       max="9999"
+                                                       value="@milestone.SequenceNumber"
+                                                       required />
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="edit-actions">
+
+                                            <button type="submit"
+                                                    class="btn-primary">
+                                                Save Changes
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn-form-secondary"
+                                                    onclick="closeEditMilestone(@milestone.ProjectMilestoneID)">
+                                                Cancel
+                                            </button>
+
+                                        </div>
+
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="milestone-empty-state">
+
+                    <div class="empty-title">
+                        No milestones defined yet
+                    </div>
+
+                    <p>
+                        Add the first milestone to establish the planned
+                        stages of this municipal project.
+                    </p>
+
+                </div>
+            }
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .municipal-project-milestones-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 30px 25px 60px;
+    }
+
+
+    /* HEADER */
+
+    .milestones-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 25px;
+    }
+
+    .milestones-header-left {
+        min-width: 0;
+    }
+
+    .milestones-eyebrow {
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        margin-bottom: 7px;
+    }
+
+    .milestones-header h1 {
+        margin: 0;
+        color: #162033;
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .milestones-project-identity {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 9px;
+        color: #0D5CC1;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .identity-separator {
+        color: #AAB3C1;
+        font-weight: 500;
+    }
+
+    .milestones-subtitle {
+        max-width: 750px;
+        margin: 10px 0 0;
+        color: #667085;
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
+    .milestones-header-actions {
+        flex-shrink: 0;
+    }
+
+
+    /* BUTTONS */
+
+    .btn-secondary,
+    .btn-primary,
+    .btn-form-secondary,
+    .btn-small {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .18s ease;
+    }
+
+    .btn-secondary {
+        min-height: 42px;
+        padding: 0 18px;
+        border: 1px solid #D6DCE5;
+        background: #fff;
+        color: #344054;
+    }
+
+        .btn-secondary:hover {
+            background: #F5F8FC;
+        }
+
+    .btn-primary {
+        min-height: 43px;
+        padding: 0 20px;
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background: #094B9F;
+        }
+
+    .btn-form-secondary {
+        min-height: 43px;
+        padding: 0 18px;
+        border: 1px solid #D6DCE5;
+        background: #fff;
+        color: #344054;
+    }
+
+
+    /* PROJECT CONTEXT */
+
+    .project-context-card {
+        display: flex;
+        justify-content: space-between;
+        gap: 25px;
+        padding: 20px 22px;
+        margin-bottom: 20px;
+        border: 1px solid #E2E7EF;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(20, 36, 60, .05);
+    }
+
+    .context-label,
+    .schedule-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #7A8494;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .9px;
+        text-transform: uppercase;
+    }
+
+    .context-title {
+        color: #162033;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .context-meta {
+        margin-top: 7px;
+        color: #667085;
+        font-size: 13px;
+    }
+
+        .context-meta span {
+            margin: 0 6px;
+            color: #B5BDC8;
+        }
+
+    .context-schedule {
+        display: flex;
+        gap: 35px;
+        align-items: center;
+    }
+
+    .schedule-item strong {
+        color: #344054;
+        font-size: 14px;
+    }
+
+
+    /* ALERTS */
+
+    .milestone-alert {
+        padding: 13px 16px;
+        margin-bottom: 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .milestone-alert-success {
+        border: 1px solid #B7DEC8;
+        background: #EEF9F2;
+        color: #17663A;
+    }
+
+    .milestone-alert-error {
+        border: 1px solid #E7B8B8;
+        background: #FFF3F3;
+        color: #9D2727;
+    }
+
+
+    /* SUMMARY */
+
+    .milestone-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        padding: 18px 20px;
+        border: 1px solid #E2E7EF;
+        border-radius: 11px;
+        background: #fff;
+    }
+
+    .summary-label {
+        display: block;
+        color: #7A8494;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .summary-card strong {
+        display: block;
+        margin-top: 5px;
+        color: #162033;
+        font-size: 26px;
+        line-height: 1.1;
+    }
+
+    .summary-description {
+        display: block;
+        margin-top: 5px;
+        color: #7A8494;
+        font-size: 12px;
+    }
+
+
+    /* LAYOUT */
+
+    .milestone-layout {
+        display: grid;
+        grid-template-columns: 390px minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .milestone-form-card,
+    .milestone-list-card {
+        padding: 24px;
+        border: 1px solid #E2E7EF;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(20, 36, 60, .045);
+    }
+
+
+    /* SECTION HEADING */
+
+    .section-eyebrow {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .section-heading h2 {
+        margin: 5px 0 0;
+        color: #162033;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .section-heading p {
+        margin: 7px 0 20px;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* FORM */
+
+    .form-grid,
+    .edit-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .form-group {
+        min-width: 0;
+    }
+
+    .form-group-full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #344054;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 42px;
+        padding: 9px 11px;
+        border: 1px solid #CDD5DF;
+        border-radius: 7px;
+        background: #fff;
+        color: #1D2939;
+        font-size: 13px;
+        outline: none;
+    }
+
+        .form-control:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, .10);
+        }
+
+    .milestone-textarea {
+        resize: vertical;
+        min-height: 110px;
+        line-height: 1.5;
+    }
+
+    .field-help {
+        margin-top: 5px;
+        color: #8A94A3;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .field-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        color: #8A94A3;
+        font-size: 11px;
+    }
+
+    .progress-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .progress-input-wrapper .form-control {
+            flex: 1;
+        }
+
+        .progress-input-wrapper span {
+            color: #667085;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+    .form-actions,
+    .edit-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid #E9EDF3;
+    }
+
+
+    /* MILESTONE LIST */
+
+    .milestone-list-heading {
+        margin-bottom: 5px;
+    }
+
+    .milestone-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .milestone-item {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 15px;
+        padding: 20px 0;
+        border-top: 1px solid #E9EDF3;
+    }
+
+    .milestone-sequence {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #EAF2FF;
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .milestone-topline {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+        .milestone-topline h3 {
+            margin: 0;
+            color: #162033;
+            font-size: 16px;
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+    .milestone-dates {
+        margin-top: 5px;
+        color: #667085;
+        font-size: 12px;
+    }
+
+        .milestone-dates span {
+            margin: 0 5px;
+            color: #AAB3C1;
+        }
+
+    .milestone-badges {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .milestone-priority,
+    .milestone-status {
+        display: inline-flex;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .milestone-priority-low {
+        background: #F2F4F7;
+        color: #475467;
+    }
+
+    .milestone-priority-medium {
+        background: #EAF2FF;
+        color: #0D5CC1;
+    }
+
+    .milestone-priority-high {
+        background: #FFF4E5;
+        color: #9A5A00;
+    }
+
+    .milestone-priority-critical {
+        background: #FFF0F0;
+        color: #B42318;
+    }
+
+    .milestone-status-notstarted {
+        background: #F2F4F7;
+        color: #475467;
+    }
+
+    .milestone-status-inprogress {
+        background: #EAF2FF;
+        color: #0D5CC1;
+    }
+
+    .milestone-status-completed {
+        background: #EAF7EF;
+        color: #17663A;
+    }
+
+    .milestone-status-delayed {
+        background: #FFF4E5;
+        color: #9A5A00;
+    }
+
+    .milestone-status-cancelled {
+        background: #FFF0F0;
+        color: #B42318;
+    }
+
+    .milestone-description {
+        margin: 12px 0 15px;
+        color: #596579;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+
+    /* PROGRESS */
+
+    .milestone-progress-section {
+        margin-top: 12px;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        color: #667085;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+        .progress-header strong {
+            color: #344054;
+        }
+
+    .progress-track {
+        height: 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #E9EDF3;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: #0D5CC1;
+    }
+
+    .actual-completion {
+        margin-top: 10px;
+        color: #667085;
+        font-size: 11px;
+    }
+
+        .actual-completion strong {
+            color: #344054;
+        }
+
+
+    /* ACTIONS */
+
+    .milestone-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .btn-small {
+        min-height: 34px;
+        padding: 0 11px;
+        border: 1px solid #D6DCE5;
+        background: #fff;
+        color: #344054;
+        font-size: 11px;
+    }
+
+        .btn-small:hover {
+            background: #F5F8FC;
+        }
+
+    .btn-danger {
+        border-color: #E6B9B9;
+        color: #A32929;
+    }
+
+        .btn-danger:hover {
+            background: #FFF4F4;
+        }
+
+    .delete-milestone-form {
+        margin: 0;
+    }
+
+
+    /* EDIT */
+
+    .edit-milestone-panel {
+        display: none;
+        margin-top: 18px;
+        padding: 18px;
+        border: 1px solid #DCE3EC;
+        border-radius: 9px;
+        background: #F8FAFC;
+    }
+
+        .edit-milestone-panel.open {
+            display: block;
+        }
+
+
+    /* EMPTY */
+
+    .milestone-empty-state {
+        padding: 55px 25px;
+        border-top: 1px solid #E9EDF3;
+        text-align: center;
+    }
+
+    .empty-title {
+        color: #344054;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .milestone-empty-state p {
+        max-width: 500px;
+        margin: 8px auto 0;
+        color: #7A8494;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* RESPONSIVE */
+
+    @@media (max-width: 1050px) {
+
+        .milestone-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .milestone-form-card {
+            order: 1;
+        }
+
+        .milestone-list-card {
+            order: 2;
+        }
+    }
+
+
+    @@media (max-width: 800px) {
+
+        .milestone-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .project-context-card {
+            flex-direction: column;
+        }
+
+        .context-schedule {
+            align-items: flex-start;
+        }
+    }
+
+
+    @@media (max-width: 650px) {
+
+        .municipal-project-milestones-page {
+            padding: 20px 15px 40px;
+        }
+
+        .milestones-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .milestones-header-actions {
+            width: 100%;
+        }
+
+            .milestones-header-actions .btn-secondary {
+                width: 100%;
+            }
+
+        .milestones-header h1 {
+            font-size: 26px;
+        }
+
+        .milestone-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .milestone-form-card,
+        .milestone-list-card {
+            padding: 18px;
+        }
+
+        .form-grid,
+        .edit-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group-full {
+            grid-column: auto;
+        }
+
+        .milestone-topline {
+            flex-direction: column;
+        }
+
+        .milestone-badges {
+            justify-content: flex-start;
+        }
+
+        .context-schedule {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+
+
+<script>
+
+    (function () {
+
+        var description =
+            document.querySelector(
+                'textarea[name="milestone.Description"]'
+            );
+
+        var counter =
+            document.getElementById(
+                'milestoneDescriptionCounter'
+            );
+
+
+        if (description && counter) {
+
+            function updateCounter() {
+
+                counter.textContent =
+                    description.value.length +
+                    " / 2000";
+
+            }
+
+            description.addEventListener(
+                "input",
+                updateCounter
+            );
+
+            updateCounter();
+
+        }
+
+
+        var status =
+            document.getElementById(
+                "milestoneStatus"
+            );
+
+        var progress =
+            document.getElementById(
+                "milestoneProgress"
+            );
+
+
+        if (status && progress) {
+
+            status.addEventListener(
+                "change",
+                function () {
+
+                    if (status.value === "NotStarted") {
+                        progress.value = 0;
+                    }
+
+                    if (status.value === "Completed") {
+                        progress.value = 100;
+                    }
+
+                }
+            );
+
+        }
+
+
+        var deleteForms =
+            document.querySelectorAll(
+                ".delete-milestone-form"
+            );
+
+
+        deleteForms.forEach(function (form) {
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    var confirmed =
+                        window.confirm(
+                            "Are you sure you want to remove this milestone from the project?"
+                        );
+
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+
+                }
+            );
+
+        });
+
+    })();
+
+
+    function openEditMilestone(id) {
+
+        var panel =
+            document.getElementById(
+                "editMilestone-" + id
+            );
+
+        if (panel) {
+            panel.classList.add("open");
+            panel.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest"
+            });
+        }
+
+    }
+
+
+    function closeEditMilestone(id) {
+
+        var panel =
+            document.getElementById(
+                "editMilestone-" + id
+            );
+
+        if (panel) {
+            panel.classList.remove("open");
+        }
+
+    }
+
+</script>

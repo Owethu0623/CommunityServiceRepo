@@ -1,0 +1,922 @@
+﻿```cshtml
+@model CommunityServiceProject.ViewModels.MunicipalProjectClosureViewModel
+
+@{
+    ViewBag.Title = "Close Municipal Project";
+}
+
+<div class="project-closure-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="project-closure-header">
+
+        <div class="header-content">
+
+            <span class="page-label">
+                MUNICIPAL PROJECT MANAGEMENT
+            </span>
+
+            <h1>
+                Close Project
+            </h1>
+
+            <p>
+                Formally conclude the lifecycle of this completed municipal project.
+            </p>
+
+        </div>
+
+        <div class="project-reference">
+
+            <strong>
+                @Model.ProjectCode
+            </strong>
+
+            <span>
+                @Model.ProjectType
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NAVIGATION
+         ===================================================== -->
+
+    <div class="closure-navigation">
+
+        @Html.ActionLink(
+            "Back to Project",
+            "Details",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+        @Html.ActionLink(
+            "View Project History",
+            "History",
+            "MunicipalProject",
+            new { id = Model.ProjectID },
+            new { @class = "btn-secondary" }
+        )
+
+    </div>
+
+
+    <!-- =====================================================
+         VALIDATION SUMMARY
+         ===================================================== -->
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="validation-summary">
+
+            @Html.ValidationSummary(
+                true,
+                "Please correct the following:"
+            )
+
+        </div>
+    }
+
+
+    <!-- =====================================================
+         PROJECT INFORMATION
+         ===================================================== -->
+
+    <section class="closure-card">
+
+        <div class="card-heading">
+
+            <h2>
+                Project Information
+            </h2>
+
+            <p>
+                Review the project before formally closing it.
+            </p>
+
+        </div>
+
+        <div class="information-grid">
+
+            <div class="information-item">
+
+                <span>
+                    Project Name
+                </span>
+
+                <strong>
+                    @Model.ProjectName
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Project Code
+                </span>
+
+                <strong>
+                    @Model.ProjectCode
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Project Type
+                </span>
+
+                <strong>
+                    @Model.ProjectType
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Ward
+                </span>
+
+                <strong>
+                    @Model.WardName
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Project Location
+                </span>
+
+                <strong>
+                    @Model.ProjectLocation
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Priority
+                </span>
+
+                <strong>
+                    @Model.Priority
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Current Status
+                </span>
+
+                <strong class="status-completed">
+                    @Model.CurrentStatus
+                </strong>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <span>
+                    Actual Completion Date
+                </span>
+
+                <strong>
+
+                    @if (Model.ActualCompletionDate.HasValue)
+                    {
+                        @Model.ActualCompletionDate.Value.ToString("dd MMM yyyy")
+                    }
+                    else
+                    {
+                        <span>
+                            Not recorded
+                        </span>
+                    }
+
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CLOSURE FORM
+         ===================================================== -->
+
+    <section class="closure-card">
+
+        <div class="card-heading">
+
+            <h2>
+                Project Closure
+            </h2>
+
+            <p>
+                Provide the official reason or summary for closing this project.
+            </p>
+
+        </div>
+
+
+        @using (Html.BeginForm(
+            "CloseProject",
+            "MunicipalProject",
+            FormMethod.Post,
+            new
+            {
+                id = "closeProjectForm"
+            }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(
+                model => model.ProjectID
+            )
+
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    model => model.ClosureSummary
+                )
+
+                @Html.TextAreaFor(
+                    model => model.ClosureSummary,
+                    new
+                    {
+                        @class = "form-control closure-summary",
+                        rows = 7,
+                        placeholder =
+                            "Record why the project is being formally closed and any relevant final information..."
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    model => model.ClosureSummary,
+                    "",
+                    new
+                    {
+                        @class = "field-validation"
+                    }
+                )
+
+                <div class="character-guidance">
+                    Minimum 10 characters. Maximum 2000 characters.
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CLOSURE WARNING
+                 ================================================= -->
+
+            <div class="closure-warning">
+
+                <strong>
+                    Project closure is a formal lifecycle action
+                </strong>
+
+                <p>
+                    Closing this project will change its status from
+                    <strong>Completed</strong> to <strong>Closed</strong>
+                    and record the action in project history.
+                </p>
+
+                <p>
+                    A closed project cannot be reopened through the project
+                    status workflow.
+                </p>
+
+            </div>
+
+
+            <button type="button"
+                    id="openClosureConfirmation"
+                    class="btn-close-project">
+
+                Close Project
+
+            </button>
+
+        }
+
+    </section>
+
+
+    <!-- =====================================================
+         CONFIRMATION MODAL
+         ===================================================== -->
+
+    <div id="closureConfirmation"
+         class="confirmation-overlay"
+         style="display:none;">
+
+        <div class="confirmation-dialog">
+
+            <h2>
+                Confirm Project Closure
+            </h2>
+
+            <p>
+                Are you sure you want to formally close
+                <strong>@Model.ProjectCode</strong>?
+            </p>
+
+            <p>
+                The project is currently marked as
+                <strong>Completed</strong>.
+                Closing it will permanently conclude its project lifecycle.
+            </p>
+
+            <div class="confirmation-actions">
+
+                <button type="button"
+                        id="cancelClosure"
+                        class="btn-secondary">
+
+                    Cancel
+
+                </button>
+
+                <button type="button"
+                        id="confirmClosure"
+                        class="btn-confirm-closure">
+
+                    Confirm Closure
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =====================================================
+       PAGE
+       ===================================================== */
+
+    .project-closure-page {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px 50px;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .project-closure-header {
+        background: #0D5CC1;
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 25px;
+    }
+
+    .header-content {
+        min-width: 0;
+    }
+
+    .page-label {
+        display: block;
+        margin-bottom: 8px;
+
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+
+        color: white;
+        opacity: 0.9;
+    }
+
+    .project-closure-header h1 {
+        margin: 0 0 8px;
+
+        font-size: 30px;
+        color: white;
+    }
+
+    .project-closure-header p {
+        margin: 0;
+
+        color: white;
+        opacity: 0.92;
+    }
+
+    .project-reference {
+        min-width: 190px;
+
+        text-align: right;
+    }
+
+    .project-reference strong {
+        display: block;
+
+        color: white;
+        font-size: 22px;
+    }
+
+    .project-reference span {
+        display: block;
+
+        margin-top: 5px;
+
+        color: white;
+        opacity: 0.9;
+    }
+
+
+    /* =====================================================
+       NAVIGATION
+       ===================================================== */
+
+    .closure-navigation {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        margin: 20px 0;
+    }
+
+    .btn-secondary {
+        display: inline-block;
+
+        padding: 10px 17px;
+
+        background: #f1f3f5;
+        color: #333;
+
+        border: 1px solid #d7dce1;
+        border-radius: 7px;
+
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .btn-secondary:hover {
+        background: #e7eaee;
+        color: #222;
+        text-decoration: none;
+    }
+
+
+    /* =====================================================
+       VALIDATION
+       ===================================================== */
+
+    .validation-summary {
+        margin-bottom: 20px;
+
+        padding: 15px 18px;
+
+        background: #fff4f4;
+        border: 1px solid #e1a5a5;
+        border-radius: 8px;
+
+        color: #9b2226;
+    }
+
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
+    .closure-card {
+        margin-bottom: 20px;
+
+        padding: 25px;
+
+        background: white;
+
+        border: 1px solid #e1e5e9;
+        border-radius: 12px;
+
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .card-heading {
+        margin-bottom: 20px;
+    }
+
+    .card-heading h2 {
+        margin: 0;
+
+        color: #1d2733;
+        font-size: 21px;
+    }
+
+    .card-heading p {
+        margin: 7px 0 0;
+
+        color: #69737d;
+    }
+
+
+    /* =====================================================
+       INFORMATION
+       ===================================================== */
+
+    .information-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 16px;
+    }
+
+    .information-item {
+        padding: 15px;
+
+        background: #f8f9fa;
+
+        border-radius: 8px;
+    }
+
+    .information-item span {
+        display: block;
+
+        margin-bottom: 5px;
+
+        color: #6c757d;
+        font-size: 12px;
+    }
+
+    .information-item strong {
+        display: block;
+
+        color: #202832;
+    }
+
+    .status-completed {
+        color: #198754 !important;
+    }
+
+
+    /* =====================================================
+       FORM
+       ===================================================== */
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #303943;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+
+        padding: 11px 12px;
+
+        background: white;
+
+        border: 1px solid #cfd5db;
+        border-radius: 7px;
+
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+
+        border-color: #0D5CC1;
+
+        box-shadow:
+            0 0 0 3px rgba(13, 92, 193, 0.10);
+    }
+
+    .closure-summary {
+        min-height: 150px;
+
+        resize: vertical;
+    }
+
+    .field-validation {
+        display: block;
+
+        margin-top: 6px;
+
+        color: #b42318;
+        font-size: 13px;
+    }
+
+    .character-guidance {
+        margin-top: 6px;
+
+        color: #6c757d;
+        font-size: 12px;
+    }
+
+
+    /* =====================================================
+       WARNING
+       ===================================================== */
+
+    .closure-warning {
+        margin: 25px 0 20px;
+
+        padding: 17px;
+
+        background: #fff8e6;
+
+        border: 1px solid #efd58a;
+        border-radius: 8px;
+    }
+
+    .closure-warning > strong {
+        color: #7a5b00;
+    }
+
+    .closure-warning p {
+        margin: 7px 0 0;
+
+        color: #665000;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       CLOSE BUTTON
+       ===================================================== */
+
+    .btn-close-project {
+        width: 100%;
+
+        padding: 13px 20px;
+
+        background: #495057;
+        color: white;
+
+        border: none;
+        border-radius: 7px;
+
+        font-size: 15px;
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .btn-close-project:hover {
+        background: #343a40;
+    }
+
+
+    /* =====================================================
+       CONFIRMATION MODAL
+       ===================================================== */
+
+    .confirmation-overlay {
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 9999;
+
+        background: rgba(0, 0, 0, 0.45);
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+    }
+
+    .confirmation-dialog {
+        width: 100%;
+        max-width: 500px;
+
+        padding: 28px;
+
+        background: white;
+
+        border-radius: 12px;
+
+        box-shadow:
+            0 15px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    .confirmation-dialog h2 {
+        margin-top: 0;
+
+        color: #1d2733;
+    }
+
+    .confirmation-dialog p {
+        color: #555f68;
+        line-height: 1.6;
+    }
+
+    .confirmation-actions {
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 10px;
+
+        margin-top: 25px;
+    }
+
+    .btn-confirm-closure {
+        padding: 11px 18px;
+
+        background: #495057;
+        color: white;
+
+        border: none;
+        border-radius: 7px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .btn-confirm-closure:hover {
+        background: #343a40;
+    }
+
+    .btn-confirm-closure:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @@media (max-width: 800px) {
+
+        .project-closure-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .project-reference {
+            text-align: left;
+        }
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    @@media (max-width: 500px) {
+
+        .confirmation-actions {
+            flex-direction: column;
+        }
+
+        .confirmation-actions button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var overlay =
+                document.getElementById(
+                    "closureConfirmation"
+                );
+
+            var openButton =
+                document.getElementById(
+                    "openClosureConfirmation"
+                );
+
+            var cancelButton =
+                document.getElementById(
+                    "cancelClosure"
+                );
+
+            var confirmButton =
+                document.getElementById(
+                    "confirmClosure"
+                );
+
+            var form =
+                document.getElementById(
+                    "closeProjectForm"
+                );
+
+
+            openButton.addEventListener(
+                "click",
+                function () {
+
+                    if (!form.checkValidity()) {
+
+                        form.reportValidity();
+
+                        return;
+                    }
+
+                    overlay.style.display =
+                        "flex";
+
+                }
+            );
+
+
+            cancelButton.addEventListener(
+                "click",
+                function () {
+
+                    overlay.style.display =
+                        "none";
+
+                }
+            );
+
+
+            confirmButton.addEventListener(
+                "click",
+                function () {
+
+                    confirmButton.disabled =
+                        true;
+
+                    confirmButton.textContent =
+                        "Closing Project...";
+
+                    form.submit();
+
+                }
+            );
+
+
+            overlay.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === overlay) {
+
+                        overlay.style.display =
+                            "none";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+</script>
+

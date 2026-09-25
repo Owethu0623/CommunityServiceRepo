@@ -1,0 +1,812 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianOpportunityCreateViewModel
+
+@{
+    ViewBag.Title = "Create Technician Opportunity";
+}
+
+<div class="technician-opportunity-create-page">
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+
+    <div class="create-header">
+
+        <div>
+            <div class="create-eyebrow">
+                MUNICIPAL RECRUITMENT MANAGEMENT
+            </div>
+
+            <h1>Create Technician Opportunity</h1>
+
+            <p>
+                Create a new technician opportunity for municipal
+                recruitment. New opportunities are saved as drafts
+                and can be published through opportunity management.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            @Html.ActionLink(
+                "Back to Opportunities",
+                "Index",
+                "TechnicianOpportunity",
+                null,
+                new { @class = "btn-secondary header-button" }
+            )
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         INFORMATION NOTICE
+         ============================================================ -->
+
+    <div class="draft-notice">
+
+        <strong>Draft opportunity</strong>
+
+        <span>
+            This opportunity will not be visible to citizens until
+            an administrator publishes it.
+        </span>
+
+    </div>
+
+
+    @using (Html.BeginForm(
+        "Create",
+        "TechnicianOpportunity",
+        FormMethod.Post,
+        new { id = "createOpportunityForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- ========================================================
+             VALIDATION SUMMARY
+             ======================================================== -->
+
+        @Html.ValidationSummary(
+            true,
+            "",
+            new { @class = "validation-summary" }
+        )
+
+
+        <!-- ========================================================
+             BASIC INFORMATION
+             ======================================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Opportunity Information</h2>
+
+                    <p>
+                        Provide the main information that identifies
+                        and describes the technician position.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.Title
+                    )
+
+                    @Html.TextBoxFor(
+                        m => m.Title,
+                        new
+                        {
+                            @class = "form-control",
+                            maxlength = "200",
+                            placeholder =
+                                "Example: Senior Roads Maintenance Technician"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Title,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        m => m.EmploymentType
+                    )
+
+                    @Html.DropDownListFor(
+                        m => m.EmploymentType,
+                        new SelectList(
+                            new[]
+                            {
+                                "Permanent",
+                                "Contract",
+                                "Temporary",
+                                "Fixed-Term"
+                            }
+                        ),
+                        "Select employment type",
+                        new { @class = "form-control" }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.EmploymentType,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        m => m.NumberOfPositions
+                    )
+
+                    @Html.TextBoxFor(
+                        m => m.NumberOfPositions,
+                        new
+                        {
+                            @class = "form-control",
+                            type = "number",
+                            min = "1",
+                            max = "999",
+                            placeholder = "Example: 5"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.NumberOfPositions,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                    <span class="field-help">
+                        Leave blank if the number of positions
+                        has not been specified.
+                    </span>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.Description
+                    )
+
+                    @Html.TextAreaFor(
+                        m => m.Description,
+                        new
+                        {
+                            @class = "form-control textarea-large",
+                            maxlength = "4000",
+                            rows = "6",
+                            placeholder =
+                                "Describe the purpose of the opportunity, the role and the type of municipal work involved."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Description,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             ROLE INFORMATION
+             ======================================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <h2>Role Requirements</h2>
+
+                <p>
+                    Define what the successful applicant will be
+                    expected to do and what they must have.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.Responsibilities
+                    )
+
+                    @Html.TextAreaFor(
+                        m => m.Responsibilities,
+                        new
+                        {
+                            @class = "form-control textarea-large",
+                            maxlength = "4000",
+                            rows = "7",
+                            placeholder =
+                                "Describe the main duties and responsibilities of the technician."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Responsibilities,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.Requirements
+                    )
+
+                    @Html.TextAreaFor(
+                        m => m.Requirements,
+                        new
+                        {
+                            @class = "form-control textarea-large",
+                            maxlength = "4000",
+                            rows = "7",
+                            placeholder =
+                                "List the eligibility and role-specific requirements."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.Requirements,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.RequiredQualifications
+                    )
+
+                    @Html.TextAreaFor(
+                        m => m.RequiredQualifications,
+                        new
+                        {
+                            @class = "form-control textarea-medium",
+                            maxlength = "2000",
+                            rows = "5",
+                            placeholder =
+                                "Example: Relevant technical certificate, diploma or equivalent qualification."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.RequiredQualifications,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.RequiredExperience
+                    )
+
+                    @Html.TextAreaFor(
+                        m => m.RequiredExperience,
+                        new
+                        {
+                            @class = "form-control textarea-medium",
+                            maxlength = "2000",
+                            rows = "5",
+                            placeholder =
+                                "Describe any required practical or municipal experience."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.RequiredExperience,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             APPLICATION INFORMATION
+             ======================================================== -->
+
+        <section class="form-section">
+
+            <div class="section-header">
+
+                <h2>Application Period</h2>
+
+                <p>
+                    Define when citizens will be able to submit
+                    applications for this opportunity.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        m => m.ApplicationStartDate
+                    )
+
+                    @Html.TextBoxFor(
+                        m => m.ApplicationStartDate,
+                        "{0:yyyy-MM-dd}",
+                        new
+                        {
+                            @class = "form-control",
+                            type = "date",
+                            id = "ApplicationStartDate"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ApplicationStartDate,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        m => m.ApplicationDeadline
+                    )
+
+                    @Html.TextBoxFor(
+                        m => m.ApplicationDeadline,
+                        "{0:yyyy-MM-dd}",
+                        new
+                        {
+                            @class = "form-control",
+                            type = "date",
+                            id = "ApplicationDeadline"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ApplicationDeadline,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    @Html.LabelFor(
+                        m => m.ApplicationInstructions
+                    )
+
+                    @Html.TextAreaFor(
+                        m => m.ApplicationInstructions,
+                        new
+                        {
+                            @class = "form-control textarea-medium",
+                            maxlength = "2000",
+                            rows = "5",
+                            placeholder =
+                                "Provide instructions citizens should follow when applying."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        m => m.ApplicationInstructions,
+                        "",
+                        new { @class = "field-error" }
+                    )
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             FORM ACTIONS
+             ======================================================== -->
+
+        <div class="form-actions">
+
+            @Html.ActionLink(
+                "Cancel",
+                "Index",
+                "TechnicianOpportunity",
+                null,
+                new { @class = "btn-secondary" }
+            )
+
+            <button type="submit"
+                    class="btn-primary"
+                    id="saveOpportunityButton">
+
+                Save as Draft
+
+            </button>
+
+        </div>
+
+    }
+
+</div>
+
+
+<style>
+
+    .technician-opportunity-create-page {
+        max-width: 1150px;
+        margin: 30px auto 60px;
+        padding: 0 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263238;
+    }
+
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+
+    .create-header {
+        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 18px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .create-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
+
+    .create-header h1 {
+        color: white;
+        margin: 0 0 9px;
+        font-size: 29px;
+    }
+
+    .create-header p {
+        color: white;
+        margin: 0;
+        max-width: 720px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+
+    /* ============================================================
+       NOTICE
+       ============================================================ */
+
+    .draft-notice {
+        background: #eef5ff;
+        border: 1px solid #c8dcf5;
+        border-radius: 9px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 13px;
+        color: #345879;
+    }
+
+        .draft-notice strong {
+            color: #0D5CC1;
+        }
+
+
+    /* ============================================================
+       FORM SECTIONS
+       ============================================================ */
+
+    .form-section {
+        background: white;
+        border: 1px solid #dfe6ed;
+        border-radius: 11px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .section-header {
+        background: #f6f8fb;
+        border-bottom: 1px solid #e1e7ed;
+        padding: 18px 22px;
+    }
+
+        .section-header h2 {
+            margin: 0 0 5px;
+            font-size: 18px;
+            color: #263b50;
+        }
+
+        .section-header p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #6b7885;
+        }
+
+
+    /* ============================================================
+       FORM GRID
+       ============================================================ */
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 22px;
+    }
+
+    .form-group {
+        min-width: 0;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374957;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ccd5df;
+        border-radius: 7px;
+        padding: 10px 12px;
+        font-family: inherit;
+        font-size: 14px;
+        color: #263238;
+        background: white;
+        outline: none;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+        .form-control:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .textarea-large {
+        min-height: 145px;
+    }
+
+    .textarea-medium {
+        min-height: 105px;
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 5px;
+        font-size: 11px;
+        color: #7b8792;
+        line-height: 1.4;
+    }
+
+    .field-error {
+        display: block;
+        margin-top: 5px;
+        color: #b42318;
+        font-size: 12px;
+    }
+
+
+    /* ============================================================
+       VALIDATION SUMMARY
+       ============================================================ */
+
+    .validation-summary {
+        background: #fff1f1;
+        border: 1px solid #efc4c4;
+        border-radius: 8px;
+        color: #a32121;
+        padding: 13px 16px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 3px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 18px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        border-color: #0D5CC1;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        border-color: #cbd5df;
+        color: #394957;
+    }
+
+        .btn-secondary:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @@media (max-width: 700px) {
+
+        .technician-opportunity-create-page {
+            padding: 0 12px;
+            margin-top: 18px;
+        }
+
+        .create-header {
+            flex-direction: column;
+            padding: 23px;
+        }
+
+            .create-header h1 {
+                font-size: 24px;
+            }
+
+        .header-button {
+            width: 100%;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            padding: 18px;
+        }
+
+        .full-width {
+            grid-column: auto;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+            .form-actions .btn-primary,
+            .form-actions .btn-secondary {
+                width: 100%;
+            }
+    }
+</style>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#createOpportunityForm").on(
+                "submit",
+                function () {
+
+                    var button =
+                        $("#saveOpportunityButton");
+
+                    button.prop(
+                        "disabled",
+                        true
+                    );
+
+                    button.text(
+                        "Saving..."
+                    );
+
+                }
+            );
+
+        });
+
+    </script>
+}

@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using static System.Web.Razor.Parser.SyntaxConstants;
+using System.Data.Entity.ModelConfiguration;
 
 namespace CommunityServiceProject.Models
 {
@@ -67,6 +68,25 @@ namespace CommunityServiceProject.Models
 
         public DbSet<AssetHistory> AssetHistories { get; set; }
         public DbSet<MunicipalProject> MunicipalProjects { get; set; }
+
+        public DbSet<ProjectObjective> ProjectObjectives { get; set; }
+
+        public DbSet<ProjectMilestone> ProjectMilestones { get; set; }
+
+        public DbSet<ProjectProgress> ProjectProgressRecords { get; set; }
+
+        public DbSet<ProjectEvidence> ProjectEvidenceRecords { get; set; }
+
+        public DbSet<ProjectHistory> ProjectHistoryRecords { get; set; }
+
+        public DbSet<ProjectRequest> ProjectRequests { get; set; }
+
+        public DbSet<TechnicianOpportunity> TechnicianOpportunities { get; set; }
+        public DbSet<TechnicianApplication> TechnicianApplications
+        {
+            get;
+            set;
+        }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -533,6 +553,117 @@ namespace CommunityServiceProject.Models
             .HasForeignKey(ap => ap.ProjectID)
              .WillCascadeOnDelete(false);
 
+
+            modelBuilder.Entity<ProjectObjective>()
+    .HasRequired(p => p.Project)
+    .WithMany(p => p.ProjectObjectives)
+    .HasForeignKey(p => p.ProjectID)
+    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectObjective>()
+                .HasRequired(p => p.CreatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.CreatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectObjective>()
+                .HasOptional(p => p.LastUpdatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.LastUpdatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<ProjectMilestone>()
+                .HasRequired(p => p.Project)
+                .WithMany(p => p.ProjectMilestones)
+                .HasForeignKey(p => p.ProjectID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectMilestone>()
+                .HasRequired(p => p.CreatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.CreatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectMilestone>()
+                .HasOptional(p => p.LastUpdatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.LastUpdatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<ProjectProgress>()
+                .HasRequired(p => p.Project)
+                .WithMany(p => p.ProjectProgressRecords)
+                .HasForeignKey(p => p.ProjectID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectProgress>()
+                .HasRequired(p => p.RecordedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.RecordedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<ProjectEvidence>()
+                .HasRequired(p => p.Project)
+                .WithMany(p => p.ProjectEvidenceRecords)
+                .HasForeignKey(p => p.ProjectID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectEvidence>()
+                .HasRequired(p => p.RecordedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.RecordedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<ProjectHistory>()
+                .HasRequired(p => p.Project)
+                .WithMany(p => p.ProjectHistoryRecords)
+                .HasForeignKey(p => p.ProjectID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectHistory>()
+                .HasRequired(p => p.PerformedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.PerformedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<ProjectRequest>()
+                .HasRequired(p => p.Project)
+                .WithMany(p => p.ProjectRequests)
+                .HasForeignKey(p => p.ProjectID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectRequest>()
+                .HasRequired(p => p.Request)
+                .WithMany()
+                .HasForeignKey(p => p.RequestID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectRequest>()
+                .HasRequired(p => p.LinkedByAdministrator)
+                .WithMany()
+                .HasForeignKey(p => p.LinkedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<AssetProject>()
+                .HasRequired(p => p.Project)
+                .WithMany(p => p.AssetProjects)
+                .HasForeignKey(p => p.ProjectID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianApplication>()
+    .HasIndex(
+        a => new
+        {
+            a.OpportunityID,
+            a.CitizenID
+        })
+    .IsUnique();
         }
     }
 }

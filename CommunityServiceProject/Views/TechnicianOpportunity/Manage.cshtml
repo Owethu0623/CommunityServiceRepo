@@ -1,0 +1,909 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianOpportunityManagementViewModel
+
+@{
+    ViewBag.Title = "Manage Technician Opportunities";
+}
+
+<div class="recruitment-management-page">
+
+    <div class="management-header">
+
+        <div>
+            <div class="management-eyebrow">
+                ADMINISTRATOR RECRUITMENT MANAGEMENT
+            </div>
+
+            <h1>Manage Technician Opportunities</h1>
+
+            <p>
+                Create, review, publish, update and close municipal
+                technician recruitment opportunities.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            @Html.ActionLink(
+                "Create Opportunity",
+                "Create",
+                "TechnicianOpportunity",
+                null,
+                new { @class = "btn-primary" }
+            )
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <!-- ============================================================
+         SUMMARY
+         ============================================================ -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <span>Total</span>
+            <strong>@Model.TotalOpportunities</strong>
+        </div>
+
+        <div class="summary-card draft">
+            <span>Draft</span>
+            <strong>@Model.DraftCount</strong>
+        </div>
+
+        <div class="summary-card published">
+            <span>Published</span>
+            <strong>@Model.PublishedCount</strong>
+        </div>
+
+        <div class="summary-card closed">
+            <span>Closed</span>
+            <strong>@Model.ClosedCount</strong>
+        </div>
+
+        <div class="summary-card cancelled">
+            <span>Cancelled</span>
+            <strong>@Model.CancelledCount</strong>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         FILTERS
+         ============================================================ -->
+
+    <div class="filter-card">
+
+        @using (Html.BeginForm(
+            "Manage",
+            "TechnicianOpportunity",
+            FormMethod.Get))
+        {
+            <div class="filter-grid">
+
+                <div>
+                    <label>Search</label>
+
+                    @Html.TextBox(
+                        "searchTerm",
+                        Model.SearchTerm,
+                        new
+                        {
+                            @class = "form-control",
+                            placeholder =
+                                "Search by code or opportunity title..."
+                        }
+                    )
+                </div>
+
+                <div>
+                    <label>Status</label>
+
+                    <select name="statusFilter"
+                            class="form-control">
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        <option value="Draft"
+                                @(Model.StatusFilter == "Draft" ? "selected" : "")>
+                            Draft
+                        </option>
+
+                        <option value="Published"
+                                @(Model.StatusFilter == "Published" ? "selected" : "")>
+                            Published
+                        </option>
+
+                        <option value="Closed"
+                                @(Model.StatusFilter == "Closed" ? "selected" : "")>
+                            Closed
+                        </option>
+
+                        <option value="Cancelled"
+                                @(Model.StatusFilter == "Cancelled" ? "selected" : "")>
+                            Cancelled
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="filter-buttons">
+
+                    <button type="submit"
+                            class="btn-primary">
+                        Search
+                    </button>
+
+                    @Html.ActionLink(
+                        "Clear",
+                        "Manage",
+                        "TechnicianOpportunity",
+                        null,
+                        new { @class = "btn-secondary" }
+                    )
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- ============================================================
+         OPPORTUNITIES
+         ============================================================ -->
+
+    @if (Model.Opportunities.Any())
+    {
+        <div class="opportunity-table-wrapper">
+
+            <table class="opportunity-table">
+
+                <thead>
+                    <tr>
+                        <th>Opportunity</th>
+                        <th>Employment</th>
+                        <th>Application Period</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var opportunity
+                        in Model.Opportunities)
+                    {
+                        <tr>
+
+                            <td>
+                                <div class="opportunity-code">
+                                    @opportunity.OpportunityCode
+                                </div>
+
+                                <strong class="opportunity-title">
+                                    @opportunity.Title
+                                </strong>
+
+                                @if (opportunity.NumberOfPositions.HasValue)
+                                {
+                                    <div class="opportunity-subtext">
+                                        @opportunity.NumberOfPositions
+                                        position@(opportunity.NumberOfPositions == 1
+                                            ? ""
+                                            : "s")
+                                    </div>
+                                }
+                            </td>
+
+                            <td>
+                                @opportunity.EmploymentType
+                            </td>
+
+                            <td>
+
+                                <div>
+                                    <strong>
+                                        @opportunity.ApplicationStartDate
+                                        .ToString("dd MMM yyyy")
+                                    </strong>
+                                </div>
+
+                                <div class="date-separator">
+                                    to
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        @opportunity.ApplicationDeadline
+                                        .ToString("dd MMM yyyy")
+                                    </strong>
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <span class="status-badge
+                                    status-@opportunity.Status.ToString().ToLower()">
+
+                                    @opportunity.Status
+
+                                </span>
+
+                                @if (opportunity.Status ==
+                                    CommunityServiceProject.Models
+                                        .TechnicianOpportunityStatus.Published &&
+                                    opportunity.DaysUntilDeadline.HasValue)
+                                {
+                                    <div class="deadline-info">
+
+                                        @if (opportunity.DaysUntilDeadline.Value < 0)
+                                        {
+                                            <span class="deadline-overdue">
+                                                Deadline passed
+                                            </span>
+                                        }
+                                        else if (opportunity.DaysUntilDeadline.Value == 0)
+                                        {
+                                            <span class="deadline-today">
+                                                Closes today
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                @opportunity.DaysUntilDeadline
+                                                day@(opportunity.DaysUntilDeadline == 1
+                                                    ? ""
+                                                    : "s")
+                                                remaining
+                                            </span>
+                                        }
+
+                                    </div>
+                                }
+
+                            </td>
+
+                            <td>
+
+                                <div class="action-group">
+
+                                    @if (opportunity.CanEdit)
+                                    {
+                                        @Html.ActionLink(
+                                            "Edit",
+                                            "Edit",
+                                            "TechnicianOpportunity",
+                                            new
+                                            {
+                                                id =
+                                                    opportunity.OpportunityID
+                                            },
+                                            new
+                                            {
+                                                @class =
+                                                    "action-button edit-button"
+                                            }
+                                        )
+                                    }
+
+
+                                    @if (opportunity.CanPublish)
+                                    {
+                                        using (Html.BeginForm(
+                                            "Publish",
+                                            "TechnicianOpportunity",
+                                            new
+                                            {
+                                                id =
+                                                    opportunity.OpportunityID
+                                            },
+                                            FormMethod.Post,
+                                            new
+                                            {
+                                                @class =
+                                                    "inline-form publish-form"
+                                            }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="action-button publish-button"
+                                                    data-confirm="Publish this opportunity? Citizens will be able to view it once its application period opens.">
+
+                                                Publish
+
+                                            </button>
+                                        }
+                                    }
+
+
+                                    @if (opportunity.CanClose)
+                                    {
+                                        using (Html.BeginForm(
+                                            "Close",
+                                            "TechnicianOpportunity",
+                                            new
+                                            {
+                                                id =
+                                                    opportunity.OpportunityID
+                                            },
+                                            FormMethod.Post,
+                                            new
+                                            {
+                                                @class =
+                                                    "inline-form close-form"
+                                            }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="action-button close-button"
+                                                    data-confirm="Close this opportunity? It will no longer be available for new applications.">
+
+                                                Close
+
+                                            </button>
+                                        }
+                                    }
+
+
+                                    @if (opportunity.CanCancel)
+                                    {
+                                        using (Html.BeginForm(
+                                            "CancelOpportunity",
+                                            "TechnicianOpportunity",
+                                            new
+                                            {
+                                                id =
+                                                    opportunity.OpportunityID
+                                            },
+                                            FormMethod.Post,
+                                            new
+                                            {
+                                                @class =
+                                                    "inline-form cancel-form"
+                                            }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="action-button cancel-button"
+                                                    data-confirm="Cancel this opportunity? This action cannot be reversed.">
+
+                                                Cancel
+
+                                            </button>
+                                        }
+                                    }
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+
+            <h2>No opportunities found</h2>
+
+            <p>
+                There are no technician opportunities matching
+                the selected criteria.
+            </p>
+
+            @Html.ActionLink(
+                "Create Opportunity",
+                "Create",
+                "TechnicianOpportunity",
+                null,
+                new { @class = "btn-primary" }
+            )
+
+        </div>
+    }
+
+
+    <div class="page-footer-navigation">
+
+        @Html.ActionLink(
+            "Back to Recruitment",
+            "Index",
+            "Home",
+            null,
+            new { @class = "btn-secondary" }
+        )
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .recruitment-management-page {
+        max-width: 1250px;
+        margin: 30px auto 60px;
+        padding: 0 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263238;
+    }
+
+    .management-header {
+        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 18px rgba(0,0,0,.08);
+    }
+
+    .management-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
+
+    .management-header h1 {
+        color: white;
+        margin: 0 0 8px;
+        font-size: 29px;
+    }
+
+    .management-header p {
+        color: white;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 720px;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 9px;
+        padding: 16px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+        .summary-card span {
+            display: block;
+            color: #74818c;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .summary-card strong {
+            font-size: 24px;
+            color: #263b50;
+        }
+
+        .summary-card.draft strong {
+            color: #8a6100;
+        }
+
+        .summary-card.published strong {
+            color: #187a43;
+        }
+
+        .summary-card.closed strong {
+            color: #526170;
+        }
+
+        .summary-card.cancelled strong {
+            color: #b42318;
+        }
+
+    .filter-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .filter-card label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 7px;
+        color: #43515d;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 41px;
+        border: 1px solid #ccd5df;
+        border-radius: 7px;
+        padding: 9px 11px;
+        font-size: 13px;
+        background: white;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .opportunity-table-wrapper {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        overflow-x: auto;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+    .opportunity-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+        .opportunity-table th {
+            background: #f6f8fb;
+            color: #44525f;
+            font-size: 12px;
+            text-align: left;
+            padding: 14px 15px;
+            border-bottom: 1px solid #e0e6ed;
+            white-space: nowrap;
+        }
+
+        .opportunity-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #edf0f3;
+            vertical-align: top;
+            font-size: 13px;
+            color: #526170;
+        }
+
+        .opportunity-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .opportunity-table tbody tr:hover {
+            background: #fbfcfe;
+        }
+
+    .opportunity-code {
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .opportunity-title {
+        display: block;
+        color: #263b50;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .opportunity-subtext {
+        color: #7a8792;
+        font-size: 11px;
+    }
+
+    .date-separator {
+        color: #98a2ab;
+        font-size: 11px;
+        margin: 2px 0;
+    }
+
+    .status-badge {
+        display: inline-block;
+        border-radius: 5px;
+        padding: 6px 9px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+
+    .status-draft {
+        background: #fff8e8;
+        color: #8a6100;
+        border-color: #eedca9;
+    }
+
+    .status-published {
+        background: #eaf7ef;
+        color: #187a43;
+        border-color: #bfe2ca;
+    }
+
+    .status-closed {
+        background: #f1f3f5;
+        color: #596773;
+        border-color: #d8dee3;
+    }
+
+    .status-cancelled {
+        background: #fff0f0;
+        color: #b42318;
+        border-color: #efc4c4;
+    }
+
+    .deadline-info {
+        margin-top: 6px;
+        font-size: 11px;
+    }
+
+    .deadline-overdue {
+        color: #b42318;
+        font-weight: 700;
+    }
+
+    .deadline-today {
+        color: #a76400;
+        font-weight: 700;
+    }
+
+    .action-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .action-button {
+        border: 1px solid #cbd5df;
+        background: white;
+        color: #394957;
+        border-radius: 5px;
+        padding: 6px 9px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .action-button:hover {
+            text-decoration: none;
+        }
+
+    .edit-button:hover {
+        border-color: #0D5CC1;
+        color: #0D5CC1;
+    }
+
+    .publish-button:hover {
+        border-color: #187a43;
+        color: #187a43;
+    }
+
+    .close-button:hover {
+        border-color: #a76400;
+        color: #a76400;
+    }
+
+    .cancel-button:hover {
+        border-color: #b42318;
+        color: #b42318;
+    }
+
+    .alert {
+        padding: 13px 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .alert-success {
+        background: #edf9f1;
+        border: 1px solid #c4e6cf;
+        color: #25643c;
+    }
+
+    .alert-error {
+        background: #fff1f1;
+        border: 1px solid #efc4c4;
+        color: #a32121;
+    }
+
+    .empty-state {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+        .empty-state h2 {
+            margin: 0 0 8px;
+            color: #344454;
+            font-size: 20px;
+        }
+
+        .empty-state p {
+            color: #71808e;
+            font-size: 13px;
+            margin: 0 0 20px;
+        }
+
+    .page-footer-navigation {
+        margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 16px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: white;
+        border-color: #0D5CC1;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: #394957;
+        border-color: #cbd5df;
+    }
+
+        .btn-secondary:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+    @@media (max-width: 850px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-buttons {
+            width: 100%;
+        }
+
+            .filter-buttons .btn-primary,
+            .filter-buttons .btn-secondary {
+                flex: 1;
+            }
+    }
+
+    @@media (max-width: 600px) {
+
+        .recruitment-management-page {
+            padding: 0 12px;
+            margin-top: 18px;
+        }
+
+        .management-header {
+            flex-direction: column;
+            padding: 23px;
+        }
+
+            .management-header h1 {
+                font-size: 24px;
+            }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-actions,
+        .header-actions .btn-primary {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var confirmationButtons =
+                document.querySelectorAll(
+                    "[data-confirm]"
+                );
+
+            confirmationButtons.forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function (event) {
+
+                            var message =
+                                button.getAttribute(
+                                    "data-confirm"
+                                );
+
+                            if (!confirm(message)) {
+                                event.preventDefault();
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+</script>

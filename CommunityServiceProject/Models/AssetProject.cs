@@ -13,6 +13,7 @@ namespace CommunityServiceProject.Models
         public int AssetID { get; set; }
 
         [Required]
+        [Display(Name = "Project")]
         public int ProjectID { get; set; }
 
         [ForeignKey("ProjectID")]

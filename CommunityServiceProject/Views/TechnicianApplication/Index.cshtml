@@ -1,0 +1,737 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationStatusViewModel
+
+@{
+    ViewBag.Title = "My Technician Applications";
+}
+
+<div class="application-status-page">
+
+    <div class="status-header">
+
+        <div>
+            <div class="status-eyebrow">
+                MUNICIPAL TECHNICIAN RECRUITMENT
+            </div>
+
+            <h1>My Technician Applications</h1>
+
+            <p>
+                Track the applications you have submitted for municipal
+                technician opportunities.
+            </p>
+        </div>
+
+        <div>
+            @Html.ActionLink(
+                "View Opportunities",
+                "Index",
+                "TechnicianOpportunity",
+                null,
+                new
+                {
+                    @class = "header-button"
+                }
+            )
+        </div>
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <!-- ============================================================
+         SUMMARY
+         ============================================================ -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <span>Total Applications</span>
+            <strong>
+                @Model.TotalApplications
+            </strong>
+        </div>
+
+        <div class="summary-card active">
+            <span>Active Applications</span>
+            <strong>
+                @Model.ActiveApplications
+            </strong>
+        </div>
+
+        <div class="summary-card selected">
+            <span>Selected</span>
+            <strong>
+                @Model.SelectedApplications
+            </strong>
+        </div>
+
+        <div class="summary-card unsuccessful">
+            <span>Not Selected</span>
+            <strong>
+                @Model.UnsuccessfulApplications
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         FILTERS
+         ============================================================ -->
+
+    <div class="filter-card">
+
+        @using (Html.BeginForm(
+            "Index",
+            "TechnicianApplication",
+            FormMethod.Get))
+        {
+            <div class="filter-grid">
+
+                <div>
+
+                    <label>
+                        Search
+                    </label>
+
+                    @Html.TextBox(
+                        "searchTerm",
+                        Model.SearchTerm,
+                        new
+                        {
+                            @class = "form-control",
+                            placeholder =
+                                "Search application reference or opportunity..."
+                        }
+                    )
+
+                </div>
+
+                <div>
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select name="statusFilter"
+                            class="form-control">
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        @foreach (
+                            var status
+                            in Enum.GetValues(
+                                typeof(
+                                    CommunityServiceProject.Models
+                                        .TechnicianApplicationStatus)))
+                        {
+                            var statusName =
+                                status.ToString();
+
+                            <option value="@statusName"
+                                    @(Model.StatusFilter == statusName ? "selected" : "")>
+
+                                @statusName
+
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="filter-buttons">
+
+                    <button type="submit"
+                            class="btn-primary">
+
+                        Search
+
+                    </button>
+
+                    @Html.ActionLink(
+                        "Clear",
+                        "Index",
+                        "TechnicianApplication",
+                        null,
+                        new
+                        {
+                            @class = "btn-secondary"
+                        }
+                    )
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- ============================================================
+         APPLICATIONS
+         ============================================================ -->
+
+    @if (Model.Applications.Any())
+    {
+        <div class="applications-list">
+
+            @foreach (
+                var application
+                in Model.Applications)
+            {
+                <div class="application-card">
+
+                    <div class="application-main">
+
+                        <div class="application-reference">
+                            @application.ApplicationReference
+                        </div>
+
+                        <h2>
+                            @application.OpportunityTitle
+                        </h2>
+
+                        <div class="application-meta">
+
+                            <span>
+                                @application.OpportunityCode
+                            </span>
+
+                            <span>
+                                @application.EmploymentType
+                            </span>
+
+                            <span>
+                                Submitted
+                                @application.ApplicationDate
+                                .ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="application-status-column">
+
+                        <span class="status-badge
+                            status-@application.Status.ToString().ToLower()">
+
+                            @application.Status
+
+                        </span>
+
+                        <div class="deadline-text">
+
+                            Deadline:
+                            @application.ApplicationDeadline
+                            .ToString("dd MMM yyyy")
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="application-action">
+
+                        @Html.ActionLink(
+                            "View Status",
+                            "Status",
+                            "TechnicianApplication",
+                            new
+                            {
+                                id =
+                                    application.ApplicationID
+                            },
+                            new
+                            {
+                                @class =
+                                    "view-button"
+                            }
+                        )
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+
+            <h2>No applications found</h2>
+
+            <p>
+                You have not submitted any technician applications
+                matching the selected criteria.
+            </p>
+
+            @Html.ActionLink(
+                "View Technician Opportunities",
+                "Index",
+                "TechnicianOpportunity",
+                null,
+                new
+                {
+                    @class = "btn-primary"
+                }
+            )
+
+        </div>
+    }
+
+
+    <div class="page-navigation">
+
+        @Html.ActionLink(
+            "Back",
+            "Index",
+            "AdministratorDashboard",
+            null,
+            new
+            {
+                @class = "btn-secondary"
+            }
+        )
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .application-status-page {
+        max-width: 1150px;
+        margin: 30px auto 60px;
+        padding: 0 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263238;
+    }
+
+    .status-header {
+        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        box-shadow: 0 5px 18px rgba(0,0,0,.08);
+    }
+
+    .status-eyebrow {
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
+
+    .status-header h1 {
+        color: white;
+        margin: 0 0 8px;
+        font-size: 29px;
+    }
+
+    .status-header p {
+        color: white;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .header-button {
+        display: inline-flex;
+        min-height: 40px;
+        padding: 9px 15px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        background: white;
+        color: #0D5CC1;
+        border: 1px solid white;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .header-button:hover {
+            background: #f2f6fb;
+            color: #094b9f;
+            text-decoration: none;
+        }
+
+    .alert {
+        padding: 13px 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .alert-success {
+        background: #edf9f1;
+        border: 1px solid #c4e6cf;
+        color: #25643c;
+    }
+
+    .alert-error {
+        background: #fff1f1;
+        border: 1px solid #efc4c4;
+        color: #a32121;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 9px;
+        padding: 17px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+        .summary-card span {
+            display: block;
+            color: #74818c;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .summary-card strong {
+            font-size: 24px;
+            color: #263b50;
+        }
+
+        .summary-card.active strong {
+            color: #0D5CC1;
+        }
+
+        .summary-card.selected strong {
+            color: #187a43;
+        }
+
+        .summary-card.unsuccessful strong {
+            color: #b42318;
+        }
+
+    .filter-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .filter-card label {
+        display: block;
+        color: #43515d;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 41px;
+        border: 1px solid #ccd5df;
+        border-radius: 7px;
+        padding: 9px 11px;
+        background: white;
+        font-size: 13px;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .applications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .application-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 19px;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 22px;
+        align-items: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+    .application-reference {
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .application-main h2 {
+        margin: 0 0 9px;
+        color: #263b50;
+        font-size: 17px;
+    }
+
+    .application-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+        .application-meta span {
+            color: #697783;
+            background: #f4f6f8;
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 11px;
+        }
+
+    .application-status-column {
+        min-width: 145px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        border-radius: 5px;
+        padding: 6px 9px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+
+    .status-submitted,
+    .status-underreview,
+    .status-screening,
+    .status-documentspending,
+    .status-documentsverified,
+    .status-assessmentscheduled,
+    .status-assessed,
+    .status-interviewscheduled,
+    .status-interviewed,
+    .status-finalverification {
+        background: #edf4ff;
+        color: #0D5CC1;
+        border-color: #cbdcf4;
+    }
+
+    .status-shortlisted,
+    .status-selected,
+    .status-approvedforonboarding {
+        background: #eaf7ef;
+        color: #187a43;
+        border-color: #bfe2ca;
+    }
+
+    .status-onboarded {
+        background: #e5f4ec;
+        color: #126334;
+        border-color: #b7ddc4;
+    }
+
+    .status-notselected {
+        background: #fff0f0;
+        color: #b42318;
+        border-color: #efc4c4;
+    }
+
+    .status-withdrawn {
+        background: #f1f3f5;
+        color: #596773;
+        border-color: #d8dee3;
+    }
+
+    .status-draft {
+        background: #fff8e8;
+        color: #8a6100;
+        border-color: #eedca9;
+    }
+
+    .deadline-text {
+        margin-top: 7px;
+        color: #7b8792;
+        font-size: 11px;
+    }
+
+    .view-button {
+        display: inline-flex;
+        min-height: 38px;
+        padding: 8px 13px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background: white;
+        color: #0D5CC1;
+        border: 1px solid #bfcddd;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+        .view-button:hover {
+            background: #f3f7fc;
+            border-color: #0D5CC1;
+            color: #094b9f;
+            text-decoration: none;
+        }
+
+    .empty-state {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+        .empty-state h2 {
+            margin: 0 0 8px;
+            color: #344454;
+            font-size: 20px;
+        }
+
+        .empty-state p {
+            margin: 0 0 20px;
+            color: #71808e;
+            font-size: 13px;
+        }
+
+    .page-navigation {
+        margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        border: 1px solid #cbd5df;
+        color: #394957;
+    }
+
+        .btn-secondary:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+    @@media (max-width: 850px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .application-card {
+            grid-template-columns: 1fr;
+            gap: 13px;
+        }
+
+        .application-action {
+            display: flex;
+            justify-content: flex-start;
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .application-status-page {
+            padding: 0 12px;
+            margin-top: 18px;
+        }
+
+        .status-header {
+            flex-direction: column;
+            padding: 23px;
+        }
+
+            .status-header h1 {
+                font-size: 24px;
+            }
+
+        .header-button {
+            width: 100%;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-buttons {
+            width: 100%;
+        }
+
+            .filter-buttons .btn-primary,
+            .filter-buttons .btn-secondary {
+                flex: 1;
+            }
+    }
+</style>

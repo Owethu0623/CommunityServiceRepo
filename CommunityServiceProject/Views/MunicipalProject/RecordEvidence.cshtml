@@ -1,0 +1,1829 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectEvidenceViewModel
+
+@{
+    ViewBag.Title = "Record Project Evidence";
+}
+
+<div class="project-evidence-page">
+
+    <!-- ============================================================
+         HEADER
+    ============================================================ -->
+
+    <div class="project-evidence-header">
+
+        <div class="project-evidence-header-content">
+
+            <div>
+
+                <div class="project-evidence-eyebrow">
+                    MUNICIPAL PROJECT MANAGEMENT
+                </div>
+
+                <h1>Record Project Evidence</h1>
+
+                <p>
+                    Upload and record supporting evidence for
+                    project activities, progress and outcomes.
+                </p>
+
+            </div>
+
+            <div class="project-header-reference">
+
+                <div class="project-code">
+                    @Model.ProjectCode
+                </div>
+
+                <div class="project-type">
+                    @Model.ProjectType
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="project-evidence-container">
+
+        <!-- ========================================================
+             PROJECT INFORMATION
+        ======================================================== -->
+
+        <div class="project-information-card">
+
+            <div class="section-heading">
+
+                <h2>Project Information</h2>
+
+                <p>
+                    Evidence recorded on this page will be associated
+                    with the project shown below.
+                </p>
+
+            </div>
+
+
+            <div class="project-information-grid">
+
+                <div class="information-item">
+
+                    <span class="information-label">
+                        Project Name
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ProjectName
+                    </span>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <span class="information-label">
+                        Project Code
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ProjectCode
+                    </span>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <span class="information-label">
+                        Project Type
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ProjectType
+                    </span>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <span class="information-label">
+                        Ward
+                    </span>
+
+                    <span class="information-value">
+                        @Model.WardName
+                    </span>
+
+                </div>
+
+
+                <div class="information-item information-wide">
+
+                    <span class="information-label">
+                        Location
+                    </span>
+
+                    <span class="information-value">
+                        @Model.ProjectLocation
+                    </span>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <span class="information-label">
+                        Current Status
+                    </span>
+
+                    <span class="status-badge">
+                        @Model.Status
+                    </span>
+
+                </div>
+
+
+                <div class="information-item">
+
+                    <span class="information-label">
+                        Priority
+                    </span>
+
+                    <span class="information-value">
+                        @Model.Priority
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================
+             RECORD EVIDENCE
+        ======================================================== -->
+
+        @using (Html.BeginForm(
+            "RecordEvidence",
+            "MunicipalProject",
+            FormMethod.Post,
+            new
+            {
+                enctype = "multipart/form-data",
+                id = "recordEvidenceForm"
+            }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(
+                model => model.ProjectID
+            )
+
+
+            <div class="record-evidence-card">
+
+                <div class="section-heading">
+
+                    <h2>Record New Evidence</h2>
+
+                    <p>
+                        Provide the evidence details and upload the
+                        supporting project document or photograph.
+                    </p>
+
+                </div>
+
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "validation-summary" }
+                )
+
+
+                <!-- =================================================
+                     TITLE
+                ================================================== -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.Entry.EvidenceTitle,
+                        new { @class = "form-label" }
+                    )
+
+                    @Html.TextBoxFor(
+                        model => model.Entry.EvidenceTitle,
+                        new
+                        {
+                            @class = "form-control",
+                            maxlength = "200",
+                            placeholder =
+                                "Enter a clear title for this evidence..."
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Entry.EvidenceTitle,
+                        "",
+                        new { @class = "field-validation" }
+                    )
+
+                </div>
+
+
+                <!-- =================================================
+                     TYPE
+                ================================================== -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.Entry.EvidenceType,
+                        new { @class = "form-label" }
+                    )
+
+                    @Html.DropDownListFor(
+                        model => model.Entry.EvidenceType,
+                        new SelectList(
+                            new[]
+                            {
+                                new
+                                {
+                                    Value = "",
+                                    Text = "Select evidence type"
+                                },
+                                new
+                                {
+                                    Value = "Site Photograph",
+                                    Text = "Site Photograph"
+                                },
+                                new
+                                {
+                                    Value = "Progress Report",
+                                    Text = "Progress Report"
+                                },
+                                new
+                                {
+                                    Value = "Inspection Report",
+                                    Text = "Inspection Report"
+                                },
+                                new
+                                {
+                                    Value = "Completion Certificate",
+                                    Text = "Completion Certificate"
+                                },
+                                new
+                                {
+                                    Value = "Contractor Document",
+                                    Text = "Contractor Document"
+                                },
+                                new
+                                {
+                                    Value = "Meeting Record",
+                                    Text = "Meeting Record"
+                                },
+                                new
+                                {
+                                    Value = "Other",
+                                    Text = "Other"
+                                }
+                            },
+                            "Value",
+                            "Text"
+                        ),
+                        new
+                        {
+                            @class = "form-control"
+                        }
+                    )
+
+                    @Html.ValidationMessageFor(
+                        model => model.Entry.EvidenceType,
+                        "",
+                        new { @class = "field-validation" }
+                    )
+
+                </div>
+
+
+                <!-- =================================================
+                     DESCRIPTION
+                ================================================== -->
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.Entry.Description,
+                        new { @class = "form-label" }
+                    )
+
+                    @Html.TextAreaFor(
+                        model => model.Entry.Description,
+                        new
+                        {
+                            @class = "form-control textarea-control",
+                            rows = "6",
+                            maxlength = "2000",
+                            id = "evidenceDescription",
+                            placeholder =
+                                "Describe what this evidence demonstrates..."
+                        }
+                    )
+
+                    <div class="character-counter">
+                        <span>
+                            Optional
+                        </span>
+
+                        <span id="descriptionCounter">
+                            0 / 2000
+                        </span>
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        model => model.Entry.Description,
+                        "",
+                        new { @class = "field-validation" }
+                    )
+
+                </div>
+
+
+                <!-- =================================================
+                     FILE
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Evidence File
+                    </label>
+
+                    <div class="file-upload-area">
+
+                        <input type="file"
+                               name="EvidenceFile"
+                               id="EvidenceFile"
+                               class="file-input"
+                               accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" />
+
+                        <label for="EvidenceFile"
+                               class="file-upload-label">
+
+                            <span class="file-upload-title">
+                                Select Evidence File
+                            </span>
+
+                            <span class="file-upload-description">
+                                JPG, JPEG, PNG, PDF, DOC, DOCX, XLS or XLSX
+                            </span>
+
+                            <span class="file-upload-limit">
+                                Maximum file size: 10 MB
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    <div id="selectedFileName"
+                         class="selected-file-name">
+                        No file selected.
+                    </div>
+
+                    <div id="fileValidationMessage"
+                         class="client-validation-message">
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     INFORMATION
+                ================================================== -->
+
+                <div class="evidence-information">
+
+                    <div class="evidence-information-title">
+                        Evidence Recording Information
+                    </div>
+
+                    <p>
+                        Evidence should provide supporting documentation
+                        for project activities, progress, inspections,
+                        decisions or outcomes.
+                    </p>
+
+                    <p>
+                        Uploaded files are stored against this municipal
+                        project and recorded with the administrator,
+                        date, file type and file size.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <div class="evidence-actions">
+
+                    @Html.ActionLink(
+                        "Back to Project Details",
+                        "Details",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID },
+                        new
+                        {
+                            @class =
+                                "evidence-btn evidence-btn-secondary"
+                        }
+                    )
+
+                    @Html.ActionLink(
+                        "Back to Projects",
+                        "Index",
+                        "MunicipalProject",
+                        null,
+                        new
+                        {
+                            @class =
+                                "evidence-btn evidence-btn-outline"
+                        }
+                    )
+
+                    <button type="button"
+                            id="openEvidenceConfirmation"
+                            class="evidence-btn evidence-btn-primary">
+                        Record Project Evidence
+                    </button>
+
+                </div>
+
+            </div>
+
+        }
+
+
+        <!-- ========================================================
+             EXISTING EVIDENCE
+        ======================================================== -->
+
+        <div class="evidence-history-card">
+
+            <div class="section-heading">
+
+                <h2>Recorded Project Evidence</h2>
+
+                <p>
+                    Evidence already recorded for this project.
+                </p>
+
+            </div>
+
+
+            @if (Model.EvidenceRecords != null &&
+                 Model.EvidenceRecords.Any())
+            {
+                <div class="evidence-list">
+
+                    @foreach (var evidence in Model.EvidenceRecords)
+                    {
+                        <div class="evidence-record">
+
+                            <div class="evidence-record-main">
+
+                                <div class="evidence-record-header">
+
+                                    <div>
+
+                                        <h3>
+                                            @evidence.EvidenceTitle
+                                        </h3>
+
+                                        <span class="evidence-type">
+                                            @evidence.EvidenceType
+                                        </span>
+
+                                    </div>
+
+                                    <a href="@Url.Content(evidence.FilePath)"
+                                       target="_blank"
+                                       class="view-evidence-button">
+                                        View File
+                                    </a>
+
+                                </div>
+
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    evidence.Description))
+                                {
+                                    <p class="evidence-description">
+                                        @evidence.Description
+                                    </p>
+                                }
+
+
+                                <div class="evidence-meta">
+
+                                    <span>
+                                        File:
+                                        <strong>
+                                            @evidence.FileName
+                                        </strong>
+                                    </span>
+
+                                    <span>
+                                        Recorded:
+                                        <strong>
+                                            @evidence.DateRecorded.ToString(
+                                                "dd MMM yyyy HH:mm"
+                                            )
+                                        </strong>
+                                    </span>
+
+                                    <span>
+                                        Recorded By:
+                                        <strong>
+                                            @evidence.RecordedByAdministratorName
+                                        </strong>
+                                    </span>
+
+                                    @if (evidence.FileSize.HasValue)
+                                    {
+                                        <span>
+                                            Size:
+                                            <strong>
+                                                @(
+                                                    evidence.FileSize.Value < 1024 * 1024
+                                                        ? Math.Round(
+                                                            evidence.FileSize.Value / 1024.0,
+                                                            1
+                                                        ) + " KB"
+                                                        : Math.Round(
+                                                            evidence.FileSize.Value / (1024.0 * 1024.0),
+                                                            2
+                                                        ) + " MB"
+                                                )
+                                            </strong>
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="no-evidence">
+
+                    <strong>
+                        No project evidence has been recorded yet.
+                    </strong>
+
+                    <p>
+                        Supporting project photographs, reports,
+                        inspection documents and other evidence will
+                        appear here once recorded.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================================
+     CONFIRMATION MODAL
+================================================================ -->
+
+<div id="evidenceConfirmationModal"
+     class="evidence-modal"
+     aria-hidden="true">
+
+    <div id="evidenceModalOverlay"
+         class="evidence-modal-overlay">
+    </div>
+
+
+    <div class="evidence-modal-dialog"
+         role="dialog"
+         aria-modal="true">
+
+        <div class="evidence-modal-header">
+
+            <div>
+
+                <div class="modal-eyebrow">
+                    CONFIRM EVIDENCE
+                </div>
+
+                <h2>
+                    Record Project Evidence
+                </h2>
+
+            </div>
+
+            <button type="button"
+                    id="closeEvidenceConfirmation"
+                    class="modal-close">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="evidence-modal-body">
+
+            <p>
+                Please review the information below before recording
+                this evidence.
+            </p>
+
+
+            <div class="confirmation-item">
+
+                <span>
+                    Evidence Title
+                </span>
+
+                <strong id="confirmEvidenceTitle">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="confirmation-item">
+
+                <span>
+                    Evidence Type
+                </span>
+
+                <strong id="confirmEvidenceType">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="confirmation-item">
+
+                <span>
+                    File
+                </span>
+
+                <strong id="confirmEvidenceFile">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="confirmation-warning">
+
+                <strong>
+                    Confirm this evidence record?
+                </strong>
+
+                <p>
+                    The evidence will be uploaded and permanently
+                    associated with this municipal project.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="evidence-modal-actions">
+
+            <button type="button"
+                    id="cancelEvidenceConfirmation"
+                    class="evidence-btn evidence-btn-secondary">
+                Cancel
+            </button>
+
+            <button type="button"
+                    id="confirmEvidence"
+                    class="evidence-btn evidence-btn-primary">
+                Confirm and Record
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* ============================================================
+       PAGE
+    ============================================================ */
+
+    .project-evidence-page {
+        min-height: 100vh;
+        background: #f4f7fb;
+        color: #26364a;
+        padding-bottom: 50px;
+    }
+
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+
+    .project-evidence-header {
+        background: linear-gradient(
+            135deg,
+            #0D5CC1,
+            #094b9f
+        );
+        color: #ffffff;
+        padding: 42px 30px;
+    }
+
+    .project-evidence-header-content {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+    }
+
+    .project-evidence-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin-bottom: 10px;
+    }
+
+    .project-evidence-header h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 32px;
+    }
+
+    .project-evidence-header p {
+        max-width: 700px;
+        margin: 10px 0 0;
+        color: #ffffff;
+        line-height: 1.6;
+        opacity: 0.94;
+    }
+
+    .project-header-reference {
+        text-align: right;
+    }
+
+    .project-code {
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .project-type {
+        margin-top: 5px;
+        color: #ffffff;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+
+    /* ============================================================
+       CONTAINER
+    ============================================================ */
+
+    .project-evidence-container {
+        max-width: 1180px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+
+    /* ============================================================
+       CARDS
+    ============================================================ */
+
+    .project-information-card,
+    .record-evidence-card,
+    .evidence-history-card {
+        background: #ffffff;
+        border: 1px solid #e0e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(20, 42, 70, 0.05);
+        margin-bottom: 24px;
+        padding: 28px;
+    }
+
+    .section-heading {
+        margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        color: #17324d;
+        font-size: 21px;
+    }
+
+    .section-heading p {
+        margin: 7px 0 0;
+        color: #6d7b8c;
+        font-size: 14px;
+    }
+
+
+    /* ============================================================
+       PROJECT INFORMATION
+    ============================================================ */
+
+    .project-information-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .information-item {
+        padding: 16px;
+        border: 1px solid #e2e8ef;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    .information-wide {
+        grid-column: span 2;
+    }
+
+    .information-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #7a8796;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+    }
+
+    .information-value {
+        color: #2d4055;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 11px;
+        border-radius: 20px;
+        background: #e8f1ff;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+
+    /* ============================================================
+       FORM
+    ============================================================ */
+
+    .form-group {
+        margin-bottom: 23px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #34485d;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border: 1px solid #ccd6e1;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #26364a;
+        font-family: inherit;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, .1);
+    }
+
+    .textarea-control {
+        resize: vertical;
+        min-height: 140px;
+        line-height: 1.6;
+    }
+
+    .character-counter {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        color: #7b8897;
+        font-size: 12px;
+    }
+
+
+    /* ============================================================
+       FILE UPLOAD
+    ============================================================ */
+
+    .file-upload-area {
+        border: 2px dashed #b9c8d8;
+        border-radius: 10px;
+        background: #f8fbff;
+        transition: .18s ease;
+    }
+
+    .file-upload-area:hover {
+        border-color: #0D5CC1;
+        background: #f3f8ff;
+    }
+
+    .file-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+    }
+
+    .file-upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 170px;
+        padding: 25px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .file-upload-title {
+        color: #0D5CC1;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .file-upload-description {
+        margin-top: 8px;
+        color: #657487;
+        font-size: 13px;
+    }
+
+    .file-upload-limit {
+        margin-top: 5px;
+        color: #8a97a5;
+        font-size: 12px;
+    }
+
+    .selected-file-name {
+        margin-top: 9px;
+        color: #43566a;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .client-validation-message {
+        margin-top: 7px;
+        color: #c0392b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+
+    /* ============================================================
+       VALIDATION
+    ============================================================ */
+
+    .field-validation {
+        display: block;
+        margin-top: 7px;
+        color: #c0392b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .validation-summary {
+        margin-bottom: 20px;
+        padding: 14px 17px;
+        border: 1px solid #efc4c0;
+        border-radius: 8px;
+        background: #fff5f4;
+        color: #a93226;
+    }
+
+
+    /* ============================================================
+       INFORMATION
+    ============================================================ */
+
+    .evidence-information {
+        margin-top: 28px;
+        padding: 19px 21px;
+        border-left: 4px solid #0D5CC1;
+        border-radius: 7px;
+        background: #f3f8ff;
+    }
+
+    .evidence-information-title {
+        color: #173e6e;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .evidence-information p {
+        margin: 7px 0 0;
+        color: #56677b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+
+    .evidence-actions {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .evidence-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 11px 20px;
+        border-radius: 7px;
+        border: 1px solid transparent;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .evidence-btn-primary {
+        background: #0D5CC1;
+        border-color: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .evidence-btn-primary:hover {
+        background: #094b9f;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .evidence-btn-secondary {
+        background: #ffffff;
+        border-color: #ccd6e1;
+        color: #44566b;
+    }
+
+    .evidence-btn-secondary:hover {
+        background: #f1f4f7;
+        color: #26364a;
+        text-decoration: none;
+    }
+
+    .evidence-btn-outline {
+        background: transparent;
+        border-color: #0D5CC1;
+        color: #0D5CC1;
+    }
+
+    .evidence-btn-outline:hover {
+        background: #edf4ff;
+        text-decoration: none;
+    }
+
+
+    /* ============================================================
+       EVIDENCE HISTORY
+    ============================================================ */
+
+    .evidence-record {
+        padding: 21px;
+        margin-bottom: 14px;
+        border: 1px solid #e0e6ed;
+        border-radius: 9px;
+        background: #fbfcfe;
+    }
+
+    .evidence-record:last-child {
+        margin-bottom: 0;
+    }
+
+    .evidence-record-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .evidence-record h3 {
+        margin: 0 0 8px;
+        color: #20364e;
+        font-size: 17px;
+    }
+
+    .evidence-type {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 15px;
+        background: #e9f2ff;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .evidence-description {
+        margin: 15px 0;
+        color: #596a7c;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .evidence-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 22px;
+        padding-top: 13px;
+        border-top: 1px solid #e3e8ee;
+        color: #7a8796;
+        font-size: 12px;
+    }
+
+    .evidence-meta strong {
+        color: #405267;
+    }
+
+    .view-evidence-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 15px;
+        border: 1px solid #0D5CC1;
+        border-radius: 6px;
+        color: #0D5CC1;
+        background: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .view-evidence-button:hover {
+        background: #edf4ff;
+        text-decoration: none;
+    }
+
+    .no-evidence {
+        padding: 25px;
+        border: 1px solid #e1e6ec;
+        border-radius: 8px;
+        background: #f8fafc;
+    }
+
+    .no-evidence strong {
+        display: block;
+        color: #30445a;
+        margin-bottom: 7px;
+    }
+
+    .no-evidence p {
+        margin: 0;
+        color: #6d7b8c;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+
+    .evidence-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+    }
+
+    .evidence-modal.is-open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .evidence-modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 30, 48, .62);
+    }
+
+    .evidence-modal-dialog {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 570px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.22);
+    }
+
+    .evidence-modal-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 24px 27px;
+        border-bottom: 1px solid #e3e8ee;
+    }
+
+    .modal-eyebrow {
+        margin-bottom: 6px;
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .evidence-modal-header h2 {
+        margin: 0;
+        color: #20364e;
+        font-size: 21px;
+    }
+
+    .modal-close {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #f0f3f7;
+        color: #596a7d;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .evidence-modal-body {
+        padding: 25px 27px;
+    }
+
+    .evidence-modal-body > p {
+        margin-top: 0;
+        color: #657487;
+        font-size: 14px;
+    }
+
+    .confirmation-item {
+        padding: 14px 15px;
+        margin-top: 10px;
+        border: 1px solid #e0e6ed;
+        border-radius: 7px;
+        background: #f8fafc;
+    }
+
+    .confirmation-item span {
+        display: block;
+        margin-bottom: 5px;
+        color: #7b8897;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .confirmation-item strong {
+        color: #34485d;
+        font-size: 14px;
+        word-break: break-word;
+    }
+
+    .confirmation-warning {
+        margin-top: 18px;
+        padding: 15px;
+        border-left: 4px solid #d99724;
+        border-radius: 6px;
+        background: #fff9ef;
+    }
+
+    .confirmation-warning strong {
+        color: #805a13;
+        font-size: 14px;
+    }
+
+    .confirmation-warning p {
+        margin: 6px 0 0;
+        color: #806b48;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .evidence-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 19px 27px;
+        border-top: 1px solid #e3e8ee;
+        background: #fafbfd;
+    }
+
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+
+    @@media (max-width: 900px) {
+
+        .project-evidence-header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .project-header-reference {
+            text-align: left;
+        }
+
+        .project-information-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .information-wide {
+            grid-column: span 2;
+        }
+
+    }
+
+    @@media (max-width: 650px) {
+
+        .project-evidence-header {
+            padding: 30px 20px;
+        }
+
+        .project-evidence-header h1 {
+            font-size: 26px;
+        }
+
+        .project-evidence-container {
+            padding: 0 12px;
+            margin-top: 20px;
+        }
+
+        .project-information-card,
+        .record-evidence-card,
+        .evidence-history-card {
+            padding: 20px;
+        }
+
+        .project-information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .information-wide {
+            grid-column: span 1;
+        }
+
+        .evidence-actions {
+            flex-direction: column;
+        }
+
+        .evidence-actions .evidence-btn {
+            width: 100%;
+        }
+
+        .evidence-record-header {
+            flex-direction: column;
+        }
+
+        .view-evidence-button {
+            width: 100%;
+        }
+
+        .evidence-modal-actions {
+            flex-direction: column-reverse;
+        }
+
+        .evidence-modal-actions .evidence-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var form =
+                document.getElementById(
+                    "recordEvidenceForm"
+                );
+
+            var fileInput =
+                document.getElementById(
+                    "EvidenceFile"
+                );
+
+            var selectedFileName =
+                document.getElementById(
+                    "selectedFileName"
+                );
+
+            var fileValidationMessage =
+                document.getElementById(
+                    "fileValidationMessage"
+                );
+
+            var description =
+                document.getElementById(
+                    "evidenceDescription"
+                );
+
+            var descriptionCounter =
+                document.getElementById(
+                    "descriptionCounter"
+                );
+
+            var openButton =
+                document.getElementById(
+                    "openEvidenceConfirmation"
+                );
+
+            var modal =
+                document.getElementById(
+                    "evidenceConfirmationModal"
+                );
+
+            var closeButton =
+                document.getElementById(
+                    "closeEvidenceConfirmation"
+                );
+
+            var cancelButton =
+                document.getElementById(
+                    "cancelEvidenceConfirmation"
+                );
+
+            var overlay =
+                document.getElementById(
+                    "evidenceModalOverlay"
+                );
+
+            var confirmButton =
+                document.getElementById(
+                    "confirmEvidence"
+                );
+
+            var titleInput =
+                document.getElementById(
+                    "Entry_EvidenceTitle"
+                );
+
+            var typeInput =
+                document.getElementById(
+                    "Entry_EvidenceType"
+                );
+
+
+            /* ========================================================
+               DESCRIPTION COUNTER
+            ======================================================== */
+
+            function updateDescriptionCounter() {
+
+                if (!description ||
+                    !descriptionCounter)
+                    return;
+
+                descriptionCounter.textContent =
+                    description.value.length
+                    + " / 2000";
+
+            }
+
+
+            if (description) {
+
+                description.addEventListener(
+                    "input",
+                    updateDescriptionCounter
+                );
+
+                updateDescriptionCounter();
+
+            }
+
+
+            /* ========================================================
+               FILE DISPLAY
+            ======================================================== */
+
+            if (fileInput) {
+
+                fileInput.addEventListener(
+                    "change",
+                    function () {
+
+                        fileValidationMessage.textContent =
+                            "";
+
+                        if (!fileInput.files ||
+                            fileInput.files.length === 0)
+                        {
+                            selectedFileName.textContent =
+                                "No file selected.";
+
+                            return;
+                        }
+
+
+                        var file =
+                            fileInput.files[0];
+
+
+                        selectedFileName.textContent =
+                            "Selected file: "
+                            + file.name;
+
+
+                        var maxSize =
+                            10 * 1024 * 1024;
+
+
+                        if (file.size > maxSize) {
+
+                            fileValidationMessage.textContent =
+                                "The selected file exceeds the 10 MB limit.";
+
+                            return;
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* ========================================================
+               OPEN MODAL
+            ======================================================== */
+
+            function openModal() {
+
+                if (!modal)
+                    return;
+
+
+                if (!titleInput ||
+                    titleInput.value.trim().length < 3)
+                {
+                    alert(
+                        "Please enter an evidence title of at least 3 characters."
+                    );
+
+                    if (titleInput)
+                        titleInput.focus();
+
+                    return;
+                }
+
+
+                if (!typeInput ||
+                    !typeInput.value)
+                {
+                    alert(
+                        "Please select an evidence type."
+                    );
+
+                    if (typeInput)
+                        typeInput.focus();
+
+                    return;
+                }
+
+
+                if (!fileInput ||
+                    !fileInput.files ||
+                    fileInput.files.length === 0)
+                {
+                    alert(
+                        "Please select an evidence file."
+                    );
+
+                    if (fileInput)
+                        fileInput.click();
+
+                    return;
+                }
+
+
+                var file =
+                    fileInput.files[0];
+
+
+                if (file.size >
+                    10 * 1024 * 1024)
+                {
+                    alert(
+                        "The selected file exceeds the 10 MB limit."
+                    );
+
+                    return;
+                }
+
+
+                document.getElementById(
+                    "confirmEvidenceTitle"
+                ).textContent =
+                    titleInput.value.trim();
+
+
+                document.getElementById(
+                    "confirmEvidenceType"
+                ).textContent =
+                    typeInput.options[
+                        typeInput.selectedIndex
+                    ].text;
+
+
+                document.getElementById(
+                    "confirmEvidenceFile"
+                ).textContent =
+                    file.name;
+
+
+                modal.classList.add(
+                    "is-open"
+                );
+
+                modal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+
+            }
+
+
+            /* ========================================================
+               CLOSE MODAL
+            ======================================================== */
+
+            function closeModal() {
+
+                if (!modal)
+                    return;
+
+                modal.classList.remove(
+                    "is-open"
+                );
+
+                modal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                document.body.style.overflow =
+                    "";
+
+            }
+
+
+            if (openButton) {
+
+                openButton.addEventListener(
+                    "click",
+                    openModal
+                );
+
+            }
+
+
+            if (closeButton) {
+
+                closeButton.addEventListener(
+                    "click",
+                    closeModal
+                );
+
+            }
+
+
+            if (cancelButton) {
+
+                cancelButton.addEventListener(
+                    "click",
+                    closeModal
+                );
+
+            }
+
+
+            if (overlay) {
+
+                overlay.addEventListener(
+                    "click",
+                    closeModal
+                );
+
+            }
+
+
+            /* ========================================================
+               ESCAPE
+            ======================================================== */
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Escape" &&
+                        modal &&
+                        modal.classList.contains(
+                            "is-open"
+                        )
+                    ) {
+                        closeModal();
+                    }
+
+                }
+            );
+
+
+            /* ========================================================
+               FINAL SUBMIT
+            ======================================================== */
+
+            if (confirmButton) {
+
+                confirmButton.addEventListener(
+                    "click",
+                    function () {
+
+                        if (!form) {
+
+                            alert(
+                                "The evidence form could not be found. Please refresh the page and try again."
+                            );
+
+                            return;
+
+                        }
+
+
+                        confirmButton.disabled =
+                            true;
+
+                        confirmButton.textContent =
+                            "Recording Evidence...";
+
+
+                        form.submit();
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>

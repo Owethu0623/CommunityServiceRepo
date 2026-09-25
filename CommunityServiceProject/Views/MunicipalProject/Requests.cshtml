@@ -1,0 +1,1949 @@
+﻿@model CommunityServiceProject.ViewModels.MunicipalProjectRequestsViewModel
+
+@{
+    ViewBag.Title = "Project Service Requests";
+}
+
+<div class="project-requests-page">
+
+    <div class="project-requests-shell">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <div class="project-requests-header">
+
+            <div class="header-content">
+
+                <div class="header-kicker">
+                    MUNICIPAL PROJECT MANAGEMENT
+                </div>
+
+                <h1>
+                    Project Service Requests
+                </h1>
+
+                <p class="header-description">
+                    Associate community service requests with this municipal
+                    project to manage related problems as part of a broader initiative.
+                </p>
+
+                <div class="project-reference">
+                    <span class="project-code">
+                        @Model.ProjectCode
+                    </span>
+
+                    <span class="reference-divider">|</span>
+
+                    <span class="project-type">
+                        @Model.ProjectType
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="header-actions">
+
+                <a href="@Url.Action(
+                    "Details",
+                    "MunicipalProject",
+                    new { id = Model.ProjectID })"
+                   class="secondary-header-button">
+                    Back to Project Details
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PROJECT CONTEXT
+             ===================================================== -->
+
+        <section class="project-context-card">
+
+            <div class="context-main">
+
+                <div class="context-label">
+                    PROJECT
+                </div>
+
+                <h2>
+                    @Model.ProjectName
+                </h2>
+
+                <div class="context-details">
+
+                    <div class="context-detail">
+                        <span>Project Location</span>
+                        <strong>@Model.ProjectLocation</strong>
+                    </div>
+
+                    <div class="context-detail">
+                        <span>Municipal Ward</span>
+                        <strong>@Model.WardName</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="request-count-panel">
+
+                <span class="count-label">
+                    LINKED REQUESTS
+                </span>
+
+                <strong class="request-count">
+                    @Model.LinkedRequestCount
+                </strong>
+
+                <span class="count-description">
+                    Service requests associated with this project
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ALERTS
+             ===================================================== -->
+
+        @if (TempData["ProjectRequestSuccess"] != null)
+        {
+            <div class="project-alert success-alert">
+                <strong>Request relationship updated</strong>
+                <span>
+                    @TempData["ProjectRequestSuccess"]
+                </span>
+            </div>
+        }
+
+        @if (TempData["ProjectRequestError"] != null)
+        {
+            <div class="project-alert error-alert">
+                <strong>Action could not be completed</strong>
+                <span>
+                    @TempData["ProjectRequestError"]
+                </span>
+            </div>
+        }
+
+
+        <!-- =====================================================
+             LINK REQUEST
+             ===================================================== -->
+
+        <section class="management-card">
+
+            <div class="management-card-header">
+
+                <div>
+                    <div class="section-kicker">
+                        US95
+                    </div>
+
+                    <h2>
+                        Link a Service Request
+                    </h2>
+
+                    <p>
+                        Select a service request that is directly related to
+                        the objectives, scope or work represented by this project.
+                    </p>
+                </div>
+
+            </div>
+
+            @using (Html.BeginForm(
+                "LinkRequest",
+                "MunicipalProject",
+                FormMethod.Post,
+                new
+                {
+                    @class = "link-request-form",
+                    id = "linkRequestForm"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.Hidden(
+                    "ProjectID",
+                    Model.ProjectID)
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+
+                        <label for="RequestID">
+                            Service Request
+                        </label>
+
+                        <select id="RequestID"
+                                name="RequestID"
+                                class="form-control"
+                                required>
+
+                            <option value="">
+                                Select a service request
+                            </option>
+
+                            @foreach (var request in Model.AvailableRequests)
+                            {
+                                <option value="@request.RequestID">
+
+                                    @request.ReferenceNumber
+                                    —
+                                    @request.RequestTitle
+                                    |
+                                    @request.WardName
+                                    |
+                                    @request.Status
+
+                                </option>
+                            }
+
+                        </select>
+
+                        <span class="field-help">
+                            Only requests that are not already linked to this
+                            project are displayed.
+                        </span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="RelationshipType">
+                            Relationship Type
+                        </label>
+
+                        <select id="RelationshipType"
+                                name="RelationshipType"
+                                class="form-control"
+                                required>
+
+                            <option value="">
+                                Select relationship
+                            </option>
+
+                            @foreach (var relationship
+                                in Model.RelationshipTypeOptions)
+                            {
+                                <option value="@relationship.Value">
+                                    @relationship.Text
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Selection Guidance
+                        </label>
+
+                        <div class="selection-guidance">
+                            <strong>
+                                Link only relevant requests
+                            </strong>
+
+                            <span>
+                                Requests should have a clear connection to
+                                the project's location, objectives, scope or
+                                planned municipal work.
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label for="Notes">
+                            Administrator Notes
+                            <span class="optional-label">
+                                Optional
+                            </span>
+                        </label>
+
+                        <textarea id="Notes"
+                                  name="Notes"
+                                  class="form-control notes-input"
+                                  rows="4"
+                                  maxlength="1000"
+                                  placeholder="Record why this request is relevant to the project or provide additional context."></textarea>
+
+                        <div class="character-counter">
+                            <span id="notesCounter">0</span>
+                            / 1000
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <a href="@Url.Action(
+                        "Details",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID })"
+                       class="cancel-button">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="primary-button"
+                            id="linkRequestButton">
+                        Link Service Request
+                    </button>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- =====================================================
+             FILTERS
+             ===================================================== -->
+
+        <section class="filter-card">
+
+            <div class="filter-header">
+
+                <div>
+                    <div class="section-kicker">
+                        REQUEST DIRECTORY
+                    </div>
+
+                    <h2>
+                        Find Available Requests
+                    </h2>
+
+                    <p>
+                        Search and narrow the available service requests
+                        before selecting one to link.
+                    </p>
+                </div>
+
+            </div>
+
+            @using (Html.BeginForm(
+                "Requests",
+                "MunicipalProject",
+                FormMethod.Get,
+                new { @class = "request-filter-form" }))
+            {
+                <input type="hidden"
+                       name="id"
+                       value="@Model.ProjectID" />
+
+                <div class="filter-grid">
+
+                    <div class="filter-field search-field">
+
+                        <label for="searchTerm">
+                            Search
+                        </label>
+
+                        <input type="text"
+                               id="searchTerm"
+                               name="searchTerm"
+                               value="@Model.SearchTerm"
+                               class="form-control"
+                               placeholder="Reference number, title or description" />
+
+                    </div>
+
+
+                    <div class="filter-field">
+
+                        <label for="status">
+                            Status
+                        </label>
+
+                        <select id="status"
+                                name="status"
+                                class="form-control">
+
+                            <option value="">
+                                All statuses
+                            </option>
+
+                            @foreach (var option
+                                in Model.StatusOptions)
+                            {
+                                <option value="@option.Value"
+                                        @(option.Selected
+                                            ? "selected"
+                                            : "")>
+
+                                    @option.Text
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-field">
+
+                        <label for="priority">
+                            Priority
+                        </label>
+
+                        <select id="priority"
+                                name="priority"
+                                class="form-control">
+
+                            <option value="">
+                                All priorities
+                            </option>
+
+                            @foreach (var option
+                                in Model.PriorityOptions)
+                            {
+                                <option value="@option.Value"
+                                        @(option.Selected
+                                            ? "selected"
+                                            : "")>
+
+                                    @option.Text
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-field">
+
+                        <label for="ward">
+                            Ward
+                        </label>
+
+                        <select id="ward"
+                                name="ward"
+                                class="form-control">
+
+                            <option value="">
+                                All wards
+                            </option>
+
+                            @foreach (var option
+                                in Model.WardOptions)
+                            {
+                                <option value="@option.Value"
+                                        @(option.Selected
+                                            ? "selected"
+                                            : "")>
+
+                                    @option.Text
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="filter-actions">
+
+                    <button type="submit"
+                            class="filter-button">
+                        Apply Filters
+                    </button>
+
+                    <a href="@Url.Action(
+                        "Requests",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID })"
+                       class="clear-filter-button">
+                        Clear Filters
+                    </a>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- =====================================================
+             AVAILABLE REQUESTS
+             ===================================================== -->
+
+        <section class="requests-card">
+
+            <div class="requests-card-header">
+
+                <div>
+                    <div class="section-kicker">
+                        AVAILABLE SERVICE REQUESTS
+                    </div>
+
+                    <h2>
+                        Requests Available for Linking
+                    </h2>
+
+                    <p>
+                        These requests are currently not associated with this
+                        project.
+                    </p>
+                </div>
+
+                <div class="result-summary">
+                    Showing
+                    <strong>
+                        @Model.AvailableRequests.Count
+                    </strong>
+                    available request@(Model.AvailableRequests.Count == 1 ? "" : "s")
+                </div>
+
+            </div>
+
+
+            @if (Model.AvailableRequests.Any())
+            {
+                <div class="request-table-wrapper">
+
+                    <table class="request-table">
+
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Service Request</th>
+                                <th>Category</th>
+                                <th>Ward</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Date Submitted</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var request
+                                in Model.AvailableRequests)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <span class="reference-number">
+                                            @request.ReferenceNumber
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="request-title">
+                                            @request.RequestTitle
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @request.CategoryName
+                                    </td>
+
+                                    <td>
+                                        @request.WardName
+                                    </td>
+
+                                    <td>
+                                        <span class="priority-badge
+                                            priority-@request.Priority.ToLowerInvariant()">
+
+                                            @request.Priority
+
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="status-badge
+                                            status-@request.Status.ToLowerInvariant()">
+
+                                            @request.Status
+
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @request.DateSubmitted.ToString("dd MMM yyyy")
+                                    </td>
+
+                                    <td class="table-action-cell">
+
+                                        <button type="button"
+                                                class="table-link-button"
+                                                data-request-id="@request.RequestID"
+                                                onclick="selectRequest(
+                                                    @request.RequestID)">
+                                            Select
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <div class="empty-state-line"></div>
+
+                    <h3>
+                        No available service requests found
+                    </h3>
+
+                    <p>
+                        No unlinked service requests match the current
+                        search and filter criteria.
+                    </p>
+
+                    <a href="@Url.Action(
+                        "Requests",
+                        "MunicipalProject",
+                        new { id = Model.ProjectID })"
+                       class="empty-state-button">
+                        View All Requests
+                    </a>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- =====================================================
+             LINKED REQUESTS
+             ===================================================== -->
+
+        <section class="requests-card linked-requests-card">
+
+            <div class="requests-card-header">
+
+                <div>
+                    <div class="section-kicker">
+                        PROJECT REQUEST RELATIONSHIPS
+                    </div>
+
+                    <h2>
+                        Linked Service Requests
+                    </h2>
+
+                    <p>
+                        Service requests currently associated with
+                        <strong>@Model.ProjectName</strong>.
+                    </p>
+                </div>
+
+                <div class="result-summary">
+                    <strong>
+                        @Model.LinkedRequestCount
+                    </strong>
+                    linked request@(Model.LinkedRequestCount == 1 ? "" : "s")
+                </div>
+
+            </div>
+
+
+            @if (Model.LinkedRequests.Any())
+            {
+                <div class="linked-request-list">
+
+                    @foreach (var request
+                        in Model.LinkedRequests)
+                    {
+                        <article class="linked-request-item">
+
+                            <div class="linked-request-main">
+
+                                <div class="linked-request-top">
+
+                                    <span class="reference-number">
+                                        @request.ReferenceNumber
+                                    </span>
+
+                                    <span class="relationship-label">
+                                        @request.RelationshipType
+                                    </span>
+
+                                </div>
+
+                                <h3>
+                                    @request.RequestTitle
+                                </h3>
+
+                                <div class="linked-request-meta">
+
+                                    <span>
+                                        @request.CategoryName
+                                    </span>
+
+                                    <span>
+                                        @request.WardName
+                                    </span>
+
+                                    <span>
+                                        @request.Priority
+                                    </span>
+
+                                    <span>
+                                        @request.Status
+                                    </span>
+
+                                    <span>
+                                        Submitted
+                                        @request.DateSubmitted.ToString("dd MMM yyyy")
+                                    </span>
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    request.Notes))
+                                {
+                                    <div class="request-notes">
+
+                                        <span class="notes-label">
+                                            Administrator Notes
+                                        </span>
+
+                                        <p>
+                                            @request.Notes
+                                        </p>
+
+                                    </div>
+                                }
+
+                                <div class="linked-request-audit">
+
+                                    Linked
+                                    @request.DateLinked.ToString("dd MMM yyyy HH:mm")
+                                    by
+                                    @request.LinkedByAdministratorName
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="linked-request-actions">
+
+                                <a href="@Url.Action(
+                                    "Details",
+                                    "Request",
+                                    new { id = request.RequestID })"
+                                   class="view-request-button">
+                                    View Request
+                                </a>
+
+                                @using (Html.BeginForm(
+                                    "UnlinkRequest",
+                                    "MunicipalProject",
+                                    FormMethod.Post,
+                                    new { @class = "unlink-form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@request.ProjectRequestID" />
+
+                                    <input type="hidden"
+                                           name="projectID"
+                                           value="@Model.ProjectID" />
+
+                                    <button type="submit"
+                                            class="unlink-button">
+                                        Remove Link
+                                    </button>
+                                }
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state linked-empty-state">
+
+                    <div class="empty-state-line"></div>
+
+                    <h3>
+                        No service requests linked yet
+                    </h3>
+
+                    <p>
+                        Once relevant community service requests are linked
+                        to this project, they will appear here for monitoring.
+                    </p>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- =====================================================
+             FOOTER NAVIGATION
+             ===================================================== -->
+
+        <div class="page-footer-actions">
+
+            <a href="@Url.Action(
+                "Details",
+                "MunicipalProject",
+                new { id = Model.ProjectID })"
+               class="footer-back-button">
+                Back to Project Details
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE FOUNDATION
+       ========================================================= */
+
+    .project-requests-page {
+        min-height: 100vh;
+        background: #f4f7fb;
+        padding: 34px 22px 60px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #1d2939;
+    }
+
+    .project-requests-shell {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .project-requests-header {
+        background: linear-gradient(
+            135deg,
+            #0D5CC1 0%,
+            #094b9f 100%
+        );
+        border-radius: 14px;
+        padding: 34px 38px;
+        color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        box-shadow: 0 10px 28px rgba(20, 53, 91, 0.12);
+    }
+
+    .header-content {
+        max-width: 850px;
+    }
+
+    .header-kicker {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin-bottom: 10px;
+        opacity: 0.78;
+    }
+
+    .project-requests-header h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+    }
+
+    .header-description {
+        margin: 12px 0 20px;
+        font-size: 14px;
+        line-height: 1.7;
+        max-width: 760px;
+        color: rgba(255,255,255,0.9);
+    }
+
+    .project-reference {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .project-code,
+    .project-type {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    .reference-divider {
+        color: rgba(255,255,255,0.55);
+    }
+
+    .header-actions {
+        flex-shrink: 0;
+    }
+
+    .secondary-header-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 18px;
+        border: 1px solid rgba(255,255,255,0.45);
+        border-radius: 7px;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        background: rgba(255,255,255,0.08);
+        transition: 0.2s ease;
+    }
+
+    .secondary-header-button:hover {
+        color: #ffffff;
+        background: rgba(255,255,255,0.16);
+        border-color: rgba(255,255,255,0.75);
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       PROJECT CONTEXT
+       ========================================================= */
+
+    .project-context-card {
+        margin-top: 20px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        box-shadow: 0 5px 18px rgba(20,53,91,0.05);
+    }
+
+    .context-label,
+    .count-label {
+        color: #667085;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.3px;
+    }
+
+    .context-main h2 {
+        margin: 6px 0 16px;
+        font-size: 21px;
+        color: #182230;
+    }
+
+    .context-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 28px;
+    }
+
+    .context-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .context-detail span {
+        color: #7a8699;
+        font-size: 11px;
+    }
+
+    .context-detail strong {
+        color: #344054;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .request-count-panel {
+        min-width: 220px;
+        border-left: 1px solid #e4e7ec;
+        padding-left: 28px;
+    }
+
+    .request-count {
+        display: block;
+        margin: 4px 0 1px;
+        color: #0D5CC1;
+        font-size: 31px;
+        line-height: 1;
+    }
+
+    .count-description {
+        display: block;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.45;
+        max-width: 170px;
+    }
+
+
+    /* =========================================================
+       ALERTS
+       ========================================================= */
+
+    .project-alert {
+        margin-top: 18px;
+        padding: 15px 18px;
+        border-radius: 9px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        border: 1px solid;
+        font-size: 13px;
+    }
+
+    .success-alert {
+        background: #f0f9f4;
+        border-color: #b7e1c7;
+        color: #21613b;
+    }
+
+    .error-alert {
+        background: #fff5f5;
+        border-color: #f0c3c3;
+        color: #a32929;
+    }
+
+
+    /* =========================================================
+       CARDS
+       ========================================================= */
+
+    .management-card,
+    .filter-card,
+    .requests-card {
+        margin-top: 20px;
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(20,53,91,0.045);
+        overflow: hidden;
+    }
+
+    .management-card-header,
+    .filter-header,
+    .requests-card-header {
+        padding: 25px 28px;
+        border-bottom: 1px solid #edf0f4;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .section-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.25px;
+        margin-bottom: 6px;
+    }
+
+    .management-card h2,
+    .filter-card h2,
+    .requests-card h2 {
+        margin: 0;
+        font-size: 19px;
+        color: #182230;
+    }
+
+    .management-card-header p,
+    .filter-header p,
+    .requests-card-header p {
+        margin: 7px 0 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .link-request-form {
+        padding: 27px 28px 28px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 20px;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        position: relative;
+    }
+
+    .form-group label,
+    .filter-field label {
+        display: block;
+        margin-bottom: 7px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .optional-label {
+        color: #98a2b3;
+        font-size: 11px;
+        font-weight: 400;
+        margin-left: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 43px;
+        box-sizing: border-box;
+        border: 1px solid #d0d5dd;
+        border-radius: 7px;
+        background: #ffffff;
+        padding: 10px 12px;
+        color: #344054;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.18s ease,
+                    box-shadow 0.18s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,0.10);
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .notes-input {
+        min-height: 105px;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        color: #7a8699;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .selection-guidance {
+        min-height: 43px;
+        padding: 10px 12px;
+        border-radius: 7px;
+        background: #f7f9fc;
+        border: 1px solid #e5eaf0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 3px;
+    }
+
+    .selection-guidance strong {
+        color: #344054;
+        font-size: 12px;
+    }
+
+    .selection-guidance span {
+        color: #7a8699;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .character-counter {
+        text-align: right;
+        margin-top: 5px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .form-actions {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid #edf0f4;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .primary-button,
+    .cancel-button,
+    .filter-button,
+    .clear-filter-button {
+        min-height: 42px;
+        padding: 0 18px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.18s ease;
+    }
+
+    .primary-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .primary-button:hover {
+        background: #094b9f;
+        border-color: #094b9f;
+        color: #ffffff;
+    }
+
+    .cancel-button {
+        border: 1px solid #d0d5dd;
+        background: #ffffff;
+        color: #475467;
+    }
+
+    .cancel-button:hover {
+        background: #f8fafc;
+        color: #344054;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       FILTERS
+       ========================================================= */
+
+    .request-filter-form {
+        padding: 23px 28px 25px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        gap: 14px;
+    }
+
+    .filter-actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 9px;
+    }
+
+    .filter-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .filter-button:hover {
+        background: #094b9f;
+        color: #ffffff;
+    }
+
+    .clear-filter-button {
+        border: 1px solid #d0d5dd;
+        color: #475467;
+        background: #ffffff;
+    }
+
+    .clear-filter-button:hover {
+        background: #f8fafc;
+        text-decoration: none;
+        color: #344054;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .result-summary {
+        color: #667085;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .request-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .request-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1050px;
+    }
+
+    .request-table th {
+        background: #f8fafc;
+        border-bottom: 1px solid #e4e7ec;
+        padding: 12px 16px;
+        text-align: left;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        white-space: nowrap;
+    }
+
+    .request-table td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #edf0f4;
+        color: #475467;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .request-table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+    .request-table tbody tr:hover {
+        background: #fbfdff;
+    }
+
+    .request-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .reference-number {
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .request-title {
+        color: #344054;
+        font-weight: 600;
+        max-width: 260px;
+        line-height: 1.45;
+    }
+
+    .priority-badge,
+    .status-badge,
+    .relationship-label {
+        display: inline-flex;
+        align-items: center;
+        min-height: 25px;
+        padding: 0 9px;
+        border-radius: 5px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .priority-low {
+        background: #eef2f6;
+        color: #52606d;
+    }
+
+    .priority-medium {
+        background: #eef5ff;
+        color: #315b9d;
+    }
+
+    .priority-high {
+        background: #fff5df;
+        color: #9a6500;
+    }
+
+    .priority-critical {
+        background: #fff0f0;
+        color: #b42318;
+    }
+
+    .status-pending {
+        background: #f2f4f7;
+        color: #475467;
+    }
+
+    .status-underreview {
+        background: #fff7e6;
+        color: #9a6500;
+    }
+
+    .status-approved {
+        background: #edf8f2;
+        color: #217346;
+    }
+
+    .status-assigned {
+        background: #eef5ff;
+        color: #315b9d;
+    }
+
+    .status-inprogress {
+        background: #eef5ff;
+        color: #315b9d;
+    }
+
+    .status-completed {
+        background: #edf8f2;
+        color: #217346;
+    }
+
+    .status-rejected {
+        background: #fff0f0;
+        color: #b42318;
+    }
+
+    .table-action-cell {
+        text-align: right;
+    }
+
+    .table-link-button {
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #0D5CC1;
+        border-radius: 6px;
+        padding: 7px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.18s ease;
+    }
+
+    .table-link-button:hover {
+        background: #eef5ff;
+        border-color: #0D5CC1;
+    }
+
+
+    /* =========================================================
+       LINKED REQUESTS
+       ========================================================= */
+
+    .linked-requests-card {
+        margin-bottom: 20px;
+    }
+
+    .linked-request-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .linked-request-item {
+        padding: 23px 28px;
+        border-bottom: 1px solid #edf0f4;
+        display: flex;
+        justify-content: space-between;
+        gap: 28px;
+    }
+
+    .linked-request-item:last-child {
+        border-bottom: none;
+    }
+
+    .linked-request-main {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .linked-request-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 7px;
+    }
+
+    .relationship-label {
+        background: #eef5ff;
+        color: #315b9d;
+        border: 1px solid #d5e3f7;
+    }
+
+    .linked-request-item h3 {
+        margin: 0;
+        color: #253043;
+        font-size: 16px;
+        font-weight: 650;
+    }
+
+    .linked-request-meta {
+        margin-top: 11px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        color: #667085;
+        font-size: 11px;
+    }
+
+    .linked-request-meta span {
+        padding-right: 13px;
+        margin-right: 13px;
+        border-right: 1px solid #d9dee7;
+    }
+
+    .linked-request-meta span:last-child {
+        border-right: none;
+    }
+
+    .request-notes {
+        margin-top: 17px;
+        padding: 12px 14px;
+        background: #f8fafc;
+        border-left: 3px solid #b9c8dc;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .notes-label {
+        display: block;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin-bottom: 5px;
+    }
+
+    .request-notes p {
+        margin: 0;
+        color: #475467;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .linked-request-audit {
+        margin-top: 14px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .linked-request-actions {
+        width: 125px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .view-request-button,
+    .unlink-button {
+        min-height: 37px;
+        padding: 0 11px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .view-request-button {
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #0D5CC1;
+    }
+
+    .view-request-button:hover {
+        background: #eef5ff;
+        color: #0D5CC1;
+        text-decoration: none;
+    }
+
+    .unlink-form {
+        margin: 0;
+    }
+
+    .unlink-button {
+        width: 100%;
+        border: 1px solid #e3b7b7;
+        background: #ffffff;
+        color: #a32929;
+    }
+
+    .unlink-button:hover {
+        background: #fff5f5;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-state-line {
+        width: 44px;
+        height: 3px;
+        margin: 0 auto 18px;
+        background: #c7d3e3;
+        border-radius: 3px;
+    }
+
+    .empty-state h3 {
+        margin: 0;
+        color: #344054;
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        max-width: 540px;
+        margin: 8px auto 20px;
+        color: #7a8699;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .empty-state-button {
+        display: inline-flex;
+        min-height: 38px;
+        padding: 0 15px;
+        align-items: center;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .empty-state-button:hover {
+        background: #eef5ff;
+        text-decoration: none;
+        color: #0D5CC1;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .page-footer-actions {
+        margin-top: 22px;
+    }
+
+    .footer-back-button {
+        display: inline-flex;
+        min-height: 40px;
+        padding: 0 16px;
+        align-items: center;
+        border: 1px solid #d0d5dd;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #475467;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .footer-back-button:hover {
+        background: #f8fafc;
+        color: #344054;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1100px) {
+
+        .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .search-field {
+            grid-column: 1 / -1;
+        }
+
+    }
+
+   @@media (max-width: 800px) {
+
+        .project-requests-page {
+            padding: 18px 12px 40px;
+        }
+
+        .project-requests-header {
+            padding: 25px 22px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .project-requests-header h1 {
+            font-size: 25px;
+        }
+
+        .project-context-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .request-count-panel {
+            width: 100%;
+            border-left: none;
+            border-top: 1px solid #e4e7ec;
+            padding-left: 0;
+            padding-top: 18px;
+        }
+
+        .form-grid,
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width,
+        .search-field {
+            grid-column: auto;
+        }
+
+        .linked-request-item {
+            flex-direction: column;
+        }
+
+        .linked-request-actions {
+            width: 100%;
+            flex-direction: row;
+        }
+
+        .view-request-button,
+        .unlink-form {
+            flex: 1;
+        }
+
+    }
+
+    @@media (max-width: 520px) {
+
+        .project-requests-header,
+        .project-context-card,
+        .management-card-header,
+        .filter-header,
+        .requests-card-header,
+        .link-request-form,
+        .request-filter-form,
+        .linked-request-item {
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .context-details {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-actions,
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .cancel-button,
+        .filter-button,
+        .clear-filter-button {
+            width: 100%;
+        }
+
+        .linked-request-actions {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var notes =
+                document.getElementById("Notes");
+
+            var counter =
+                document.getElementById("notesCounter");
+
+            if (notes && counter) {
+
+                function updateCounter() {
+
+                    counter.textContent =
+                        notes.value.length;
+
+                }
+
+                notes.addEventListener(
+                    "input",
+                    updateCounter);
+
+                updateCounter();
+            }
+
+
+            var linkForm =
+                document.getElementById("linkRequestForm");
+
+            var linkButton =
+                document.getElementById("linkRequestButton");
+
+            if (linkForm && linkButton) {
+
+                linkForm.addEventListener(
+                    "submit",
+                    function (event) {
+
+                        var request =
+                            document.getElementById("RequestID");
+
+                        var relationship =
+                            document.getElementById("RelationshipType");
+
+                        if (!request.value) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "Please select a service request before continuing."
+                            );
+
+                            request.focus();
+
+                            return;
+                        }
+
+                        if (!relationship.value) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "Please select a relationship type before continuing."
+                            );
+
+                            relationship.focus();
+
+                            return;
+                        }
+
+                        var confirmed =
+                            window.confirm(
+                                "Link this service request to the selected municipal project?"
+                            );
+
+                        if (!confirmed) {
+
+                            event.preventDefault();
+
+                            return;
+                        }
+
+                        linkButton.disabled = true;
+                        linkButton.textContent = "Linking...";
+                    });
+            }
+
+
+            var unlinkForms =
+                document.querySelectorAll(".unlink-form");
+
+            unlinkForms.forEach(
+                function (form) {
+
+                    form.addEventListener(
+                        "submit",
+                        function (event) {
+
+                            var confirmed =
+                                window.confirm(
+                                    "Remove this service request from the project? The service request itself will not be deleted."
+                                );
+
+                            if (!confirmed) {
+                                event.preventDefault();
+                            }
+
+                        });
+                });
+        });
+
+
+    function selectRequest(requestID) {
+
+        var requestSelect =
+            document.getElementById("RequestID");
+
+        if (!requestSelect) {
+            return;
+        }
+
+        requestSelect.value =
+            requestID;
+
+        var form =
+            document.getElementById("linkRequestForm");
+
+        if (form) {
+
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+        requestSelect.focus();
+
+    }
+
+</script>

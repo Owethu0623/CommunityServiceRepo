@@ -9,12 +9,18 @@ namespace CommunityServiceProject.Models
         [Key]
         public int TechnicianID { get; set; }
 
+        public int? CitizenID { get; set; }
+
+        [ForeignKey("CitizenID")]
+        public virtual Citizen Citizen { get; set; }
+
 
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
         [RegularExpression(
     @"^[A-Za-z]+(?:[ '-][A-Za-z]+)*$",
     ErrorMessage = "First name may contain letters, spaces, hyphens and apostrophes only."
+
 )]
         public string FirstName { get; set; }
 
@@ -46,6 +52,12 @@ namespace CommunityServiceProject.Models
         public string PhoneNumber { get; set; }
 
 
+        [Required]
+        [Display(Name = "Must Change Password")]
+        public bool MustChangePassword { get; set; }
+
+
+
         // ===========================================================
         // LOGIN INFORMATION
         // ===========================================================
@@ -75,12 +87,17 @@ namespace CommunityServiceProject.Models
         public string ConfirmPassword { get; set; }
 
 
+
+
+
+
         // ===========================================================
         // ACCOUNT STATUS
         // ===========================================================
 
         [Required]
         public AccountStatus AccountStatus { get; set; }
+
 
 
         // ===========================================================

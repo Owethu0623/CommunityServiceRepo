@@ -1,0 +1,1262 @@
+﻿
+@model CommunityServiceProject.ViewModels.AdministratorMunicipalServiceRequestReviewViewModel
+
+@{
+    ViewBag.Title = "Review Municipal Service Request";
+}
+
+<style>
+    .review-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .back-row {
+        margin-bottom: 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+        .back-button:hover {
+            color: #094b9f;
+        }
+
+    .back-icon {
+        font-size: 18px;
+    }
+
+    .review-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+        .review-header h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .review-header p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.92;
+            line-height: 1.5;
+        }
+
+    .header-reference {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 18px;
+    }
+
+        .header-reference span {
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.23);
+            border-radius: 7px;
+            padding: 7px 11px;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .section-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 23px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 14px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            color: #16324f;
+            font-size: 19px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+    }
+
+    .info-item {
+        min-width: 0;
+    }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+    .info-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.035em;
+    }
+
+    .info-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .description-box {
+        background: #f8fafc;
+        border: 1px solid #e3e8ef;
+        border-radius: 9px;
+        padding: 15px;
+        color: #374151;
+        font-size: 13px;
+        line-height: 1.65;
+        white-space: pre-wrap;
+    }
+
+    .service-summary {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+        padding: 16px;
+    }
+
+    .service-icon {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border-radius: 9px;
+        background: #0D5CC1;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .service-summary h3 {
+        margin: 0 0 4px;
+        color: #16324f;
+        font-size: 15px;
+    }
+
+    .service-summary p {
+        margin: 0;
+        color: #52657a;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .status-area {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .status-label {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-under-review {
+        background: #fff8e8;
+        color: #8a6514;
+        border: 1px solid #eed79e;
+    }
+
+    .status-approved {
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+    }
+
+    .status-rejected {
+        background: #fff1f0;
+        color: #a12620;
+        border: 1px solid #efc0bc;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 28px;
+    }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 6px;
+            bottom: 6px;
+            width: 1px;
+            background: #d8e0ea;
+        }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 21px;
+    }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+    .timeline-dot {
+        position: absolute;
+        left: -28px;
+        top: 3px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #d4dce6;
+        border: 2px solid white;
+        box-shadow: 0 0 0 1px #c8d2df;
+    }
+
+    .timeline-item.completed .timeline-dot {
+        background: #198754;
+        box-shadow: 0 0 0 1px #198754;
+    }
+
+    .timeline-item.current .timeline-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.13);
+    }
+
+    .timeline-title {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .timeline-date {
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .sidebar-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+        .sidebar-card h3 {
+            margin: 0 0 15px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+    .reference-box {
+        background: #f8fafc;
+        border: 1px solid #e1e7ef;
+        border-radius: 8px;
+        padding: 13px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+        .reference-box span {
+            display: block;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .reference-box strong {
+            color: #0D5CC1;
+            font-size: 15px;
+        }
+
+    .review-note {
+        background: #fff8e8;
+        border: 1px solid #f0d59b;
+        border-radius: 8px;
+        padding: 13px;
+        color: #6b531c;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .decision-card {
+        border: 1px solid #dce4ee;
+        border-radius: 10px;
+        background: #f8fafc;
+        padding: 18px;
+    }
+
+        .decision-card h3 {
+            margin: 0 0 6px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+        .decision-card p {
+            margin: 0 0 16px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+    .decision-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .approve-button,
+    .reject-button {
+        min-height: 42px;
+        border-radius: 8px;
+        padding: 0 17px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        flex: 1;
+    }
+
+    .approve-button {
+        border: 1px solid #198754;
+        background: #198754;
+        color: white;
+    }
+
+        .approve-button:hover {
+            background: #157347;
+            border-color: #157347;
+        }
+
+    .reject-button {
+        border: 1px solid #c83b32;
+        background: white;
+        color: #b42318;
+    }
+
+        .reject-button:hover {
+            background: #fff1f0;
+        }
+
+    .final-status-note {
+        background: #f8fafc;
+        border: 1px solid #e1e7ef;
+        border-radius: 9px;
+        padding: 14px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    @@media (max-width: 1000px) {
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .review-page {
+            padding: 20px 12px 35px;
+        }
+
+        .review-header {
+            padding: 22px;
+        }
+
+            .review-header h1 {
+                font-size: 23px;
+            }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-card {
+            padding: 19px;
+        }
+
+        .decision-actions {
+            flex-direction: column;
+        }
+
+        .approve-button,
+        .reject-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="review-page">
+
+    <div class="back-row">
+        <a href="@Url.Action("Index", "AdministratorMunicipalServiceRequests")"
+           class="back-button">
+            <span class="back-icon">←</span>
+            Back to Municipal Service Requests
+        </a>
+    </div>
+
+    <div class="review-header">
+
+        <h1>Review Municipal Service Request</h1>
+
+        <p>
+            Review the citizen's request and service information before making
+            an administrative decision.
+        </p>
+
+        <div class="header-reference">
+            <span>@Model.ReferenceNumber</span>
+            <span>@Model.ServiceCode</span>
+            <span>Administrator Review</span>
+        </div>
+
+    </div>
+
+    <div class="page-layout">
+
+        <div class="main-column">
+
+            <!-- SERVICE -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+                    <h2>Municipal Service</h2>
+
+                    <p>
+                        Service selected by the citizen.
+                    </p>
+                </div>
+
+                <div class="service-summary">
+
+                    <div class="service-icon">
+                        MS
+                    </div>
+
+                    <div>
+                        <h3>@Model.ServiceName</h3>
+
+                        <p>
+                            <strong>@Model.ServiceCode</strong>
+                            —
+                            @Model.ServiceDescription
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CITIZEN -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+                    <h2>Citizen Information</h2>
+
+                    <p>
+                        Applicant information associated with this municipal service request.
+                    </p>
+                </div>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <span class="info-label">Citizen Name</span>
+
+                        <div class="info-value">
+                            @Model.CitizenName
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Email Address</span>
+
+                        <div class="info-value">
+                            @Model.CitizenEmail
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Phone Number</span>
+
+                        <div class="info-value">
+                            @Model.CitizenPhoneNumber
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Residential Address</span>
+
+                        <div class="info-value">
+                            @Model.CitizenAddress
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- REQUEST -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+                    <h2>Request Details</h2>
+
+                    <p>
+                        Information submitted by the citizen for administrative review.
+                    </p>
+                </div>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <span class="info-label">Request Title</span>
+
+                        <div class="info-value">
+                            @Model.Title
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Reference Number</span>
+
+                        <div class="info-value">
+                            @Model.ReferenceNumber
+                        </div>
+                    </div>
+
+                    <div class="info-item full-width">
+                        <span class="info-label">Description</span>
+
+                        <div class="description-box">
+                            @Model.Description
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.AdditionalInformation))
+                    {
+                        <div class="info-item full-width">
+
+                            <span class="info-label">
+                                Additional Information
+                            </span>
+
+                            <div class="description-box">
+                                @Model.AdditionalInformation
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- WORKFLOW -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+                    <h2>Request Workflow</h2>
+
+                    <p>
+                        Current position of the request in the municipal service process.
+                    </p>
+                </div>
+
+                <div class="timeline">
+
+                    <div class="timeline-item completed">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-title">
+                            Request Submitted
+                        </div>
+
+                        <div class="timeline-date">
+                            @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item current">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-title">
+                            Administrator Review
+                        </div>
+
+                        <div class="timeline-date">
+                            @if (Model.DateReviewed.HasValue)
+                            {
+                                @Model.DateReviewed.Value.ToString("dd MMM yyyy HH:mm")
+                            }
+                            else
+                            {
+                                @:Awaiting review
+                            }
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-title">
+                            Approval / Rejection
+                        </div>
+
+                        <div class="timeline-date">
+                            Administrative decision pending
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-title">
+                            Invoice Processing
+                        </div>
+
+                        <div class="timeline-date">
+                            Available after approval
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- DECISION -->
+
+            @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+                        <h2>Administrative Decision</h2>
+
+                        <p>
+                            Select the appropriate outcome after reviewing the request.
+                        </p>
+                    </div>
+
+                    <div class="decision-card">
+
+                        <h3>Review completed?</h3>
+
+                        <p>
+                            Approval will allow the request to proceed to invoice processing.
+                            Rejection will end the request workflow.
+                        </p>
+
+
+                        <div class="decision-actions">
+
+                            @using (Html.BeginForm(
+                                "Approve",
+                                "AdministratorMunicipalServiceRequests",
+                                new { id = Model.MunicipalServiceRequestID },
+                                FormMethod.Post,
+                                new { id = "approveRequestForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="approve-button"
+                                        id="approveRequestButton">
+                                    Approve Request
+                                </button>
+                            }
+
+                            <button type="button"
+                                    class="reject-button"
+                                    id="openRejectModal">
+                                Reject Request
+                            </button>
+
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="section-card">
+
+                    <div class="final-status-note">
+                        This request has already received an administrative decision.
+                        No further review decision is available from this page.
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-card">
+
+                <h3>Request Summary</h3>
+
+                <div class="reference-box">
+
+                    <span>Reference Number</span>
+
+                    <strong>
+                        @Model.ReferenceNumber
+                    </strong>
+
+                </div>
+
+                <div class="status-area">
+
+                    <span class="status-label">
+                        Current Status
+                    </span>
+
+                    @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+                    {
+                        <span class="status-badge status-under-review">
+                            Under Review
+                        </span>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                    {
+                        <span class="status-badge status-approved">
+                            Approved
+                        </span>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+                    {
+                        <span class="status-badge status-rejected">
+                            Rejected
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-badge status-under-review">
+                            @Model.Status
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="sidebar-card">
+
+                <h3>Review Information</h3>
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Submitted
+                    </span>
+
+                    <div class="info-value">
+                        @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="info-item">
+                    <span class="info-label">
+                        Reviewed
+                    </span>
+
+                    <div class="info-value">
+
+                        @if (Model.DateReviewed.HasValue)
+                        {
+                            @Model.DateReviewed.Value.ToString("dd MMM yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @:Not yet reviewed
+                        }
+
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.ReviewedByAdministratorName))
+                {
+                    <br />
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Reviewed By
+                        </span>
+
+                        <div class="info-value">
+                            @Model.ReviewedByAdministratorName
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="sidebar-card">
+
+                <h3>Administrator Guidance</h3>
+
+                <div class="review-note">
+                    Confirm that the request contains sufficient information
+                    and relates to the selected municipal service before approving it.
+                    Approved requests proceed to invoice processing.
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+```cshtml
+<div id="rejectModal"
+     class="reject-modal-overlay">
+
+    <div class="reject-modal">
+
+        <div class="reject-modal-header">
+            <h3>Reject Municipal Service Request</h3>
+
+            <button type="button"
+                    id="closeRejectModal"
+                    class="close-modal-button">
+                ×
+            </button>
+        </div>
+
+        <div class="reject-modal-body">
+
+            <p>
+                You are about to reject
+                <strong>@Model.ReferenceNumber</strong>.
+            </p>
+
+            <div class="reject-warning">
+                Rejected requests cannot proceed to invoice processing.
+                The citizen will need to submit a new request if they
+                require the service again.
+            </div>
+
+            @using (Html.BeginForm(
+                "Reject",
+                "AdministratorMunicipalServiceRequests",
+                new { id = Model.MunicipalServiceRequestID },
+                FormMethod.Post,
+                new { id = "rejectRequestForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <label for="rejectionReason"
+                       class="rejection-label">
+                    Rejection Reason
+                </label>
+
+                <textarea id="rejectionReason"
+                          name="rejectionReason"
+                          class="rejection-textarea"
+                          maxlength="500"
+                          rows="5"
+                          placeholder="Enter the reason for rejecting this request..."
+                          required></textarea>
+
+                <div class="character-count">
+                    Maximum 500 characters
+                </div>
+
+                <div class="reject-modal-actions">
+
+                    <button type="button"
+                            id="cancelRejectModal"
+                            class="cancel-reject-button">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            id="confirmRejectButton"
+                            class="confirm-reject-button">
+                        Confirm Rejection
+                    </button>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .reject-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 23, 42, 0.58);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+        .reject-modal-overlay.active {
+            display: flex;
+        }
+
+    .reject-modal {
+        width: 100%;
+        max-width: 520px;
+        background: white;
+        border-radius: 13px;
+        box-shadow: 0 20px 55px rgba(15, 23, 42, 0.25);
+        overflow: hidden;
+    }
+
+    .reject-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 22px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .reject-modal-header h3 {
+            margin: 0;
+            color: #16324f;
+            font-size: 18px;
+        }
+
+    .close-modal-button {
+        border: none;
+        background: transparent;
+        color: #64748b;
+        font-size: 25px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+        .close-modal-button:hover {
+            color: #1f2937;
+        }
+
+    .reject-modal-body {
+        padding: 22px;
+    }
+
+        .reject-modal-body > p {
+            margin: 0 0 14px;
+            color: #374151;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+    .reject-warning {
+        background: #fff8e8;
+        border: 1px solid #f0d59b;
+        border-radius: 8px;
+        padding: 12px 13px;
+        margin-bottom: 18px;
+        color: #6b531c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .rejection-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .rejection-textarea {
+        width: 100%;
+        box-sizing: border-box;
+        resize: vertical;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        padding: 11px 12px;
+        color: #1f2937;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+        .rejection-textarea:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.09);
+        }
+
+    .character-count {
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 11px;
+    }
+
+    .reject-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+    .cancel-reject-button,
+    .confirm-reject-button {
+        min-height: 40px;
+        padding: 0 15px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .cancel-reject-button {
+        border: 1px solid #cfd7e3;
+        background: white;
+        color: #374151;
+    }
+
+        .cancel-reject-button:hover {
+            background: #f5f7fa;
+        }
+
+    .confirm-reject-button {
+        border: 1px solid #b42318;
+        background: #b42318;
+        color: white;
+    }
+
+        .confirm-reject-button:hover {
+            background: #981b12;
+        }
+
+    @@media (max-width: 550px) {
+        .reject-modal-actions {
+            flex-direction: column-reverse;
+        }
+
+        .cancel-reject-button,
+        .confirm-reject-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var rejectModal =
+            document.getElementById("rejectModal");
+
+        var openRejectModal =
+            document.getElementById("openRejectModal");
+
+        var closeRejectModal =
+            document.getElementById("closeRejectModal");
+
+        var cancelRejectModal =
+            document.getElementById("cancelRejectModal");
+
+        var rejectForm =
+            document.getElementById("rejectRequestForm");
+
+        var rejectionReason =
+            document.getElementById("rejectionReason");
+
+        var confirmRejectButton =
+            document.getElementById("confirmRejectButton");
+
+        var approveForm =
+            document.getElementById("approveRequestForm");
+
+        var approveRequestButton =
+            document.getElementById("approveRequestButton");
+
+
+        function openModal() {
+            rejectModal.classList.add("active");
+
+            if (rejectionReason) {
+                rejectionReason.focus();
+            }
+        }
+
+
+        function closeModal() {
+            rejectModal.classList.remove("active");
+        }
+
+
+        if (openRejectModal) {
+            openRejectModal.addEventListener(
+                "click",
+                function () {
+                    openModal();
+                }
+            );
+        }
+
+
+        if (closeRejectModal) {
+            closeRejectModal.addEventListener(
+                "click",
+                function () {
+                    closeModal();
+                }
+            );
+        }
+
+
+        if (cancelRejectModal) {
+            cancelRejectModal.addEventListener(
+                "click",
+                function () {
+                    closeModal();
+                }
+            );
+        }
+
+
+        if (rejectModal) {
+            rejectModal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === rejectModal) {
+                        closeModal();
+                    }
+
+                }
+            );
+        }
+
+
+        if (rejectForm) {
+            rejectForm.addEventListener(
+                "submit",
+                function () {
+
+                    if (!rejectionReason.value.trim()) {
+                        rejectionReason.focus();
+                        return;
+                    }
+
+                    confirmRejectButton.disabled = true;
+                    confirmRejectButton.textContent =
+                        "Rejecting...";
+                }
+            );
+        }
+
+
+        if (approveForm) {
+            approveForm.addEventListener(
+                "submit",
+                function () {
+
+                    approveRequestButton.disabled = true;
+                    approveRequestButton.textContent =
+                        "Approving...";
+
+                }
+            );
+        }
+
+    });
+</script>
+
+
+
+

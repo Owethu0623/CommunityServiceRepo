@@ -1,0 +1,1054 @@
+﻿
+@model CommunityServiceProject.Models.MunicipalServiceRequest
+
+@{
+    ViewBag.Title = "Municipal Service Request Details";
+}
+
+<style>
+    .municipal-request-details-page {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .request-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+        .request-header h1 {
+            margin: 0 0 7px;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .request-header p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+    .header-reference {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .header-reference span {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+        margin-bottom: 18px;
+    }
+
+        .back-button:hover {
+            color: #094b9f;
+            text-decoration: none;
+        }
+
+    .back-icon {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 310px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .section-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: #16324f;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .request-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+    }
+
+    .summary-item {
+        min-width: 0;
+    }
+
+    .summary-label {
+        display: block;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .summary-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+        .summary-value.reference {
+            color: #0D5CC1;
+            font-size: 15px;
+        }
+
+        .summary-value.muted {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+    .status-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    .status-information {
+        min-width: 0;
+    }
+
+    .status-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .status-description {
+        margin: 5px 0 0;
+        color: #526277;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 20px;
+        padding: 7px 13px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+
+    .status-submitted {
+        background: #eef4ff;
+        color: #245ca8;
+        border-color: #c8daf7;
+    }
+
+    .status-under-review {
+        background: #fff8e8;
+        color: #795a1d;
+        border-color: #eed9a4;
+    }
+
+    .status-approved {
+        background: #e8f7ee;
+        color: #18794e;
+        border-color: #bfe7cf;
+    }
+
+    .status-rejected {
+        background: #fff1f0;
+        color: #a32820;
+        border-color: #f0b8b4;
+    }
+
+    .status-invoice {
+        background: #f4efff;
+        color: #6346a3;
+        border-color: #d9cdf5;
+    }
+
+    .status-payment {
+        background: #fff7ed;
+        color: #9a4d12;
+        border-color: #f2c89e;
+    }
+
+    .status-processing {
+        background: #edf8ff;
+        color: #12658f;
+        border-color: #bfdfef;
+    }
+
+    .status-paid {
+        background: #e8f7ee;
+        color: #18794e;
+        border-color: #bfe7cf;
+    }
+
+    .status-cancelled {
+        background: #f3f4f6;
+        color: #4b5563;
+        border-color: #d7dce2;
+    }
+
+    .status-failed {
+        background: #fff1f0;
+        color: #a32820;
+        border-color: #f0b8b4;
+    }
+
+    .description-box {
+        background: #f8fafc;
+        border: 1px solid #e3e8ef;
+        border-radius: 9px;
+        padding: 16px;
+        color: #374151;
+        font-size: 14px;
+        line-height: 1.65;
+        white-space: pre-line;
+    }
+
+    .timeline {
+        position: relative;
+        margin-top: 5px;
+    }
+
+    .timeline-item {
+        position: relative;
+        display: flex;
+        gap: 14px;
+        padding-bottom: 23px;
+    }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+    .timeline-line {
+        position: absolute;
+        left: 7px;
+        top: 16px;
+        bottom: 0;
+        width: 1px;
+        background: #d7dee8;
+    }
+
+    .timeline-item:last-child .timeline-line {
+        display: none;
+    }
+
+    .timeline-dot {
+        position: relative;
+        z-index: 1;
+        width: 15px;
+        height: 15px;
+        margin-top: 2px;
+        border-radius: 50%;
+        background: #0D5CC1;
+        border: 2px solid white;
+        box-shadow: 0 0 0 1px #0D5CC1;
+        flex-shrink: 0;
+    }
+
+    .timeline-item.pending .timeline-dot {
+        background: #d5dce5;
+        box-shadow: 0 0 0 1px #c7d0dc;
+    }
+
+    .timeline-content {
+        min-width: 0;
+    }
+
+    .timeline-title {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .timeline-item.active .timeline-title {
+        color: #0D5CC1;
+    }
+
+    .timeline-description {
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+        .sidebar-card h3 {
+            margin: 0 0 16px;
+            color: #16324f;
+            font-size: 17px;
+        }
+
+    .reference-box {
+        background: #f8fafc;
+        border: 1px solid #e3e8ef;
+        border-radius: 9px;
+        padding: 15px;
+        margin-bottom: 16px;
+    }
+
+    .reference-label {
+        display: block;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .reference-number {
+        color: #0D5CC1;
+        font-size: 17px;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .next-step {
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+        padding: 14px;
+        color: #36516e;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+        .next-step strong {
+            color: #1d3f66;
+        }
+
+    .success-message {
+        background: #eaf7ef;
+        border: 1px solid #bfe4cc;
+        color: #19663f;
+        border-radius: 9px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .action-area {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: flex-start;
+        padding-top: 4px;
+    }
+
+    .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .invoice-button {
+        background: #6346a3;
+        border-color: #6346a3;
+    }
+
+        .invoice-button:hover {
+            background: #503786;
+            border-color: #503786;
+            color: white;
+        }
+
+    @@media (max-width: 1000px) {
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .municipal-request-details-page {
+            padding: 20px 12px 35px;
+        }
+
+        .request-header {
+            padding: 22px;
+        }
+
+            .request-header h1 {
+                font-size: 23px;
+            }
+
+        .request-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .section-card,
+        .sidebar-card {
+            padding: 19px;
+        }
+
+        .status-container {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .rejection-reason-display {
+            background: #fff8f7;
+            border: 1px solid #efc7c3;
+            border-radius: 9px;
+            padding: 16px;
+            color: #374151;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+            .rejection-reason-display p {
+                margin: 0 0 10px;
+            }
+
+                .rejection-reason-display p:last-child {
+                    margin-bottom: 0;
+                }
+
+            .rejection-reason-display ul,
+            .rejection-reason-display ol {
+                margin: 8px 0 10px 20px;
+            }
+
+            .rejection-reason-display strong,
+            .rejection-reason-display b {
+                color: #1f2937;
+            }
+    }
+</style>
+
+<div class="municipal-request-details-page">
+
+    <a href="@Url.Action("Index", "MunicipalServices")"
+       class="back-button">
+        <span class="back-icon">←</span>
+        Back to Municipal Services
+    </a>
+
+    <div class="request-header">
+
+        <h1>Municipal Service Request</h1>
+
+        <p>
+            View the details and current status of your municipal service request.
+        </p>
+
+        <div class="header-reference">
+
+            <span>
+                @Model.ReferenceNumber
+            </span>
+
+            <span>
+                @Model.ServiceType.ServiceCode
+            </span>
+
+            <span>
+                @Model.ServiceType.ServiceName
+            </span>
+
+        </div>
+
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="success-message">
+            <strong>Request submitted successfully.</strong>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="page-layout">
+
+        <div class="main-column">
+
+            <!-- =================================================
+                 CURRENT STATUS
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Current Status</h2>
+
+                    <p>
+                        The current processing stage of your municipal service request.
+                    </p>
+
+                </div>
+
+                @{
+                    var statusClass = "status-submitted";
+                    var statusDescription = "Your request has been submitted and is awaiting municipal processing.";
+
+                    switch (Model.Status)
+                    {
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview:
+                            statusClass = "status-under-review";
+                            statusDescription = "Your request is currently being reviewed by the municipality.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved:
+                            statusClass = "status-approved";
+                            statusDescription = "Your request has been approved and can proceed to the next municipal processing stage.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected:
+                            statusClass = "status-rejected";
+                            statusDescription = "Your request has been rejected. Please review any available municipal communication for further information.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued:
+                            statusClass = "status-invoice";
+                            statusDescription = "An invoice has been issued for this municipal service request.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired:
+                            statusClass = "status-payment";
+                            statusDescription = "Payment is required before the municipal service can proceed.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing:
+                            statusClass = "status-processing";
+                            statusDescription = "Your payment is currently being processed.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid:
+                            statusClass = "status-paid";
+                            statusDescription = "Payment has been successfully recorded for this request.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress:
+                            statusClass = "status-processing";
+                            statusDescription = "The requested municipal service is currently being processed.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed:
+                            statusClass = "status-paid";
+                            statusDescription = "The requested municipal service has been completed.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.Cancelled:
+                            statusClass = "status-cancelled";
+                            statusDescription = "This municipal service request has been cancelled.";
+                            break;
+
+                        case CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed:
+                            statusClass = "status-failed";
+                            statusDescription = "The payment attempt was unsuccessful. Further payment action may be required.";
+                            break;
+                    }
+                }
+
+                <div class="status-container">
+
+                    <div class="status-information">
+
+                        <span class="status-label">
+                            Request Status
+                        </span>
+
+                        <span class="status-badge @statusClass">
+                            @Model.Status
+                        </span>
+
+                        <p class="status-description">
+                            @statusDescription
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 REQUEST INFORMATION
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Request Information</h2>
+
+                    <p>
+                        Information submitted for this municipal service request.
+                    </p>
+
+                </div>
+
+                <div class="request-summary">
+
+                    <div class="summary-item">
+
+                        <span class="summary-label">
+                            Reference Number
+                        </span>
+
+                        <div class="summary-value reference">
+                            @Model.ReferenceNumber
+                        </div>
+
+                    </div>
+
+                    <div class="summary-item">
+
+                        <span class="summary-label">
+                            Service
+                        </span>
+
+                        <div class="summary-value">
+                            @Model.ServiceType.ServiceName
+                        </div>
+
+                    </div>
+
+                    <div class="summary-item">
+
+                        <span class="summary-label">
+                            Service Code
+                        </span>
+
+                        <div class="summary-value">
+                            @Model.ServiceType.ServiceCode
+                        </div>
+
+                    </div>
+
+                    <div class="summary-item">
+
+                        <span class="summary-label">
+                            Date Submitted
+                        </span>
+
+                        <div class="summary-value">
+                            @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                    @if (Model.DateReviewed.HasValue)
+                    {
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                Date Reviewed
+                            </span>
+
+                            <div class="summary-value">
+                                @Model.DateReviewed.Value.ToString("dd MMM yyyy HH:mm")
+                            </div>
+
+                        </div>
+                    }
+
+                    @if (Model.DateApproved.HasValue)
+                    {
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                Date Approved
+                            </span>
+
+                            <div class="summary-value">
+                                @Model.DateApproved.Value.ToString("dd MMM yyyy HH:mm")
+                            </div>
+
+                        </div>
+                    }
+
+                    @if (Model.DateCompleted.HasValue)
+                    {
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                Date Completed
+                            </span>
+
+                            <div class="summary-value">
+                                @Model.DateCompleted.Value.ToString("dd MMM yyyy HH:mm")
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 REQUEST DESCRIPTION
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Request Description</h2>
+
+                    <p>
+                        Details provided when the municipal service request was submitted.
+                    </p>
+
+                </div>
+
+                <div class="summary-label">
+                    Request Title
+                </div>
+
+                <div class="summary-value"
+                     style="margin-bottom:16px;">
+                    @Model.Title
+                </div>
+
+                <div class="summary-label">
+                    Description
+                </div>
+
+                <div class="description-box">
+                    @Model.Description
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.AdditionalInformation))
+                {
+                    <div class="summary-label"
+                         style="margin-top:18px;">
+                        Additional Information
+                    </div>
+
+                    <div class="description-box">
+                        @Model.AdditionalInformation
+                    </div>
+                }
+
+            </div>
+
+            <!-- =================================================
+                 REQUEST PROGRESS
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Request Progress</h2>
+
+                    <p>
+                        Your request follows the municipal service processing workflow.
+                    </p>
+
+                </div>
+
+                <div class="timeline">
+
+                    <div class="timeline-item active">
+
+                        <div class="timeline-line"></div>
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-title">
+                                Request Submitted
+                            </div>
+
+                            <div class="timeline-description">
+                                Your municipal service request has been submitted successfully.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item @(Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview ? "active" : (Model.DateReviewed.HasValue ? "" : "pending"))">
+
+                        <div class="timeline-line"></div>
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-title">
+                                Under Review
+                            </div>
+
+                            <div class="timeline-description">
+                                The municipality reviews the submitted request.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item @(Model.DateApproved.HasValue ? "" : (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved ? "active" : "pending"))">
+
+                        <div class="timeline-line"></div>
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-title">
+                                Approval Decision
+                            </div>
+
+                            <div class="timeline-description">
+                                The municipality records an approval or rejection decision.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item @(Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued || Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ? "active" : "pending")">
+
+                        <div class="timeline-line"></div>
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-title">
+                                Invoice and Payment
+                            </div>
+
+                            <div class="timeline-description">
+                                Where applicable, an invoice is issued and payment is processed.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item @(Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ? "active" : (Model.DateCompleted.HasValue ? "" : "pending"))">
+
+                        <div class="timeline-line"></div>
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-title">
+                                Service Processing
+                            </div>
+
+                            <div class="timeline-description">
+                                The municipality processes the approved service request.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item @(Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed ? "active" : "pending")">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-title">
+                                Completed
+                            </div>
+
+                            <div class="timeline-description">
+                                The municipal service request has been completed.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-card">
+
+                <h3>Request Reference</h3>
+
+                <div class="reference-box">
+
+                    <span class="reference-label">
+                        Reference Number
+                    </span>
+
+                    <div class="reference-number">
+                        @Model.ReferenceNumber
+                    </div>
+
+                </div>
+
+                <div class="next-step">
+
+                    <strong>What happens next?</strong>
+
+                    <br />
+
+                    Your request will follow the municipal processing workflow.
+                    Keep the reference number above for future status enquiries.
+
+                </div>
+
+            </div>
+
+            <div class="action-area">
+
+                @{
+                    bool canViewInvoice =
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed;
+                }
+
+                @if (canViewInvoice)
+                {
+                    <a href="@Url.Action("Invoice", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button invoice-button">
+                        View Invoice
+                    </a>
+                }
+
+                <a href="@Url.Action("Index", "MunicipalServices")"
+                   class="primary-button">
+                    Back to Municipal Services
+                </a>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+@if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected &&
+    !string.IsNullOrWhiteSpace(Model.RejectionReason))
+{
+    <div class="section-card">
+
+        <div class="section-heading">
+
+            <h2>Rejection Reason</h2>
+
+            <p>
+                Reason recorded by the Administrator when the request was rejected.
+            </p>
+
+        </div>
+
+        <div class="rejection-reason-display">
+            @Html.Raw(Model.RejectionReason)
+        </div>
+
+    </div>
+}
+

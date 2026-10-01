@@ -1,0 +1,872 @@
+﻿
+@model IEnumerable<CommunityServiceProject.Models.Invoice>
+
+@{
+    ViewBag.Title = "Outstanding Payments";
+}
+
+<style>
+    .outstanding-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 22px 50px;
+        color: #1f2937;
+    }
+
+    .outstanding-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+        .outstanding-header h1 {
+            margin: 0 0 8px;
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .outstanding-header p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.92;
+            line-height: 1.5;
+        }
+
+    .header-reference {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .header-reference span {
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        padding: 19px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+        .summary-card .label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            display: block;
+            color: #16324f;
+            font-size: 24px;
+            font-weight: 750;
+            line-height: 1.2;
+        }
+
+        .summary-card .description {
+            display: block;
+            color: #6b7280;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .summary-card.warning .value {
+            color: #b45309;
+        }
+
+        .summary-card.danger .value {
+            color: #b42318;
+        }
+
+        .summary-card.success .value {
+            color: #18794e;
+        }
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .main-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 21px 23px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .card-header h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: #16324f;
+        }
+
+        .card-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .invoice-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+        .invoice-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.035em;
+            padding: 13px 14px;
+            text-align: left;
+            border-bottom: 1px solid #e3e8ef;
+            white-space: nowrap;
+        }
+
+        .invoice-table td {
+            padding: 15px 14px;
+            border-bottom: 1px solid #edf0f4;
+            vertical-align: middle;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .invoice-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+    .invoice-number {
+        color: #0D5CC1;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .request-reference {
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .citizen-name {
+        font-weight: 650;
+        color: #1f2937;
+    }
+
+    .service-name {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .amount {
+        font-weight: 700;
+        color: #1f2937;
+        white-space: nowrap;
+    }
+
+    .amount-paid {
+        color: #18794e;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .balance {
+        color: #b42318;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .date-value {
+        color: #4b5563;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-issued {
+        background: #eef4ff;
+        color: #0D5CC1;
+        border: 1px solid #cdddf8;
+    }
+
+    .status-partial {
+        background: #fff8e8;
+        color: #9a6700;
+        border: 1px solid #f1d99b;
+    }
+
+    .status-overdue {
+        background: #fff1f0;
+        color: #b42318;
+        border: 1px solid #f0b8b4;
+    }
+
+    .view-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 35px;
+        padding: 0 12px;
+        border-radius: 7px;
+        border: 1px solid #cfd7e3;
+        background: #ffffff;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+
+        .view-button:hover {
+            background: #f0f6ff;
+            border-color: #0D5CC1;
+            color: #094b9f;
+        }
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        width: 52px;
+        height: 52px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #e8f7ee;
+        color: #18794e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        font-weight: 700;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+        color: #16324f;
+        font-size: 18px;
+    }
+
+    .empty-state p {
+        max-width: 500px;
+        margin: 0 auto;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+        .sidebar-card + .sidebar-card {
+            margin-top: 17px;
+        }
+
+        .sidebar-card h3 {
+            margin: 0 0 16px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+    .monitoring-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 0;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+        .monitoring-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .monitoring-item:first-child {
+            padding-top: 0;
+        }
+
+    .monitoring-label {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .monitoring-value {
+        color: #1f2937;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+        .monitoring-value.overdue {
+            color: #b42318;
+        }
+
+        .monitoring-value.partial {
+            color: #9a6700;
+        }
+
+    .navigation-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .navigation-links a {
+            color: #0D5CC1;
+            font-size: 12px;
+            font-weight: 650;
+            text-decoration: none;
+            padding: 10px 0;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+            .navigation-links a:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .navigation-links a:first-child {
+                padding-top: 0;
+            }
+
+            .navigation-links a:hover {
+                color: #094b9f;
+            }
+
+    .back-area {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 15px;
+        border-radius: 8px;
+        border: 1px solid #cfd7e3;
+        background: white;
+        color: #374151;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+        transition: all 0.15s ease;
+    }
+
+        .back-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+    @@media (max-width: 1100px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .sidebar-card + .sidebar-card {
+            margin-top: 0;
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .outstanding-page {
+            padding: 20px 12px 35px;
+        }
+
+        .outstanding-header {
+            padding: 22px;
+        }
+
+            .outstanding-header h1 {
+                font-size: 23px;
+            }
+
+        .summary-grid,
+        .sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar-card + .sidebar-card {
+            margin-top: 17px;
+        }
+    }
+</style>
+
+<div class="outstanding-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="outstanding-header">
+
+        <h1>Outstanding Payments</h1>
+
+        <p>
+            Monitor unpaid municipal service invoices and identify balances
+            that require payment or follow-up.
+        </p>
+
+        <div class="header-reference">
+
+            <span>
+                US140
+            </span>
+
+            <span>
+                Finance Operations
+            </span>
+
+            <span>
+                Outstanding Invoice Monitoring
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card danger">
+
+            <span class="label">
+                Outstanding Balance
+            </span>
+
+            <span class="value">
+                R @ViewBag.TotalOutstandingBalance.ToString("N2")
+            </span>
+
+            <span class="description">
+                Total amount still unpaid
+            </span>
+
+        </div>
+
+        <div class="summary-card warning">
+
+            <span class="label">
+                Outstanding Invoices
+            </span>
+
+            <span class="value">
+                @ViewBag.TotalOutstandingInvoices
+            </span>
+
+            <span class="description">
+                Invoices with unpaid balances
+            </span>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span class="label">
+                Partially Paid
+            </span>
+
+            <span class="value">
+                @ViewBag.TotalPartiallyPaidInvoices
+            </span>
+
+            <span class="description">
+                Invoices with remaining balances
+            </span>
+
+        </div>
+
+        <div class="summary-card danger">
+
+            <span class="label">
+                Overdue
+            </span>
+
+            <span class="value">
+                @ViewBag.TotalOverdueInvoices
+            </span>
+
+            <span class="description">
+                Invoices marked overdue
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="page-layout">
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+        <main>
+
+            <div class="main-card">
+
+                <div class="card-header">
+
+                    <h2>Outstanding Invoice Register</h2>
+
+                    <p>
+                        Review invoices with an outstanding balance and
+                        open individual invoices for further processing.
+                    </p>
+
+                </div>
+
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-wrapper">
+
+                        <table class="invoice-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Service Request</th>
+                                    <th>Citizen</th>
+                                    <th>Service</th>
+                                    <th>Amount</th>
+                                    <th>Paid</th>
+                                    <th>Balance</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var invoice in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            <div class="invoice-number">
+                                                @invoice.InvoiceNumber
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="request-reference">
+                                                @if (invoice.MunicipalServiceRequest != null)
+                                                {
+                                                    @invoice.MunicipalServiceRequest.ReferenceNumber
+                                                }
+                                                else
+                                                {
+                                                    @:N/A
+                                                }
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="citizen-name">
+                                                @if (invoice.Citizen != null)
+                                                {
+                                                    @invoice.Citizen.FirstName
+                                                    @: @invoice.Citizen.LastName
+                                                }
+                                                else
+                                                {
+                                                    @:Unknown Citizen
+                                                }
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="service-name">
+                                                @if (invoice.FeeSchedule != null &&
+                                                     invoice.FeeSchedule.ServiceType != null)
+                                                {
+                                                    @invoice.FeeSchedule.ServiceType.ServiceName
+                                                }
+                                                else
+                                                {
+                                                    @:Municipal Service
+                                                }
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <span class="amount">
+                                                R @invoice.Amount.ToString("N2")
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="amount-paid">
+                                                R @invoice.AmountPaid.ToString("N2")
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="balance">
+                                                R @invoice.Balance.ToString("N2")
+                                            </span>
+                                        </td>
+
+                                        <td>
+
+                                            @if (invoice.DueDate.HasValue)
+                                            {
+                                                <span class="date-value">
+                                                    @invoice.DueDate.Value.ToString("dd MMM yyyy")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="date-value">
+                                                    No due date
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            @if (invoice.Status == CommunityServiceProject.Models.InvoiceStatus.Issued)
+                                            {
+                                                <span class="status-badge status-issued">
+                                                    Issued
+                                                </span>
+                                            }
+                                            else if (invoice.Status == CommunityServiceProject.Models.InvoiceStatus.PartiallyPaid)
+                                            {
+                                                <span class="status-badge status-partial">
+                                                    Partially Paid
+                                                </span>
+                                            }
+                                            else if (invoice.Status == CommunityServiceProject.Models.InvoiceStatus.Overdue)
+                                            {
+                                                <span class="status-badge status-overdue">
+                                                    Overdue
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge status-issued">
+                                                    @invoice.Status
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            <a href="@Url.Action("Details", "Invoice", new { id = invoice.InvoiceID })"
+                                               class="view-button">
+                                                View Invoice
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+
+                        <div class="empty-state-icon">
+                            ✓
+                        </div>
+
+                        <h3>No Outstanding Payments</h3>
+
+                        <p>
+                            There are currently no invoices with an outstanding
+                            balance requiring payment monitoring.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+
+            <div class="back-area">
+
+                <a href="@Url.Action("Index", "FinanceDashboard")"
+                   class="back-button">
+                    ← Back to Finance Dashboard
+                </a>
+
+            </div>
+
+        </main>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-card">
+
+                <h3>Payment Monitoring</h3>
+
+                <div class="monitoring-item">
+
+                    <span class="monitoring-label">
+                        Outstanding
+                    </span>
+
+                    <span class="monitoring-value">
+                        @ViewBag.TotalOutstandingInvoices
+                    </span>
+
+                </div>
+
+                <div class="monitoring-item">
+
+                    <span class="monitoring-label">
+                        Issued
+                    </span>
+
+                    <span class="monitoring-value">
+                        @ViewBag.TotalIssuedInvoices
+                    </span>
+
+                </div>
+
+                <div class="monitoring-item">
+
+                    <span class="monitoring-label">
+                        Partially Paid
+                    </span>
+
+                    <span class="monitoring-value partial">
+                        @ViewBag.TotalPartiallyPaidInvoices
+                    </span>
+
+                </div>
+
+                <div class="monitoring-item">
+
+                    <span class="monitoring-label">
+                        Overdue
+                    </span>
+
+                    <span class="monitoring-value overdue">
+                        @ViewBag.TotalOverdueInvoices
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="sidebar-card">
+
+                <h3>Finance Navigation</h3>
+
+                <div class="navigation-links">
+
+                    <a href="@Url.Action("Index", "FinanceDashboard")">
+                        Finance Dashboard
+                    </a>
+
+                    <a href="@Url.Action("Index", "Invoice")">
+                        Invoice Generation
+                    </a>
+
+                    <a href="@Url.Action("Issued", "Invoice")">
+                        Issued Invoices
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Municipal Service Requests
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+

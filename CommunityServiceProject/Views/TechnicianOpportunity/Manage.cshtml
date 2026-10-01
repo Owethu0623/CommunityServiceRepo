@@ -23,15 +23,43 @@
 
         <div class="header-actions">
 
+
             @Html.ActionLink(
-                "Create Opportunity",
-                "Create",
-                "TechnicianOpportunity",
-                null,
-                new { @class = "btn-primary" }
-            )
+    "Create New Opportunity",
+    "Create",
+    "TechnicianOpportunity",
+    null,
+    new { @class = "btn-primary" }
+)
+
+            @Html.ActionLink(
+    "Review Applications",
+    "ReviewApplications",
+    "TechnicianApplication",
+    null,
+    new { @class = "btn-primary" }
+)
+
+            @Html.ActionLink(
+    "Shortlisted Applicants",
+   "ShortlistedApplicants",
+    "TechnicianApplication",
+    null,
+    new { @class = "btn-primary" }
+)
+            
+
+
+            @Html.ActionLink(
+    "Back",
+    "Index",
+    "AdministratorDashboard",
+    null,
+    new { @class = "btn-primary" }
+)
 
         </div>
+
 
     </div>
 
@@ -223,10 +251,9 @@
                             <td>
 
                                 <div>
-                                    <strong>
-                                        @opportunity.ApplicationStartDate
-                                        .ToString("dd MMM yyyy")
-                                    </strong>
+                                        <strong>
+                                            @opportunity.ApplicationStartDate.ToString("dd MMM yyyy")
+                                        </strong>
                                 </div>
 
                                 <div class="date-separator">
@@ -234,10 +261,9 @@
                                 </div>
 
                                 <div>
-                                    <strong>
-                                        @opportunity.ApplicationDeadline
-                                        .ToString("dd MMM yyyy")
-                                    </strong>
+                                        <strong>
+                                            @opportunity.ApplicationDeadline.ToString("dd MMM yyyy")
+                                        </strong>
                                 </div>
 
                             </td>
@@ -433,19 +459,6 @@
 
         </div>
     }
-
-
-    <div class="page-footer-navigation">
-
-        @Html.ActionLink(
-            "Back to Recruitment",
-            "Index",
-            "Home",
-            null,
-            new { @class = "btn-secondary" }
-        )
-
-    </div>
 
 </div>
 

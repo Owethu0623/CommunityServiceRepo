@@ -298,10 +298,69 @@
     <Compile Include="Migrations\202609250518160_AddTechnicianApplication1.Designer.cs">
       <DependentUpon>202609250518160_AddTechnicianApplication1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202609251331245_AddApplicationDocument.cs" />
+    <Compile Include="Migrations\202609251331245_AddApplicationDocument.Designer.cs">
+      <DependentUpon>202609251331245_AddApplicationDocument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609251710054_AddTechnicianApplicationScreening.cs" />
+    <Compile Include="Migrations\202609251710054_AddTechnicianApplicationScreening.Designer.cs">
+      <DependentUpon>202609251710054_AddTechnicianApplicationScreening.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609251927360_CreateApplicationAssessment.cs" />
+    <Compile Include="Migrations\202609251927360_CreateApplicationAssessment.Designer.cs">
+      <DependentUpon>202609251927360_CreateApplicationAssessment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609261208531_AddApplicationInterviewStatus.cs" />
+    <Compile Include="Migrations\202609261208531_AddApplicationInterviewStatus.Designer.cs">
+      <DependentUpon>202609261208531_AddApplicationInterviewStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609261238502_AddInterviewInstructions.cs" />
+    <Compile Include="Migrations\202609261238502_AddInterviewInstructions.Designer.cs">
+      <DependentUpon>202609261238502_AddInterviewInstructions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609261336239_AddTechnicianApplicationSelection.cs" />
+    <Compile Include="Migrations\202609261336239_AddTechnicianApplicationSelection.Designer.cs">
+      <DependentUpon>202609261336239_AddTechnicianApplicationSelection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609261413252_AddTechnicianApplicationFinalVerification.cs" />
+    <Compile Include="Migrations\202609261413252_AddTechnicianApplicationFinalVerification.Designer.cs">
+      <DependentUpon>202609261413252_AddTechnicianApplicationFinalVerification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609261809446_AddTechnicianOnboardingAndCitizenTechnicianLink.cs" />
+    <Compile Include="Migrations\202609261809446_AddTechnicianOnboardingAndCitizenTechnicianLink.Designer.cs">
+      <DependentUpon>202609261809446_AddTechnicianOnboardingAndCitizenTechnicianLink.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609271406235_AddTechnicianApplicationNotifications.cs" />
+    <Compile Include="Migrations\202609271406235_AddTechnicianApplicationNotifications.Designer.cs">
+      <DependentUpon>202609271406235_AddTechnicianApplicationNotifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609271916221_AddTechnicianMustChangePassword.cs" />
+    <Compile Include="Migrations\202609271916221_AddTechnicianMustChangePassword.Designer.cs">
+      <DependentUpon>202609271916221_AddTechnicianMustChangePassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609272117308_RemoveUniqueTechnicianOnboardingApplication.cs" />
+    <Compile Include="Migrations\202609272117308_RemoveUniqueTechnicianOnboardingApplication.Designer.cs">
+      <DependentUpon>202609272117308_RemoveUniqueTechnicianOnboardingApplication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609281834435_AddFinanceOfficer.cs" />
+    <Compile Include="Migrations\202609281834435_AddFinanceOfficer.Designer.cs">
+      <DependentUpon>202609281834435_AddFinanceOfficer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609282238238_AddMunicipalFinanceAndPayroll.cs" />
+    <Compile Include="Migrations\202609282238238_AddMunicipalFinanceAndPayroll.Designer.cs">
+      <DependentUpon>202609282238238_AddMunicipalFinanceAndPayroll.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202609290453519_AddMunicipalServiceRequestNotifications.cs" />
+    <Compile Include="Migrations\202609290453519_AddMunicipalServiceRequestNotifications.Designer.cs">
+      <DependentUpon>202609290453519_AddMunicipalServiceRequestNotifications.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
     <Compile Include="Models\AdministratorForgotPasswordController.cs" />
+    <Compile Include="Models\AdministratorMunicipalServiceRequestReviewViewModel.cs" />
+    <Compile Include="Models\AdministratorMunicipalServiceRequestsController.cs" />
+    <Compile Include="Models\AdministratorMunicipalServiceRequestsViewModel.cs" />
     <Compile Include="Models\AdministratorReportsController.cs" />
     <Compile Include="Models\AdministratorReportsViewModel.cs" />
     <Compile Include="Models\AdministratorRequestsController.cs" />
@@ -313,6 +372,15 @@
     <Compile Include="Models\AppealAccessViewModel.cs" />
     <Compile Include="Models\AppealsController.cs" />
     <Compile Include="Models\AppealStatus.cs" />
+    <Compile Include="Models\ApplicantScreeningResult.cs" />
+    <Compile Include="Models\ApplicationAssessment.cs" />
+    <Compile Include="Models\ApplicationAssessmentStatus.cs" />
+    <Compile Include="Models\ApplicationDocument.cs" />
+    <Compile Include="Models\ApplicationDocumentCreateViewModel.cs" />
+    <Compile Include="Models\ApplicationDocumentVerificationStatus.cs" />
+    <Compile Include="Models\ApplicationFinalVerificationResult.cs" />
+    <Compile Include="Models\ApplicationInterview.cs" />
+    <Compile Include="Models\ApplicationInterviewStatus.cs" />
     <Compile Include="Models\AssetEnums.cs" />
     <Compile Include="Models\AssetHistory.cs" />
     <Compile Include="Models\AssetHistoryViewModel.cs" />
@@ -332,6 +400,7 @@
     <Compile Include="Models\CitizenComplianceController.cs" />
     <Compile Include="Models\CitizenManagementController.cs" />
     <Compile Include="Models\CitizenNotificationController.cs" />
+    <Compile Include="Models\CitizenNotificationViewModel.cs" />
     <Compile Include="Models\CitizenProfileViewModel.cs" />
     <Compile Include="Models\CompletionVerificationStatus.cs" />
     <Compile Include="Models\ComplianceRecord.cs" />
@@ -342,8 +411,21 @@
     <Compile Include="Models\FeedbackController.cs" />
     <Compile Include="Models\FeedbackManagementController.cs" />
     <Compile Include="Models\FeedbackResolutionStatus.cs" />
+    <Compile Include="Models\FeeSchedule.cs" />
+    <Compile Include="Models\FeeScheduleController.cs" />
+    <Compile Include="Models\FeeScheduleManagementViewModels.cs" />
+    <Compile Include="Models\FinanceDashboardController.cs" />
+    <Compile Include="Models\FinanceDashboardViewModel.cs" />
+    <Compile Include="Models\FinanceMunicipalServiceRequestController.cs" />
+    <Compile Include="Models\FinanceOfficer.cs" />
+    <Compile Include="Models\FinancialAudit.cs" />
+    <Compile Include="Models\FinancialAuditAction.cs" />
+    <Compile Include="Models\GenerateInvoiceListViewModel.cs" />
     <Compile Include="Models\IdentifyAssetMaintenanceNeedViewModel.cs" />
     <Compile Include="Models\InspectMunicipalAssetViewModel.cs" />
+    <Compile Include="Models\Invoice.cs" />
+    <Compile Include="Models\InvoiceController.cs" />
+    <Compile Include="Models\InvoiceStatus.cs" />
     <Compile Include="Models\LinkAssetMaintenanceViewModel.cs" />
     <Compile Include="Models\LinkAssetRequestViewModel.cs" />
     <Compile Include="Models\LoginController.cs" />
@@ -354,11 +436,13 @@
     <Compile Include="Models\MaintenanceProgress.cs" />
     <Compile Include="Models\MaintenanceWork.cs" />
     <Compile Include="Models\MaintenanceWorkStatus.cs" />
+    <Compile Include="Models\MakePaymentViewModel.cs" />
     <Compile Include="Models\MunicipalAsset.cs" />
     <Compile Include="Models\MunicipalAssetController.cs" />
     <Compile Include="Models\MunicipalAssetDashboardViewModel.cs" />
     <Compile Include="Models\MunicipalAssetEditViewModel.cs" />
     <Compile Include="Models\MunicipalAssetIndexViewModel.cs" />
+    <Compile Include="Models\MunicipalAssetProjectsViewModel.cs" />
     <Compile Include="Models\MunicipalAssetViewModel.cs" />
     <Compile Include="Models\MunicipalEvidenceViewModel.cs" />
     <Compile Include="Models\MunicipalProject.cs" />
@@ -378,7 +462,26 @@
     <Compile Include="Models\MunicipalProjectRequestsViewmodel.cs" />
     <Compile Include="Models\MunicipalProjectScopeViewModel.cs" />
     <Compile Include="Models\MunicipalProjectStatusViewModel.cs" />
+    <Compile Include="Models\MunicipalServiceRequest.cs" />
+    <Compile Include="Models\MunicipalServiceRequestController.cs" />
+    <Compile Include="Models\MunicipalServiceRequestNotification.cs" />
+    <Compile Include="Models\MunicipalServiceRequestNotificationService.cs" />
+    <Compile Include="Models\MunicipalServiceRequestNotificationType.cs" />
+    <Compile Include="Models\MunicipalServiceRequestStatus.cs" />
+    <Compile Include="Models\MunicipalServicesController.cs" />
     <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\OvertimeClaim.cs" />
+    <Compile Include="Models\OvertimeClaimStatus.cs" />
+    <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\PaymentStatus.cs" />
+    <Compile Include="Models\Payroll.cs" />
+    <Compile Include="Models\PayrollAllowance.cs" />
+    <Compile Include="Models\PayrollDeduction.cs" />
+    <Compile Include="Models\PayrollPayment.cs" />
+    <Compile Include="Models\PayrollPaymentStatus.cs" />
+    <Compile Include="Models\PayrollPeriod.cs" />
+    <Compile Include="Models\PayrollStatus.cs" />
+    <Compile Include="Models\Payslip.cs" />
     <Compile Include="Models\Priority.cs" />
     <Compile Include="Models\ProjectEvidence.cs" />
     <Compile Include="Models\ProjectHistory.cs" />
@@ -391,31 +494,63 @@
     <Compile Include="Models\ReassignmentRequest.cs" />
     <Compile Include="Models\ReassignmentRequestViewModel.cs" />
     <Compile Include="Models\ReassignmentStatus.cs" />
+    <Compile Include="Models\Receipt.cs" />
     <Compile Include="Models\RecordAssetConditionViewModel.cs" />
+    <Compile Include="Models\Refund.cs" />
+    <Compile Include="Models\RefundStatus.cs" />
     <Compile Include="Models\RequestClassificationViewModel.cs" />
     <Compile Include="Models\RequestSkill.cs" />
     <Compile Include="Models\RetireMunicipalAssetViewModel.cs" />
+    <Compile Include="Models\ServiceType.cs" />
+    <Compile Include="Models\ServiceTypeController.cs" />
+    <Compile Include="Models\ServiceTypeManagementViewModels.cs" />
     <Compile Include="Models\Skill.cs" />
     <Compile Include="Models\SystemHistoryViewModel.cs" />
     <Compile Include="Models\TechhnicianApplicationCreateViewModel.cs" />
+    <Compile Include="Models\TechInterviewOutcomecomeViewModel.cs" />
+    <Compile Include="Models\TechnicianAccountDetailsViewModel.cs" />
     <Compile Include="Models\TechnicianApplication.cs" />
+    <Compile Include="Models\TechnicianApplicationAssessmentResultViewModel.cs" />
     <Compile Include="Models\TechnicianApplicationController.cs" />
     <Compile Include="Models\TechnicianApplicationDetailsViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationDocumentVerificationResultViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationDocumentVerificationViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationFinalVerification.cs" />
+    <Compile Include="Models\TechnicianApplicationNotification.cs" />
+    <Compile Include="Models\TechnicianApplicationNotificationService.cs" />
+    <Compile Include="Models\TechnicianApplicationNotificationType.cs" />
+    <Compile Include="Models\TechnicianApplicationReviewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationScheduleAssessmentViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationScheduleInterviewViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationScreening.cs" />
+    <Compile Include="Models\TechnicianApplicationScreeningViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationSelection.cs" />
+    <Compile Include="Models\TechnicianApplicationSelectViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationShortListedViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicationShortlistViewModel.cs" />
     <Compile Include="Models\TechnicianApplicationStatus.cs" />
     <Compile Include="Models\TechnicianApplicationStatusViewModel.cs" />
+    <Compile Include="Models\TechnicianApplicatoionEditViewModel.cs" />
     <Compile Include="Models\TechnicianAssignment.cs" />
     <Compile Include="Models\TechnicianAssignmentViewModel.cs" />
+    <Compile Include="Models\TechnicianChangePasswordViewModel.cs" />
     <Compile Include="Models\TechnicianDashboardViewModel.cs" />
+    <Compile Include="Models\TechnicianFinalVerificationViewModel.cs" />
     <Compile Include="Models\TechnicianManagementController.cs" />
+    <Compile Include="Models\TechnicianOnboarding.cs" />
+    <Compile Include="Models\TechnicianOnboardingSuccessViewModel.cs" />
+    <Compile Include="Models\TechnicianOnbordingViewModel.cs" />
     <Compile Include="Models\TechnicianOpportunity.cs" />
     <Compile Include="Models\TechnicianOpportunityController.cs" />
     <Compile Include="Models\TechnicianOpportunityCreateViewModel.cs" />
     <Compile Include="Models\TechnicianOpportunityDetailsViewModel.cs" />
     <Compile Include="Models\TechnicianOpportunityListViewModel.cs" />
     <Compile Include="Models\TechnicianOpportunityManagementViewModel.cs" />
+    <Compile Include="Models\TechnicianPayrollProfile.cs" />
     <Compile Include="Models\TechnicianProfileViewModel.cs" />
     <Compile Include="Models\TechniciansController.cs" />
     <Compile Include="Models\TechnicianSkill.cs" />
+    <Compile Include="Models\TechnicianSkillManagementViewModel.cs" />
     <Compile Include="Models\UpdateAssetConditionAfterMaintenanceViewModel.cs" />
     <Compile Include="Models\Violation.cs" />
     <Compile Include="Models\Ward.cs" />
@@ -686,6 +821,47 @@
     <Content Include="Views\TechnicianApplication\Create.cshtml" />
     <Content Include="Views\TechnicianApplication\Index.cshtml" />
     <Content Include="Views\TechnicianApplication\Status.cshtml" />
+    <Content Include="Views\TechnicianApplication\Edit.cshtml" />
+    <Content Include="Views\TechnicianOpportunity\Edit.cshtml" />
+    <Content Include="Views\TechnicianApplication\Documents.cshtml" />
+    <Content Include="Views\TechnicianApplication\UploadDocument.cshtml" />
+    <Content Include="Views\TechnicianApplication\ReviewApplications.cshtml" />
+    <Content Include="Views\TechnicianApplication\Review.cshtml" />
+    <Content Include="Views\TechnicianApplication\Screen.cshtml" />
+    <Content Include="Views\TechnicianApplication\VerifyDocuments.cshtml" />
+    <Content Include="Views\TechnicianApplication\RecordDocumentVerification.cshtml" />
+    <Content Include="Views\TechnicianApplication\Shortlist.cshtml" />
+    <Content Include="Views\TechnicianApplication\ShortListedApplicants.cshtml" />
+    <Content Include="Views\TechnicianApplication\ScheduleAssessment.cshtml" />
+    <Content Include="Views\TechnicianApplication\RecordAssessmentResult.cshtml" />
+    <Content Include="Views\TechnicianApplication\RecordInterviewOutcome.cshtml" />
+    <Content Include="Views\TechnicianApplication\ScheduleInterview.cshtml" />
+    <Content Include="Views\TechnicianApplication\SelectApplicant.cshtml" />
+    <Content Include="Views\TechnicianApplication\FinalApplicantVerification.cshtml" />
+    <Content Include="Views\TechnicianApplication\OnboardTechnician.cshtml" />
+    <Content Include="Views\TechnicianApplication\OnboardingSuccess.cshtml" />
+    <Content Include="Views\TechnicianApplication\ManageSkills.cshtml" />
+    <Content Include="Views\TechnicianApplication\ReplaceRejectedDocument.cshtml" />
+    <Content Include="Views\CitizenNotification\Details.cshtml" />
+    <Content Include="Views\Technicians\ChangePassword.cshtml" />
+    <Content Include="Views\TechnicianApplication\TechnicianAccountDetails.cshtml" />
+    <Content Include="Views\MunicipalAsset\LinkProject.cshtml" />
+    <Content Include="Views\FinanceDashboard\Index.cshtml" />
+    <Content Include="Views\ServiceType\Index.cshtml" />
+    <Content Include="Views\FeeSchedule\Index.cshtml" />
+    <Content Include="Views\MunicipalServices\Index.cshtml" />
+    <Content Include="Views\MunicipalServiceRequest\Create.cshtml" />
+    <Content Include="Views\MunicipalServiceRequest\Details.cshtml" />
+    <Content Include="Views\AdministratorMunicipalServiceRequests\Index.cshtml" />
+    <Content Include="Views\AdministratorMunicipalServiceRequests\Review.cshtml" />
+    <Content Include="Views\Invoice\Index.cshtml" />
+    <Content Include="Views\Invoice\Generate.cshtml" />
+    <Content Include="Views\Invoice\Details.cshtml" />
+    <Content Include="Views\FinanceMunicipalServiceRequest\Index.cshtml" />
+    <Content Include="Views\FinanceMunicipalServiceRequest\Details.cshtml" />
+    <Content Include="Views\Invoice\Issued.cshtml" />
+    <Content Include="Views\Invoice\Outstanding.cshtml" />
+    <Content Include="Views\MunicipalServiceRequest\Invoice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -860,6 +1036,48 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202609250518160_AddTechnicianApplication1.resx">
       <DependentUpon>202609250518160_AddTechnicianApplication1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609251331245_AddApplicationDocument.resx">
+      <DependentUpon>202609251331245_AddApplicationDocument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609251710054_AddTechnicianApplicationScreening.resx">
+      <DependentUpon>202609251710054_AddTechnicianApplicationScreening.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609251927360_CreateApplicationAssessment.resx">
+      <DependentUpon>202609251927360_CreateApplicationAssessment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609261208531_AddApplicationInterviewStatus.resx">
+      <DependentUpon>202609261208531_AddApplicationInterviewStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609261238502_AddInterviewInstructions.resx">
+      <DependentUpon>202609261238502_AddInterviewInstructions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609261336239_AddTechnicianApplicationSelection.resx">
+      <DependentUpon>202609261336239_AddTechnicianApplicationSelection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609261413252_AddTechnicianApplicationFinalVerification.resx">
+      <DependentUpon>202609261413252_AddTechnicianApplicationFinalVerification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609261809446_AddTechnicianOnboardingAndCitizenTechnicianLink.resx">
+      <DependentUpon>202609261809446_AddTechnicianOnboardingAndCitizenTechnicianLink.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609271406235_AddTechnicianApplicationNotifications.resx">
+      <DependentUpon>202609271406235_AddTechnicianApplicationNotifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609271916221_AddTechnicianMustChangePassword.resx">
+      <DependentUpon>202609271916221_AddTechnicianMustChangePassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609272117308_RemoveUniqueTechnicianOnboardingApplication.resx">
+      <DependentUpon>202609272117308_RemoveUniqueTechnicianOnboardingApplication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609281834435_AddFinanceOfficer.resx">
+      <DependentUpon>202609281834435_AddFinanceOfficer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609282238238_AddMunicipalFinanceAndPayroll.resx">
+      <DependentUpon>202609282238238_AddMunicipalFinanceAndPayroll.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202609290453519_AddMunicipalServiceRequestNotifications.resx">
+      <DependentUpon>202609290453519_AddMunicipalServiceRequestNotifications.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>

@@ -1,4 +1,5 @@
 ﻿using CommunityServiceProject.Models;
+using CommunityServiceProject.ViewModels;
 using System;
 using System.IO;
 using System.Linq;
@@ -23,13 +24,11 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-        // ===========================================================
-        // LOGIN - POST
-        // ===========================================================
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Login(string emailAddress, string password)
+        
+                                           
+[HttpPost]
+[ValidateAntiForgeryToken]
+public ActionResult Login(string emailAddress, string password)
         {
             if (string.IsNullOrWhiteSpace(emailAddress) ||
                 string.IsNullOrWhiteSpace(password))
@@ -40,13 +39,11 @@ namespace CommunityServiceProject.Controllers
                 return View();
             }
 
-
             // Find technician using email and password
             var technician = db.Technicians
                 .FirstOrDefault(t =>
                     t.EmailAddress == emailAddress &&
                     t.Password == password);
-
 
             // Invalid credentials
             if (technician == null)
@@ -57,7 +54,6 @@ namespace CommunityServiceProject.Controllers
                 return View();
             }
 
-
             // Check account status
             if (technician.AccountStatus != AccountStatus.Active)
             {
@@ -67,17 +63,118 @@ namespace CommunityServiceProject.Controllers
                 return View();
             }
 
-
             // Store technician information in session
-            Session["TechnicianID"] = technician.TechnicianID;
+            Session["TechnicianID"] =
+                technician.TechnicianID;
 
             Session["TechnicianName"] =
-                technician.FirstName + " " + technician.LastName;
+                technician.FirstName + " " +
+                technician.LastName;
 
+            // ===========================================================
+            // FORCE FIRST-TIME PASSWORD CHANGE
+            // ===========================================================
 
-            // Redirect to Technician Dashboard
+            if (technician.MustChangePassword)
+            {
+                return RedirectToAction("ChangePassword");
+            }
+
+            // ===========================================================
+            // NORMAL TECHNICIAN LOGIN
+            // ===========================================================
+
             return RedirectToAction("Dashboard");
         }
+
+
+        
+        
+// ===========================================================
+// CHANGE PASSWORD
+// ===========================================================
+
+[HttpGet]
+public ActionResult ChangePassword()
+        {
+            if (Session["TechnicianID"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(
+            TechnicianChangePasswordViewModel model)
+        {
+            if (Session["TechnicianID"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            int technicianID =
+                (int)Session["TechnicianID"];
+
+            var technician = db.Technicians
+                .FirstOrDefault(t =>
+                    t.TechnicianID == technicianID);
+
+            if (technician == null)
+            {
+                Session.Clear();
+
+                return RedirectToAction("Login");
+            }
+
+            // Verify current password
+            if (technician.Password != model.CurrentPassword)
+            {
+                ModelState.AddModelError(
+                    "CurrentPassword",
+                    "The current password is incorrect."
+                );
+
+                return View(model);
+            }
+
+            // Prevent reusing the current password
+            if (technician.Password == model.NewPassword)
+            {
+                ModelState.AddModelError(
+                    "NewPassword",
+                    "The new password must be different from your current password."
+                );
+
+                return View(model);
+            }
+
+            // Update password
+            technician.Password =
+                model.NewPassword;
+
+            technician.MustChangePassword = false;
+
+            db.SaveChanges();
+
+            Session.Clear();
+
+            return RedirectToAction(
+                "Login",
+                "Technicians"
+            );
+        }
+
+
+
 
 
         // ===========================================================

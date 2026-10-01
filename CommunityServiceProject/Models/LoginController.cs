@@ -29,6 +29,66 @@ namespace CommunityServiceProject.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                // =========================================================
+                // CHECK FINANCE OFFICER LOGIN
+                // =========================================================
+
+                var financeOfficer = db.FinanceOfficers.FirstOrDefault(f =>
+                    f.EmailAddress == model.EmailAddress &&
+                    f.Password == model.Password
+                );
+
+                if (financeOfficer != null)
+                {
+                    // ---------------------------------------------
+                    // Finance Officer account status
+                    // ---------------------------------------------
+
+                    if (financeOfficer.AccountStatus != AccountStatus.Active)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            financeOfficer.AccountStatus == AccountStatus.Suspended
+                                ? "Your Finance Officer account has been suspended."
+                                : "Your Finance Officer account is inactive."
+                        );
+
+                        return View(model);
+                    }
+
+                    // ---------------------------------------------
+                    // Finance Officer session
+                    // ---------------------------------------------
+
+                    Session["FinanceOfficerID"] =
+                        financeOfficer.FinanceOfficerID;
+
+                    Session["FinanceOfficerName"] =
+                        financeOfficer.FirstName;
+
+                    Session["FinanceOfficerEmail"] =
+                        financeOfficer.EmailAddress;
+
+                    Session["UserRole"] =
+                        "FinanceOfficer";
+
+                    // ---------------------------------------------
+                    // Finance Dashboard
+                    // ---------------------------------------------
+
+                    return RedirectToAction(
+                        "Index",
+                        "FinanceDashboard"
+                    );
+                }
+
+
+                // =========================================================
+                // EXISTING CITIZEN LOGIN
+                // =========================================================
+
+               
                 // Find the citizen using email and password
                 var citizen = db.Citizens.FirstOrDefault(c =>
                     c.EmailAddress == model.EmailAddress &&

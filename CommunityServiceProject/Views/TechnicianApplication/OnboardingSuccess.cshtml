@@ -1,0 +1,940 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianOnboardingSuccessViewModel
+
+@{
+    ViewBag.Title = "Technician Onboarding Completed";
+}
+
+<style>
+    .success-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 35px 20px 55px;
+        color: #1f2937;
+    }
+
+    .success-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 15px;
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 9px 25px rgba(13, 92, 193, 0.18);
+    }
+
+        .success-header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .success-header p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.94;
+        }
+
+    .success-reference {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+        .success-reference span {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 7px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.24);
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+    .success-status {
+        margin-top: 24px;
+        padding: 18px;
+        border-radius: 10px;
+        background: #eaf8ef;
+        border: 1px solid #bce4ca;
+        color: #176b43;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+        .success-status strong {
+            color: #125b39;
+        }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .section-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            color: #16324f;
+            font-size: 19px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 25px;
+    }
+
+    .info-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .info-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .active-status {
+        display: inline-block;
+        padding: 5px 11px;
+        border-radius: 20px;
+        background: #e8f7ee;
+        border: 1px solid #bfe7cf;
+        color: #18794e;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .skill-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 7px;
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        color: #0D5CC1;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .workflow-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        position: sticky;
+        top: 20px;
+    }
+
+        .workflow-card h3 {
+            margin: 0 0 18px;
+            color: #16324f;
+            font-size: 17px;
+        }
+
+    .workflow-step {
+        position: relative;
+        padding-left: 28px;
+        padding-bottom: 21px;
+    }
+
+        .workflow-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 18px;
+            bottom: 0;
+            width: 1px;
+            background: #d7dee8;
+        }
+
+    .workflow-dot {
+        position: absolute;
+        left: 0;
+        top: 3px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #d3dbe5;
+        border: 2px solid white;
+        box-shadow: 0 0 0 1px #c9d2de;
+    }
+
+    .workflow-step.completed .workflow-dot {
+        background: #198754;
+        box-shadow: 0 0 0 1px #198754;
+    }
+
+    .workflow-step.current .workflow-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.13);
+    }
+
+    .workflow-title {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .workflow-step.current .workflow-title {
+        color: #0D5CC1;
+    }
+
+    .workflow-step.completed .workflow-title {
+        color: #18794e;
+    }
+
+    .workflow-description {
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .next-step {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 9px;
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+    }
+
+    .next-step-title {
+        margin-bottom: 5px;
+        color: #16324f;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .next-step-text {
+        color: #53677c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .action-area {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-top: 4px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 43px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        box-sizing: border-box;
+        transition: all 0.15s ease;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+        }
+
+    .secondary-button {
+        background: white;
+        border: 1px solid #cfd7e3;
+        color: #374151;
+    }
+
+        .secondary-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+    @@media (max-width: 950px) {
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .workflow-card {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 650px) {
+
+        .success-page {
+            padding: 20px 12px 40px;
+        }
+
+        .success-header {
+            padding: 23px;
+        }
+
+            .success-header h1 {
+                font-size: 23px;
+            }
+
+        .section-card {
+            padding: 19px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-area {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="success-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="success-header">
+
+        <h1>
+            Technician Onboarding Completed
+        </h1>
+
+        <p>
+            The selected applicant has successfully been onboarded,
+            linked to the existing Citizen account, and assigned a
+            primary municipal maintenance skill.
+        </p>
+
+        <div class="success-reference">
+
+            <span>
+                Application: @Model.ApplicationReference
+            </span>
+
+            <span>
+                @Model.OpportunityCode
+            </span>
+
+            <span>
+                Technician ID: @Model.TechnicianID
+            </span>
+
+            <span>
+                Onboarded
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="content-grid">
+
+        <div class="main-column">
+
+            <!-- =================================================
+                 SUCCESS SUMMARY
+                 ================================================= -->
+
+            <div class="success-status">
+
+                <strong>Onboarding completed successfully.</strong>
+
+                The technician account is now active, the selected skill
+                has been assigned, and the technician can use the existing
+                Technician Login process.
+
+            </div>
+
+            <!-- =================================================
+                 TECHNICIAN ACCOUNT
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Technician Account
+                    </h2>
+
+                    <p>
+                        Details of the technician account created during onboarding.
+                    </p>
+
+                </div>
+
+                <div class="info-grid">
+
+                    <div>
+
+                        <span class="info-label">
+                            Technician Name
+                        </span>
+
+                        <div class="info-value">
+                            @Model.TechnicianName
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Technician ID
+                        </span>
+
+                        <div class="info-value">
+                            @Model.TechnicianID
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Municipal Email
+                        </span>
+
+                        <div class="info-value">
+                            @Model.MunicipalEmail
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Phone Number
+                        </span>
+
+                        <div class="info-value">
+                            @Model.PhoneNumber
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Account Status
+                        </span>
+
+                        <div class="info-value">
+
+                            <span class="active-status">
+                                @Model.AccountStatus
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Onboarding Date
+                        </span>
+
+                        <div class="info-value">
+                            @Model.OnboardingDate.ToString("dd MMM yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 TECHNICIAN SKILL
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Technician Skill Assignment
+                    </h2>
+
+                    <p>
+                        The primary municipal maintenance skill assigned during onboarding.
+                    </p>
+
+                </div>
+
+                <div class="info-grid">
+
+                    <div>
+
+                        <span class="info-label">
+                            Skill
+                        </span>
+
+                        <div class="info-value">
+
+                            <span class="skill-status">
+                                @Model.SkillName
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Skill ID
+                        </span>
+
+                        <div class="info-value">
+                            @Model.SkillID
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Assignment Status
+                        </span>
+
+                        <div class="info-value">
+                            Assigned during onboarding
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Technician
+                        </span>
+
+                        <div class="info-value">
+                            @Model.TechnicianName
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 RECRUITMENT RECORD
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Recruitment Record
+                    </h2>
+
+                    <p>
+                        Recruitment information associated with the newly created technician profile.
+                    </p>
+
+                </div>
+
+                <div class="info-grid">
+
+                    <div>
+
+                        <span class="info-label">
+                            Application Reference
+                        </span>
+
+                        <div class="info-value">
+                            @Model.ApplicationReference
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Application Status
+                        </span>
+
+                        <div class="info-value">
+                            @Model.ApplicationStatus
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Position
+                        </span>
+
+                        <div class="info-value">
+                            @Model.OpportunityTitle
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Opportunity Code
+                        </span>
+
+                        <div class="info-value">
+                            @Model.OpportunityCode
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Onboarded By
+                        </span>
+
+                        <div class="info-value">
+                            @Model.AdministratorName
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 CITIZEN RELATIONSHIP
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Citizen Account Relationship
+                    </h2>
+
+                    <p>
+                        The technician profile is associated with the applicant's existing Citizen account.
+                    </p>
+
+                </div>
+
+                <div class="info-grid">
+
+                    <div>
+
+                        <span class="info-label">
+                            Citizen
+                        </span>
+
+                        <div class="info-value">
+                            @Model.CitizenName
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Citizen ID
+                        </span>
+
+                        <div class="info-value">
+                            @Model.CitizenID
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Technician Profile
+                        </span>
+
+                        <div class="info-value">
+                            Technician #@Model.TechnicianID
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <span class="info-label">
+                            Relationship
+                        </span>
+
+                        <div class="info-value">
+                            Citizen account linked to Technician profile
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Next Actions
+                    </h2>
+
+                    <p>
+                        Continue managing the technician from the appropriate administration area.
+                    </p>
+
+                </div>
+
+                <div class="action-area">
+
+                    <a href="@Url.Action("Details", "TechnicianManagement", new { id = Model.TechnicianID })"
+                       class="primary-button">
+                        View Technician Profile
+                    </a>
+
+                    <a href="@Url.Action("Review", "TechnicianApplication", new { id = Model.ApplicationID })"
+                       class="secondary-button">
+                        Application Review
+                    </a>
+
+                    <a href="@Url.Action("ReviewApplications", "TechnicianApplication")"
+                       class="secondary-button">
+                        Review Applications
+                    </a>
+
+                    <a href="@Url.Action("Index", "TechnicianApplication")"
+                       class="secondary-button">
+                        Technician Applications
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             WORKFLOW SIDEBAR
+             ===================================================== -->
+
+        <aside>
+
+            <div class="workflow-card">
+
+                <h3>
+                    Recruitment Progress
+                </h3>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Application
+                    </div>
+
+                    <div class="workflow-description">
+                        Application submitted and reviewed.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Screening
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant screening completed.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Assessment
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant assessment completed.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Interview
+                    </div>
+
+                    <div class="workflow-description">
+                        Interview outcome recorded.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Selection
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant selected.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Final Verification
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant approved for onboarding.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Technician Onboarding
+                    </div>
+
+                    <div class="workflow-description">
+                        Active Technician account created and linked to the Citizen account.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Skill Assignment
+                    </div>
+
+                    <div class="workflow-description">
+                        Primary technician skill assigned during onboarding.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step current">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Technician Access
+                    </div>
+
+                    <div class="workflow-description">
+                        Technician can now access the municipal maintenance system.
+                    </div>
+
+                </div>
+
+                <div class="next-step">
+
+                    <div class="next-step-title">
+                        Technician onboarding complete
+                    </div>
+
+                    <div class="next-step-text">
+                        The technician account is active and the primary skill
+                        has been assigned. The technician can now use the
+                        existing Technician Login functionality.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+

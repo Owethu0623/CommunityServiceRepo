@@ -1,0 +1,796 @@
+﻿@model CommunityServiceProject.ViewModels.ApplicationDocumentCreateViewModel
+
+@{
+    ViewBag.Title = "Upload Supporting Document";
+}
+
+<div class="document-upload-page">
+
+    <div class="document-upload-header">
+        <div>
+            <span class="page-kicker">TECHNICIAN RECRUITMENT</span>
+            <h1>Upload Supporting Document</h1>
+            <p>
+                Submit a supporting document for your technician application.
+            </p>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-message error-message">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="document-upload-layout">
+
+        <div class="document-upload-main">
+
+            <div class="upload-card">
+
+                <div class="card-heading">
+                    <h2>Document Information</h2>
+                    <p>
+                        Provide the details of the document you are submitting.
+                    </p>
+                </div>
+
+                @using (Html.BeginForm(
+                    "UploadDocument",
+                    "TechnicianApplication",
+                    FormMethod.Post,
+                    new
+                    {
+                        enctype = "multipart/form-data",
+                        @class = "upload-form"
+                    }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(model => model.ApplicationID)
+
+                    @Html.ValidationSummary(
+                        true,
+                        "",
+                        new { @class = "validation-summary" }
+                    )
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentType)
+
+                        @Html.DropDownListFor(
+                            model => model.DocumentType,
+                            new SelectList(
+                                new[]
+                                {
+                                    "Identity Document",
+                                    "Curriculum Vitae",
+                                    "Qualification Certificate",
+                                    "Academic Transcript",
+                                    "Proof of Experience",
+                                    "Professional Registration",
+                                    "Other Supporting Document"
+                                }
+                            ),
+                            "Select document type",
+                            new { @class = "form-control" }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            model => model.DocumentType,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentTitle)
+
+                        @Html.TextBoxFor(
+                            model => model.DocumentTitle,
+                            new
+                            {
+                                @class = "form-control",
+                                maxlength = "200",
+                                placeholder = "Example: Electrical Qualification Certificate"
+                            }
+                        )
+
+                        <div class="field-help">
+                            Enter a clear title that identifies the document.
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            model => model.DocumentTitle,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(model => model.DocumentFile)
+
+                        <div class="file-upload-box">
+                            <input type="file"
+                                   name="DocumentFile"
+                                   id="DocumentFile"
+                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                   class="file-input" />
+
+                            <div class="file-upload-content">
+                                <strong>Select a supporting document</strong>
+                                <span>
+                                    PDF, DOC, DOCX, JPG, JPEG or PNG
+                                </span>
+                                <span>
+                                    Maximum file size: 10 MB
+                                </span>
+                            </div>
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            model => model.DocumentFile,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                        <div id="file-details" class="file-details" style="display:none;">
+                            <div>
+                                <strong>Selected file:</strong>
+                                <span id="selected-file-name"></span>
+                            </div>
+
+                            <div>
+                                <strong>File size:</strong>
+                                <span id="selected-file-size"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="confirmation-box">
+
+                        <label class="confirmation-label">
+                            <input type="checkbox"
+                                   id="documentConfirmation"
+                                   name="documentConfirmation"
+                                   value="true" />
+
+                            <span>
+                                I confirm that this document belongs to me and
+                                the information submitted is accurate.
+                            </span>
+                        </label>
+
+                        <div id="confirmation-error"
+                             class="confirmation-error"
+                             style="display:none;">
+                            Please confirm that the document and information
+                            submitted are accurate.
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        @Html.ActionLink(
+                            "Cancel",
+                            "Documents",
+                            "TechnicianApplication",
+                            new { id = Model.ApplicationID },
+                            new { @class = "btn-secondary" }
+                        )
+
+                        <button type="submit"
+                                id="submitDocumentButton"
+                                class="btn-primary">
+                            Submit Document
+                        </button>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        <aside class="document-upload-sidebar">
+
+            <div class="application-summary-card">
+
+                <div class="sidebar-heading">
+                    <h2>Application</h2>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Reference</span>
+                    <strong class="summary-value">
+                        @Model.ApplicationReference
+                    </strong>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Opportunity</span>
+                    <strong class="summary-value">
+                        @Model.OpportunityCode
+                    </strong>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Position</span>
+                    <strong class="summary-value">
+                        @Model.OpportunityTitle
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="upload-guidance-card">
+
+                <div class="sidebar-heading">
+                    <h2>Before You Submit</h2>
+                </div>
+
+                <ul>
+                    <li>Make sure the document is clear and readable.</li>
+                    <li>Use an appropriate document type.</li>
+                    <li>Check that the document belongs to you.</li>
+                    <li>Maximum file size is 10 MB.</li>
+                    <li>Only PDF, DOC, DOCX, JPG, JPEG and PNG files are accepted.</li>
+                </ul>
+
+            </div>
+
+            <div class="navigation-card">
+
+                @Html.ActionLink(
+                    "Back to Supporting Documents",
+                    "Documents",
+                    "TechnicianApplication",
+                    new { id = Model.ApplicationID },
+                    new { @class = "sidebar-link" }
+                )
+
+                @Html.ActionLink(
+                    "Back to Application Status",
+                    "Status",
+                    "TechnicianApplication",
+                    new { id = Model.ApplicationID },
+                    new { @class = "sidebar-link" }
+                )
+
+                @Html.ActionLink(
+                    "Back to My Applications",
+                    "Index",
+                    "TechnicianApplication",
+                    null,
+                    new { @class = "sidebar-link" }
+                )
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+<style>
+
+    .document-upload-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #263238;
+    }
+
+    .document-upload-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 30px 34px;
+        margin-bottom: 24px;
+    }
+
+    .page-kicker {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        margin-bottom: 8px;
+        color: #dceaff;
+    }
+
+    .document-upload-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .document-upload-header p {
+        margin: 0;
+        color: #e7f0ff;
+        font-size: 15px;
+    }
+
+    .alert-message {
+        padding: 14px 18px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .error-message {
+        background: #fff1f1;
+        border: 1px solid #efb0b0;
+        color: #a12626;
+    }
+
+    .document-upload-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .upload-card,
+    .application-summary-card,
+    .upload-guidance-card,
+    .navigation-card {
+        background: #ffffff;
+        border: 1px solid #e0e6ed;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(20, 50, 80, 0.06);
+    }
+
+    .upload-card {
+        padding: 28px;
+    }
+
+    .card-heading {
+        border-bottom: 1px solid #e5e9ee;
+        padding-bottom: 18px;
+        margin-bottom: 24px;
+    }
+
+    .card-heading h2,
+    .sidebar-heading h2 {
+        margin: 0 0 6px;
+        font-size: 19px;
+        color: #17324d;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: #697586;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 23px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        color: #263b50;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 46px;
+        border: 1px solid #cbd5df;
+        border-radius: 7px;
+        padding: 10px 13px;
+        font-size: 14px;
+        color: #263238;
+        background: #ffffff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+    }
+
+    .field-help {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #7a8795;
+    }
+
+    .field-validation {
+        display: block;
+        margin-top: 7px;
+        color: #b42318;
+        font-size: 13px;
+    }
+
+    .validation-summary {
+        background: #fff1f1;
+        border: 1px solid #efb0b0;
+        color: #a12626;
+        padding: 13px 16px;
+        border-radius: 7px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    .file-upload-box {
+        position: relative;
+        border: 2px dashed #b9c8d8;
+        border-radius: 10px;
+        padding: 24px;
+        background: #f8fbfe;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .file-upload-box:hover {
+        border-color: #0D5CC1;
+        background: #f4f9ff;
+    }
+
+    .file-input {
+        width: 100%;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .file-upload-content {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        color: #526273;
+        font-size: 13px;
+    }
+
+    .file-upload-content strong {
+        color: #1e3a56;
+        font-size: 14px;
+    }
+
+    .file-details {
+        margin-top: 12px;
+        padding: 12px 14px;
+        background: #f4f7fa;
+        border-radius: 7px;
+        color: #526273;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .confirmation-box {
+        border: 1px solid #d8e0e8;
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 24px;
+    }
+
+    .confirmation-label {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #465566;
+        cursor: pointer;
+    }
+
+    .confirmation-label input {
+        margin-top: 3px;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+
+    .confirmation-error {
+        margin-top: 9px;
+        color: #b42318;
+        font-size: 13px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 5px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 43px;
+        padding: 0 20px;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background: #094b9f;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #eef2f6;
+        color: #34495e;
+        border: 1px solid #d2dbe4;
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8ee;
+        color: #24384b;
+        text-decoration: none;
+    }
+
+    .document-upload-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .application-summary-card,
+    .upload-guidance-card,
+    .navigation-card {
+        padding: 20px;
+    }
+
+    .sidebar-heading {
+        padding-bottom: 14px;
+        border-bottom: 1px solid #e5e9ee;
+        margin-bottom: 14px;
+    }
+
+    .summary-item {
+        padding: 11px 0;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .summary-label {
+        display: block;
+        color: #7a8795;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin-bottom: 4px;
+    }
+
+    .summary-value {
+        display: block;
+        color: #1d3852;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .upload-guidance-card ul {
+        margin: 0;
+        padding-left: 19px;
+        color: #526273;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .navigation-card {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .sidebar-link {
+        display: block;
+        padding: 11px 13px;
+        border: 1px solid #d8e0e8;
+        border-radius: 7px;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        background: #ffffff;
+    }
+
+    .sidebar-link:hover {
+        background: #f3f7fc;
+        color: #094b9f;
+        text-decoration: none;
+    }
+
+    @@media (max-width: 850px) {
+
+        .document-upload-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .document-upload-sidebar {
+            order: 2;
+        }
+
+    }
+
+    @@media (max-width: 600px) {
+
+        .document-upload-page {
+            padding: 20px 12px 35px;
+        }
+
+        .document-upload-header {
+            padding: 24px 20px;
+        }
+
+        .document-upload-header h1 {
+            font-size: 25px;
+        }
+
+        .upload-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var fileInput =
+                document.getElementById("DocumentFile");
+
+            var fileDetails =
+                document.getElementById("file-details");
+
+            var fileName =
+                document.getElementById("selected-file-name");
+
+            var fileSize =
+                document.getElementById("selected-file-size");
+
+            var confirmation =
+                document.getElementById("documentConfirmation");
+
+            var confirmationError =
+                document.getElementById("confirmation-error");
+
+            var form =
+                document.querySelector(".upload-form");
+
+            var maxFileSize =
+                10 * 1024 * 1024;
+
+            var allowedExtensions =
+                [
+                    ".pdf",
+                    ".doc",
+                    ".docx",
+                    ".jpg",
+                    ".jpeg",
+                    ".png"
+                ];
+
+            if (fileInput) {
+
+                fileInput.addEventListener("change", function () {
+
+                    if (!fileInput.files ||
+                        fileInput.files.length === 0) {
+
+                        fileDetails.style.display = "none";
+                        return;
+                    }
+
+                    var file =
+                        fileInput.files[0];
+
+                    var extension =
+                        file.name
+                            .substring(file.name.lastIndexOf("."))
+                            .toLowerCase();
+
+                    fileName.textContent =
+                        file.name;
+
+                    fileSize.textContent =
+                        formatFileSize(file.size);
+
+                    fileDetails.style.display =
+                        "block";
+
+                    if (allowedExtensions.indexOf(extension) === -1) {
+
+                        alert(
+                            "Only PDF, DOC, DOCX, JPG, JPEG, and PNG files are allowed."
+                        );
+
+                        fileInput.value = "";
+                        fileDetails.style.display = "none";
+
+                        return;
+                    }
+
+                    if (file.size > maxFileSize) {
+
+                        alert(
+                            "The selected document cannot exceed 10 MB."
+                        );
+
+                        fileInput.value = "";
+                        fileDetails.style.display = "none";
+                    }
+
+                });
+
+            }
+
+            if (form) {
+
+                form.addEventListener("submit", function (event) {
+
+                    if (!confirmation.checked) {
+
+                        event.preventDefault();
+
+                        confirmationError.style.display =
+                            "block";
+
+                        confirmation.focus();
+
+                        return false;
+                    }
+
+                    confirmationError.style.display =
+                        "none";
+
+                });
+
+            }
+
+            function formatFileSize(bytes) {
+
+                if (bytes < 1024) {
+                    return bytes + " B";
+                }
+
+                if (bytes < 1024 * 1024) {
+                    return (bytes / 1024).toFixed(1) + " KB";
+                }
+
+                return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+            }
+
+        });
+
+    </script>
+}

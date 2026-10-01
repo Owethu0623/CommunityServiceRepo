@@ -1,0 +1,725 @@
+﻿
+@model CommunityServiceProject.Models.Invoice
+
+@{
+    ViewBag.Title = "Invoice";
+}
+
+<style>
+    .invoice-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .invoice-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 14px;
+        padding: 28px 30px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+        .invoice-header h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .invoice-header p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.92;
+        }
+
+    .header-reference {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .header-reference span {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .section-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: #16324f;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .invoice-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .summary-box {
+        border: 1px solid #e1e7ef;
+        border-radius: 9px;
+        padding: 17px;
+        background: #f8fafc;
+    }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        color: #16324f;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        background: #eef4ff;
+        color: #0D5CC1;
+        border: 1px solid #c9ddf8;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .details-table tr {
+            border-bottom: 1px solid #edf0f4;
+        }
+
+            .details-table tr:last-child {
+                border-bottom: none;
+            }
+
+        .details-table th,
+        .details-table td {
+            text-align: left;
+            padding: 13px 0;
+            vertical-align: top;
+            font-size: 13px;
+        }
+
+        .details-table th {
+            width: 42%;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .details-table td {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+    .amount-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .amount-table tr {
+            border-bottom: 1px solid #edf0f4;
+        }
+
+            .amount-table tr:last-child {
+                border-bottom: none;
+            }
+
+        .amount-table td {
+            padding: 13px 0;
+            font-size: 14px;
+        }
+
+            .amount-table td:first-child {
+                color: #64748b;
+            }
+
+            .amount-table td:last-child {
+                text-align: right;
+                font-weight: 700;
+                color: #1f2937;
+            }
+
+        .amount-table .balance-row td {
+            padding-top: 17px;
+            font-size: 17px;
+            color: #0D5CC1;
+            font-weight: 700;
+        }
+
+    .request-link {
+        color: #0D5CC1;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+        .request-link:hover {
+            color: #094b9f;
+            text-decoration: underline;
+        }
+
+    .sidebar-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        margin-bottom: 18px;
+    }
+
+        .sidebar-card h3 {
+            margin: 0 0 14px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+    .sidebar-item {
+        margin-bottom: 13px;
+    }
+
+        .sidebar-item:last-child {
+            margin-bottom: 0;
+        }
+
+    .sidebar-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .sidebar-value {
+        color: #1f2937;
+        font-size: 13px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .info-notice {
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+        padding: 14px 16px;
+        color: #24415f;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .action-area {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 18px;
+        margin-top: 20px;
+        border-top: 1px solid #e8edf3;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+        }
+
+    .secondary-button {
+        background: white;
+        border: 1px solid #cfd7e3;
+        color: #374151;
+    }
+
+        .secondary-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+    @@media (max-width: 900px) {
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .invoice-page {
+            padding: 20px 12px 35px;
+        }
+
+        .invoice-header {
+            padding: 22px;
+        }
+
+            .invoice-header h1 {
+                font-size: 23px;
+            }
+
+        .invoice-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .section-card {
+            padding: 19px;
+        }
+
+        .details-table th {
+            width: 45%;
+        }
+
+        .action-area {
+            flex-direction: column-reverse;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="invoice-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="invoice-header">
+
+        <h1>Invoice</h1>
+
+        <p>
+            Review the invoice issued for your municipal service request.
+        </p>
+
+        <div class="header-reference">
+
+            <span>
+                Invoice: @Model.InvoiceNumber
+            </span>
+
+            <span>
+                Request: @Model.MunicipalServiceRequest.ReferenceNumber
+            </span>
+
+            <span>
+                Status: @Model.Status
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="page-layout">
+
+        <div class="main-column">
+
+            <!-- =================================================
+                 INVOICE SUMMARY
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="invoice-summary">
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Invoice Amount
+                        </span>
+
+                        <span class="summary-value">
+                            R @Model.Amount.ToString("N2")
+                        </span>
+
+                    </div>
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Amount Paid
+                        </span>
+
+                        <span class="summary-value">
+                            R @Model.AmountPaid.ToString("N2")
+                        </span>
+
+                    </div>
+
+                    <div class="summary-box">
+
+                        <span class="summary-label">
+                            Balance
+                        </span>
+
+                        <span class="summary-value">
+                            R @Model.Balance.ToString("N2")
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 INVOICE INFORMATION
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Invoice Information</h2>
+
+                    <p>
+                        Details of the invoice associated with this municipal service request.
+                    </p>
+
+                </div>
+
+                <table class="details-table">
+
+                    <tr>
+                        <th>Invoice Number</th>
+                        <td>@Model.InvoiceNumber</td>
+                    </tr>
+
+                    <tr>
+                        <th>Invoice Status</th>
+                        <td>
+                            <span class="status-badge">
+                                @Model.Status
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Issue Date</th>
+                        <td>
+                            @Model.IssueDate.ToString("dd MMM yyyy HH:mm")
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Due Date</th>
+                        <td>
+                            @if (Model.DueDate.HasValue)
+                            {
+                                @Model.DueDate.Value.ToString("dd MMM yyyy")
+                            }
+                            else
+                            {
+                                <span>Not specified</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Paid Date</th>
+                        <td>
+                            @if (Model.PaidDate.HasValue)
+                            {
+                                @Model.PaidDate.Value.ToString("dd MMM yyyy HH:mm")
+                            }
+                            else
+                            {
+                                <span>Not paid</span>
+                            }
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+            <!-- =================================================
+                 SERVICE REQUEST
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Municipal Service Request</h2>
+
+                    <p>
+                        The service request for which this invoice was generated.
+                    </p>
+
+                </div>
+
+                <table class="details-table">
+
+                    <tr>
+                        <th>Reference Number</th>
+
+                        <td>
+                            <a href="@Url.Action("Details", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                               class="request-link">
+                                @Model.MunicipalServiceRequest.ReferenceNumber
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Service</th>
+
+                        <td>
+                            @if (Model.FeeSchedule != null &&
+                                 Model.FeeSchedule.ServiceType != null)
+                            {
+                                @Model.FeeSchedule.ServiceType.ServiceName
+                            }
+                            else if (Model.MunicipalServiceRequest.ServiceType != null)
+                            {
+                                @Model.MunicipalServiceRequest.ServiceType.ServiceName
+                            }
+                            else
+                            {
+                                <span>Municipal Service</span>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Request Title</th>
+                        <td>
+                            @Model.MunicipalServiceRequest.Title
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Request Status</th>
+                        <td>
+                            @Model.MunicipalServiceRequest.Status
+                        </td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+            <!-- =================================================
+                 AMOUNT DETAILS
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Amount Details</h2>
+
+                    <p>
+                        Current financial position of this invoice.
+                    </p>
+
+                </div>
+
+                <table class="amount-table">
+
+                    <tr>
+                        <td>Invoice Amount</td>
+                        <td>R @Model.Amount.ToString("N2")</td>
+                    </tr>
+
+                    <tr>
+                        <td>Amount Paid</td>
+                        <td>R @Model.AmountPaid.ToString("N2")</td>
+                    </tr>
+
+                    <tr class="balance-row">
+                        <td>Outstanding Balance</td>
+                        <td>R @Model.Balance.ToString("N2")</td>
+                    </tr>
+
+                </table>
+
+                <div class="info-notice" style="margin-top:18px;">
+
+                    Payment is handled separately from invoice viewing.
+                    If payment is required, return to the service request
+                    to continue with the payment process.
+
+                </div>
+
+                <div class="action-area">
+
+                    <a href="@Url.Action("Details", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="secondary-button">
+                        Back to Service Request
+                    </a>
+
+                    @if (Model.Balance > 0)
+                    {
+                        <a href="@Url.Action("Details", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                           class="primary-button">
+                            Continue to Payment
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-card">
+
+                <h3>Invoice Summary</h3>
+
+                <div class="sidebar-item">
+
+                    <span class="sidebar-label">
+                        Invoice
+                    </span>
+
+                    <div class="sidebar-value">
+                        @Model.InvoiceNumber
+                    </div>
+
+                </div>
+
+                <div class="sidebar-item">
+
+                    <span class="sidebar-label">
+                        Request
+                    </span>
+
+                    <div class="sidebar-value">
+                        @Model.MunicipalServiceRequest.ReferenceNumber
+                    </div>
+
+                </div>
+
+                <div class="sidebar-item">
+
+                    <span class="sidebar-label">
+                        Amount
+                    </span>
+
+                    <div class="sidebar-value">
+                        R @Model.Amount.ToString("N2")
+                    </div>
+
+                </div>
+
+                <div class="sidebar-item">
+
+                    <span class="sidebar-label">
+                        Balance
+                    </span>
+
+                    <div class="sidebar-value">
+                        R @Model.Balance.ToString("N2")
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="sidebar-card">
+
+                <h3>Navigation</h3>
+
+                <a href="@Url.Action("Details", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                   class="secondary-button"
+                   style="width:100%;">
+                    Back to Service Request
+                </a>
+
+                <a href="@Url.Action("Index", "MunicipalServices")"
+                   class="secondary-button"
+                   style="width:100%; margin-top:9px;">
+                    Municipal Services
+                </a>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>

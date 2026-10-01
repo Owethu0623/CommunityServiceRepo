@@ -1,0 +1,1103 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationShortlistViewModel
+
+@{
+    ViewBag.Title = "Shortlist Applicant";
+}
+
+<div class="admin-shortlist-page">
+
+    <div class="admin-shortlist-header">
+        <div>
+            <div class="page-kicker">RECRUITMENT</div>
+
+            <h1>Shortlist Applicant</h1>
+
+            <p>
+                Review the applicant's eligibility before confirming the
+                shortlisting decision.
+            </p>
+        </div>
+
+        <div class="application-reference">
+            @Model.ApplicationReference
+        </div>
+    </div>
+
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-message alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert-message alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+
+    <div class="shortlist-summary-grid">
+
+        <div class="summary-card">
+            <span class="summary-label">Applicant</span>
+            <strong>@Model.ApplicantName</strong>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Opportunity</span>
+            <strong>@Model.OpportunityCode</strong>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Application Status</span>
+            <strong>
+                @Model.ApplicationStatus
+            </strong>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Screening Result</span>
+            <strong class="@(Model.ScreeningPassed ? "status-success" : "status-danger")">
+                @Model.ScreeningResult
+            </strong>
+        </div>
+
+    </div>
+
+
+    <div class="shortlist-content-grid">
+
+        <main class="shortlist-main-column">
+
+            <section class="shortlist-card">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Applicant Information</h2>
+                        <p>Details of the applicant being considered.</p>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+
+                    <div class="detail-item">
+                        <span>Application Reference</span>
+                        <strong>@Model.ApplicationReference</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Applicant Name</span>
+                        <strong>@Model.ApplicantName</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Email Address</span>
+                        <strong>@Model.ApplicantEmail</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Opportunity</span>
+                        <strong>@Model.OpportunityTitle</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Opportunity Code</span>
+                        <strong>@Model.OpportunityCode</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Application Date</span>
+                        <strong>@Model.ApplicationDate.ToString("dd MMM yyyy")</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="shortlist-card">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Screening Assessment</h2>
+                        <p>
+                            Screening must be successfully completed before
+                            an applicant can be shortlisted.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="assessment-status-row">
+
+                    <div>
+                        <span>Overall Screening Result</span>
+
+                        <strong class="@(Model.ScreeningPassed ? "status-success" : "status-danger")">
+                            @Model.ScreeningResult
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Screening Requirement</span>
+
+                        <strong>
+                            @(Model.ScreeningPassed
+                                ? "Satisfied"
+                                : "Not Satisfied")
+                        </strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="shortlist-card">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Supporting Document Verification</h2>
+                        <p>
+                            All submitted supporting documents must be
+                            accepted before shortlisting.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="document-summary-grid">
+
+                    <div class="document-summary-item">
+                        <span>Total Documents</span>
+                        <strong>@Model.TotalDocuments</strong>
+                    </div>
+
+                    <div class="document-summary-item document-accepted">
+                        <span>Accepted</span>
+                        <strong>@Model.AcceptedDocuments</strong>
+                    </div>
+
+                    <div class="document-summary-item document-pending">
+                        <span>Pending</span>
+                        <strong>@Model.PendingDocuments</strong>
+                    </div>
+
+                    <div class="document-summary-item document-rejected">
+                        <span>Rejected</span>
+                        <strong>@Model.RejectedDocuments</strong>
+                    </div>
+
+                </div>
+
+                <div class="verification-result
+                            @(Model.DocumentsVerified
+                                ? "verification-success"
+                                : "verification-warning")">
+
+                    <strong>
+                        @(Model.DocumentsVerified
+                            ? "All submitted documents have been accepted."
+                            : "Document verification is not complete.")
+                    </strong>
+
+                    <p>
+                        @(Model.DocumentsVerified
+                            ? "The applicant has satisfied the document verification requirement."
+                            : "The applicant cannot be shortlisted until all submitted documents have been accepted.")
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <section class="shortlist-card decision-card">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Shortlisting Decision</h2>
+                        <p>
+                            Confirm whether this applicant should proceed
+                            to the next recruitment stage.
+                        </p>
+                    </div>
+                </div>
+
+
+                @if (Model.EligibleForShortlisting)
+                {
+                    using (Html.BeginForm(
+"ConfirmShortlisting",
+"TechnicianApplication",
+FormMethod.Post,
+new
+{
+        @class = "shortlist-form",
+        id = "shortlistForm"
+}))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.HiddenFor(m => m.ApplicationID)
+
+                        <div class="eligibility-panel eligibility-success">
+
+                            <div class="eligibility-title">
+                                Eligible for Shortlisting
+                            </div>
+
+                            <p>
+                                This applicant has successfully met the
+                                screening and supporting document
+                                verification requirements.
+                            </p>
+
+                        </div>
+
+
+                        <div class="confirmation-box">
+
+                            <label class="confirmation-label">
+
+                                @Html.CheckBoxFor(
+                                    m => m.ConfirmShortlisting)
+
+                                <span>
+                                    I confirm that I want to shortlist
+                                    this applicant.
+                                </span>
+
+                            </label>
+
+                            @Html.ValidationMessageFor(
+                                m => m.ConfirmShortlisting,
+                                "",
+                                new
+                                {
+                                    @class = "validation-message"
+                                })
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <a href="@Url.Action(
+                                "Review",
+                                "TechnicianApplication",
+                                new
+                                {
+                                    id = Model.ApplicationID
+                                })"
+                               class="secondary-button">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="primary-button"
+                                    id="confirmShortlistButton">
+                                Confirm Shortlisting
+                            </button>
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="eligibility-panel eligibility-warning">
+
+                        <div class="eligibility-title">
+                            Applicant Not Eligible
+                        </div>
+
+                        <p>
+                            This applicant does not currently satisfy all
+                            requirements for shortlisting.
+                        </p>
+
+                        <div class="eligibility-checks">
+
+                            <div class="eligibility-check">
+                                <span>Screening Requirement</span>
+
+                                <strong class="@(Model.ScreeningPassed
+                                    ? "check-passed"
+                                    : "check-failed")">
+
+                                    @(Model.ScreeningPassed
+                                        ? "Satisfied"
+                                        : "Not Satisfied")
+                                </strong>
+                            </div>
+
+                            <div class="eligibility-check">
+                                <span>Document Verification</span>
+
+                                <strong class="@(Model.DocumentsVerified
+                                    ? "check-passed"
+                                    : "check-failed")">
+
+                                    @(Model.DocumentsVerified
+                                        ? "Completed"
+                                        : "Incomplete")
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <a href="@Url.Action(
+                            "Review",
+                            "TechnicianApplication",
+                            new
+                            {
+                                id = Model.ApplicationID
+                            })"
+                           class="secondary-button">
+                            Back to Application
+                        </a>
+
+                    </div>
+                }
+
+            </section>
+
+        </main>
+
+
+        <aside class="shortlist-sidebar">
+
+            <section class="sidebar-card">
+
+                <h3>Shortlisting Process</h3>
+
+                <div class="process-step completed">
+                    <span class="process-number">1</span>
+
+                    <div>
+                        <strong>Application Reviewed</strong>
+
+                        <p>
+                            Application information has been reviewed.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step completed">
+                    <span class="process-number">2</span>
+
+                    <div>
+                        <strong>Applicant Screened</strong>
+
+                        <p>
+                            Applicant requirements have been assessed.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step completed">
+                    <span class="process-number">3</span>
+
+                    <div>
+                        <strong>Documents Verified</strong>
+
+                        <p>
+                            Supporting documents have been reviewed.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step active">
+                    <span class="process-number">4</span>
+
+                    <div>
+                        <strong>Shortlist Applicant</strong>
+
+                        <p>
+                            Confirm whether the applicant should progress.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <span class="process-number">5</span>
+
+                    <div>
+                        <strong>Next Recruitment Stage</strong>
+
+                        <p>
+                            Shortlisted applicants can proceed to assessment
+                            scheduling.
+                        </p>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <section class="sidebar-card">
+
+                <h3>Shortlisting Requirements</h3>
+
+                <ul class="requirements-list">
+
+                    <li>
+                        Screening must meet the defined requirements.
+                    </li>
+
+                    <li>
+                        Supporting documents must be submitted.
+                    </li>
+
+                    <li>
+                        All submitted documents must be accepted.
+                    </li>
+
+                    <li>
+                        The application must not already be completed,
+                        withdrawn or rejected.
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <section class="sidebar-card navigation-card">
+
+                <h3>Navigation</h3>
+
+                <a href="@Url.Action(
+                    "Review",
+                    "TechnicianApplication",
+                    new
+                    {
+                        id = Model.ApplicationID
+                    })"
+                   class="sidebar-navigation-button">
+                    Back to Application Review
+                </a>
+
+                <a href="@Url.Action(
+                    "ReviewApplications",
+                    "TechnicianApplication")"
+                   class="sidebar-navigation-button">
+                    Back to Applications
+                </a>
+
+                <a href="@Url.Action(
+                    "Manage",
+                    "TechnicianOpportunity")"
+                   class="sidebar-navigation-button">
+                    Opportunity Management
+                </a>
+
+                <a href="@Url.Action(
+                    "Index",
+                    "AdministratorDashboard")"
+                   class="sidebar-navigation-button">
+                    Administrator Dashboard
+                </a>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .admin-shortlist-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px;
+        color: #1f2937;
+    }
+
+    .admin-shortlist-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 30px 34px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 24px rgba(13, 92, 193, 0.15);
+    }
+
+    .page-kicker {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+        opacity: 0.85;
+    }
+
+    .admin-shortlist-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .admin-shortlist-header p {
+        margin: 0;
+        max-width: 720px;
+        font-size: 15px;
+        line-height: 1.6;
+        opacity: 0.92;
+    }
+
+    .application-reference {
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.28);
+        border-radius: 9px;
+        padding: 13px 18px;
+        font-size: 15px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .alert-message {
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .alert-error {
+        background: #fff1f1;
+        color: #a61b1b;
+        border: 1px solid #f2b8b8;
+    }
+
+    .alert-success {
+        background: #edf9f1;
+        color: #176b36;
+        border: 1px solid #b8e0c4;
+    }
+
+    .shortlist-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e4e9f0;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .summary-label {
+        display: block;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        margin-bottom: 8px;
+    }
+
+    .summary-card strong {
+        display: block;
+        color: #172033;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .status-success {
+        color: #18733b !important;
+    }
+
+    .status-danger {
+        color: #b42318 !important;
+    }
+
+    .shortlist-content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .shortlist-main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .shortlist-card,
+    .sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e4e9f0;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .section-heading {
+        margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 5px;
+        color: #172033;
+        font-size: 20px;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border-top: 1px solid #edf0f4;
+        border-left: 1px solid #edf0f4;
+    }
+
+    .detail-item {
+        padding: 16px;
+        border-right: 1px solid #edf0f4;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .detail-item span,
+    .assessment-status-row span,
+    .document-summary-item span {
+        display: block;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 7px;
+    }
+
+    .detail-item strong,
+    .assessment-status-row strong {
+        color: #172033;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .assessment-status-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 18px;
+        background: #f8fafc;
+        border: 1px solid #e8edf3;
+        border-radius: 9px;
+    }
+
+    .document-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .document-summary-item {
+        background: #f8fafc;
+        border: 1px solid #e6ebf1;
+        border-radius: 9px;
+        padding: 15px;
+    }
+
+    .document-summary-item strong {
+        font-size: 21px;
+        color: #172033;
+    }
+
+    .document-accepted strong {
+        color: #18733b;
+    }
+
+    .document-pending strong {
+        color: #a15c00;
+    }
+
+    .document-rejected strong {
+        color: #b42318;
+    }
+
+    .verification-result {
+        border-radius: 9px;
+        padding: 16px 18px;
+        border: 1px solid;
+    }
+
+    .verification-success {
+        background: #edf9f1;
+        border-color: #b8e0c4;
+        color: #176b36;
+    }
+
+    .verification-warning {
+        background: #fff8e8;
+        border-color: #efd39a;
+        color: #8a5700;
+    }
+
+    .verification-result strong {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .verification-result p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .decision-card {
+        border-top: 4px solid #0D5CC1;
+    }
+
+    .eligibility-panel {
+        border-radius: 10px;
+        padding: 19px;
+        border: 1px solid;
+        margin-bottom: 20px;
+    }
+
+    .eligibility-success {
+        background: #edf9f1;
+        border-color: #b8e0c4;
+        color: #176b36;
+    }
+
+    .eligibility-warning {
+        background: #fff8e8;
+        border-color: #efd39a;
+        color: #8a5700;
+    }
+
+    .eligibility-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .eligibility-panel p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .confirmation-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        padding: 17px;
+        margin-bottom: 20px;
+    }
+
+    .confirmation-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: #263244;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+        cursor: pointer;
+    }
+
+    .confirmation-label input {
+        margin-top: 3px;
+        width: 16px;
+        height: 16px;
+        accent-color: #0D5CC1;
+    }
+
+    .validation-message {
+        display: block;
+        color: #b42318;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    .eligibility-checks {
+        margin-top: 17px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .eligibility-check {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 11px 13px;
+        background: rgba(255,255,255,0.65);
+        border-radius: 7px;
+        font-size: 13px;
+    }
+
+    .check-passed {
+        color: #18733b;
+    }
+
+    .check-failed {
+        color: #b42318;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .sidebar-navigation-button {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 42px;
+        padding: 10px 17px;
+        border-radius: 7px;
+        text-decoration: none !important;
+        font-size: 14px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        color: #ffffff !important;
+    }
+
+    .primary-button:hover {
+        background: #094b9f;
+    }
+
+    .secondary-button {
+        background: #eef2f7;
+        color: #263244 !important;
+        border: 1px solid #d8dee7;
+    }
+
+    .secondary-button:hover {
+        background: #e3e8ef;
+    }
+
+    .shortlist-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar-card h3 {
+        margin: 0 0 18px;
+        color: #172033;
+        font-size: 17px;
+    }
+
+    .process-step {
+        display: flex;
+        gap: 12px;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .process-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 31px;
+        bottom: 0;
+        width: 1px;
+        background: #d9e0e8;
+    }
+
+    .process-number {
+        position: relative;
+        z-index: 1;
+        width: 29px;
+        height: 29px;
+        flex: 0 0 29px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background: #e9edf3;
+        color: #657083;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .process-step.completed .process-number,
+    .process-step.active .process-number {
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .process-step strong {
+        display: block;
+        color: #263244;
+        font-size: 13px;
+        margin: 4px 0;
+    }
+
+    .process-step p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .requirements-list {
+        margin: 0;
+        padding-left: 18px;
+        color: #596579;
+    }
+
+    .requirements-list li {
+        margin-bottom: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .navigation-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-navigation-button {
+        width: 100%;
+        background: #f4f6f9;
+        color: #263244 !important;
+        border: 1px solid #e0e5ec;
+        margin-bottom: 9px;
+        box-sizing: border-box;
+    }
+
+    .sidebar-navigation-button:hover {
+        background: #e9edf3;
+    }
+
+    @@media (max-width: 1100px) {
+
+        .shortlist-content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .shortlist-sidebar {
+            position: static;
+        }
+
+        .shortlist-summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @@media (max-width: 700px) {
+
+        .admin-shortlist-page {
+            padding: 18px;
+        }
+
+        .admin-shortlist-header {
+            padding: 24px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .shortlist-summary-grid,
+        .detail-grid,
+        .assessment-status-row,
+        .document-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .shortlist-card,
+        .sidebar-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var form =
+            document.getElementById("shortlistForm");
+
+        var button =
+            document.getElementById("confirmShortlistButton");
+
+        if (!form || !button) {
+            return;
+        }
+
+        form.addEventListener("submit", function (event) {
+
+            var checkbox =
+                document.getElementById(
+                    "ConfirmShortlisting");
+
+            if (!checkbox || !checkbox.checked) {
+                return;
+            }
+
+            var confirmed =
+                window.confirm(
+                    "Are you sure you want to shortlist this applicant? " +
+                    "This will move the application to the Shortlisted stage."
+                );
+
+            if (!confirmed) {
+                event.preventDefault();
+                return;
+            }
+
+            button.disabled = true;
+            button.innerText = "Processing...";
+        });
+
+    });
+
+</script>
+

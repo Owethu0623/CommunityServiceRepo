@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
-using static System.Web.Razor.Parser.SyntaxConstants;
 using System.Data.Entity.ModelConfiguration;
+using static System.Data.Entity.Migrations.Model.UpdateDatabaseOperation;
+using static System.Web.Razor.Parser.SyntaxConstants;
 
 namespace CommunityServiceProject.Models
 {
@@ -14,6 +15,7 @@ namespace CommunityServiceProject.Models
         public DbSet<Citizen> Citizens { get; set; }
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<Technician> Technicians { get; set; }
+        public DbSet<FinanceOfficer> FinanceOfficers { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Ward> Wards { get; set; }
@@ -87,6 +89,51 @@ namespace CommunityServiceProject.Models
             get;
             set;
         }
+
+        public DbSet<ApplicationDocument> ApplicationDocuments { get; set; }
+        public DbSet<TechnicianApplicationScreening> TechnicianApplicationScreenings { get; set; }
+        public DbSet<ApplicationAssessment> ApplicationAssessments { get; set; }
+        public DbSet<ApplicationInterview> ApplicationInterviews { get; set; }
+        public DbSet<TechnicianApplicationSelection> TechnicianApplicationSelections { get; set; }
+        public DbSet<TechnicianApplicationFinalVerification> TechnicianApplicationFinalVerifications { get; set; }
+        public DbSet<TechnicianOnboarding> TechnicianOnboardings { get; set; }
+        public DbSet<TechnicianApplicationNotification> TechnicianApplicationNotifications { get; set; }
+
+
+        public DbSet<ServiceType> ServiceTypes { get; set; }
+
+        public DbSet<FeeSchedule> FeeSchedules { get; set; }
+
+        public DbSet<MunicipalServiceRequest> MunicipalServiceRequests { get; set; }
+
+        public DbSet<Invoice> Invoices { get; set; }
+
+        public DbSet<Payment> Payments { get; set; }
+
+        public DbSet<Receipt> Receipts { get; set; }
+
+        public DbSet<Refund> Refunds { get; set; }
+
+        public DbSet<TechnicianPayrollProfile> TechnicianPayrollProfiles { get; set; }
+
+        public DbSet<OvertimeClaim> OvertimeClaims { get; set; }
+
+        public DbSet<PayrollPeriod> PayrollPeriods { get; set; }
+
+        public DbSet<Payroll> Payrolls { get; set; }
+
+        public DbSet<PayrollAllowance> PayrollAllowances { get; set; }
+
+        public DbSet<PayrollDeduction> PayrollDeductions { get; set; }
+
+        public DbSet<PayrollPayment> PayrollPayments { get; set; }
+
+        public DbSet<Payslip> Payslips { get; set; }
+
+        public DbSet<FinancialAudit> FinancialAudits { get; set; }
+      
+      public DbSet<MunicipalServiceRequestNotification> MunicipalServiceRequestNotifications { get; set; }
+
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -664,6 +711,364 @@ namespace CommunityServiceProject.Models
             a.CitizenID
         })
     .IsUnique();
+
+
+            modelBuilder.Entity<TechnicianApplicationSelection>()
+    .HasRequired(s => s.Application)
+    .WithMany()
+    .HasForeignKey(s => s.ApplicationID)
+    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianApplicationSelection>()
+                .HasRequired(s => s.SelectedByAdministrator)
+                .WithMany()
+                .HasForeignKey(s => s.SelectedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianApplicationFinalVerification>()
+    .HasRequired(v => v.Application)
+    .WithMany()
+    .HasForeignKey(v => v.ApplicationID)
+    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianApplicationFinalVerification>()
+                .HasRequired(v => v.VerifiedByAdministrator)
+                .WithMany()
+                .HasForeignKey(v => v.VerifiedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianOnboarding>()
+    .HasRequired(t => t.Application)
+    .WithMany()
+    .HasForeignKey(t => t.ApplicationID)
+    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianOnboarding>()
+                .HasRequired(t => t.Technician)
+                .WithMany()
+                .HasForeignKey(t => t.TechnicianID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianOnboarding>()
+                .HasRequired(t => t.OnboardedByAdministrator)
+                .WithMany()
+                .HasForeignKey(t => t.OnboardedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Technician>()
+                .HasOptional(t => t.Citizen)
+                .WithMany()
+                .HasForeignKey(t => t.CitizenID)
+                .WillCascadeOnDelete(false);
+
+           
+modelBuilder.Entity<TechnicianApplicationNotification>()
+    .HasRequired(n => n.Application)
+    .WithMany()
+    .HasForeignKey(n => n.ApplicationID)
+    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TechnicianApplicationNotification>()
+                .HasRequired(n => n.Citizen)
+                .WithMany()
+                .HasForeignKey(n => n.CitizenID)
+                .WillCascadeOnDelete(false);
+
+            // ============================================================
+            // FINANCE OFFICER
+            // ============================================================
+
+            modelBuilder.Entity<FinancialAudit>()
+                .HasRequired(a => a.FinanceOfficer)
+                .WithMany(f => f.FinancialAudits)
+                .HasForeignKey(a => a.FinanceOfficerID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // MUNICIPAL SERVICE TYPES
+            // ============================================================
+
+            modelBuilder.Entity<ServiceType>()
+                .HasMany(s => s.FeeSchedules)
+                .WithRequired(f => f.ServiceType)
+                .HasForeignKey(f => f.ServiceTypeID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ServiceType>()
+                .HasMany(s => s.MunicipalServiceRequests)
+                .WithRequired(r => r.ServiceType)
+                .HasForeignKey(r => r.ServiceTypeID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // FEE SCHEDULE
+            // ============================================================
+
+            modelBuilder.Entity<FeeSchedule>()
+                .HasRequired(f => f.CreatedByFinanceOfficer)
+                .WithMany()
+                .HasForeignKey(f => f.CreatedByFinanceOfficerID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // MUNICIPAL SERVICE REQUEST
+            // ============================================================
+
+            // Citizen → Municipal Service Requests
+            modelBuilder.Entity<MunicipalServiceRequest>()
+                .HasRequired(r => r.Citizen)
+                .WithMany()
+                .HasForeignKey(r => r.CitizenID)
+                .WillCascadeOnDelete(false);
+
+            // Administrator review is optional because a newly submitted
+            // service request has not necessarily been reviewed yet.
+            modelBuilder.Entity<MunicipalServiceRequest>()
+                .HasOptional(r => r.ReviewedByAdministrator)
+                .WithMany()
+                .HasForeignKey(r => r.ReviewedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // Municipal Service Request → Invoice
+            //
+            // A request can have zero or more invoices.
+            // Normally the application will create one invoice, but the
+            // database relationship remains flexible for future adjustments.
+            modelBuilder.Entity<Invoice>()
+                .HasRequired(i => i.MunicipalServiceRequest)
+                .WithMany(r => r.Invoices)
+                .HasForeignKey(i => i.MunicipalServiceRequestID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // INVOICE
+            // ============================================================
+
+            // Invoice → Citizen
+            modelBuilder.Entity<Invoice>()
+                .HasRequired(i => i.Citizen)
+                .WithMany()
+                .HasForeignKey(i => i.CitizenID)
+                .WillCascadeOnDelete(false);
+
+            // Invoice → Fee Schedule
+            modelBuilder.Entity<Invoice>()
+                .HasRequired(i => i.FeeSchedule)
+                .WithMany()
+                .HasForeignKey(i => i.FeeScheduleID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYMENT
+            // ============================================================
+
+            // Invoice → Payments
+            //
+            // An invoice may have multiple payment attempts.
+            // Example:
+            //
+            // Invoice
+            //    ├── Failed payment
+            //    ├── Failed payment
+            //    └── Successful payment
+            //
+            modelBuilder.Entity<Payment>()
+    .HasRequired(p => p.Invoice)
+    .WithMany(i => i.Payments)
+    .HasForeignKey(p => p.InvoiceID)
+    .WillCascadeOnDelete(false);
+
+            // Payment → Citizen
+            modelBuilder.Entity<Payment>()
+                .HasRequired(p => p.Citizen)
+                .WithMany()
+                .HasForeignKey(p => p.CitizenID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // RECEIPT
+            // ============================================================
+
+            // Payment → Receipt
+            //
+            // A successful payment can have one receipt.
+            modelBuilder.Entity<Receipt>()
+    .HasRequired(r => r.Payment)
+    .WithMany(p => p.Receipts)
+    .HasForeignKey(r => r.PaymentID)
+    .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // REFUND
+            // ============================================================
+
+            // Payment → Refund
+            modelBuilder.Entity<Refund>()
+                .HasRequired(r => r.Payment)
+                .WithMany()
+                .HasForeignKey(r => r.PaymentID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Refund>()
+    .HasRequired(r => r.Invoice)
+    .WithMany(i => i.Refunds)
+    .HasForeignKey(r => r.InvoiceID)
+    .WillCascadeOnDelete(false); ;
+
+            // Finance Officer → Refund
+            //
+            // Finance Officer is optional because a refund may exist before
+            // it has been processed.
+            modelBuilder.Entity<Refund>()
+                .HasOptional(r => r.ProcessedByFinanceOfficer)
+                .WithMany()
+                .HasForeignKey(r => r.ProcessedByFinanceOfficerID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // TECHNICIAN PAYROLL PROFILE
+            // ============================================================
+
+            // Technician → Payroll Profile
+            //
+            // A technician can have zero or one payroll profile.
+            modelBuilder.Entity<TechnicianPayrollProfile>()
+    .HasRequired(p => p.Technician)
+    .WithMany()
+    .HasForeignKey(p => p.TechnicianID)
+    .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // OVERTIME CLAIM
+            // ============================================================
+
+            // Technician → Overtime Claims
+            modelBuilder.Entity<OvertimeClaim>()
+                .HasRequired(o => o.Technician)
+                .WithMany()
+                .HasForeignKey(o => o.TechnicianID)
+                .WillCascadeOnDelete(false);
+
+            // Administrator → Overtime Claims
+            //
+            // Administrator review is optional until the claim is reviewed.
+            modelBuilder.Entity<OvertimeClaim>()
+                .HasOptional(o => o.ReviewedByAdministrator)
+                .WithMany()
+                .HasForeignKey(o => o.ReviewedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // Payroll → Overtime Claims
+            //
+            // An overtime claim can exist without being included in payroll.
+            // Once included, PayrollID identifies the payroll period.
+            modelBuilder.Entity<OvertimeClaim>()
+                .HasOptional(o => o.Payroll)
+                .WithMany(p => p.OvertimeClaims)
+                .HasForeignKey(o => o.PayrollID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYROLL PERIOD
+            // ============================================================
+
+            modelBuilder.Entity<PayrollPeriod>()
+                .HasMany(p => p.Payrolls)
+                .WithRequired(p => p.PayrollPeriod)
+                .HasForeignKey(p => p.PayrollPeriodID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYROLL
+            // ============================================================
+
+            // Technician → Payroll
+            modelBuilder.Entity<Payroll>()
+                .HasRequired(p => p.Technician)
+                .WithMany()
+                .HasForeignKey(p => p.TechnicianID)
+                .WillCascadeOnDelete(false);
+
+            // Finance Officer → Approved Payroll
+            //
+            // Finance Officer is optional until payroll has been approved.
+            modelBuilder.Entity<Payroll>()
+                .HasOptional(p => p.ApprovedByFinanceOfficer)
+                .WithMany()
+                .HasForeignKey(p => p.ApprovedByFinanceOfficerID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYROLL ALLOWANCES
+            // ============================================================
+
+            modelBuilder.Entity<PayrollAllowance>()
+                .HasRequired(a => a.Payroll)
+                .WithMany(p => p.Allowances)
+                .HasForeignKey(a => a.PayrollID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYROLL DEDUCTIONS
+            // ============================================================
+
+            modelBuilder.Entity<PayrollDeduction>()
+                .HasRequired(d => d.Payroll)
+                .WithMany(p => p.Deductions)
+                .HasForeignKey(d => d.PayrollID)
+                .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYROLL PAYMENT
+            // ============================================================
+
+            // Payroll → Payroll Payment
+            //
+            modelBuilder.Entity<PayrollPayment>()
+    .HasRequired(p => p.Payroll)
+    .WithMany()
+    .HasForeignKey(p => p.PayrollID)
+    .WillCascadeOnDelete(false);
+
+
+            // ============================================================
+            // PAYSLIP
+            // ============================================================
+
+            // Payroll → Payslip
+            //
+            // A completed payroll can have zero or one payslip.
+            modelBuilder.Entity<Payslip>()
+    .HasRequired(p => p.Payroll)
+    .WithMany()
+    .HasForeignKey(p => p.PayrollID)
+    .WillCascadeOnDelete(false);
+
+            // Technician → Payslip
+            modelBuilder.Entity<Payslip>()
+                .HasRequired(p => p.Technician)
+                .WithMany()
+                .HasForeignKey(p => p.TechnicianID)
+                .WillCascadeOnDelete(false);
+
+
+
         }
     }
+
+
 }

@@ -1,8 +1,7 @@
-﻿using CommunityServiceProject.Models;
+﻿
+using CommunityServiceProject.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CommunityServiceProject.ViewModels
 {
@@ -20,7 +19,15 @@ namespace CommunityServiceProject.ViewModels
 
         public string EmploymentType { get; set; }
 
+        public bool IsEditable { get; set; }
+
         public int? NumberOfPositions { get; set; }
+
+        public bool HasDocuments { get; set; }
+
+        public int DocumentCount { get; set; }
+
+        public bool CanSubmit { get; set; }
 
         public DateTime ApplicationDate { get; set; }
 
@@ -35,5 +42,32 @@ namespace CommunityServiceProject.ViewModels
         public bool IsSuccessful { get; set; }
 
         public bool IsUnsuccessful { get; set; }
+
+        public List<TechnicianOnboardingStatusViewModel> TechnicianOnboardings
+        {
+            get;
+            set;
+        }
+
+        public TechnicianApplicationDetailsViewModel()
+        {
+            TechnicianOnboardings =
+                new List<TechnicianOnboardingStatusViewModel>();
+        }
+    }
+
+    public class TechnicianOnboardingStatusViewModel
+    {
+        public int OnboardingID { get; set; }
+
+        public int TechnicianID { get; set; }
+
+        public string TechnicianName { get; set; }
+
+        public string MunicipalEmail { get; set; }
+
+        public string AccountStatus { get; set; }
+
+        public DateTime OnboardingDate { get; set; }
     }
 }

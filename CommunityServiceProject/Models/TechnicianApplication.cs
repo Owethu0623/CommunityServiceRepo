@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -56,5 +57,12 @@ namespace CommunityServiceProject.Models
         [DataType(DataType.DateTime)]
         [Display(Name = "Last Updated")]
         public DateTime? LastUpdatedDate { get; set; }
+
+        public virtual ICollection<ApplicationDocument> ApplicationDocuments { get; set; }
+        public TechnicianApplication()
+        {
+            ApplicationDocuments =
+                new HashSet<ApplicationDocument>();
+        }
     }
 }

@@ -24,23 +24,8 @@
                 </h1>
 
                 <p>
-                    Create, publish and manage municipal technician recruitment opportunities.
+                    View current and upcoming municipal technician recruitment opportunities.
                 </p>
-            </div>
-
-            <div class="page-header-actions">
-
-                @Html.ActionLink(
-                    "Create New Opportunity",
-                    "Create",
-                    "TechnicianOpportunity",
-                    null,
-                    new
-                    {
-                        @class = "btn-primary"
-                    }
-                )
-
             </div>
 
         </div>
@@ -50,7 +35,7 @@
             @Html.ActionLink(
                 "Back",
                 "Index",
-                "AdministratorDashboard",
+                "CitizenDashboard",
                 null,
                 new { @class = "btn-secondary" }
             )
@@ -125,7 +110,7 @@
                             class="form-control">
 
                         <option value="">
-                            All available opportunities
+                            All published opportunities
                         </option>
 
                         <option value="7"
@@ -180,13 +165,13 @@
         <div>
 
             <h2>
-                Available Opportunities
+                Published Technician Opportunities
             </h2>
 
             <p>
                 @Model.TotalOpportunities
-                opportunity@(Model.TotalOpportunities == 1 ? "" : "ies")
-                currently available.
+                published opportun@(Model.TotalOpportunities == 1 ? "y" : "ities")
+                currently listed.
             </p>
 
         </div>
@@ -205,6 +190,9 @@
 
             @foreach (var opportunity in Model.Opportunities)
             {
+                var applicationsOpen =
+                    opportunity.IsOpenForApplications;
+
                 <div class="opportunity-card">
 
                     <div class="opportunity-card-main">
@@ -238,8 +226,7 @@
 
                             <span>
                                 Applications close
-                                @opportunity.ApplicationDeadline
-                                .ToString("dd MMM yyyy")
+                                @opportunity.ApplicationDeadline.ToString("dd MMM yyyy")
                             </span>
 
                         </div>
@@ -262,7 +249,22 @@
 
                     <div class="opportunity-card-side">
 
-                        @if (opportunity.DaysRemaining == 0)
+                        @if (!applicationsOpen)
+                        {
+                            <div class="application-status upcoming">
+
+                                <strong>
+                                    Applications not yet open
+                                </strong>
+
+                                <span>
+                                    Applications open
+                                    @opportunity.ApplicationStartDate.ToString("dd MMM yyyy")
+                                </span>
+
+                            </div>
+                        }
+                        else if (opportunity.DaysRemaining == 0)
                         {
                             <div class="deadline-badge deadline-today">
                                 Closing today
@@ -318,7 +320,7 @@
             </div>
 
             <p>
-                There are currently no available technician
+                There are currently no published technician
                 opportunities matching your search criteria.
             </p>
 
@@ -351,7 +353,7 @@
        ============================================================ */
 
     .technician-opportunity-header {
-        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
         color: white;
         border-radius: 12px;
         padding: 30px;
@@ -430,6 +432,8 @@
         letter-spacing: 1.2px;
         margin-bottom: 7px;
     }
+
+
     /* ============================================================
        FILTER CARD
        ============================================================ */
@@ -595,6 +599,37 @@
         justify-content: center;
         gap: 12px;
     }
+
+
+    /* ============================================================
+       APPLICATION STATUS
+       ============================================================ */
+
+    .application-status {
+        border-radius: 6px;
+        padding: 9px 10px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+        .application-status.upcoming {
+            background: #f4f7fb;
+            color: #46596c;
+            border: 1px solid #d5dee8;
+        }
+
+        .application-status strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .application-status span {
+            display: block;
+            font-size: 11px;
+            color: #69798a;
+        }
 
 
     /* ============================================================

@@ -1,0 +1,1004 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationReviewViewModel
+
+@using System
+@using System.Linq
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Review Technician Applications";
+}
+
+<div class="admin-applications-page">
+
+    <!-- ============================================================
+         PAGE HEADER
+         ============================================================ -->
+
+    <div class="admin-applications-header">
+
+        <div>
+            <div class="page-eyebrow">
+                TECHNICIAN RECRUITMENT
+            </div>
+
+            <h1>Review Technician Applications</h1>
+
+            <p>
+                View and review submitted technician applications
+                before applicant screening and assessment.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            <a href="@Url.Action("Manage", "TechnicianOpportunity")"
+               class="secondary-button">
+                Opportunity Management
+            </a>
+
+            <a href="@Url.Action("Index", "AdministratorDashboard")"
+               class="secondary-button">
+                Administrator Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         SUMMARY CARDS
+         ============================================================ -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <div class="summary-label">
+                Total Applications
+            </div>
+
+            <div class="summary-value">
+                @Model.TotalApplications
+            </div>
+
+            <div class="summary-description">
+                Submitted applications available for review
+            </div>
+        </div>
+
+
+        <div class="summary-card">
+            <div class="summary-label">
+                Submitted
+            </div>
+
+            <div class="summary-value">
+                @Model.SubmittedApplications
+            </div>
+
+            <div class="summary-description">
+                Applications awaiting initial processing
+            </div>
+        </div>
+
+
+        <div class="summary-card">
+            <div class="summary-label">
+                Under Review
+            </div>
+
+            <div class="summary-value">
+                @Model.UnderReviewApplications
+            </div>
+
+            <div class="summary-description">
+                Applications currently being processed
+            </div>
+        </div>
+
+
+        <div class="summary-card">
+            <div class="summary-label">
+                Shortlisted
+            </div>
+
+            <div class="summary-value">
+                @Model.ShortlistedApplications
+            </div>
+
+            <div class="summary-description">
+                Applicants currently shortlisted
+            </div>
+        </div>
+
+
+        <div class="summary-card">
+            <div class="summary-label">
+                Selected
+            </div>
+
+            <div class="summary-value">
+                @Model.SelectedApplications
+            </div>
+
+            <div class="summary-description">
+                Applicants recorded as selected
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         FILTER PANEL
+         ============================================================ -->
+
+    <div class="filter-card">
+
+        <div class="filter-heading">
+            <h2>Find Applications</h2>
+
+            <p>
+                Search applications by reference, applicant,
+                opportunity or email address.
+            </p>
+        </div>
+
+
+        @using (Html.BeginForm(
+            "ReviewApplications",
+            "TechnicianApplication",
+            FormMethod.Get,
+            new { @class = "application-filter-form" }))
+        {
+
+            <div class="filter-grid">
+
+                <div class="filter-field filter-search">
+
+                    <label for="searchTerm">
+                        Search
+                    </label>
+
+                    <input type="text"
+                           id="searchTerm"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           placeholder="Application reference, applicant, opportunity or email" />
+
+                </div>
+
+
+                <div class="filter-field">
+
+                    <label for="statusFilter">
+                        Status
+                    </label>
+
+                    <select id="statusFilter"
+                            name="statusFilter">
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        @foreach (TechnicianApplicationStatus status
+                            in Enum.GetValues(typeof(TechnicianApplicationStatus)))
+                        {
+                            if (status ==
+                                TechnicianApplicationStatus.Draft)
+                            {
+                                continue;
+                            }
+
+                            <option value="@status"
+                                    @(Model.StatusFilter == status.ToString() ? "selected" : "")>
+                                @status
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <div class="filter-field">
+
+                    <label for="opportunityFilter">
+                        Opportunity
+                    </label>
+
+                    <select id="opportunityFilter"
+                            name="opportunityFilter">
+
+                        <option value="">
+                            All opportunities
+                        </option>
+
+                        @foreach (var opportunity
+                            in Model.Opportunities)
+                        {
+                            <option value="@opportunity.OpportunityID"
+                                    @(Model.OpportunityFilter == opportunity.OpportunityID ? "selected" : "")>
+                                @opportunity.OpportunityCode -
+                                @opportunity.Title
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="primary-button">
+                    Apply Filters
+                </button>
+
+                <a href="@Url.Action(
+                    "ReviewApplications",
+                    "TechnicianApplication")"
+                   class="secondary-button">
+                    Clear Filters
+                </a>
+
+            </div>
+
+        }
+
+    </div>
+
+
+    <!-- ============================================================
+         APPLICATION RESULTS
+         ============================================================ -->
+
+    <div class="applications-card">
+
+        <div class="results-header">
+
+            <div>
+                <h2>Submitted Applications</h2>
+
+                <p>
+                    @Model.Applications.Count application(s) displayed.
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.Applications.Any())
+        {
+            <div class="table-wrapper">
+
+                <table class="applications-table">
+
+                    <thead>
+                        <tr>
+
+                            <th>
+                                Application
+                            </th>
+
+                            <th>
+                                Applicant
+                            </th>
+
+                            <th>
+                                Opportunity
+                            </th>
+
+                            <th>
+                                Submitted
+                            </th>
+
+                            <th>
+                                Documents
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var application
+                            in Model.Applications)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="application-reference">
+                                        @application.ApplicationReference
+                                    </div>
+
+                                    <div class="application-id">
+                                        Application ID:
+                                        @application.ApplicationID
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="applicant-name">
+                                        @application.ApplicantName
+                                    </div>
+
+                                    <div class="applicant-email">
+                                        @application.ApplicantEmail
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="opportunity-code">
+                                        @application.OpportunityCode
+                                    </div>
+
+                                    <div class="opportunity-title">
+                                        @application.OpportunityTitle
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <div class="date-main">
+                                        @application.ApplicationDate.ToString("dd MMM yyyy")
+                                    </div>
+
+                                    <div class="date-secondary">
+                                        @application.ApplicationDate.ToString("HH:mm")
+                                    </div>
+                                </td>
+
+
+                                <td>
+
+                                    @if (application.HasDocuments)
+                                    {
+                                        <div class="document-count">
+                                            @application.DocumentCount
+                                            document(s)
+                                        </div>
+
+                                        if (application.PendingDocumentCount > 0)
+                                        {
+                                            <div class="document-pending">
+                                                @application.PendingDocumentCount
+                                                pending verification
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="document-complete">
+                                                No pending verification
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="document-none">
+                                            No documents submitted
+                                        </div>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge status-@application.Status">
+                                        @application.Status
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <a href="@Url.Action(
+                                        "Review",
+                                        "TechnicianApplication",
+                                        new
+                                        {
+                                            id = application.ApplicationID
+                                        })"
+                                       class="review-button">
+                                        Review Application
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <h3>No applications found</h3>
+
+                <p>
+                    No submitted technician applications match
+                    the current search and filter criteria.
+                </p>
+
+                <a href="@Url.Action(
+                    "ReviewApplications",
+                    "TechnicianApplication")"
+                   class="secondary-button">
+                    View All Applications
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- ============================================================
+         NAVIGATION
+         ============================================================ -->
+
+    <div class="bottom-navigation">
+
+        <a href="@Url.Action(
+            "Manage",
+            "TechnicianOpportunity")"
+           class="secondary-button">
+            Back to Opportunity Management
+        </a>
+
+        <a href="@Url.Action(
+            "Index",
+            "AdministratorDashboard")"
+           class="secondary-button">
+            Back to Administrator Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .admin-applications-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 35px 25px 60px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+    }
+
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+
+    .admin-applications-header {
+        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        color: white;
+        border-radius: 14px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+
+    .page-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.4px;
+        opacity: 0.85;
+        margin-bottom: 8px;
+    }
+
+
+    .admin-applications-header h1 {
+        margin: 0 0 10px;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+
+    .admin-applications-header p {
+        margin: 0;
+        max-width: 750px;
+        line-height: 1.6;
+        opacity: 0.95;
+    }
+
+
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+
+    .primary-button,
+    .secondary-button,
+    .review-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 17px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+
+    .primary-button {
+        background: #0D5CC1;
+        color: white;
+    }
+
+
+        .primary-button:hover {
+            background: #094b9f;
+        }
+
+
+    .secondary-button {
+        background: white;
+        color: #0D5CC1;
+        border: 1px solid #cbd5e1;
+    }
+
+
+        .secondary-button:hover {
+            background: #f1f5f9;
+            color: #094b9f;
+        }
+
+
+    .admin-applications-header .secondary-button {
+        background: rgba(255,255,255,0.12);
+        border-color: rgba(255,255,255,0.35);
+        color: white;
+    }
+
+
+        .admin-applications-header .secondary-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+
+    .review-button {
+        background: #0D5CC1;
+        color: white;
+        white-space: nowrap;
+    }
+
+
+        .review-button:hover {
+            background: #094b9f;
+            color: white;
+        }
+
+
+    /* ============================================================
+       SUMMARY
+       ============================================================ */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+    }
+
+
+    .summary-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+
+
+    .summary-value {
+        font-size: 30px;
+        font-weight: 700;
+        color: #0D5CC1;
+        margin-bottom: 6px;
+    }
+
+
+    .summary-description {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.45;
+    }
+
+
+    /* ============================================================
+       FILTER
+       ============================================================ */
+
+    .filter-card,
+    .applications-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+    }
+
+
+    .filter-card {
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+
+    .filter-heading h2,
+    .results-header h2 {
+        margin: 0 0 5px;
+        font-size: 20px;
+        color: #1e293b;
+    }
+
+
+    .filter-heading p,
+    .results-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1.5fr;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+
+    .filter-field label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+
+    .filter-field input,
+    .filter-field select {
+        width: 100%;
+        box-sizing: border-box;
+        height: 44px;
+        padding: 0 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: white;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+
+        .filter-field input:focus,
+        .filter-field select:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.1);
+        }
+
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+
+    /* ============================================================
+       RESULTS
+       ============================================================ */
+
+    .results-header {
+        padding: 23px 25px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+
+    .applications-table {
+        width: 100%;
+        min-width: 1150px;
+        border-collapse: collapse;
+    }
+
+
+        .applications-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+
+        .applications-table td {
+            padding: 17px 16px;
+            border-bottom: 1px solid #eef2f7;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+
+        .applications-table tbody tr:hover {
+            background: #f8fbff;
+        }
+
+
+    .application-reference,
+    .applicant-name,
+    .opportunity-code {
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+
+    .application-id,
+    .applicant-email,
+    .opportunity-title,
+    .date-secondary {
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+
+    .date-main {
+        font-weight: 600;
+        color: #334155;
+    }
+
+
+    .document-count {
+        font-weight: 600;
+        color: #334155;
+    }
+
+
+    .document-pending {
+        margin-top: 4px;
+        color: #b45309;
+        font-size: 12px;
+    }
+
+
+    .document-complete {
+        margin-top: 4px;
+        color: #15803d;
+        font-size: 12px;
+    }
+
+
+    .document-none {
+        color: #64748b;
+    }
+
+
+    /* ============================================================
+       STATUS
+       ============================================================ */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+
+    .status-Submitted {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+
+    .status-UnderReview {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+
+    .status-DocumentsPending {
+        background: #ffedd5;
+        color: #c2410c;
+    }
+
+
+    .status-DocumentsVerified {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+
+    .status-Shortlisted {
+        background: #e0e7ff;
+        color: #4338ca;
+    }
+
+
+    .status-Selected {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+
+    .status-NotSelected {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+
+    .status-Withdrawn {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+
+    /* ============================================================
+       EMPTY STATE
+       ============================================================ */
+
+    .empty-state {
+        text-align: center;
+        padding: 65px 25px;
+    }
+
+
+        .empty-state h3 {
+            margin: 0 0 8px;
+            color: #334155;
+            font-size: 20px;
+        }
+
+
+        .empty-state p {
+            max-width: 550px;
+            margin: 0 auto 20px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+
+    .bottom-navigation {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @@media (max-width: 1100px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .filter-search {
+            grid-column: 1 / -1;
+        }
+    }
+
+
+    @@media (max-width: 750px) {
+
+        .admin-applications-page {
+            padding: 20px 15px 40px;
+        }
+
+        .admin-applications-header {
+            flex-direction: column;
+        }
+
+        .header-actions {
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-search {
+            grid-column: auto;
+        }
+
+        .filter-actions,
+        .bottom-navigation {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .secondary-button,
+        .review-button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>

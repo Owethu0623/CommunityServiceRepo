@@ -380,53 +380,57 @@
     <!-- FOOTER -->
     <div class="admin-review-footer">
 
-        <a href="@Url.Action("Index", "AdministratorRequests")"
-           class="admin-back-button">
+        @if (!string.IsNullOrWhiteSpace(ViewBag.ReturnUrl as string))
+        {
+            <a href="@ViewBag.ReturnUrl"
+               class="admin-back-button">
+                Back to Request History
+            </a>
+        }
+        else
+        {
+            <a href="@Url.Action("Index", "AdministratorRequests")"
+               class="admin-back-button">
+                Back to Requests
+            </a>
+        }
 
-            Back to Requests
+        @if (ViewBag.LinkedAssetID != null)
+        {
+            <a href="@Url.Action(
+    "Details",
+    "MunicipalAsset",
+    new { id = ViewBag.LinkedAssetID }
+)"
+               class="admin-back-button">
+                Back to Asset Register
+            </a>
+        }
 
-        </a>
         @if (ViewBag.ViolationRecorded == true)
         {
             <div class="admin-violation-success">
+
                 <strong>Violation Recorded</strong>
+
                 <span>
                     The violation for this request has been successfully submitted
                     and recorded.
                 </span>
+
             </div>
         }
         else
         {
             <a href="@Url.Action(
-        "RecordViolation",
-        "AdministratorRequests",
-        new { id = Model.RequestID }
-    )"
+                    "RecordViolation",
+                    "AdministratorRequests",
+                    new { id = Model.RequestID }
+                 )"
                class="admin-approve-button">
                 Record Violation
             </a>
         }
+
     </div>
-
-    @if (!string.IsNullOrWhiteSpace(ViewBag.ReturnUrl as string))
-    {
-        <a href="@ViewBag.ReturnUrl"
-           class="admin-back-button">
-            Back to System History
-        </a>
-    }
-
-
-    @if (ViewBag.LinkedAssetID != null)
-    {
-        <a href="@Url.Action(
-        "Details",
-        "MunicipalAsset",
-        new { id = ViewBag.LinkedAssetID }
-    )"
-           class="admin-back-button">
-            Back to Asset Register
-        </a>
-    }
 </div>

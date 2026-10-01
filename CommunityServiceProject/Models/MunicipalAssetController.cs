@@ -3390,6 +3390,689 @@ public ActionResult Index(
             }
         }
 
+      
+// =========================================================
+// ASSET PROJECT LINKING
+// =========================================================
+
+// =========================================================
+// LINK PROJECT TO ASSET — GET
+// =========================================================
+
+[HttpGet]
+public ActionResult LinkProject(
+    int? id,
+    string searchTerm,
+    string projectType,
+    string projectStatus,
+    string projectPriority,
+    int? ward)
+        {
+            if (!IsAdministrator())
+                return new HttpUnauthorizedResult();
+
+            if (!id.HasValue)
+                return HttpNotFound();
+
+            var asset =
+                db.MunicipalAssets
+                    .AsNoTracking()
+                    .Include(a => a.Ward)
+                    .FirstOrDefault(a =>
+                        a.AssetID == id.Value);
+
+            if (asset == null)
+                return HttpNotFound();
+
+
+            // =====================================================
+            // GET PROJECTS ALREADY LINKED TO THIS ASSET
+            // =====================================================
+
+            var linkedProjectIds =
+                db.AssetProjects
+                    .Where(ap =>
+                        ap.AssetID == asset.AssetID)
+                    .Select(ap => ap.ProjectID)
+                    .ToList();
+
+
+             var linkedProjects =
+    db.AssetProjects
+        .AsNoTracking()
+        .Include(ap => ap.Project)
+        .Include(ap => ap.Project.Ward)
+        .Include(ap => ap.LinkedByAdministrator)
+        .Where(ap => ap.AssetID == asset.AssetID)
+        .ToList();
+
+
+            var linkedProjectItems =
+                linkedProjects
+                    .Where(ap =>
+                        ap.Project != null)
+                    .Select(ap => new AssetProjectLinkedItemViewModel
+                    {
+                        AssetProjectID =
+                            ap.AssetProjectID,
+
+                        ProjectID =
+                            ap.ProjectID,
+
+                        ProjectCode =
+                            ap.Project.ProjectCode,
+
+                        ProjectName =
+                            ap.Project.ProjectName,
+
+                        ProjectType =
+                            ap.Project.ProjectType,
+
+                        ProjectLocation =
+                            ap.Project.ProjectLocation,
+
+                        WardName =
+                            ap.Project.Ward != null
+                                ? "Ward " +
+                                  ap.Project.Ward.WardNumber +
+                                  " – " +
+                                  ap.Project.Ward.WardName
+                                : "Ward unavailable",
+
+                        Status =
+                            ap.Project.Status.ToString(),
+
+                        Priority =
+                            ap.Project.Priority.ToString(),
+
+                        StartDate =
+                            ap.Project.StartDate,
+
+                        ExpectedCompletionDate =
+                            ap.Project.ExpectedCompletionDate,
+
+                        ActualCompletionDate =
+                            ap.Project.ActualCompletionDate,
+
+                        LinkDate =
+                            ap.LinkDate,
+
+                        Notes =
+                            ap.Notes,
+
+                        LinkedByAdministratorName =
+                            ap.LinkedByAdministrator != null
+                                ? ap.LinkedByAdministrator.FirstName +
+                                  " " +
+                                  ap.LinkedByAdministrator.LastName
+                                : "Administrator unavailable"
+                    })
+                    .OrderByDescending(x => x.LinkDate)
+                    .ToList();
+
+
+            // =====================================================
+            // AVAILABLE PROJECTS
+            // =====================================================
+
+            var availableQuery =
+                db.MunicipalProjects
+                    .AsNoTracking()
+                    .Include(p => p.Ward)
+                    .Where(p =>
+                        !linkedProjectIds.Contains(p.ProjectID));
+
+
+            // =====================================================
+            // SEARCH
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm =
+                    searchTerm.Trim();
+
+                availableQuery =
+                    availableQuery.Where(p =>
+                        p.ProjectCode.Contains(searchTerm) ||
+                        p.ProjectName.Contains(searchTerm) ||
+                        p.ProjectType.Contains(searchTerm) ||
+                        p.ProjectLocation.Contains(searchTerm) ||
+                        p.LocationDescription.Contains(searchTerm));
+            }
+
+
+            // =====================================================
+            // PROJECT TYPE FILTER
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(projectType))
+            {
+                availableQuery =
+                    availableQuery.Where(p =>
+                        p.ProjectType == projectType);
+            }
+
+
+            // =====================================================
+            // PROJECT STATUS FILTER
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(projectStatus))
+            {
+                MunicipalProjectStatus selectedStatus;
+
+                if (Enum.TryParse(
+                    projectStatus,
+                    true,
+                    out selectedStatus))
+                {
+                    availableQuery =
+                        availableQuery.Where(p =>
+                            p.Status == selectedStatus);
+                }
+            }
+
+
+            // =====================================================
+            // PROJECT PRIORITY FILTER
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(projectPriority))
+            {
+                MunicipalProjectPriority selectedPriority;
+
+                if (Enum.TryParse(
+                    projectPriority,
+                    true,
+                    out selectedPriority))
+                {
+                    availableQuery =
+                        availableQuery.Where(p =>
+                            p.Priority == selectedPriority);
+                }
+            }
+
+
+            // =====================================================
+            // WARD FILTER
+            // =====================================================
+
+            if (ward.HasValue)
+            {
+                availableQuery =
+                    availableQuery.Where(p =>
+                        p.WardID == ward.Value);
+            }
+
+
+            // =====================================================
+            // LIMIT RESULTS
+            // =====================================================
+
+            var availableProjects =
+                availableQuery
+                    .OrderBy(p => p.ProjectCode)
+                    .Take(100)
+                    .ToList();
+
+
+            // =====================================================
+            // MAP AVAILABLE PROJECTS
+            // =====================================================
+
+            var availableProjectItems =
+                availableProjects
+                    .Select(p => new AssetProjectAvailableItemViewModel
+                    {
+                        ProjectID =
+                            p.ProjectID,
+
+                        ProjectCode =
+                            p.ProjectCode,
+
+                        ProjectName =
+                            p.ProjectName,
+
+                        ProjectType =
+                            p.ProjectType,
+
+                        ProjectLocation =
+                            p.ProjectLocation,
+
+                        WardName =
+                            p.Ward != null
+                                ? "Ward " +
+                                  p.Ward.WardNumber +
+                                  " – " +
+                                  p.Ward.WardName
+                                : "Ward unavailable",
+
+                        Status =
+                            p.Status.ToString(),
+
+                        Priority =
+                            p.Priority.ToString(),
+
+                        StartDate =
+                            p.StartDate,
+
+                        ExpectedCompletionDate =
+                            p.ExpectedCompletionDate
+                    })
+                    .ToList();
+
+
+            // =====================================================
+            // BUILD VIEW MODEL
+            // =====================================================
+
+            var model =
+                new MunicipalAssetProjectsViewModel
+                {
+                    AssetID =
+                        asset.AssetID,
+
+                    AssetCode =
+                        asset.AssetCode,
+
+                    AssetName =
+                        asset.AssetName,
+
+                    AssetType =
+                        asset.AssetType,
+
+                    AssetCategory =
+                        asset.AssetCategory,
+
+                    WardName =
+                        asset.Ward != null
+                            ? "Ward " +
+                              asset.Ward.WardNumber +
+                              " – " +
+                              asset.Ward.WardName
+                            : "Ward unavailable",
+
+                    LocationDescription =
+                        asset.LocationDescription,
+
+                    LinkedProjects =
+                        linkedProjectItems,
+
+                    AvailableProjects =
+                        availableProjectItems,
+
+                    SearchTerm =
+                        searchTerm,
+
+                    ProjectTypeFilter =
+                        projectType,
+
+                    ProjectStatusFilter =
+                        projectStatus,
+
+                    ProjectPriorityFilter =
+                        projectPriority,
+
+                    WardFilter =
+                        ward
+                };
+
+
+            PopulateAssetProjectOptions(model);
+
+
+            return View(model);
+        }
+
+
+        // =========================================================
+        // POPULATE PROJECT FILTER OPTIONS
+        // =========================================================
+
+        private void PopulateAssetProjectOptions(
+            MunicipalAssetProjectsViewModel model)
+        {
+            // =====================================================
+            // PROJECT TYPES
+            // =====================================================
+
+            model.ProjectTypeOptions =
+                db.MunicipalProjects
+                    .AsNoTracking()
+                    .Where(p =>
+                        p.ProjectType != null)
+                    .Select(p =>
+                        p.ProjectType)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToList()
+                    .Select(type =>
+                        new SelectListItem
+                        {
+                            Text =
+                                type,
+
+                            Value =
+                                type,
+
+                            Selected =
+                                type ==
+                                model.ProjectTypeFilter
+                        })
+                    .ToList();
+
+
+            // =====================================================
+            // PROJECT STATUS
+            // =====================================================
+
+            model.ProjectStatusOptions =
+                Enum.GetValues(
+                    typeof(MunicipalProjectStatus))
+                    .Cast<MunicipalProjectStatus>()
+                    .Select(status =>
+                        new SelectListItem
+                        {
+                            Text =
+                                status.ToString(),
+
+                            Value =
+                                status.ToString(),
+
+                            Selected =
+                                status.ToString() ==
+                                model.ProjectStatusFilter
+                        })
+                    .ToList();
+
+
+            // =====================================================
+            // PROJECT PRIORITY
+            // =====================================================
+
+            model.ProjectPriorityOptions =
+                Enum.GetValues(
+                    typeof(MunicipalProjectPriority))
+                    .Cast<MunicipalProjectPriority>()
+                    .Select(priority =>
+                        new SelectListItem
+                        {
+                            Text =
+                                priority.ToString(),
+
+                            Value =
+                                priority.ToString(),
+
+                            Selected =
+                                priority.ToString() ==
+                                model.ProjectPriorityFilter
+                        })
+                    .ToList();
+
+
+            // =====================================================
+            // WARDS
+            // =====================================================
+
+            model.WardOptions =
+                db.Wards
+                    .AsNoTracking()
+                    .Where(w =>
+                        w.IsActive)
+                    .ToList()
+                    .OrderBy(w =>
+                    {
+                        int number;
+
+                        return int.TryParse(
+                            w.WardNumber,
+                            out number)
+                            ? number
+                            : int.MaxValue;
+                    })
+                    .Select(w =>
+                        new SelectListItem
+                        {
+                            Text =
+                                "Ward " +
+                                w.WardNumber +
+                                " – " +
+                                w.WardName,
+
+                            Value =
+                                w.WardID.ToString(),
+
+                            Selected =
+                                model.WardFilter.HasValue &&
+                                model.WardFilter.Value ==
+                                w.WardID
+                        })
+                    .ToList();
+        }
+
+
+        // =========================================================
+        // LINK PROJECT TO ASSET — POST
+        // =========================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LinkProject(
+            LinkAssetProjectViewModel model)
+        {
+            if (!IsAdministrator())
+                return new HttpUnauthorizedResult();
+
+            var administratorID =
+                GetAdministratorID();
+
+            if (!administratorID.HasValue)
+                return new HttpUnauthorizedResult();
+
+
+            if (model.AssetID <= 0)
+                return HttpNotFound();
+
+
+            if (model.ProjectID <= 0)
+            {
+                TempData["ErrorMessage"] =
+                    "Please select a municipal project to link.";
+
+                return RedirectToAction(
+                    "LinkProject",
+                    new
+                    {
+                        id = model.AssetID
+                    });
+            }
+
+
+            // =====================================================
+            // GET ASSET
+            // =====================================================
+
+            var asset =
+                db.MunicipalAssets
+                    .FirstOrDefault(a =>
+                        a.AssetID ==
+                        model.AssetID);
+
+            if (asset == null)
+                return HttpNotFound();
+
+
+            // =====================================================
+            // GET PROJECT
+            // =====================================================
+
+            var project =
+                db.MunicipalProjects
+                    .FirstOrDefault(p =>
+                        p.ProjectID ==
+                        model.ProjectID);
+
+            if (project == null)
+            {
+                TempData["ErrorMessage"] =
+                    "The selected municipal project could not be found.";
+
+                return RedirectToAction(
+                    "LinkProject",
+                    new
+                    {
+                        id = model.AssetID
+                    });
+            }
+
+
+            // =====================================================
+            // PREVENT DUPLICATE RELATIONSHIP
+            // =====================================================
+
+            var alreadyLinked =
+                db.AssetProjects.Any(ap =>
+                    ap.AssetID ==
+                    model.AssetID &&
+                    ap.ProjectID ==
+                    model.ProjectID);
+
+            if (alreadyLinked)
+            {
+                TempData["ErrorMessage"] =
+                    "This project is already linked to the selected asset.";
+
+                return RedirectToAction(
+                    "LinkProject",
+                    new
+                    {
+                        id = model.AssetID
+                    });
+            }
+
+
+            // =====================================================
+            // CLEAN NOTES
+            // =====================================================
+
+            var notes =
+                string.IsNullOrWhiteSpace(model.Notes)
+                    ? null
+                    : model.Notes.Trim();
+
+
+            // =====================================================
+            // CREATE RELATIONSHIP
+            // =====================================================
+
+            var assetProject =
+                new AssetProject
+                {
+                    AssetID =
+                        asset.AssetID,
+
+                    ProjectID =
+                        project.ProjectID,
+
+                    LinkedByAdministratorID =
+                        administratorID.Value,
+
+                    LinkDate =
+                        DateTime.Now,
+
+                    Notes =
+                        notes
+                };
+
+
+            db.AssetProjects.Add(assetProject);
+
+            db.SaveChanges();
+
+
+            // =====================================================
+            // SUCCESS
+            // =====================================================
+
+            TempData["SuccessMessage"] =
+                "Project " +
+                project.ProjectCode +
+                " was successfully linked to asset " +
+                asset.AssetCode +
+                ".";
+
+
+            return RedirectToAction(
+                "LinkProject",
+                new
+                {
+                    id = asset.AssetID
+                });
+        }
+
+
+        // =========================================================
+        // UNLINK PROJECT FROM ASSET
+        // =========================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UnlinkProject(
+            int? id,
+            int? assetID)
+        {
+            if (!IsAdministrator())
+                return new HttpUnauthorizedResult();
+
+
+            if (!id.HasValue ||
+                !assetID.HasValue)
+                return HttpNotFound();
+
+
+            var assetProject =
+                db.AssetProjects
+                    .Include(ap => ap.Project)
+                    .FirstOrDefault(ap =>
+                        ap.AssetProjectID ==
+                        id.Value &&
+                        ap.AssetID ==
+                        assetID.Value);
+
+
+            if (assetProject == null)
+                return HttpNotFound();
+
+
+            var projectCode =
+                assetProject.Project != null
+                    ? assetProject.Project.ProjectCode
+                    : "the selected project";
+
+
+            db.AssetProjects.Remove(
+                assetProject);
+
+            db.SaveChanges();
+
+
+            TempData["SuccessMessage"] =
+                "Project " +
+                projectCode +
+                " was successfully unlinked from the asset.";
+
+
+            return RedirectToAction(
+                "LinkProject",
+                new
+                {
+                    id = assetID.Value
+                });
+        }
+
+
+
         [HttpGet]
         public ActionResult UpdateConditionAfterMaintenance(int? id)
         {

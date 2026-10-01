@@ -1,0 +1,1070 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationSelectViewModel
+
+@{
+    ViewBag.Title = "Select Technician Applicant";
+}
+
+<div class="select-applicant-page">
+
+    <div class="select-applicant-header">
+        <div>
+            <div class="page-kicker">TECHNICIAN RECRUITMENT</div>
+
+            <h1>Select Technician Applicant</h1>
+
+            <p>
+                Review the completed interview information before recording
+                the applicant's selection.
+            </p>
+        </div>
+
+        <div class="application-reference">
+            @Model.ApplicationReference
+        </div>
+    </div>
+
+    <div class="select-applicant-layout">
+
+        <main class="select-applicant-main">
+
+            @using (Html.BeginForm(
+                "SelectApplicant",
+                "TechnicianApplication",
+                FormMethod.Post,
+                new
+                {
+                    @class = "selection-form",
+                    id = "selectionForm"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.ApplicationID)
+
+                <section class="selection-card">
+
+                    <div class="card-heading">
+                        <h2>Applicant Information</h2>
+                        <span class="status-badge">
+                            @Model.ApplicationStatus
+                        </span>
+                    </div>
+
+                    <div class="information-grid">
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Applicant Name
+                            </span>
+
+                            <span class="information-value">
+                                @Model.ApplicantName
+                            </span>
+                        </div>
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Email Address
+                            </span>
+
+                            <span class="information-value">
+                                @Model.ApplicantEmail
+                            </span>
+                        </div>
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Application Reference
+                            </span>
+
+                            <span class="information-value">
+                                @Model.ApplicationReference
+                            </span>
+                        </div>
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Application Date
+                            </span>
+
+                            <span class="information-value">
+                                @Model.ApplicationDate.ToString("dd MMM yyyy HH:mm")
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="selection-card">
+
+                    <div class="card-heading">
+                        <h2>Opportunity Information</h2>
+                    </div>
+
+                    <div class="information-grid">
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Opportunity Code
+                            </span>
+
+                            <span class="information-value">
+                                @Model.OpportunityCode
+                            </span>
+                        </div>
+
+                        <div class="information-item information-item-wide">
+                            <span class="information-label">
+                                Opportunity
+                            </span>
+
+                            <span class="information-value">
+                                @Model.OpportunityTitle
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="selection-card">
+
+                    <div class="card-heading">
+                        <h2>Completed Interview</h2>
+                    </div>
+
+                    <div class="information-grid">
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Interview Method
+                            </span>
+
+                            <span class="information-value">
+                                @Model.InterviewMethod
+                            </span>
+                        </div>
+
+                        <div class="information-item">
+                            <span class="information-label">
+                                Interview Date
+                            </span>
+
+                            <span class="information-value">
+                                @Model.InterviewDate.ToString("dd MMM yyyy HH:mm")
+                            </span>
+                        </div>
+
+                        <div class="information-item information-item-wide">
+                            <span class="information-label">
+                                Interview Location
+                            </span>
+
+                            <span class="information-value">
+                                @Model.InterviewLocation
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="interview-outcome-box">
+
+                        <div class="outcome-label">
+                            Interview Outcome
+                        </div>
+
+                        <div class="outcome-text">
+                            @Model.InterviewOutcome
+                        </div>
+
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.InterviewComments))
+                    {
+                        <div class="interview-comments-box">
+
+                            <div class="outcome-label">
+                                Interview Comments
+                            </div>
+
+                            <div class="outcome-text">
+                                @Model.InterviewComments
+                            </div>
+
+                        </div>
+                    }
+
+                </section>
+
+                <section class="selection-card">
+
+                    <div class="card-heading">
+                        <h2>Selection Decision</h2>
+                    </div>
+
+                    <div class="decision-notice">
+                        <strong>Selection stage</strong>
+
+                        <p>
+                            Selecting this applicant will move the application
+                            from <strong>Interviewed</strong> to
+                            <strong>Selected</strong>.
+                            Final applicant verification and onboarding will
+                            be completed in later recruitment stages.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.Comments,
+                            new
+                            {
+                                @class = "form-label"
+                            })
+
+                        @Html.TextAreaFor(
+                            m => m.Comments,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = 6,
+                                maxlength = 3000,
+                                placeholder =
+                                    "Enter optional comments supporting the selection decision."
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Comments,
+                            "",
+                            new
+                            {
+                                @class = "validation-message"
+                            })
+
+                        <div class="field-help">
+                            Optional. Maximum 3000 characters.
+                        </div>
+
+                    </div>
+
+                    <div class="confirmation-panel">
+
+                        <label class="confirmation-label">
+
+                            @Html.CheckBoxFor(
+                                m => m.ConfirmSelection,
+                                new
+                                {
+                                    id = "confirmSelection"
+                                })
+
+                            <span>
+                                I confirm that I have reviewed the applicant's
+                                completed interview and want to select this applicant.
+                            </span>
+
+                        </label>
+
+                        @Html.ValidationMessageFor(
+                            m => m.ConfirmSelection,
+                            "",
+                            new
+                            {
+                                @class = "validation-message"
+                            })
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <a href="@Url.Action(
+                            "Review",
+                            "TechnicianApplication",
+                            new
+                            {
+                                id = Model.ApplicationID
+                            })"
+                           class="secondary-button">
+                            Back to Application
+                        </a>
+
+                        <a href="@Url.Action(
+                            "ReviewApplications",
+                            "TechnicianApplication")"
+                           class="secondary-button">
+                            Back to Applications
+                        </a>
+
+                        <button type="submit"
+                                id="selectApplicantButton"
+                                class="primary-button"
+                                disabled>
+                            Select Applicant
+                        </button>
+
+                    </div>
+
+                </section>
+            }
+
+        </main>
+
+        <aside class="selection-sidebar">
+
+            <section class="sidebar-card">
+
+                <h3>Recruitment Progress</h3>
+
+                <div class="progress-list">
+
+                    <div class="progress-item completed">
+                        <span class="progress-number">1</span>
+                        <span>Application</span>
+                    </div>
+
+                    <div class="progress-item completed">
+                        <span class="progress-number">2</span>
+                        <span>Screening</span>
+                    </div>
+
+                    <div class="progress-item completed">
+                        <span class="progress-number">3</span>
+                        <span>Documents</span>
+                    </div>
+
+                    <div class="progress-item completed">
+                        <span class="progress-number">4</span>
+                        <span>Assessment</span>
+                    </div>
+
+                    <div class="progress-item completed">
+                        <span class="progress-number">5</span>
+                        <span>Interview</span>
+                    </div>
+
+                    <div class="progress-item current">
+                        <span class="progress-number">6</span>
+                        <span>Selection</span>
+                    </div>
+
+                    <div class="progress-item">
+                        <span class="progress-number">7</span>
+                        <span>Final Verification</span>
+                    </div>
+
+                    <div class="progress-item">
+                        <span class="progress-number">8</span>
+                        <span>Onboarding</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="sidebar-card">
+
+                <h3>Selection Guidance</h3>
+
+                <p>
+                    Selection should be recorded only after the applicant's
+                    interview has been completed and reviewed.
+                </p>
+
+                <p>
+                    Selecting the applicant does not create a technician
+                    profile or grant technician access. Those actions belong
+                    to the later onboarding stages.
+                </p>
+
+            </section>
+
+            <section class="sidebar-card">
+
+                <h3>Current Stage</h3>
+
+                <div class="current-stage">
+                    Interviewed
+                </div>
+
+                <div class="stage-arrow">
+                    ↓
+                </div>
+
+                <div class="next-stage">
+                    Selected
+                </div>
+
+            </section>
+
+            <a href="@Url.Action(
+                "Index",
+                "TechnicianOpportunity")"
+               class="sidebar-navigation-button">
+                Opportunity Management
+            </a>
+
+            <a href="@Url.Action(
+                "Index",
+                "Administrator")"
+               class="sidebar-navigation-button">
+                Administrator Dashboard
+            </a>
+
+        </aside>
+
+    </div>
+
+</div>
+
+<style>
+
+    .select-applicant-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    color: #1f2937;
+}
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.select-applicant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    background: #0D5CC1;
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.page-kicker {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    color: #ffffff;
+    opacity: 0.88;
+}
+
+.select-applicant-header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.select-applicant-header p {
+    margin: 0;
+    max-width: 760px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ffffff;
+    opacity: 0.94;
+}
+
+.application-reference {
+    flex-shrink: 0;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   MAIN PAGE LAYOUT
+   ========================================================= */
+
+.select-applicant-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 25px;
+    align-items: start;
+}
+
+.select-applicant-main {
+    min-width: 0;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.selection-card,
+.sidebar-card {
+    background: #ffffff;
+    border: 1px solid #e3e8ef;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+}
+
+.selection-card {
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.sidebar-card {
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+/* =========================================================
+   CARD HEADINGS
+   ========================================================= */
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e8edf3;
+}
+
+.card-heading h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 19px;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.status-badge {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    background: #e8f1ff;
+    border: 1px solid #c9dcf7;
+    border-radius: 20px;
+    color: #0D5CC1;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   INFORMATION GRID
+   ========================================================= */
+
+.information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+    align-items: stretch;
+}
+
+/* =========================================================
+   INFORMATION FIELD
+   ========================================================= */
+
+.information-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 7px;
+    min-width: 0;
+    min-height: 72px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    background: #f8fafc;
+    border: 1px solid #e5eaf0;
+    border-radius: 8px;
+}
+
+.information-item-wide {
+    grid-column: 1 / -1;
+}
+
+.information-label {
+    display: block;
+    margin: 0;
+    color: #667085;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+}
+
+.information-value {
+    display: block;
+    margin: 0;
+    color: #172033;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 600;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   INTERVIEW OUTCOME
+   ========================================================= */
+
+.interview-outcome-box,
+.interview-comments-box {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #e5eaf0;
+    border-radius: 8px;
+}
+
+.interview-comments-box {
+    margin-top: 12px;
+}
+
+.outcome-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #667085;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+}
+
+.outcome-text {
+    margin: 0;
+    color: #273449;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   SELECTION DECISION
+   ========================================================= */
+
+.decision-notice {
+    margin-bottom: 25px;
+    padding: 18px;
+    background: #eef5ff;
+    border-left: 4px solid #0D5CC1;
+    border-radius: 7px;
+}
+
+.decision-notice strong {
+    color: #0D5CC1;
+}
+
+.decision-notice p {
+    margin: 7px 0 0;
+    color: #344054;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #273449;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.form-control {
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    color: #172033;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #0D5CC1;
+    box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.12);
+}
+
+.field-help {
+    margin-top: 7px;
+    color: #7a8699;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.validation-message {
+    display: block;
+    margin-top: 6px;
+    color: #b42318;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   CONFIRMATION
+   ========================================================= */
+
+.confirmation-panel {
+    margin-bottom: 25px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #dce3eb;
+    border-radius: 8px;
+}
+
+.confirmation-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    color: #273449;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.confirmation-label input {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin: 3px 0 0;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-top: 5px;
+}
+
+.primary-button,
+.secondary-button,
+.sidebar-navigation-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 42px;
+    box-sizing: border-box;
+    padding: 0 17px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
+}
+
+.primary-button {
+    background: #0D5CC1;
+    border: 1px solid #0D5CC1;
+    color: #ffffff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background: #094b9f;
+    border-color: #094b9f;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.primary-button:disabled {
+    background: #b8c0cc;
+    border-color: #b8c0cc;
+    color: #f7f8fa;
+    cursor: not-allowed;
+}
+
+.secondary-button {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #344054;
+}
+
+.secondary-button:hover {
+    background: #f5f7fa;
+    border-color: #b8c1cd;
+    color: #172033;
+    text-decoration: none;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.selection-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-card h3 {
+    margin: 0 0 15px;
+    color: #172033;
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.sidebar-card p {
+    margin: 0 0 12px;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.sidebar-card p:last-child {
+    margin-bottom: 0;
+}
+
+/* =========================================================
+   RECRUITMENT PROGRESS
+   ========================================================= */
+
+.progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #8a94a6;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.progress-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #edf0f4;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.progress-item.completed {
+    color: #344054;
+}
+
+.progress-item.completed .progress-number {
+    background: #dff5e7;
+    color: #18794e;
+}
+
+.progress-item.current {
+    color: #0D5CC1;
+    font-weight: 700;
+}
+
+.progress-item.current .progress-number {
+    background: #0D5CC1;
+    color: #ffffff;
+}
+
+/* =========================================================
+   CURRENT / NEXT STAGE
+   ========================================================= */
+
+.current-stage,
+.next-stage {
+    padding: 11px;
+    border-radius: 7px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.current-stage {
+    background: #eef5ff;
+    color: #0D5CC1;
+}
+
+.stage-arrow {
+    padding: 7px;
+    color: #8a94a6;
+    text-align: center;
+    font-weight: 700;
+}
+
+.next-stage {
+    background: #f2f4f7;
+    color: #667085;
+}
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+
+.sidebar-navigation-button {
+    width: 100%;
+    margin-bottom: 10px;
+    background: #ffffff;
+    border: 1px solid #d5dbe3;
+    color: #344054;
+}
+
+.sidebar-navigation-button:hover {
+    background: #f5f7fa;
+    border-color: #b8c1cd;
+    color: #172033;
+    text-decoration: none;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@@media (max-width: 1050px) {
+
+    .select-applicant-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .selection-sidebar {
+        position: static;
+    }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@@media (max-width: 700px) {
+
+    .select-applicant-page {
+        padding: 15px;
+    }
+
+    .select-applicant-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 22px;
+    }
+
+    .select-applicant-header h1 {
+        font-size: 24px;
+    }
+
+    .application-reference {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .selection-card {
+        padding: 18px;
+    }
+
+    .card-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .information-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .information-item-wide {
+        grid-column: auto;
+    }
+
+    .information-item {
+        min-height: auto;
+        padding: 13px 14px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+    }
+}
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var checkbox =
+            document.getElementById("confirmSelection");
+
+        var button =
+            document.getElementById("selectApplicantButton");
+
+        var form =
+            document.getElementById("selectionForm");
+
+        if (!checkbox || !button || !form) {
+            return;
+        }
+
+        checkbox.addEventListener("change", function () {
+            button.disabled = !checkbox.checked;
+        });
+
+        form.addEventListener("submit", function (event) {
+
+            if (!checkbox.checked) {
+                event.preventDefault();
+
+                alert(
+                    "Please confirm that you want to select this applicant."
+                );
+
+                return;
+            }
+
+            var confirmed =
+                window.confirm(
+                    "Are you sure you want to select this applicant? " +
+                    "The application status will change from Interviewed to Selected."
+                );
+
+            if (!confirmed) {
+                event.preventDefault();
+                return;
+            }
+
+            button.disabled = true;
+            button.innerText = "Saving...";
+        });
+
+    });
+</script>
+

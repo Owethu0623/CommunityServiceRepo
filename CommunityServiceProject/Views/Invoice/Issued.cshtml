@@ -1,0 +1,1005 @@
+﻿
+@model IEnumerable<CommunityServiceProject.Models.Invoice>
+
+@{
+    ViewBag.Title = "Issued Invoices";
+
+    var invoices = Model ?? Enumerable.Empty<CommunityServiceProject.Models.Invoice>();
+
+    var totalInvoices = ViewBag.TotalInvoices != null
+        ? (int)ViewBag.TotalInvoices
+        : invoices.Count();
+
+    var totalBilled = ViewBag.TotalBilled != null
+        ? (decimal)ViewBag.TotalBilled
+        : invoices.Sum(i => i.Amount);
+
+    var totalPaid = ViewBag.TotalPaid != null
+        ? (decimal)ViewBag.TotalPaid
+        : invoices.Sum(i => i.AmountPaid);
+
+    var totalOutstanding = ViewBag.TotalOutstanding != null
+        ? (decimal)ViewBag.TotalOutstanding
+        : invoices.Sum(i => i.Balance);
+}
+
+<style>
+    .invoice-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 22px 50px;
+        color: #1f2937;
+    }
+
+    .invoice-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 30px 32px;
+        color: #ffffff;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 24px rgba(13, 92, 193, 0.18);
+    }
+
+    .invoice-header-content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .invoice-header h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .invoice-header p {
+        margin: 0;
+        max-width: 760px;
+        font-size: 14px;
+        line-height: 1.55;
+        opacity: 0.92;
+    }
+
+    .header-badge {
+        flex-shrink: 0;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 9px;
+        padding: 10px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 650;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .summary-value {
+        display: block;
+        color: #16324f;
+        font-size: 23px;
+        font-weight: 750;
+    }
+
+        .summary-value.blue {
+            color: #0D5CC1;
+        }
+
+        .summary-value.green {
+            color: #18794e;
+        }
+
+        .summary-value.orange {
+            color: #b76e00;
+        }
+
+    .summary-description {
+        display: block;
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .content-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .main-card,
+    .sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .main-card {
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 21px 23px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .card-header h2 {
+            margin: 0 0 5px;
+            color: #16324f;
+            font-size: 18px;
+        }
+
+        .card-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .invoice-table {
+        width: 100%;
+        min-width: 1000px;
+        border-collapse: collapse;
+    }
+
+        .invoice-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.035em;
+            padding: 13px 16px;
+            border-bottom: 1px solid #e3e8ef;
+            white-space: nowrap;
+        }
+
+        .invoice-table td {
+            padding: 15px 16px;
+            border-bottom: 1px solid #edf0f4;
+            vertical-align: middle;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .invoice-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .invoice-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .invoice-number {
+        color: #0D5CC1;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .reference-number {
+        color: #374151;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .citizen-name {
+        font-weight: 650;
+        color: #1f2937;
+    }
+
+    .service-name {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .amount {
+        font-weight: 700;
+        color: #1f2937;
+        white-space: nowrap;
+    }
+
+    .amount-paid {
+        color: #18794e;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .balance {
+        color: #b42318;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .balance-zero {
+        color: #18794e;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .date-value {
+        color: #64748b;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-issued {
+        background: #eaf2ff;
+        color: #0D5CC1;
+        border: 1px solid #c8daf8;
+    }
+
+    .status-partial {
+        background: #fff7e6;
+        color: #9a6500;
+        border: 1px solid #f0d69b;
+    }
+
+    .status-overdue {
+        background: #fff0ef;
+        color: #b42318;
+        border: 1px solid #efc0bc;
+    }
+
+    .status-paid {
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+    }
+
+    .status-cancelled {
+        background: #f1f3f5;
+        color: #64748b;
+        border: 1px solid #d8dde3;
+    }
+
+    .status-default {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #dbe3ec;
+    }
+
+    .view-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 0 11px;
+        border-radius: 7px;
+        border: 1px solid #cfd9e6;
+        background: #ffffff;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+
+        .view-button:hover {
+            background: #f0f6ff;
+            border-color: #0D5CC1;
+            color: #094b9f;
+        }
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #eef4fb;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+        color: #16324f;
+        font-size: 17px;
+    }
+
+    .empty-state p {
+        max-width: 520px;
+        margin: 0 auto;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .sidebar-card {
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+        .sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-card h3 {
+            margin: 0 0 15px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+    .workflow-item {
+        position: relative;
+        padding-left: 25px;
+        padding-bottom: 17px;
+    }
+
+        .workflow-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .workflow-item:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 16px;
+            bottom: 0;
+            width: 1px;
+            background: #d9e1ea;
+        }
+
+    .workflow-dot {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #d5dde7;
+        box-shadow: 0 0 0 1px #c8d2de;
+    }
+
+    .workflow-item.completed .workflow-dot {
+        background: #198754;
+        box-shadow: 0 0 0 1px #198754;
+    }
+
+    .workflow-item.current .workflow-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.12);
+    }
+
+    .workflow-title {
+        color: #374151;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .workflow-description {
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .navigation-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .navigation-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 0 12px;
+        border-radius: 7px;
+        border: 1px solid #d5dde7;
+        background: #ffffff;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+        .navigation-button:hover {
+            background: #f5f8fc;
+            border-color: #b9c8da;
+            color: #0D5CC1;
+        }
+
+        .navigation-button.primary {
+            background: #0D5CC1;
+            border-color: #0D5CC1;
+            color: #ffffff;
+        }
+
+            .navigation-button.primary:hover {
+                background: #094b9f;
+                border-color: #094b9f;
+                color: #ffffff;
+            }
+
+    .info-note {
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 8px;
+        padding: 13px;
+        color: #24415f;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .page-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: 1px solid #cfd7e3;
+        background: #ffffff;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+    }
+
+        .back-button:hover {
+            background: #f5f7fa;
+            color: #0D5CC1;
+        }
+
+    @@media (max-width: 1100px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .content-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .invoice-page {
+            padding: 20px 12px 35px;
+        }
+
+        .invoice-header {
+            padding: 23px;
+        }
+
+        .invoice-header-content {
+            flex-direction: column;
+        }
+
+        .invoice-header h1 {
+            font-size: 23px;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="invoice-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="invoice-header">
+
+        <div class="invoice-header-content">
+
+            <div>
+                <h1>Issued Invoices</h1>
+
+                <p>
+                    View and monitor all invoices issued for municipal
+                    service requests. This register provides Finance with
+                    a complete record of amounts billed to citizens.
+                </p>
+            </div>
+
+            <div class="header-badge">
+                US139 · Invoice Register
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <span class="summary-label">
+                Total Invoices
+            </span>
+
+            <span class="summary-value blue">
+                @totalInvoices
+            </span>
+
+            <span class="summary-description">
+                Invoices currently recorded
+            </span>
+        </div>
+
+
+        <div class="summary-card">
+            <span class="summary-label">
+                Total Billed
+            </span>
+
+            <span class="summary-value">
+                R @totalBilled.ToString("N2")
+            </span>
+
+            <span class="summary-description">
+                Total invoice value
+            </span>
+        </div>
+
+
+        <div class="summary-card">
+            <span class="summary-label">
+                Total Paid
+            </span>
+
+            <span class="summary-value green">
+                R @totalPaid.ToString("N2")
+            </span>
+
+            <span class="summary-description">
+                Payments recorded against invoices
+            </span>
+        </div>
+
+
+        <div class="summary-card">
+            <span class="summary-label">
+                Outstanding
+            </span>
+
+            <span class="summary-value orange">
+                R @totalOutstanding.ToString("N2")
+            </span>
+
+            <span class="summary-description">
+                Remaining invoice balance
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         CONTENT
+         ========================================================= -->
+
+    <div class="content-layout">
+
+        <div class="main-card">
+
+            <div class="card-header">
+
+                <h2>Invoice Register</h2>
+
+                <p>
+                    All invoices generated by the municipal finance system,
+                    ordered from the most recently issued.
+                </p>
+
+            </div>
+
+
+            @if (!invoices.Any())
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        R
+                    </div>
+
+                    <h3>No invoices have been issued</h3>
+
+                    <p>
+                        There are currently no invoices recorded in the
+                        system. Approved chargeable municipal service
+                        requests can be invoiced through the invoice
+                        generation process.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-wrapper">
+
+                    <table class="invoice-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Invoice</th>
+                                <th>Request</th>
+                                <th>Citizen</th>
+                                <th>Municipal Service</th>
+                                <th>Amount</th>
+                                <th>Paid</th>
+                                <th>Balance</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var invoice in invoices)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <span class="invoice-number">
+                                            @invoice.InvoiceNumber
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="reference-number">
+                                            @(invoice.MunicipalServiceRequest != null
+                                                ? invoice.MunicipalServiceRequest.ReferenceNumber
+                                                : "—")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="citizen-name">
+                                            @(invoice.Citizen != null
+                                                ? invoice.Citizen.FirstName + " " + invoice.Citizen.LastName
+                                                : "Unknown Citizen")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="service-name">
+                                            @(invoice.FeeSchedule != null &&
+                                              invoice.FeeSchedule.ServiceType != null
+                                                ? invoice.FeeSchedule.ServiceType.ServiceName
+                                                : "—")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="amount">
+                                            R @invoice.Amount.ToString("N2")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="amount-paid">
+                                            R @invoice.AmountPaid.ToString("N2")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        @if (invoice.Balance > 0)
+                                        {
+                                            <span class="balance">
+                                                R @invoice.Balance.ToString("N2")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="balance-zero">
+                                                R 0.00
+                                            </span>
+                                        }
+                                    </td>
+
+
+                                    <td>
+                                        <span class="date-value">
+                                            @invoice.IssueDate.ToString("dd MMM yyyy")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="date-value">
+                                            @(invoice.DueDate.HasValue
+                                                ? invoice.DueDate.Value.ToString("dd MMM yyyy")
+                                                : "—")
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (invoice.Status ==
+                                            CommunityServiceProject.Models.InvoiceStatus.Issued)
+                                        {
+                                            <span class="status-badge status-issued">
+                                                Issued
+                                            </span>
+                                        }
+                                        else if (invoice.Status ==
+                                            CommunityServiceProject.Models.InvoiceStatus.PartiallyPaid)
+                                        {
+                                            <span class="status-badge status-partial">
+                                                Partially Paid
+                                            </span>
+                                        }
+                                        else if (invoice.Status ==
+                                            CommunityServiceProject.Models.InvoiceStatus.Overdue)
+                                        {
+                                            <span class="status-badge status-overdue">
+                                                Overdue
+                                            </span>
+                                        }
+                                        else if (invoice.Status ==
+                                            CommunityServiceProject.Models.InvoiceStatus.Paid)
+                                        {
+                                            <span class="status-badge status-paid">
+                                                Paid
+                                            </span>
+                                        }
+                                        else if (invoice.Status ==
+                                            CommunityServiceProject.Models.InvoiceStatus.Cancelled)
+                                        {
+                                            <span class="status-badge status-cancelled">
+                                                Cancelled
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge status-default">
+                                                @invoice.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <a href="@Url.Action(
+                                            "Details",
+                                            "Invoice",
+                                            new
+                                            {
+                                                id = invoice.InvoiceID
+                                            })"
+                                           class="view-button">
+                                            View Details
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside>
+
+            <div class="sidebar-card">
+
+                <h3>Financial Workflow</h3>
+
+
+                <div class="workflow-item completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Request Approved
+                    </div>
+
+                    <div class="workflow-description">
+                        Administrator approves the municipal service request.
+                    </div>
+
+                </div>
+
+
+                <div class="workflow-item completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Invoice Issued
+                    </div>
+
+                    <div class="workflow-description">
+                        Finance generates the invoice using the applicable fee schedule.
+                    </div>
+
+                </div>
+
+
+                <div class="workflow-item current">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Invoice Monitoring
+                    </div>
+
+                    <div class="workflow-description">
+                        Finance monitors billed amounts, payments and outstanding balances.
+                    </div>
+
+                </div>
+
+
+                <div class="workflow-item">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Payment
+                    </div>
+
+                    <div class="workflow-description">
+                        Citizens settle outstanding municipal service invoices.
+                    </div>
+
+                </div>
+
+
+                <div class="workflow-item">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Service Processing
+                    </div>
+
+                    <div class="workflow-description">
+                        Approved and paid services continue to operational processing.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-card">
+
+                <h3>Invoice Information</h3>
+
+                <div class="info-note">
+                    This page contains the complete invoice register.
+                    Invoice records remain available after generation so
+                    Finance can monitor billing, payments and outstanding
+                    balances throughout the service lifecycle.
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-card">
+
+                <h3>Navigation</h3>
+
+                <div class="navigation-links">
+
+                    <a href="@Url.Action("Index", "FinanceDashboard")"
+                       class="navigation-button primary">
+                        Finance Dashboard
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "Invoice")"
+                       class="navigation-button">
+                        Invoice Generation
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")"
+                       class="navigation-button">
+                        Municipal Service Requests
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <!-- =========================================================
+         PAGE FOOTER
+         ========================================================= -->
+
+    <div class="page-footer">
+
+        <a href="@Url.Action("Index", "FinanceDashboard")"
+           class="back-button">
+            ← Back to Finance Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+

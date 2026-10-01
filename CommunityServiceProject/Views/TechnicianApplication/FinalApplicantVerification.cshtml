@@ -1,0 +1,2602 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationFinalVerificationViewModel
+
+@{
+    ViewBag.Title = "Final Applicant Verification";
+}
+
+<style>
+     /* ================================================================
+    FINAL APPLICANT VERIFICATION — CLEAN PROFESSIONAL UI
+    ================================================================ */
+     .final-verification-page {
+         --fv-primary: #0b5ed7;
+         --fv-primary-dark: #084298;
+         --fv-primary-soft: #eef5ff;
+         --fv-success: #198754;
+         --fv-success-soft: #edf9f1;
+         --fv-warning: #b7791f;
+         --fv-warning-soft: #fff8e8;
+         --fv-danger: #c0392b;
+         --fv-danger-soft: #fff1ef;
+         --fv-text: #182230;
+         --fv-text-soft: #475467;
+         --fv-muted: #667085;
+         --fv-border: #dfe5ec;
+         --fv-border-light: #edf1f5;
+         --fv-bg: #f4f7fb;
+         --fv-white: #ffffff;
+         --fv-radius: 14px;
+         min-height: calc(100vh - 70px);
+         padding: 30px 28px 56px;
+         background: var(--fv-bg);
+         color: var(--fv-text);
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+     }
+
+         .final-verification-page *,
+         .final-verification-page *::before,
+         .final-verification-page *::after {
+             box-sizing: border-box;
+         }
+
+     .final-verification-container {
+         width: 100%;
+         max-width: 1420px;
+         margin: 0 auto;
+     }
+
+     /* HEADER */
+     .final-verification-header {
+         position: relative;
+         overflow: hidden;
+         margin-bottom: 22px;
+         padding: 27px 30px;
+         border-radius: 16px;
+         background: linear-gradient(135deg, #0b5ed7 0%, #084298 100%);
+         color: #fff;
+         box-shadow: 0 10px 28px rgba(11, 94, 215, .15);
+     }
+
+         .final-verification-header::after {
+             content: "";
+             position: absolute;
+             width: 280px;
+             height: 280px;
+             right: -105px;
+             top: -150px;
+             border-radius: 50%;
+             background: rgba(255,255,255,.07);
+         }
+
+     .final-verification-header-inner {
+         position: relative;
+         z-index: 1;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         gap: 28px;
+     }
+
+     .final-verification-header-content {
+         min-width: 0;
+         flex: 1;
+     }
+
+     .final-verification-eyebrow {
+         margin-bottom: 7px;
+         color: rgba(255,255,255,.76);
+         font-size: 10px;
+         font-weight: 800;
+         letter-spacing: .1em;
+         text-transform: uppercase;
+     }
+
+     .final-verification-title {
+         margin: 0 0 7px;
+         color: #fff;
+         font-size: 28px;
+         line-height: 1.2;
+         font-weight: 750;
+     }
+
+     .final-verification-subtitle {
+         max-width: 800px;
+         margin: 0;
+         color: rgba(255,255,255,.88);
+         font-size: 13px;
+         line-height: 1.55;
+     }
+
+     .final-verification-reference-card {
+         flex: 0 0 245px;
+         padding: 14px 17px;
+         border: 1px solid rgba(255,255,255,.22);
+         border-radius: 11px;
+         background: rgba(255,255,255,.12);
+         backdrop-filter: blur(5px);
+     }
+
+     .final-verification-reference-label {
+         display: block;
+         margin-bottom: 5px;
+         color: rgba(255,255,255,.7);
+         font-size: 9px;
+         font-weight: 800;
+         letter-spacing: .08em;
+         text-transform: uppercase;
+     }
+
+     .final-verification-reference-value {
+         display: block;
+         color: #fff;
+         font-size: 15px;
+         font-weight: 750;
+         overflow-wrap: anywhere;
+     }
+
+     /* LAYOUT */
+     .final-verification-layout {
+         display: grid;
+         grid-template-columns: minmax(0,1fr) 315px;
+         gap: 22px;
+         align-items: start;
+     }
+
+     .final-verification-main {
+         min-width: 0;
+         display: flex;
+         flex-direction: column;
+         gap: 18px;
+     }
+
+     .final-verification-sidebar {
+         min-width: 0;
+         position: sticky;
+         top: 18px;
+         display: flex;
+         flex-direction: column;
+         gap: 15px;
+     }
+
+     /* SECTION CARDS */
+     .final-verification-section,
+     .final-verification-sidebar-card {
+         width: 100%;
+         min-width: 0;
+         overflow: hidden;
+         border: 1px solid var(--fv-border);
+         border-radius: var(--fv-radius);
+         background: #fff;
+         box-shadow: 0 3px 12px rgba(16,24,40,.045);
+     }
+
+     .final-verification-section-header {
+         display: flex;
+         align-items: center;
+         gap: 13px;
+         padding: 17px 21px;
+         border-bottom: 1px solid var(--fv-border-light);
+     }
+
+     .final-verification-section-icon {
+         width: 36px;
+         height: 36px;
+         flex: 0 0 36px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         border-radius: 9px;
+         background: var(--fv-primary-soft);
+         color: var(--fv-primary);
+         font-size: 11px;
+         font-weight: 800;
+     }
+
+     .final-verification-section-heading {
+         min-width: 0;
+         flex: 1;
+     }
+
+     .final-verification-section-title {
+         margin: 0 0 3px;
+         color: #172b4d;
+         font-size: 15px;
+         line-height: 1.3;
+         font-weight: 750;
+     }
+
+     .final-verification-section-description {
+         margin: 0;
+         color: var(--fv-muted);
+         font-size: 11.5px;
+         line-height: 1.5;
+     }
+
+     .final-verification-section-body {
+         min-width: 0;
+         padding: 20px 21px;
+     }
+
+     /* INFORMATION */
+     .final-verification-info-grid {
+         display: grid;
+         grid-template-columns: repeat(2,minmax(0,1fr));
+         border: 1px solid var(--fv-border-light);
+         border-radius: 10px;
+         overflow: hidden;
+     }
+
+     .final-verification-info-item {
+         min-width: 0;
+         padding: 14px 16px;
+         background: #fff;
+         border-right: 1px solid var(--fv-border-light);
+         border-bottom: 1px solid var(--fv-border-light);
+     }
+
+         .final-verification-info-item:nth-child(2n) {
+             border-right: 0;
+         }
+
+         .final-verification-info-item.full-width {
+             grid-column: 1/-1;
+             border-right: 0;
+         }
+
+     .final-verification-info-grid .final-verification-info-item:nth-last-child(-n+2) {
+         border-bottom: 0;
+     }
+
+     .final-verification-info-label {
+         display: block;
+         margin-bottom: 5px;
+         color: #667085;
+         font-size: 9.5px;
+         line-height: 1.3;
+         font-weight: 800;
+         letter-spacing: .055em;
+         text-transform: uppercase;
+     }
+
+     .final-verification-info-value {
+         display: block;
+         width: 100%;
+         min-width: 0;
+         color: var(--fv-text);
+         font-size: 13px;
+         line-height: 1.5;
+         font-weight: 650;
+         overflow-wrap: anywhere;
+     }
+
+         .final-verification-info-value.primary {
+             color: var(--fv-primary);
+         }
+
+         .final-verification-info-value.muted {
+             color: #98a2b3;
+             font-weight: 500;
+         }
+
+     .final-verification-not-available {
+         color: #98a2b3;
+         font-weight: 500;
+     }
+
+     /* STATUS */
+     .final-verification-status {
+         display: inline-flex;
+         align-items: center;
+         gap: 6px;
+         padding: 5px 9px;
+         border: 1px solid transparent;
+         border-radius: 999px;
+         font-size: 10.5px;
+         line-height: 1.2;
+         font-weight: 750;
+         white-space: normal;
+     }
+
+         .final-verification-status::before {
+             content: "";
+             width: 6px;
+             height: 6px;
+             flex: 0 0 6px;
+             border-radius: 50%;
+             background: currentColor;
+         }
+
+         .final-verification-status.selected {
+             color: #6941c6;
+             background: #f4f0ff;
+             border-color: #ddd6fe;
+         }
+
+         .final-verification-status.approved {
+             color: #18794e;
+             background: var(--fv-success-soft);
+             border-color: #bfe6cc;
+         }
+
+         .final-verification-status.pending {
+             color: #9a6700;
+             background: var(--fv-warning-soft);
+             border-color: #f3d39b;
+         }
+
+         .final-verification-status.rejected {
+             color: #a12a1f;
+             background: var(--fv-danger-soft);
+             border-color: #f1c7c1;
+         }
+
+     /* DOCUMENT SUMMARY */
+     .final-verification-document-summary {
+         display: grid;
+         grid-template-columns: repeat(4,minmax(0,1fr));
+         gap: 10px;
+     }
+
+     .final-verification-document-card {
+         min-width: 0;
+         padding: 13px 14px;
+         border: 1px solid var(--fv-border);
+         border-radius: 10px;
+         background: #fafbfc;
+     }
+
+         .final-verification-document-card.accepted {
+             background: #f5fbf7;
+             border-color: #c9e8d2;
+         }
+
+         .final-verification-document-card.pending {
+             background: #fffbf2;
+             border-color: #f1ddb4;
+         }
+
+         .final-verification-document-card.rejected {
+             background: #fff7f6;
+             border-color: #f0ccc7;
+         }
+
+     .final-verification-document-label {
+         display: block;
+         margin-bottom: 5px;
+         color: var(--fv-muted);
+         font-size: 10px;
+         line-height: 1.35;
+         font-weight: 700;
+     }
+
+     .final-verification-document-value {
+         display: block;
+         color: #172033;
+         font-size: 23px;
+         line-height: 1.15;
+         font-weight: 800;
+     }
+
+     /* NOTICES */
+     .final-verification-notice {
+         display: flex;
+         align-items: flex-start;
+         gap: 10px;
+         margin-top: 16px;
+         padding: 13px 14px;
+         border: 1px solid #cfe0f7;
+         border-radius: 10px;
+         background: #f6f9fe;
+     }
+
+         .final-verification-notice.warning {
+             background: var(--fv-warning-soft);
+             border-color: #f3d39b;
+         }
+
+         .final-verification-notice.danger {
+             background: var(--fv-danger-soft);
+             border-color: #f1c7c1;
+         }
+
+         .final-verification-notice.success {
+             background: var(--fv-success-soft);
+             border-color: #bfe6cc;
+         }
+
+     .final-verification-notice-icon {
+         width: 26px;
+         height: 26px;
+         flex: 0 0 26px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         border-radius: 7px;
+         background: var(--fv-primary);
+         color: #fff;
+         font-size: 12px;
+         font-weight: 800;
+     }
+
+     .final-verification-notice.warning .final-verification-notice-icon {
+         background: var(--fv-warning);
+     }
+
+     .final-verification-notice.danger .final-verification-notice-icon {
+         background: var(--fv-danger);
+     }
+
+     .final-verification-notice.success .final-verification-notice-icon {
+         background: var(--fv-success);
+     }
+
+     .final-verification-notice-content {
+         min-width: 0;
+         flex: 1;
+     }
+
+     .final-verification-notice-title {
+         margin: 0 0 3px;
+         color: #172033;
+         font-size: 12px;
+         line-height: 1.35;
+         font-weight: 750;
+     }
+
+     .final-verification-notice-text {
+         margin: 0;
+         color: #667085;
+         font-size: 11px;
+         line-height: 1.5;
+         overflow-wrap: anywhere;
+     }
+
+     /* DECISION */
+     .final-verification-decision-area {
+         padding: 18px;
+         border: 1px solid #dce5ef;
+         border-radius: 11px;
+         background: #fbfcfe;
+     }
+
+     .final-verification-decision-heading {
+         margin-bottom: 18px;
+         padding-bottom: 14px;
+         border-bottom: 1px solid var(--fv-border-light);
+     }
+
+     .final-verification-decision-title {
+         margin: 0 0 4px;
+         color: #172b4d;
+         font-size: 15px;
+         font-weight: 750;
+     }
+
+     .final-verification-decision-description {
+         margin: 0;
+         color: var(--fv-muted);
+         font-size: 11.5px;
+         line-height: 1.5;
+     }
+
+     .final-verification-form-group {
+         width: 100%;
+         min-width: 0;
+         margin: 0 0 17px;
+     }
+
+         .final-verification-form-group:last-child {
+             margin-bottom: 0;
+         }
+
+     .final-verification-form-label {
+         display: block;
+         margin-bottom: 7px;
+         color: #344054;
+         font-size: 11.5px;
+         line-height: 1.35;
+         font-weight: 750;
+     }
+
+     .final-verification-form-control {
+         display: block;
+         width: 100%;
+         min-width: 0;
+         padding: 10px 12px;
+         border: 1px solid #cfd6df;
+         border-radius: 8px;
+         background: #fff;
+         color: #172033;
+         font: inherit;
+         font-size: 12.5px;
+         line-height: 1.45;
+         outline: none;
+         transition: border-color .15s ease,box-shadow .15s ease,background .15s ease;
+     }
+
+         .final-verification-form-control:hover {
+             border-color: #b8c2cf;
+         }
+
+         .final-verification-form-control:focus {
+             border-color: var(--fv-primary);
+             box-shadow: 0 0 0 3px rgba(11,94,215,.09);
+         }
+
+         .final-verification-form-control::placeholder {
+             color: #98a2b3;
+         }
+
+     select.final-verification-form-control {
+         min-height: 42px;
+         cursor: pointer;
+     }
+
+     textarea.final-verification-form-control {
+         min-height: 135px;
+         resize: vertical;
+     }
+
+     .final-verification-field-help {
+         margin-top: 6px;
+         color: #667085;
+         font-size: 10.5px;
+         line-height: 1.45;
+     }
+
+     .final-verification-validation {
+         display: block;
+         margin-top: 5px;
+         color: var(--fv-danger);
+         font-size: 10.5px;
+         line-height: 1.4;
+     }
+
+     .final-verification-validation-summary {
+         padding: 12px 14px;
+         margin-bottom: 18px;
+         border: 1px solid #f1c7c1;
+         border-radius: 9px;
+         background: var(--fv-danger-soft);
+         color: #912018;
+         font-size: 11.5px;
+         line-height: 1.5;
+     }
+
+         .final-verification-validation-summary ul {
+             margin: 6px 0 0 18px;
+             padding: 0;
+         }
+
+     /* CONFIRMATION + ACTIONS */
+     .final-verification-confirmation {
+         display: flex;
+         align-items: flex-start;
+         gap: 10px;
+         padding: 13px 14px;
+         border: 1px solid #dce3eb;
+         border-radius: 9px;
+         background: #f8fafc;
+     }
+
+         .final-verification-confirmation input[type="checkbox"] {
+             width: 17px;
+             height: 17px;
+             flex: 0 0 17px;
+             margin: 2px 0 0;
+             accent-color: var(--fv-primary);
+             cursor: pointer;
+         }
+
+     .final-verification-confirmation-text {
+         color: #475467;
+         font-size: 11.5px;
+         line-height: 1.55;
+     }
+
+         .final-verification-confirmation-text strong {
+             color: #172033;
+         }
+
+     .final-verification-actions {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         gap: 12px;
+         margin-top: 20px;
+         padding-top: 18px;
+         border-top: 1px solid var(--fv-border-light);
+     }
+
+     .final-verification-actions-left, .final-verification-actions-right {
+         display: flex;
+         align-items: center;
+         gap: 9px;
+         min-width: 0;
+     }
+
+     .final-verification-actions-right {
+         margin-left: auto;
+     }
+
+     .final-verification-btn {
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         min-height: 40px;
+         padding: 0 15px;
+         border-radius: 8px;
+         font: inherit;
+         font-size: 11.5px;
+         font-weight: 750;
+         text-decoration: none;
+         white-space: nowrap;
+         cursor: pointer;
+         transition: .15s ease;
+     }
+
+     .final-verification-btn-primary {
+         border: 1px solid var(--fv-primary);
+         background: var(--fv-primary);
+         color: #fff;
+     }
+
+         .final-verification-btn-primary:hover {
+             border-color: var(--fv-primary-dark);
+             background: var(--fv-primary-dark);
+             color: #fff;
+         }
+
+         .final-verification-btn-primary:disabled {
+             border-color: #c5ccd5;
+             background: #c5ccd5;
+             color: #fff;
+             cursor: not-allowed;
+         }
+
+     .final-verification-btn-secondary {
+         border: 1px solid #cfd6df;
+         background: #fff;
+         color: #344054;
+     }
+
+         .final-verification-btn-secondary:hover {
+             border-color: #b8c2cf;
+             background: #f8fafc;
+             color: #172033;
+         }
+
+     /* SIDEBAR */
+     .final-verification-sidebar-card {
+         overflow: hidden;
+     }
+
+     .final-verification-sidebar-header {
+         padding: 16px 17px 12px;
+         border-bottom: 1px solid var(--fv-border-light);
+     }
+
+     .final-verification-sidebar-title {
+         margin: 0 0 3px;
+         color: #172b4d;
+         font-size: 13.5px;
+         line-height: 1.35;
+         font-weight: 750;
+     }
+
+     .final-verification-sidebar-description {
+         margin: 0;
+         color: var(--fv-muted);
+         font-size: 10.5px;
+         line-height: 1.45;
+     }
+
+     .final-verification-sidebar-body {
+         padding: 16px 17px;
+     }
+
+     .final-verification-progress {
+         display: flex;
+         flex-direction: column;
+     }
+
+     .final-verification-progress-item {
+         position: relative;
+         display: flex;
+         align-items: flex-start;
+         gap: 10px;
+         padding-bottom: 15px;
+     }
+
+         .final-verification-progress-item:last-child {
+             padding-bottom: 0;
+         }
+
+         .final-verification-progress-item:not(:last-child)::after {
+             content: "";
+             position: absolute;
+             left: 8px;
+             top: 20px;
+             bottom: 0;
+             width: 1px;
+             background: #dfe4ea;
+         }
+
+     .final-verification-progress-marker {
+         position: relative;
+         z-index: 1;
+         width: 17px;
+         height: 17px;
+         flex: 0 0 17px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         margin-top: 1px;
+         border: 1px solid #cbd5e1;
+         border-radius: 50%;
+         background: #fff;
+         color: #667085;
+         font-size: 8px;
+         font-weight: 800;
+     }
+
+     .final-verification-progress-item.completed .final-verification-progress-marker {
+         border-color: var(--fv-success);
+         background: var(--fv-success);
+         color: #fff;
+     }
+
+     .final-verification-progress-item.current .final-verification-progress-marker {
+         border-color: var(--fv-primary);
+         background: var(--fv-primary);
+         color: #fff;
+         box-shadow: 0 0 0 3px rgba(11,94,215,.12);
+     }
+
+     .final-verification-progress-content {
+         min-width: 0;
+         flex: 1;
+     }
+
+     .final-verification-progress-title {
+         margin: 0 0 2px;
+         color: #344054;
+         font-size: 10.8px;
+         line-height: 1.35;
+         font-weight: 750;
+     }
+
+     .final-verification-progress-item.current .final-verification-progress-title {
+         color: var(--fv-primary);
+     }
+
+     .final-verification-progress-item.completed .final-verification-progress-title {
+         color: #18794e;
+     }
+
+     .final-verification-progress-description {
+         margin: 0;
+         color: #667085;
+         font-size: 9.8px;
+         line-height: 1.4;
+     }
+
+     .final-verification-guidance-list {
+         display: flex;
+         flex-direction: column;
+         gap: 8px;
+         margin: 0;
+         padding: 0;
+         list-style: none;
+     }
+
+     .final-verification-guidance-item {
+         position: relative;
+         padding-left: 14px;
+         color: #667085;
+         font-size: 10.5px;
+         line-height: 1.45;
+     }
+
+         .final-verification-guidance-item::before {
+             content: "";
+             position: absolute;
+             left: 0;
+             top: 6px;
+             width: 5px;
+             height: 5px;
+             border-radius: 50%;
+             background: var(--fv-primary);
+         }
+
+     .final-verification-stage-card {
+         padding: 13px 14px;
+         border: 1px solid #cfe0f7;
+         border-radius: 9px;
+         background: #f6f9fe;
+     }
+
+     .final-verification-stage-label {
+         margin-bottom: 4px;
+         color: #667085;
+         font-size: 9px;
+         font-weight: 800;
+         letter-spacing: .055em;
+         text-transform: uppercase;
+     }
+
+     .final-verification-stage-value {
+         color: var(--fv-primary);
+         font-size: 13px;
+         font-weight: 800;
+     }
+
+     .final-verification-stage-description {
+         margin: 5px 0 0;
+         color: #667085;
+         font-size: 10.5px;
+         line-height: 1.45;
+     }
+
+     .final-verification-navigation {
+         display: flex;
+         flex-direction: column;
+     }
+
+         .final-verification-navigation a {
+             display: flex;
+             align-items: center;
+             padding: 9px 0;
+             border-bottom: 1px solid var(--fv-border-light);
+             color: var(--fv-primary);
+             font-size: 10.8px;
+             line-height: 1.4;
+             font-weight: 650;
+             text-decoration: none;
+         }
+
+             .final-verification-navigation a:first-child {
+                 padding-top: 0;
+             }
+
+             .final-verification-navigation a:last-child {
+                 padding-bottom: 0;
+                 border-bottom: 0;
+             }
+
+             .final-verification-navigation a:hover {
+                 color: var(--fv-primary-dark);
+             }
+
+     /* RESPONSIVE */
+     @@media (max-width:1100px) {
+         .final-verification-layout {
+             grid-template-columns: 1fr;
+         }
+
+         .final-verification-sidebar {
+             position: static;
+             display: grid;
+             grid-template-columns: repeat(2,minmax(0,1fr));
+             gap: 15px;
+         }
+     }
+
+     @@media (max-width:780px) {
+         .final-verification-page {
+             padding: 22px 16px 42px;
+         }
+
+         .final-verification-header {
+             padding: 23px 21px;
+         }
+
+         .final-verification-header-inner {
+             flex-direction: column;
+             align-items: stretch;
+             gap: 17px;
+         }
+
+         .final-verification-reference-card {
+             flex-basis: auto;
+             width: 100%;
+         }
+
+         .final-verification-title {
+             font-size: 23px;
+         }
+
+         .final-verification-sidebar {
+             grid-template-columns: 1fr;
+         }
+
+         .final-verification-document-summary {
+             grid-template-columns: repeat(2,minmax(0,1fr));
+         }
+     }
+
+     @@media (max-width:560px) {
+         .final-verification-page {
+             padding: 15px 10px 32px;
+         }
+
+         .final-verification-header {
+             border-radius: 12px;
+             padding: 20px 17px;
+         }
+
+         .final-verification-title {
+             font-size: 21px;
+         }
+
+         .final-verification-subtitle {
+             font-size: 12px;
+         }
+
+         .final-verification-section {
+             border-radius: 11px;
+         }
+
+         .final-verification-section-header {
+             padding: 15px;
+             align-items: flex-start;
+         }
+
+         .final-verification-section-body {
+             padding: 15px;
+         }
+
+         .final-verification-info-grid {
+             grid-template-columns: 1fr;
+         }
+
+         .final-verification-info-item, .final-verification-info-item:nth-child(2n) {
+             border-right: 0;
+         }
+
+             .final-verification-info-item.full-width {
+                 grid-column: auto;
+             }
+
+         .final-verification-info-grid .final-verification-info-item {
+             border-bottom: 1px solid var(--fv-border-light);
+         }
+
+             .final-verification-info-grid .final-verification-info-item:last-child {
+                 border-bottom: 0;
+             }
+
+         .final-verification-document-summary {
+             grid-template-columns: 1fr;
+         }
+
+         .final-verification-decision-area {
+             padding: 14px;
+         }
+
+         .final-verification-actions {
+             flex-direction: column-reverse;
+             align-items: stretch;
+         }
+
+         .final-verification-actions-left, .final-verification-actions-right {
+             width: 100%;
+             margin: 0;
+             flex-direction: column;
+         }
+
+         .final-verification-btn {
+             width: 100%;
+         }
+     }
+
+     @@media (max-width:400px) {
+         .final-verification-page {
+             padding-left: 7px;
+             padding-right: 7px;
+         }
+
+         .final-verification-section-icon {
+             width: 32px;
+             height: 32px;
+             flex-basis: 32px;
+         }
+
+         .final-verification-section-title {
+             font-size: 14px;
+         }
+
+         .final-verification-section-description {
+             font-size: 10.5px;
+         }
+
+         .final-verification-info-item {
+             padding: 12px 13px;
+         }
+     }
+</style>
+
+
+<div class="final-verification-page">
+
+    <div class="final-verification-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <header class="final-verification-header">
+
+            <div class="final-verification-header-inner">
+
+                <div class="final-verification-header-content">
+
+                    <div class="final-verification-eyebrow">
+                        Final Applicant Verification
+                    </div>
+
+                    <h1 class="final-verification-title">
+                        Final Applicant Verification
+                    </h1>
+
+                    <p class="final-verification-subtitle">
+                        Review the applicant's complete recruitment record
+                        before recording the final verification decision.
+                    </p>
+
+                </div>
+
+                <div class="final-verification-reference-card">
+
+                    <div class="final-verification-reference-label">
+                        Application Reference
+                    </div>
+
+                    <div class="final-verification-reference-value">
+                        @Model.ApplicationReference
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             MAIN LAYOUT
+             ===================================================== -->
+
+        <div class="final-verification-layout">
+
+            <main class="final-verification-main">
+
+                @using (Html.BeginForm(
+                    "FinalApplicantVerification",
+                    "TechnicianApplication",
+                    FormMethod.Post,
+                    new
+                    {
+                        @class = "verification-form",
+                        id = "finalVerificationForm"
+                    }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(m => m.ApplicationID)
+
+
+                    <!-- =================================================
+                         VALIDATION SUMMARY
+                         ================================================= -->
+
+                    if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="final-verification-section">
+
+                            <div class="final-verification-section-body">
+
+                                @Html.ValidationSummary(
+                                         true,
+                                         "",
+                                         new
+                                         {
+                                             @class =
+                                                 "final-verification-validation-summary"
+                                         })
+
+                            </div>
+
+                        </div>
+                    }
+
+
+                    <!-- =================================================
+                         01 APPLICANT INFORMATION
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                01
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Applicant Information
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    Identity, contact and application reference details for the applicant being verified.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            <div class="final-verification-info-grid">
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Applicant Name
+                                    </span>
+
+                                    <span class="final-verification-info-value">
+                                        @Model.ApplicantName
+                                    </span>
+
+                                </div>
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Email Address
+                                    </span>
+
+                                    <span class="final-verification-info-value">
+                                        @Model.ApplicantEmail
+                                    </span>
+
+                                </div>
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Application Reference
+                                    </span>
+
+                                    <span class="final-verification-info-value primary">
+                                        @Model.ApplicationReference
+                                    </span>
+
+                                </div>
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Application Date
+                                    </span>
+
+                                    <span class="final-verification-info-value">
+                                        @Model.ApplicationDate.ToString(
+                                                 "dd MMM yyyy HH:mm")
+                                    </span>
+
+                                </div>
+
+                                <div class="final-verification-info-item full-width">
+
+                                    <span class="final-verification-info-label">
+                                        Current Application Status
+                                    </span>
+
+                                    <span class="final-verification-status selected">
+                                        @Model.ApplicationStatus
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         02 OPPORTUNITY
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                02
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Opportunity
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    The technician position and opportunity reference linked to this application.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            <div class="final-verification-info-grid">
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Opportunity Code
+                                    </span>
+
+                                    <span class="final-verification-info-value primary">
+                                        @Model.OpportunityCode
+                                    </span>
+
+                                </div>
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Opportunity Title
+                                    </span>
+
+                                    <span class="final-verification-info-value">
+                                        @Model.OpportunityTitle
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         03 SCREENING
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                03
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Application Screening
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    Initial eligibility screening completed before assessment and interview stages.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            <div class="final-verification-info-grid">
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Screening Result
+                                    </span>
+
+                                    <span class="final-verification-status approved">
+                                        @Model.ScreeningResult
+                                    </span>
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    Model.ScreeningComments))
+                                {
+                                    <div class="final-verification-info-item full-width">
+
+                                        <span class="final-verification-info-label">
+                                            Screening Comments
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.ScreeningComments
+                                        </span>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         04 DOCUMENT VERIFICATION
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                04
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Supporting Document Verification
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    Review the submission status of every supporting document required for this application.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            <div class="final-verification-document-summary">
+
+                                <div class="final-verification-document-card">
+
+                                    <div class="final-verification-document-label">
+                                        Total Documents
+                                    </div>
+
+                                    <div class="final-verification-document-value">
+                                        @Model.TotalDocuments
+                                    </div>
+
+                                </div>
+
+                                <div class="final-verification-document-card accepted">
+
+                                    <div class="final-verification-document-label">
+                                        Accepted
+                                    </div>
+
+                                    <div class="final-verification-document-value">
+                                        @Model.AcceptedDocuments
+                                    </div>
+
+                                </div>
+
+                                <div class="final-verification-document-card pending">
+
+                                    <div class="final-verification-document-label">
+                                        Pending
+                                    </div>
+
+                                    <div class="final-verification-document-value">
+                                        @(Model.TotalDocuments -
+                                          Model.AcceptedDocuments -
+                                          Model.RejectedDocuments)
+                                    </div>
+
+                                </div>
+
+                                <div class="final-verification-document-card rejected">
+
+                                    <div class="final-verification-document-label">
+                                        Rejected
+                                    </div>
+
+                                    <div class="final-verification-document-value">
+                                        @Model.RejectedDocuments
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            @if (Model.TotalDocuments == 0)
+                            {
+                                <div class="final-verification-notice danger">
+
+                                    <div class="final-verification-notice-icon">
+                                        !
+                                    </div>
+
+                                    <div class="final-verification-notice-content">
+
+                                        <h3 class="final-verification-notice-title">
+                                            Documents Required
+                                        </h3>
+
+                                        <p class="final-verification-notice-text">
+                                            No supporting documents are
+                                            available for final verification.
+                                            Final verification cannot proceed
+                                            until the required supporting
+                                            documents have been verified.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+                            }
+                            else if (Model.RejectedDocuments > 0)
+                            {
+                                <div class="final-verification-notice danger">
+
+                                    <div class="final-verification-notice-icon">
+                                        !
+                                    </div>
+
+                                    <div class="final-verification-notice-content">
+
+                                        <h3 class="final-verification-notice-title">
+                                            Rejected Documents
+                                        </h3>
+
+                                        <p class="final-verification-notice-text">
+                                            One or more supporting documents
+                                            have been rejected. Final
+                                            verification cannot proceed
+                                            until all supporting documents
+                                            have been accepted.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+                            }
+                            else if (Model.AcceptedDocuments <
+                                     Model.TotalDocuments)
+                            {
+                                <div class="final-verification-notice warning">
+
+                                    <div class="final-verification-notice-icon">
+                                        !
+                                    </div>
+
+                                    <div class="final-verification-notice-content">
+
+                                        <h3 class="final-verification-notice-title">
+                                            Verification Pending
+                                        </h3>
+
+                                        <p class="final-verification-notice-text">
+                                            Some supporting documents are
+                                            still awaiting verification.
+                                            Final verification cannot proceed
+                                            until all supporting documents
+                                            have been accepted.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="final-verification-notice success">
+
+                                    <div class="final-verification-notice-icon">
+                                        ✓
+                                    </div>
+
+                                    <div class="final-verification-notice-content">
+
+                                        <h3 class="final-verification-notice-title">
+                                            All Documents Verified
+                                        </h3>
+
+                                        <p class="final-verification-notice-text">
+                                            All submitted supporting
+                                            documents have been accepted
+                                            and verified.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         05 ASSESSMENT
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                05
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Assessment
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    Assessment type, date, result and score recorded for the applicant.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            @if (Model.AssessmentDate.HasValue)
+                            {
+                                <div class="final-verification-info-grid">
+
+                                    <div class="final-verification-info-item">
+
+                                        <span class="final-verification-info-label">
+                                            Assessment Type
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.AssessmentType
+                                        </span>
+
+                                    </div>
+
+                                    <div class="final-verification-info-item">
+
+                                        <span class="final-verification-info-label">
+                                            Assessment Date
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.AssessmentDate.Value.ToString(
+                                                     "dd MMM yyyy HH:mm")
+                                        </span>
+
+                                    </div>
+
+                                    <div class="final-verification-info-item">
+
+                                        <span class="final-verification-info-label">
+                                            Assessment Result
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.AssessmentResult
+                                        </span>
+
+                                    </div>
+
+                                    <div class="final-verification-info-item">
+
+                                        <span class="final-verification-info-label">
+                                            Assessment Score
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+
+                                            @if (Model.AssessmentScore.HasValue)
+                                            {
+                                                @Model.AssessmentScore.Value.ToString(
+                                                         "0.##")
+                                                @:%
+                                            }
+                                            else
+                                            {
+                                                <span class="final-verification-not-available">
+                                                    Not recorded
+                                                </span>
+                                            }
+
+                                        </span>
+
+                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        Model.AssessmentComments))
+                                    {
+                                        <div class="final-verification-info-item full-width">
+
+                                            <span class="final-verification-info-label">
+                                                Assessment Comments
+                                            </span>
+
+                                            <span class="final-verification-info-value">
+                                                @Model.AssessmentComments
+                                            </span>
+
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="final-verification-notice danger">
+
+                                    <div class="final-verification-notice-icon">
+                                        !
+                                    </div>
+
+                                    <div class="final-verification-notice-content">
+
+                                        <h3 class="final-verification-notice-title">
+                                            Assessment Not Available
+                                        </h3>
+
+                                        <p class="final-verification-notice-text">
+                                            No completed assessment record is
+                                            available. Final verification
+                                            cannot proceed without a completed
+                                            assessment.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         06 INTERVIEW
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                06
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Interview
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    Interview method, date, location and recorded outcome for the applicant.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            @if (Model.InterviewDate.HasValue)
+                            {
+                                <div class="final-verification-info-grid">
+
+                                    <div class="final-verification-info-item">
+
+                                        <span class="final-verification-info-label">
+                                            Interview Method
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.InterviewMethod
+                                        </span>
+
+                                    </div>
+
+                                    <div class="final-verification-info-item">
+
+                                        <span class="final-verification-info-label">
+                                            Interview Date
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.InterviewDate.Value.ToString(
+                                                     "dd MMM yyyy HH:mm")
+                                        </span>
+
+                                    </div>
+
+                                    <div class="final-verification-info-item full-width">
+
+                                        <span class="final-verification-info-label">
+                                            Interview Location
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.InterviewLocation
+                                        </span>
+
+                                    </div>
+
+                                    <div class="final-verification-info-item full-width">
+
+                                        <span class="final-verification-info-label">
+                                            Interview Outcome
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.InterviewOutcome
+                                        </span>
+
+                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        Model.InterviewComments))
+                                    {
+                                        <div class="final-verification-info-item full-width">
+
+                                            <span class="final-verification-info-label">
+                                                Interview Comments
+                                            </span>
+
+                                            <span class="final-verification-info-value">
+                                                @Model.InterviewComments
+                                            </span>
+
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="final-verification-notice danger">
+
+                                    <div class="final-verification-notice-icon">
+                                        !
+                                    </div>
+
+                                    <div class="final-verification-notice-content">
+
+                                        <h3 class="final-verification-notice-title">
+                                            Interview Not Available
+                                        </h3>
+
+                                        <p class="final-verification-notice-text">
+                                            No completed interview record is
+                                            available. Final verification
+                                            cannot proceed without a completed
+                                            interview.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         07 SELECTION
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                07
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Selection Decision
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    The selection outcome recorded after the assessment and interview stages.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            <div class="final-verification-info-grid">
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Selection Status
+                                    </span>
+
+                                    <span class="final-verification-status selected">
+                                        Selected
+                                    </span>
+
+                                </div>
+
+                                <div class="final-verification-info-item">
+
+                                    <span class="final-verification-info-label">
+                                        Selection Date
+                                    </span>
+
+                                    <span class="final-verification-info-value">
+
+                                        @if (Model.SelectionDate.HasValue)
+                                        {
+                                            @Model.SelectionDate.Value.ToString(
+                                                     "dd MMM yyyy HH:mm")
+                                        }
+                                        else
+                                        {
+                                            <span class="final-verification-not-available">
+                                                Not recorded
+                                            </span>
+                                        }
+
+                                    </span>
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    Model.SelectionComments))
+                                {
+                                    <div class="final-verification-info-item full-width">
+
+                                        <span class="final-verification-info-label">
+                                            Selection Comments
+                                        </span>
+
+                                        <span class="final-verification-info-value">
+                                            @Model.SelectionComments
+                                        </span>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         08 FINAL VERIFICATION DECISION
+                         ================================================= -->
+
+                    <section class="final-verification-section">
+
+                        <div class="final-verification-section-header">
+
+                            <div class="final-verification-section-icon">
+                                08
+                            </div>
+
+                            <div class="final-verification-section-heading">
+
+                                <h2 class="final-verification-section-title">
+                                    Final Verification Decision
+                                </h2>
+
+                                <p class="final-verification-section-description">
+                                    Make the final verification decision using the applicant information and completed recruitment checks.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="final-verification-section-body">
+
+                            <div class="final-verification-decision-area">
+
+                                <div class="final-verification-decision-heading">
+
+                                    <h3 class="final-verification-decision-title">
+                                        Final Verification Outcome
+                                    </h3>
+
+                                    <p class="final-verification-decision-description">
+                                        Choose the verification result and explain the evidence or checks that support that outcome.
+                                    </p>
+
+                                </div>
+
+
+                                <!-- =========================================
+                                     RESULT
+                                     ========================================= -->
+
+                                <div class="final-verification-form-group">
+
+                                    @Html.LabelFor(
+                                             m => m.Result,
+                                             new
+                                             {
+                                                 @class =
+                                                     "final-verification-form-label"
+                                             })
+
+                                    @Html.DropDownListFor(
+                                             m => m.Result,
+                                             new SelectList(
+                                                 new[]
+                                                 {
+                                                new
+                                                {
+                                                    Value = "Verified",
+                                                    Text =
+                                                        "Verified - Approve for Onboarding"
+                                                },
+                                                new
+                                                {
+                                                    Value = "NotVerified",
+                                                    Text =
+                                                        "Not Verified - Do Not Proceed"
+                                                }
+                             },
+                                                 "Value",
+                                                 "Text"),
+                                             "-- Select final verification result --",
+                                             new
+                                             {
+                                                 @class =
+                                                     "final-verification-form-control",
+                                                 id = "verificationResult"
+                                             })
+
+                                    @Html.ValidationMessageFor(
+                                             m => m.Result,
+                                             "",
+                                             new
+                                             {
+                                                 @class =
+                                                     "final-verification-validation"
+                                             })
+
+                                    <div class="final-verification-field-help">
+                                        Select <strong>Verified</strong> only when the required recruitment checks have been completed and the applicant can proceed to onboarding.
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =========================================
+                                     COMMENTS
+                                     ========================================= -->
+
+                                <div class="final-verification-form-group">
+
+                                    @Html.LabelFor(
+                                             m => m.Comments,
+                                             new
+                                             {
+                                                 @class =
+                                                     "final-verification-form-label"
+                                             })
+
+                                    @Html.TextAreaFor(
+                                             m => m.Comments,
+                                             new
+                                             {
+                                                 @class =
+                                                     "final-verification-form-control",
+                                                 rows = "6",
+                                                 maxlength = "3000",
+                                                 placeholder =
+                                                     "Explain why the applicant is verified or not verified, referring to the completed checks and any relevant findings."
+                                             })
+
+                                    <div class="final-verification-field-help">
+                                        Use this field to document the reason for the selected verification outcome.
+                                    </div>
+
+                                    @Html.ValidationMessageFor(
+                                             m => m.Comments,
+                                             "",
+                                             new
+                                             {
+                                                 @class =
+                                                     "final-verification-validation"
+                                             })
+
+                                </div>
+
+
+                                <!-- =========================================
+                                     CONFIRMATION
+                                     ========================================= -->
+
+                                <div class="final-verification-confirmation">
+
+                                    @Html.CheckBoxFor(
+                                             m => m.ConfirmVerification,
+                                             new
+                                             {
+                                                 id = "confirmVerification"
+                                             })
+
+                                    <div class="final-verification-confirmation-text">
+                                        I confirm that I have reviewed the
+                                        applicant's recruitment information,
+                                        supporting documents, assessment,
+                                        interview outcome, and selection
+                                        decision, and that I have completed
+                                        the final verification.
+                                    </div>
+
+                                </div>
+
+                                @Html.ValidationMessageFor(
+                                         m => m.ConfirmVerification,
+                                         "",
+                                         new
+                                         {
+                                             @class =
+                                                 "final-verification-validation"
+                                         })
+
+
+                                <!-- =========================================
+                                     ACTIONS
+                                     ========================================= -->
+
+                                <div class="final-verification-actions">
+
+                                    <div class="final-verification-actions-left">
+
+                                        <a href="@Url.Action(
+                                            "Review",
+                                            "TechnicianApplication",
+                                            new
+                                            {
+                                                id = Model.ApplicationID
+                                            })"
+                                           class="final-verification-btn final-verification-btn-secondary">
+                                            Back to Application
+                                        </a>
+
+                                    </div>
+
+                                    <div class="final-verification-actions-right">
+
+                                        <button type="submit"
+                                                id="completeVerificationButton"
+                                                class="final-verification-btn final-verification-btn-primary"
+                                                disabled>
+                                            Complete Final Verification
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                }
+
+            </main>
+
+
+            <!-- =====================================================
+                 SIDEBAR
+                 ===================================================== -->
+
+            <aside class="final-verification-sidebar">
+
+                <!-- =================================================
+                     RECRUITMENT PROGRESS
+                     ================================================= -->
+
+                <div class="final-verification-sidebar-card">
+
+                    <div class="final-verification-sidebar-header">
+
+                        <h3 class="final-verification-sidebar-title">
+                            Recruitment Progress
+                        </h3>
+
+                        <p class="final-verification-sidebar-description">
+                            Current position in the technician recruitment
+                            workflow.
+                        </p>
+
+                    </div>
+
+                    <div class="final-verification-sidebar-body">
+
+                        <div class="final-verification-progress">
+
+                            <div class="final-verification-progress-item completed">
+
+                                <div class="final-verification-progress-marker">
+                                    1
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Application
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Submitted and reviewed
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item completed">
+
+                                <div class="final-verification-progress-marker">
+                                    2
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Screening
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Requirements reviewed
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item completed">
+
+                                <div class="final-verification-progress-marker">
+                                    3
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Documents
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Supporting documents verified
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item completed">
+
+                                <div class="final-verification-progress-marker">
+                                    4
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Assessment
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Assessment completed
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item completed">
+
+                                <div class="final-verification-progress-marker">
+                                    5
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Interview
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Interview completed
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item completed">
+
+                                <div class="final-verification-progress-marker">
+                                    6
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Selection
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Applicant selected
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item current">
+
+                                <div class="final-verification-progress-marker">
+                                    7
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Final Verification
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Current stage
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="final-verification-progress-item">
+
+                                <div class="final-verification-progress-marker">
+                                    8
+                                </div>
+
+                                <div class="final-verification-progress-content">
+
+                                    <div class="final-verification-progress-title">
+                                        Onboarding
+                                    </div>
+
+                                    <div class="final-verification-progress-description">
+                                        Next stage if verified
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     GUIDANCE
+                     ================================================= -->
+
+                <div class="final-verification-sidebar-card">
+
+                    <div class="final-verification-sidebar-header">
+
+                        <h3 class="final-verification-sidebar-title">
+                            Verification Guidance
+                        </h3>
+
+                        <p class="final-verification-sidebar-description">
+                            Use these checks to confirm the recruitment record is complete before submitting the decision.
+                        </p>
+
+                    </div>
+
+                    <div class="final-verification-sidebar-body">
+
+                        <ul class="final-verification-guidance-list">
+
+                            <li class="final-verification-guidance-item">
+                                Confirm applicant identity.
+                            </li>
+
+                            <li class="final-verification-guidance-item">
+                                Review screening results.
+                            </li>
+
+                            <li class="final-verification-guidance-item">
+                                Confirm all documents are accepted.
+                            </li>
+
+                            <li class="final-verification-guidance-item">
+                                Review assessment information.
+                            </li>
+
+                            <li class="final-verification-guidance-item">
+                                Review interview outcome.
+                            </li>
+
+                            <li class="final-verification-guidance-item">
+                                Confirm the selection decision.
+                            </li>
+
+                            <li class="final-verification-guidance-item">
+                                Record clear verification comments.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CURRENT STAGE
+                     ================================================= -->
+
+                <div class="final-verification-sidebar-card">
+
+                    <div class="final-verification-sidebar-header">
+
+                        <h3 class="final-verification-sidebar-title">
+                            Current Stage
+                        </h3>
+
+                    </div>
+
+                    <div class="final-verification-sidebar-body">
+
+                        <div class="final-verification-stage-card">
+
+                            <div class="final-verification-stage-label">
+                                Selection Status
+                            </div>
+
+                            <div class="final-verification-stage-value">
+                                Selected
+                            </div>
+
+                            <p class="final-verification-stage-description">
+                                The applicant was selected and is now awaiting the final verification outcome.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     NAVIGATION
+                     ================================================= -->
+
+                <div class="final-verification-sidebar-card">
+
+                    <div class="final-verification-sidebar-header">
+
+                        <h3 class="final-verification-sidebar-title">
+                            Navigation
+                        </h3>
+
+                    </div>
+
+                    <div class="final-verification-sidebar-body">
+
+                        <div class="final-verification-navigation">
+
+                            <a href="@Url.Action(
+                                "Review",
+                                "TechnicianApplication",
+                                new
+                                {
+                                    id = Model.ApplicationID
+                                })">
+                                Application Review
+                            </a>
+
+                            <a href="@Url.Action(
+                                "ReviewApplications",
+                                "TechnicianApplication")">
+                                Review Applications
+                            </a>
+
+                            <a href="@Url.Action(
+                                "Manage",
+                                "TechnicianOpportunity")">
+                                Opportunity Management
+                            </a>
+
+                            <a href="@Url.Action(
+                                "Index",
+                                "Administrators")">
+                                Administrator Dashboard
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     FINAL VERIFICATION SCRIPT
+     ============================================================= -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var checkbox =
+            document.getElementById("confirmVerification");
+
+        var button =
+            document.getElementById("completeVerificationButton");
+
+        var form =
+            document.getElementById("finalVerificationForm");
+
+        var result =
+            document.getElementById("verificationResult");
+
+
+        if (!checkbox || !button || !form) {
+            return;
+        }
+
+
+        /* =========================================================
+           BUTTON STATE
+           ========================================================= */
+
+        function updateButtonState() {
+
+            button.disabled =
+                !checkbox.checked || !result || !result.value;
+        }
+
+
+        /* =========================================================
+           CHECKBOX
+           ========================================================= */
+
+        checkbox.addEventListener(
+            "change",
+            updateButtonState
+        );
+
+
+        /* =========================================================
+           FORM SUBMISSION
+           ========================================================= */
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                /*
+                 * Confirmation is mandatory.
+                 */
+
+                if (!checkbox.checked) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please confirm that you have completed the final verification."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Verification result is mandatory.
+                 */
+
+                if (!result || !result.value) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select the final verification result."
+                    );
+
+                    if (result) {
+                        result.focus();
+                    }
+
+                    return;
+                }
+
+
+                /*
+                 * Final confirmation.
+                 */
+
+                var confirmed =
+                    window.confirm(
+                        "Are you sure you want to complete final verification for this applicant?"
+                    );
+
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+
+                /*
+                 * Prevent duplicate submission.
+                 */
+
+                button.disabled = true;
+
+                button.innerText =
+                    "Saving...";
+
+            }
+        );
+
+
+        /*
+         * Initial state.
+         */
+
+        updateButtonState();
+
+    });
+</script>
+
+

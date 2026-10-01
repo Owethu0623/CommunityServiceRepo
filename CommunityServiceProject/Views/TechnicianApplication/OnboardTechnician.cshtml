@@ -1,0 +1,1765 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianOnboardingViewModel
+
+@{
+    ViewBag.Title = "Onboard Selected Technician";
+}
+
+<style>
+    .onboarding-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .onboarding-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+        .onboarding-header h1 {
+            margin: 0 0 8px;
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .onboarding-header p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 14px;
+        }
+
+    .header-reference {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .header-reference span {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 310px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .section-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: #16324f;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+    }
+
+    .info-item {
+        min-width: 0;
+    }
+
+    .info-label {
+        display: block;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .info-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+        .info-value.muted {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+    .status-approved {
+        display: inline-block;
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+        border-radius: 20px;
+        padding: 5px 11px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .verification-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    .verification-box {
+        border: 1px solid #e3e8ef;
+        border-radius: 9px;
+        padding: 15px;
+        background: #f8fafc;
+    }
+
+        .verification-box .number {
+            display: block;
+            font-size: 22px;
+            font-weight: 700;
+            color: #0D5CC1;
+            margin-bottom: 3px;
+        }
+
+        .verification-box .label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+    .account-notice {
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+        padding: 15px 16px;
+        margin-bottom: 20px;
+        color: #24415f;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .skill-notice {
+        background: #f8fafc;
+        border: 1px solid #dce4ee;
+        border-radius: 9px;
+        padding: 14px 15px;
+        margin-top: 6px;
+        color: #475569;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 22px;
+    }
+
+    .form-group {
+        margin: 0;
+    }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+    .form-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        padding: 11px 12px;
+        font-size: 14px;
+        color: #1f2937;
+        background: white;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+        }
+
+    select.form-control {
+        cursor: pointer;
+        appearance: auto;
+    }
+
+    .field-help {
+        margin-top: 5px;
+        font-size: 11px;
+        color: #6b7280;
+        line-height: 1.4;
+    }
+
+    .field-validation {
+        color: #b42318;
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .password-note {
+        background: #fff8e8;
+        border: 1px solid #f1d99b;
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-top: 8px;
+        color: #70551c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .review-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .review-table tr {
+            border-bottom: 1px solid #edf0f4;
+        }
+
+            .review-table tr:last-child {
+                border-bottom: none;
+            }
+
+        .review-table th,
+        .review-table td {
+            text-align: left;
+            padding: 12px 0;
+            vertical-align: top;
+            font-size: 13px;
+        }
+
+        .review-table th {
+            width: 42%;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .review-table td {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+    .confirmation-panel {
+        background: #f8fafc;
+        border: 1px solid #dce4ee;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    .confirmation-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+        .confirmation-row input[type="checkbox"] {
+            margin-top: 3px;
+            width: 17px;
+            height: 17px;
+            accent-color: #0D5CC1;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+    .confirmation-text {
+        font-size: 13px;
+        color: #374151;
+        line-height: 1.55;
+        cursor: pointer;
+    }
+
+        .confirmation-text strong {
+            color: #1f2937;
+        }
+
+    .action-area {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e8edf3;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        box-sizing: border-box;
+    }
+
+    .primary-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+        }
+
+        .primary-button:disabled {
+            background: #b9c1cc;
+            border-color: #b9c1cc;
+            color: #ffffff;
+            cursor: not-allowed;
+        }
+
+    .secondary-button {
+        border: 1px solid #cfd7e3;
+        background: white;
+        color: #374151;
+    }
+
+        .secondary-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+    .error-summary {
+        background: #fff1f0;
+        border: 1px solid #f0b8b4;
+        color: #9b1c1c;
+        border-radius: 9px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+        .error-summary ul {
+            margin: 7px 0 0 18px;
+            padding: 0;
+        }
+
+    .progress-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+        .progress-card h3 {
+            margin: 0 0 18px;
+            color: #16324f;
+            font-size: 17px;
+        }
+
+    .workflow-step {
+        position: relative;
+        padding-left: 28px;
+        padding-bottom: 20px;
+    }
+
+        .workflow-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 18px;
+            bottom: 0;
+            width: 1px;
+            background: #d7dee8;
+        }
+
+    .workflow-dot {
+        position: absolute;
+        left: 0;
+        top: 3px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #d3dbe5;
+        border: 2px solid white;
+        box-shadow: 0 0 0 1px #c9d2de;
+    }
+
+    .workflow-step.completed .workflow-dot {
+        background: #198754;
+        box-shadow: 0 0 0 1px #198754;
+    }
+
+    .workflow-step.current .workflow-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.13);
+    }
+
+    .workflow-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 3px;
+    }
+
+    .workflow-step.current .workflow-title {
+        color: #0D5CC1;
+    }
+
+    .workflow-step.completed .workflow-title {
+        color: #18794e;
+    }
+
+    .workflow-description {
+        font-size: 11px;
+        line-height: 1.45;
+        color: #6b7280;
+    }
+
+    .navigation-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 18px;
+        margin-top: 18px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+        .navigation-card h3 {
+            margin: 0 0 12px;
+            font-size: 15px;
+            color: #16324f;
+        }
+
+    .navigation-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+        .navigation-links a {
+            color: #0D5CC1;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+            .navigation-links a:last-child {
+                border-bottom: none;
+            }
+
+            .navigation-links a:hover {
+                color: #094b9f;
+            }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 23, 42, 0.55);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+    .confirmation-dialog {
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 13px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+        padding: 26px;
+    }
+
+        .confirmation-dialog h3 {
+            margin: 0 0 10px;
+            color: #16324f;
+            font-size: 20px;
+        }
+
+        .confirmation-dialog p {
+            margin: 0;
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+    .dialog-warning {
+        background: #fff8e8;
+        border: 1px solid #f0d59b;
+        border-radius: 8px;
+        padding: 12px;
+        margin: 17px 0;
+        color: #6b531c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+    @@media (max-width: 1050px) {
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .navigation-card {
+            margin-top: 0;
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .onboarding-page {
+            padding: 20px 12px 35px;
+        }
+
+        .onboarding-header {
+            padding: 22px;
+        }
+
+            .onboarding-header h1 {
+                font-size: 23px;
+            }
+
+        .info-grid,
+        .form-grid,
+        .verification-summary,
+        .sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .section-card {
+            padding: 19px;
+        }
+
+        .action-area {
+            flex-direction: column-reverse;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+
+        .review-table th {
+            width: 45%;
+        }
+
+        .dialog-actions {
+            flex-direction: column-reverse;
+        }
+
+            .dialog-actions .primary-button,
+            .dialog-actions .secondary-button {
+                width: 100%;
+            }
+    }
+</style>
+
+<div class="onboarding-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="onboarding-header">
+
+        <h1>Onboard Selected Technician</h1>
+
+        <p>
+            Create the technician account, assign the technician's primary
+            municipal skill, and complete the recruitment process.
+        </p>
+
+        <div class="header-reference">
+
+            <span>
+                Application: @Model.ApplicationReference
+            </span>
+
+            <span>
+                @Model.OpportunityCode
+            </span>
+
+            <span>
+                Approved for Onboarding
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="page-layout">
+
+        <div class="main-column">
+
+            @using (Html.BeginForm(
+                "OnboardTechnician",
+                "TechnicianApplication",
+                FormMethod.Post,
+                new { id = "onboardingForm" }
+            ))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.ApplicationID)
+
+                if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary">
+
+                        <strong>
+                            Please correct the following before continuing:
+                        </strong>
+
+                        @Html.ValidationSummary(
+                            true,
+                            "",
+                            new { @class = "" }
+                        )
+
+                    </div>
+                }
+
+                <!-- =================================================
+                     APPLICANT INFORMATION
+                     ================================================= -->
+
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Applicant Information</h2>
+
+                        <p>
+                            Recruitment information shown for verification and traceability.
+                        </p>
+
+                    </div>
+
+                    <div class="info-grid">
+
+                        <div class="info-item">
+                            <span class="info-label">Applicant</span>
+
+                            <div class="info-value">
+                                @Model.ApplicantName
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Application Reference</span>
+
+                            <div class="info-value">
+                                @Model.ApplicationReference
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Personal Email</span>
+
+                            <div class="info-value">
+                                @Model.PersonalEmail
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Phone Number</span>
+
+                            <div class="info-value">
+                                @Model.ApplicantPhoneNumber
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Application Date</span>
+
+                            <div class="info-value">
+                                @Model.ApplicationDate.ToString("dd MMM yyyy HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Application Status</span>
+
+                            <div class="info-value">
+                                <span class="status-approved">
+                                    @Model.ApplicationStatus
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =================================================
+                     OPPORTUNITY
+                     ================================================= -->
+
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Opportunity</h2>
+
+                        <p>
+                            Position information associated with the selected application.
+                        </p>
+
+                    </div>
+
+                    <div class="info-grid">
+
+                        <div class="info-item">
+                            <span class="info-label">Position</span>
+
+                            <div class="info-value">
+                                @Model.OpportunityTitle
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Opportunity Code</span>
+
+                            <div class="info-value">
+                                @Model.OpportunityCode
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Employment Type</span>
+
+                            <div class="info-value">
+                                @Model.EmploymentType
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =================================================
+                     RECRUITMENT OUTCOME
+                     ================================================= -->
+
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Recruitment Outcome</h2>
+
+                        <p>
+                            Recruitment evidence supporting the onboarding decision.
+                        </p>
+
+                    </div>
+
+                    <div class="info-grid">
+
+                        <div class="info-item">
+                            <span class="info-label">Screening Result</span>
+
+                            <div class="info-value">
+                                @Model.ScreeningResult
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Assessment Result</span>
+
+                            <div class="info-value">
+                                @Model.AssessmentResult
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Assessment Score</span>
+
+                            <div class="info-value">
+
+                                @if (Model.AssessmentScore.HasValue)
+                                {
+                                    @Model.AssessmentScore.Value.ToString("0.##")<text>%</text>
+                                }
+                                else
+                                {
+                                    <span class="info-value muted">
+                                        Not available
+                                    </span>
+                                }
+
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Interview Outcome</span>
+
+                            <div class="info-value">
+                                @Model.InterviewOutcome
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Final Verification</span>
+
+                            <div class="info-value">
+                                @Model.FinalVerificationResult
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="verification-summary">
+
+                        <div class="verification-box">
+
+                            <span class="number">
+                                @Model.VerifiedDocumentCount
+                            </span>
+
+                            <span class="label">
+                                Verified Documents
+                            </span>
+
+                        </div>
+
+                        <div class="verification-box">
+
+                            <span class="number">
+                                @Model.UnverifiedDocumentCount
+                            </span>
+
+                            <span class="label">
+                                Documents Requiring Attention
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =================================================
+                     TECHNICIAN ACCOUNT
+                     ================================================= -->
+
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Technician Account Setup</h2>
+
+                        <p>
+                            Configure the municipal technician account and assign
+                            the technician's primary maintenance skill.
+                        </p>
+
+                    </div>
+
+                    <div class="account-notice">
+
+                        The applicant's name and phone number have been
+                        prepopulated from the existing Citizen account.
+                        Review all information before completing onboarding.
+
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.FirstName)
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.FirstName,
+                                new
+                                {
+                                    @class = "form-control",
+                                    autocomplete = "given-name"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.FirstName,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.LastName)
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.LastName,
+                                new
+                                {
+                                    @class = "form-control",
+                                    autocomplete = "family-name"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.LastName,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.MunicipalEmail)
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.MunicipalEmail,
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "email",
+                                    autocomplete = "username",
+                                    placeholder = "name@municipality.co.za"
+                                }
+                            )
+
+                            <div class="field-help">
+                                This becomes the technician's municipal login username.
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.MunicipalEmail,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.PhoneNumber)
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.PhoneNumber,
+                                new
+                                {
+                                    @class = "form-control",
+                                    autocomplete = "tel",
+                                    maxlength = "10"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.PhoneNumber,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.SelectedSkillID)
+                            </label>
+
+                            @Html.DropDownListFor(
+                                m => m.SelectedSkillID,
+                                Model.AvailableSkills,
+                                "-- Select primary skill --",
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "SelectedSkillID"
+                                }
+                            )
+
+                            <div class="field-help">
+                                Select the primary municipal maintenance skill
+                                assigned to this technician.
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.SelectedSkillID,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                            <div class="skill-notice">
+                                The selected skill will be assigned when onboarding
+                                is completed and will be used when matching
+                                technicians to maintenance work.
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.Password)
+                            </label>
+
+                            @Html.PasswordFor(
+                                m => m.Password,
+                                new
+                                {
+                                    @class = "form-control",
+                                    autocomplete = "new-password"
+                                }
+                            )
+
+                            <div class="field-help">
+                                Enter the initial password for Technician Login.
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Password,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                @Html.DisplayNameFor(m => m.ConfirmPassword)
+                            </label>
+
+                            @Html.PasswordFor(
+                                m => m.ConfirmPassword,
+                                new
+                                {
+                                    @class = "form-control",
+                                    autocomplete = "new-password"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.ConfirmPassword,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+
+                        </div>
+
+                        <div class="form-group full-width">
+
+                            <div class="password-note">
+
+                                The technician account will be created as
+                                <strong>Active</strong>, linked to the existing
+                                Citizen account, and assigned the selected
+                                primary skill.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =================================================
+                     FINAL REVIEW
+                     ================================================= -->
+
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Final Onboarding Review</h2>
+
+                        <p>
+                            Confirm the account information before creating the technician.
+                        </p>
+
+                    </div>
+
+                    <table class="review-table">
+
+                        <tr>
+                            <th>Applicant</th>
+                            <td>@Model.ApplicantName</td>
+                        </tr>
+
+                        <tr>
+                            <th>Application</th>
+                            <td>@Model.ApplicationReference</td>
+                        </tr>
+
+                        <tr>
+                            <th>Technician Name</th>
+                            <td id="reviewTechnicianName">
+                                @Model.FirstName @Model.LastName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Municipal Login</th>
+                            <td id="reviewMunicipalEmail">
+                                @Model.MunicipalEmail
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Primary Skill</th>
+                            <td id="reviewTechnicianSkill">
+                                Select a skill
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Account Status</th>
+                            <td>Active</td>
+                        </tr>
+
+                        <tr>
+                            <th>Citizen Link</th>
+                            <td>Existing Citizen account linked</td>
+                        </tr>
+
+                        <tr>
+                            <th>Application Status After Onboarding</th>
+                            <td>Onboarded</td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <!-- =================================================
+                     CONFIRMATION
+                     ================================================= -->
+
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Onboarding Confirmation</h2>
+
+                        <p>
+                            Confirm the information before creating the technician account.
+                        </p>
+
+                    </div>
+
+                    <div class="confirmation-panel">
+
+                        <div class="confirmation-row">
+
+                            @Html.CheckBoxFor(
+                                m => m.ConfirmOnboarding,
+                                new { id = "confirmOnboarding" }
+                            )
+
+                            <label for="confirmOnboarding"
+                                   class="confirmation-text">
+
+                                I confirm that I have reviewed the applicant's
+                                recruitment outcome and verified the technician
+                                account information, including the selected primary
+                                skill. I understand that completing onboarding will
+                                create an active Technician account, assign the
+                                selected skill, link the technician to the existing
+                                Citizen account, and change the application status
+                                to <strong>Onboarded</strong>.
+
+                            </label>
+
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.ConfirmOnboarding,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+
+                    </div>
+
+                    <div class="action-area">
+
+                        <a href="@Url.Action(
+                            "Review",
+                            "TechnicianApplication",
+                            new { id = Model.ApplicationID })"
+                           class="secondary-button">
+                            Back to Application Review
+                        </a>
+
+                        <button type="button"
+                                id="completeOnboardingButton"
+                                class="primary-button"
+                                disabled>
+                            Complete Onboarding
+                        </button>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="progress-card">
+
+                <h3>Recruitment Progress</h3>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Application
+                    </div>
+
+                    <div class="workflow-description">
+                        Application submitted and reviewed.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Screening
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant screening completed.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Documents
+                    </div>
+
+                    <div class="workflow-description">
+                        Supporting documents verified.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Assessment
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant assessment completed.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Interview
+                    </div>
+
+                    <div class="workflow-description">
+                        Interview outcome recorded.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Selection
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant selected.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step completed">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Final Verification
+                    </div>
+
+                    <div class="workflow-description">
+                        Applicant approved for onboarding.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step current">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Technician Onboarding
+                    </div>
+
+                    <div class="workflow-description">
+                        Create the active technician account and assign the primary skill.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Completed
+                    </div>
+
+                    <div class="workflow-description">
+                        Technician onboarding completed and account ready for use.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="navigation-card">
+
+                <h3>Navigation</h3>
+
+                <div class="navigation-links">
+
+                    <a href="@Url.Action(
+                        "Review",
+                        "TechnicianApplication",
+                        new { id = Model.ApplicationID })">
+                        Application Review
+                    </a>
+
+                    <a href="@Url.Action(
+                        "ReviewApplications",
+                        "TechnicianApplication")">
+                        Review Applications
+                    </a>
+
+                    <a href="@Url.Action(
+                        "Index",
+                        "TechnicianApplication")">
+                        Technician Applications
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+<!-- =============================================================
+     CONFIRMATION DIALOG
+     ============================================================= -->
+
+<div id="onboardingModal"
+     class="modal-overlay">
+
+    <div class="confirmation-dialog">
+
+        <h3>
+            Complete Technician Onboarding?
+        </h3>
+
+        <p>
+            You are about to create an active Technician account for
+            <strong id="dialogApplicantName">
+                @Model.ApplicantName
+            </strong>.
+        </p>
+
+        <div class="dialog-warning">
+
+            This action will:
+
+            <br /><br />
+
+            Create the active Technician account, assign the selected
+            primary skill, link the technician to the existing Citizen
+            account, create the onboarding record, and change the
+            application status to <strong>Onboarded</strong>.
+
+            <br /><br />
+
+            Please ensure that the municipal email, password and selected
+            skill are correct.
+
+        </div>
+
+        <div class="dialog-actions">
+
+            <button type="button"
+                    id="cancelOnboarding"
+                    class="secondary-button">
+                Cancel
+            </button>
+
+            <button type="button"
+                    id="confirmOnboardingSubmit"
+                    class="primary-button">
+                Confirm Onboarding
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var form =
+            document.getElementById("onboardingForm");
+
+        var checkbox =
+            document.getElementById("confirmOnboarding");
+
+        var completeButton =
+            document.getElementById("completeOnboardingButton");
+
+        var modal =
+            document.getElementById("onboardingModal");
+
+        var cancelButton =
+            document.getElementById("cancelOnboarding");
+
+        var confirmButton =
+            document.getElementById("confirmOnboardingSubmit");
+
+        var firstNameInput =
+            document.getElementById("FirstName");
+
+        var lastNameInput =
+            document.getElementById("LastName");
+
+        var emailInput =
+            document.getElementById("MunicipalEmail");
+
+        var skillInput =
+            document.getElementById("SelectedSkillID");
+
+        var reviewName =
+            document.getElementById("reviewTechnicianName");
+
+        var reviewEmail =
+            document.getElementById("reviewMunicipalEmail");
+
+        var reviewSkill =
+            document.getElementById("reviewTechnicianSkill");
+
+
+        function updateButtonState() {
+
+            if (!completeButton || !checkbox) {
+                return;
+            }
+
+            completeButton.disabled =
+                !checkbox.checked;
+        }
+
+
+        function updateReviewInformation() {
+
+            var firstName =
+                firstNameInput
+                    ? firstNameInput.value.trim()
+                    : "";
+
+            var lastName =
+                lastNameInput
+                    ? lastNameInput.value.trim()
+                    : "";
+
+            var email =
+                emailInput
+                    ? emailInput.value.trim()
+                    : "";
+
+            var selectedSkillText = "";
+
+            if (skillInput &&
+                skillInput.selectedIndex >= 0) {
+
+                selectedSkillText =
+                    skillInput.options[
+                        skillInput.selectedIndex
+                    ].text;
+            }
+
+            if (reviewName) {
+
+                reviewName.textContent =
+                    (firstName + " " + lastName).trim();
+            }
+
+            if (reviewEmail) {
+
+                reviewEmail.textContent =
+                    email || "Not provided";
+            }
+
+            if (reviewSkill) {
+
+                if (!skillInput ||
+                    !skillInput.value ||
+                    skillInput.value === "0") {
+
+                    reviewSkill.textContent =
+                        "Select a skill";
+
+                } else {
+
+                    reviewSkill.textContent =
+                        selectedSkillText;
+                }
+            }
+        }
+
+
+        if (checkbox) {
+
+            checkbox.addEventListener(
+                "change",
+                updateButtonState
+            );
+        }
+
+
+        if (firstNameInput) {
+
+            firstNameInput.addEventListener(
+                "input",
+                updateReviewInformation
+            );
+        }
+
+
+        if (lastNameInput) {
+
+            lastNameInput.addEventListener(
+                "input",
+                updateReviewInformation
+            );
+        }
+
+
+        if (emailInput) {
+
+            emailInput.addEventListener(
+                "input",
+                updateReviewInformation
+            );
+        }
+
+
+        if (skillInput) {
+
+            skillInput.addEventListener(
+                "change",
+                updateReviewInformation
+            );
+        }
+
+
+        if (completeButton) {
+
+            completeButton.addEventListener(
+                "click",
+                function () {
+
+                    if (!checkbox ||
+                        !checkbox.checked) {
+
+                        return;
+                    }
+
+                    updateReviewInformation();
+
+                    if (modal) {
+
+                        modal.classList.add("active");
+                    }
+                }
+            );
+        }
+
+
+        if (cancelButton) {
+
+            cancelButton.addEventListener(
+                "click",
+                function () {
+
+                    if (modal) {
+
+                        modal.classList.remove("active");
+                    }
+                }
+            );
+        }
+
+
+        if (modal) {
+
+            modal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === modal) {
+
+                        modal.classList.remove("active");
+                    }
+                }
+            );
+        }
+
+
+        if (confirmButton) {
+
+            confirmButton.addEventListener(
+                "click",
+                function () {
+
+                    if (!form) {
+                        return;
+                    }
+
+                    if (!checkbox ||
+                        !checkbox.checked) {
+
+                        return;
+                    }
+
+                    confirmButton.disabled = true;
+
+                    if (completeButton) {
+
+                        completeButton.disabled = true;
+                    }
+
+                    confirmButton.textContent =
+                        "Saving...";
+
+                    form.submit();
+                }
+            );
+        }
+
+
+        updateButtonState();
+
+        updateReviewInformation();
+
+    });
+
+</script>
+

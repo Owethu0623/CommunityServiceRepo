@@ -32,6 +32,7 @@ namespace CommunityServiceProject.ViewModels
         public List<SelectListItem> StatusOptions { get; set; }
 
         public List<SelectListItem> WardOptions { get; set; }
+        public List<ProjectAssetSuggestedItemViewModel> SuggestedAssets { get; set; }
 
         public string SearchTerm { get; set; }
 
@@ -137,3 +138,35 @@ namespace CommunityServiceProject.ViewModels
         public string Notes { get; set; }
     }
 }
+
+public class ProjectAssetSuggestedItemViewModel
+{
+    public int AssetID { get; set; }
+
+    public string AssetCode { get; set; }
+
+    public string AssetName { get; set; }
+
+    public string AssetType { get; set; }
+
+    public string AssetCategory { get; set; }
+
+    public string WardName { get; set; }
+
+    public string LocationDescription { get; set; }
+
+    public string Condition { get; set; }
+
+    public string Status { get; set; }
+
+    public DateTime DateRegistered { get; set; }
+
+    public DateTime? LastInspectionDate { get; set; }
+
+    public DateTime? LastMaintenanceDate { get; set; }
+
+    public int MatchScore { get; set; }
+
+    public string MatchReason { get; set; }
+}
+

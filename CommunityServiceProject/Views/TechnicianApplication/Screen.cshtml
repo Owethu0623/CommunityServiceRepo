@@ -1,0 +1,791 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationScreeningViewModel
+
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Screen Applicant";
+}
+
+<div class="screening-page">
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+
+    <div class="screening-header">
+
+        <div>
+
+            <div class="page-eyebrow">
+                TECHNICIAN RECRUITMENT
+            </div>
+
+            <h1>
+                Screen Applicant
+            </h1>
+
+            <p>
+                Assess the applicant against the requirements defined
+                for the technician opportunity.
+            </p>
+
+        </div>
+
+        <div class="application-reference">
+            @Model.ApplicationReference
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         APPLICANT SUMMARY
+         ============================================================ -->
+
+    <div class="applicant-summary">
+
+        <div>
+
+            <div class="summary-label">
+                APPLICANT
+            </div>
+
+            <div class="summary-name">
+                @Model.ApplicantName
+            </div>
+
+            <div class="summary-email">
+                @Model.ApplicantEmail
+            </div>
+
+        </div>
+
+        <div>
+
+            <div class="summary-label">
+                OPPORTUNITY
+            </div>
+
+            <div class="summary-opportunity">
+                @Model.OpportunityTitle
+            </div>
+
+            <div class="summary-code">
+                @Model.OpportunityCode
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         SCREENING FORM
+         ============================================================ -->
+
+    @using (Html.BeginForm(
+        "Screen",
+        "TechnicianApplication",
+        FormMethod.Post,
+        new { @class = "screening-form" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.ApplicationID)
+
+
+        <!-- ========================================================
+             REQUIREMENTS
+             ======================================================== -->
+
+        <section class="screening-card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="section-kicker">
+                        ASSESSMENT CRITERIA
+                    </div>
+
+                    <h2>
+                        Defined Opportunity Requirements
+                    </h2>
+
+                    <p>
+                        Review the requirements published for this opportunity
+                        before recording the screening assessment.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="requirements-grid">
+
+                <div class="requirement-block">
+
+                    <div class="requirement-label">
+                        Required Qualifications
+                    </div>
+
+                    <div class="requirement-content">
+                        @Model.RequiredQualifications
+                    </div>
+
+                </div>
+
+
+                <div class="requirement-block">
+
+                    <div class="requirement-label">
+                        Required Experience
+                    </div>
+
+                    <div class="requirement-content">
+
+                        @(string.IsNullOrWhiteSpace(Model.RequiredExperience)
+                            ? "No specific experience requirement was specified."
+                            : Model.RequiredExperience)
+
+                    </div>
+
+                </div>
+
+
+                <div class="requirement-block full-width">
+
+                    <div class="requirement-label">
+                        General Requirements
+                    </div>
+
+                    <div class="requirement-content">
+                        @Model.Requirements
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             COVER LETTER
+             ======================================================== -->
+
+        <section class="screening-card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="section-kicker">
+                        APPLICANT INFORMATION
+                    </div>
+
+                    <h2>
+                        Cover Letter
+                    </h2>
+
+                    <p>
+                        Applicant statement submitted with the application.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="cover-letter">
+
+                @if (!string.IsNullOrWhiteSpace(Model.CoverLetter))
+                {
+                    @Model.CoverLetter
+                }
+                else
+                {
+                    <span class="empty-information">
+                        No cover letter was submitted.
+                    </span>
+                }
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             SCREENING ASSESSMENT
+             ======================================================== -->
+
+        <section class="screening-card">
+
+            <div class="card-header">
+
+                <div>
+                    <div class="section-kicker">
+                        SCREENING DECISION
+                    </div>
+
+                    <h2>
+                        Screening Assessment
+                    </h2>
+
+                    <p>
+                        Assess the applicant consistently against the defined
+                        opportunity requirements.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="assessment-grid">
+
+                <div class="assessment-item">
+
+                    <label>
+                        Qualification Assessment
+                    </label>
+
+                    @Html.EnumDropDownListFor(
+                        m => m.QualificationAssessment,
+                        new
+                        {
+                            @class = "screening-select"
+                        })
+
+                    <div class="field-help">
+                        Assess whether the applicant's qualifications
+                        satisfy the published qualification requirements.
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.QualificationAssessment,
+                        "",
+                        new { @class = "validation-message" })
+
+                </div>
+
+
+                <div class="assessment-item">
+
+                    <label>
+                        Experience Assessment
+                    </label>
+
+                    @Html.EnumDropDownListFor(
+                        m => m.ExperienceAssessment,
+                        new
+                        {
+                            @class = "screening-select"
+                        })
+
+                    <div class="field-help">
+                        Assess whether the applicant's experience satisfies
+                        the published experience requirements.
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.ExperienceAssessment,
+                        "",
+                        new { @class = "validation-message" })
+
+                </div>
+
+
+                <div class="assessment-item full-width">
+
+                    <label>
+                        Requirements Assessment
+                    </label>
+
+                    @Html.EnumDropDownListFor(
+                        m => m.RequirementsAssessment,
+                        new
+                        {
+                            @class = "screening-select"
+                        })
+
+                    <div class="field-help">
+                        Assess the applicant against the remaining
+                        requirements defined for the opportunity.
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.RequirementsAssessment,
+                        "",
+                        new { @class = "validation-message" })
+
+                </div>
+
+
+                <div class="assessment-item full-width">
+
+                    <label>
+                        Overall Screening Result
+                    </label>
+
+                    @Html.EnumDropDownListFor(
+                        m => m.OverallResult,
+                        new
+                        {
+                            @class = "screening-select overall-result"
+                        })
+
+                    <div class="field-help">
+                        Record the overall outcome of the screening assessment.
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.OverallResult,
+                        "",
+                        new { @class = "validation-message" })
+
+                </div>
+
+
+                <div class="assessment-item full-width">
+
+                    <label>
+                        Screening Comments
+                    </label>
+
+                    @Html.TextAreaFor(
+                        m => m.ScreeningComments,
+                        7,
+                        0,
+                        new
+                        {
+                            @class = "screening-textarea",
+                            placeholder =
+                                "Record the evidence and reasoning supporting the screening result."
+                        })
+
+                    <div class="field-help">
+                        Provide clear comments supporting the recorded assessment.
+                    </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.ScreeningComments,
+                        "",
+                        new { @class = "validation-message" })
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             ACTIONS
+             ======================================================== -->
+
+        <div class="screening-actions">
+
+            <a href="@Url.Action(
+                "Review",
+                "TechnicianApplication",
+                new { id = Model.ApplicationID })"
+               class="secondary-button">
+                Cancel
+            </a>
+
+            <button type="submit"
+                    class="primary-button">
+                Save Screening
+            </button>
+
+        </div>
+
+    }
+
+</div>
+
+
+<style>
+
+    /* ================================================================
+       PAGE
+       ================================================================ */
+
+    .screening-page {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 32px 26px 60px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1e293b;
+    }
+
+
+    /* ================================================================
+       HEADER
+       ================================================================ */
+
+    .screening-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 30px 32px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.10);
+    }
+
+    .page-eyebrow {
+        color: rgba(255,255,255,0.82);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
+
+    .screening-header h1 {
+        margin: 0;
+        color: white;
+        font-size: 30px;
+    }
+
+    .screening-header p {
+        margin: 10px 0 0;
+        color: rgba(255,255,255,0.92);
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 700px;
+    }
+
+    .application-reference {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        border: 1px solid rgba(255,255,255,0.30);
+        border-radius: 7px;
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+
+    /* ================================================================
+       APPLICANT SUMMARY
+       ================================================================ */
+
+    .applicant-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        padding: 21px 23px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 10px rgba(15,23,42,0.04);
+    }
+
+    .summary-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+    }
+
+    .summary-name,
+    .summary-opportunity {
+        color: #172033;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .summary-email,
+    .summary-code {
+        margin-top: 4px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .summary-code {
+        color: #0D5CC1;
+        font-weight: 700;
+    }
+
+
+    /* ================================================================
+       CARD
+       ================================================================ */
+
+    .screening-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(15,23,42,0.045);
+    }
+
+    .card-header {
+        padding: 21px 24px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .section-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.1px;
+        margin-bottom: 6px;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 19px;
+    }
+
+    .card-header p {
+        margin: 6px 0 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+
+    /* ================================================================
+       REQUIREMENTS
+       ================================================================ */
+
+    .requirements-grid {
+        padding: 22px 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .requirement-block {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 17px;
+    }
+
+        .requirement-block.full-width {
+            grid-column: 1 / -1;
+        }
+
+    .requirement-label {
+        color: #475569;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 8px;
+    }
+
+    .requirement-content {
+        color: #334155;
+        font-size: 13px;
+        line-height: 1.7;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+
+    /* ================================================================
+       COVER LETTER
+       ================================================================ */
+
+    .cover-letter {
+        margin: 22px 24px;
+        padding: 20px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #334155;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .empty-information {
+        color: #64748b;
+        font-style: italic;
+    }
+
+
+    /* ================================================================
+       ASSESSMENT
+       ================================================================ */
+
+    .assessment-grid {
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+    }
+
+    .assessment-item {
+        min-width: 0;
+    }
+
+        .assessment-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .assessment-item label {
+            display: block;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+    .screening-select {
+        width: 100%;
+        min-height: 43px;
+        padding: 9px 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background: white;
+        color: #1e293b;
+        font-size: 13px;
+        box-sizing: border-box;
+    }
+
+        .screening-select:focus,
+        .screening-textarea:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13,92,193,0.10);
+        }
+
+    .screening-textarea {
+        width: 100%;
+        min-height: 150px;
+        resize: vertical;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #1e293b;
+    }
+
+    .field-help {
+        margin-top: 6px;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .validation-message {
+        display: block;
+        margin-top: 5px;
+        color: #b91c1c;
+        font-size: 11px;
+    }
+
+
+    /* ================================================================
+       ACTIONS
+       ================================================================ */
+
+    .screening-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .primary-button,
+    .secondary-button {
+        min-height: 42px;
+        padding: 0 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .secondary-button {
+        background: white;
+        border: 1px solid #cbd5e1;
+        color: #0D5CC1;
+    }
+
+        .secondary-button:hover {
+            background: #f8fafc;
+            border-color: #0D5CC1;
+            color: #094b9f;
+            text-decoration: none;
+        }
+
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+
+    @@media (max-width: 800px) {
+
+        .screening-page {
+            padding: 20px 15px 40px;
+        }
+
+        .screening-header {
+            flex-direction: column;
+            padding: 25px 22px;
+        }
+
+        .applicant-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .requirements-grid,
+        .assessment-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .requirement-block.full-width,
+        .assessment-item.full-width {
+            grid-column: auto;
+        }
+    }
+
+
+    @@media (max-width: 550px) {
+
+        .screening-header h1 {
+            font-size: 25px;
+        }
+
+        .screening-actions {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+</style>

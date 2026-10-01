@@ -1,0 +1,1120 @@
+﻿
+@model IEnumerable<CommunityServiceProject.Models.MunicipalServiceRequest>
+
+@{
+    ViewBag.Title = "Municipal Service Requests";
+
+    var requests = Model ?? Enumerable.Empty<CommunityServiceProject.Models.MunicipalServiceRequest>();
+    var requestCount = requests.Count();
+
+    var submittedCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Submitted);
+
+    var underReviewCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview);
+
+    var approvedCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved);
+
+    var rejectedCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected);
+
+    var invoiceCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued);
+
+    var paymentCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed);
+
+    var paidCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid);
+
+    var completedCount = requests.Count(r =>
+        r.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed);
+}
+
+<style>
+    .finance-service-request-page {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 30px 22px 55px;
+        color: #1f2937;
+    }
+
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .page-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 15px;
+        padding: 30px 32px;
+        color: #ffffff;
+        margin-bottom: 22px;
+        box-shadow: 0 9px 25px rgba(13, 92, 193, 0.16);
+    }
+
+    .page-header-content {
+        max-width: 850px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+        font-size: 27px;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: rgba(255,255,255,0.92);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .header-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 19px;
+    }
+
+    .header-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 11px;
+        border-radius: 7px;
+        background: rgba(255,255,255,0.13);
+        border: 1px solid rgba(255,255,255,0.22);
+        font-size: 11px;
+        font-weight: 650;
+    }
+
+    /* =========================================================
+       SUMMARY
+       ========================================================= */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 13px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        padding: 17px 18px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .summary-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #718096;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+    }
+
+    .summary-number {
+        color: #16324f;
+        font-size: 23px;
+        font-weight: 750;
+        line-height: 1.1;
+    }
+
+    .summary-description {
+        margin-top: 5px;
+        color: #8792a2;
+        font-size: 10.5px;
+        line-height: 1.4;
+    }
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 285px;
+        gap: 21px;
+        align-items: start;
+    }
+
+    .main-column {
+        min-width: 0;
+    }
+
+    /* =========================================================
+       TABLE CARD
+       ========================================================= */
+
+    .table-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.045);
+        overflow: hidden;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 22px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .table-header h2 {
+            margin: 0 0 4px;
+            color: #16324f;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .table-header p {
+            margin: 0;
+            color: #718096;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+    .total-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 31px;
+        padding: 0 10px;
+        border-radius: 7px;
+        background: #eef5ff;
+        border: 1px solid #d4e4f8;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .request-table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: collapse;
+    }
+
+        .request-table th {
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e4e9f0;
+            color: #687586;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.045em;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .request-table td {
+            padding: 14px;
+            border-bottom: 1px solid #edf0f4;
+            color: #374151;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .request-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .request-table tbody tr:hover {
+            background: #fbfdff;
+        }
+
+    .reference {
+        color: #0D5CC1;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .citizen {
+        color: #263445;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .service {
+        color: #374151;
+        font-weight: 600;
+        max-width: 180px;
+    }
+
+    .submitted-date {
+        color: #687586;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 25px;
+        padding: 0 9px;
+        border-radius: 15px;
+        border: 1px solid transparent;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-submitted {
+        background: #f1f5f9;
+        border-color: #d8e0e8;
+        color: #475569;
+    }
+
+    .status-review {
+        background: #fff8e8;
+        border-color: #f0d59b;
+        color: #7a5b17;
+    }
+
+    .status-approved {
+        background: #e8f7ee;
+        border-color: #bfe7cf;
+        color: #18794e;
+    }
+
+    .status-rejected {
+        background: #fff1f0;
+        border-color: #efc0bc;
+        color: #a12a23;
+    }
+
+    .status-invoice {
+        background: #eef5ff;
+        border-color: #cbdcf5;
+        color: #0D5CC1;
+    }
+
+    .status-payment {
+        background: #f4efff;
+        border-color: #ddd1f5;
+        color: #6741a5;
+    }
+
+    .status-paid {
+        background: #e8f7ee;
+        border-color: #bfe7cf;
+        color: #18794e;
+    }
+
+    .status-processing {
+        background: #edf7fb;
+        border-color: #c9e4ee;
+        color: #17657b;
+    }
+
+    .status-completed {
+        background: #eaf7f2;
+        border-color: #c5e6d9;
+        color: #19704e;
+    }
+
+    .status-cancelled {
+        background: #f3f4f6;
+        border-color: #d9dce1;
+        color: #6b7280;
+    }
+
+    .status-default {
+        background: #f3f4f6;
+        border-color: #d9dce1;
+        color: #4b5563;
+    }
+
+    /* =========================================================
+       ACTION BUTTONS
+       ========================================================= */
+
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+    }
+
+    .view-button,
+    .invoice-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 33px;
+        padding: 0 11px;
+        border-radius: 7px;
+        font-size: 10.5px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .view-button {
+        background: #ffffff;
+        border: 1px solid #cfd7e3;
+        color: #0D5CC1;
+    }
+
+        .view-button:hover {
+            background: #f0f6ff;
+            border-color: #b8cee9;
+            color: #094b9f;
+            text-decoration: none;
+        }
+
+    .invoice-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+        .invoice-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 60px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 45px;
+        height: 45px;
+        margin: 0 auto 14px;
+        border-radius: 10px;
+        background: #eef5ff;
+        border: 1px solid #d5e4f7;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+        color: #374151;
+        font-size: 17px;
+    }
+
+    .empty-state p {
+        max-width: 480px;
+        margin: 0 auto;
+        color: #718096;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        padding: 19px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.045);
+    }
+
+        .sidebar-card + .sidebar-card {
+            margin-top: 15px;
+        }
+
+        .sidebar-card h3 {
+            margin: 0 0 15px;
+            color: #16324f;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+    /* =========================================================
+       WORKFLOW
+       ========================================================= */
+
+    .workflow-step {
+        position: relative;
+        padding-left: 27px;
+        padding-bottom: 18px;
+    }
+
+        .workflow-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 17px;
+            bottom: 0;
+            width: 1px;
+            background: #d7dee8;
+        }
+
+    .workflow-dot {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #d5dde7;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 0 1px #c9d2de;
+    }
+
+    .workflow-step.active .workflow-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.13);
+    }
+
+    .workflow-title {
+        margin-bottom: 2px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .workflow-step.active .workflow-title {
+        color: #0D5CC1;
+    }
+
+    .workflow-description {
+        color: #7b8794;
+        font-size: 10.5px;
+        line-height: 1.45;
+    }
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    .navigation-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .navigation-links a {
+            padding: 9px 0;
+            border-bottom: 1px solid #edf0f4;
+            color: #0D5CC1;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+            .navigation-links a:last-child {
+                border-bottom: none;
+            }
+
+            .navigation-links a:hover {
+                color: #094b9f;
+                text-decoration: none;
+            }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1050px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .sidebar-card + .sidebar-card {
+            margin-top: 0;
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .finance-service-request-page {
+            padding: 20px 12px 35px;
+        }
+
+        .page-header {
+            padding: 23px;
+        }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+        .summary-grid,
+        .sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .table-header {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="finance-service-request-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <div class="page-header-content">
+
+            <h1>
+                Municipal Service Requests
+            </h1>
+
+            <p>
+                Monitor municipal service requests across their complete lifecycle.
+                Finance can review request information and continue financial
+                processing when a request reaches the appropriate stage.
+            </p>
+
+            <div class="header-tags">
+
+                <span class="header-tag">
+                    Finance Operations
+                </span>
+
+                <span class="header-tag">
+                    Request Monitoring
+                </span>
+
+                <span class="header-tag">
+                    Financial Processing
+                </span>
+
+                <span class="header-tag">
+                    Full Request Lifecycle
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Total Requests
+            </span>
+
+            <div class="summary-number">
+                @requestCount
+            </div>
+
+            <div class="summary-description">
+                All municipal service requests
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Awaiting Review
+            </span>
+
+            <div class="summary-number">
+                @(submittedCount + underReviewCount)
+            </div>
+
+            <div class="summary-description">
+                Submitted or under administrator review
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Approved
+            </span>
+
+            <div class="summary-number">
+                @approvedCount
+            </div>
+
+            <div class="summary-description">
+                Eligible for financial processing
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Completed
+            </span>
+
+            <div class="summary-number">
+                @completedCount
+            </div>
+
+            <div class="summary-description">
+                Completed municipal services
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="page-layout">
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+        <div class="main-column">
+
+            <div class="table-card">
+
+                <div class="table-header">
+
+                    <div>
+
+                        <h2>
+                            Municipal Service Request Register
+                        </h2>
+
+                        <p>
+                            All requests are displayed regardless of their current status.
+                        </p>
+
+                    </div>
+
+                    <span class="total-count">
+                        @requestCount
+                    </span>
+
+                </div>
+
+                @if (requestCount > 0)
+                {
+                    <div class="table-wrapper">
+
+                        <table class="request-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Reference
+                                    </th>
+
+                                    <th>
+                                        Citizen
+                                    </th>
+
+                                    <th>
+                                        Municipal Service
+                                    </th>
+
+                                    <th>
+                                        Submitted
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Actions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var request in requests)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            <span class="reference">
+                                                @request.ReferenceNumber
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="citizen">
+                                                @request.Citizen.FirstName @request.Citizen.LastName
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="service">
+                                                @request.ServiceType.ServiceName
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="submitted-date">
+                                                @request.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                                            </span>
+                                        </td>
+
+                                        <td>
+
+                                            @if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Submitted)
+                                            {
+                                                <span class="status-badge status-submitted">
+                                                    Submitted
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+                                            {
+                                                <span class="status-badge status-review">
+                                                    Under Review
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                                            {
+                                                <span class="status-badge status-approved">
+                                                    Approved
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+                                            {
+                                                <span class="status-badge status-rejected">
+                                                    Rejected
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+                                            {
+                                                <span class="status-badge status-invoice">
+                                                    Invoice Issued
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+                                            {
+                                                <span class="status-badge status-payment">
+                                                    Payment Required
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+                                            {
+                                                <span class="status-badge status-processing">
+                                                    Payment Processing
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+                                            {
+                                                <span class="status-badge status-rejected">
+                                                    Payment Failed
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                                            {
+                                                <span class="status-badge status-paid">
+                                                    Paid
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                                            {
+                                                <span class="status-badge status-processing">
+                                                    Service In Progress
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                                            {
+                                                <span class="status-badge status-completed">
+                                                    Completed
+                                                </span>
+                                            }
+                                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Cancelled)
+                                            {
+                                                <span class="status-badge status-cancelled">
+                                                    Cancelled
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-badge status-default">
+                                                    @request.Status
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="action-group">
+
+                                                <a href="@Url.Action("Details", "FinanceMunicipalServiceRequest", new { id = request.MunicipalServiceRequestID })"
+                                                   class="view-button">
+                                                    View
+                                                </a>
+
+                                                @if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                                                {
+                                                    <a href="@Url.Action("Generate","Invoice", new { municipalServiceRequestId = request.MunicipalServiceRequestID })"
+                                                       class="invoice-button">
+                                                        Generate Invoice
+                                                    </a>
+                                                }
+                                                else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+                                                {
+                                                    <a href="@Url.Action("Index", "Invoice")"
+                                                       class="invoice-button">
+                                                        View Invoice
+                                                    </a>
+                                                }
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+
+                        <div class="empty-icon"></div>
+
+                        <h3>
+                            No Municipal Service Requests
+                        </h3>
+
+                        <p>
+                            There are currently no municipal service requests
+                            recorded in the system.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <!-- FINANCIAL WORKFLOW -->
+
+            <div class="sidebar-card">
+
+                <h3>
+                    Financial Workflow
+                </h3>
+
+                <div class="workflow-step active">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Service Requests
+                    </div>
+
+                    <div class="workflow-description">
+                        View requests across the complete lifecycle.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Administrator Approval
+                    </div>
+
+                    <div class="workflow-description">
+                        Administrator determines whether the request is approved or rejected.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Invoice
+                    </div>
+
+                    <div class="workflow-description">
+                        Approved requests can proceed to invoice generation.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Payment
+                    </div>
+
+                    <div class="workflow-description">
+                        Payment activity is monitored and verified by Finance.
+                    </div>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <span class="workflow-dot"></span>
+
+                    <div class="workflow-title">
+                        Financial Record
+                    </div>
+
+                    <div class="workflow-description">
+                        Payments, receipts, refunds and transactions are retained.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- STATUS OVERVIEW -->
+
+            <div class="sidebar-card">
+
+                <h3>
+                    Status Overview
+                </h3>
+
+                <div class="navigation-links">
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        All Requests (@requestCount)
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Awaiting Review (@(submittedCount + underReviewCount))
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Approved (@approvedCount)
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Invoiced (@invoiceCount)
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Payment Stage (@paymentCount)
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Paid (@paidCount)
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Completed (@completedCount)
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Rejected (@rejectedCount)
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- NAVIGATION -->
+
+            <div class="sidebar-card">
+
+                <h3>
+                    Navigation
+                </h3>
+
+                <div class="navigation-links">
+
+                    <a href="@Url.Action("Index", "FinanceDashboard")">
+                        Finance Dashboard
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Municipal Service Requests
+                    </a>
+
+                    <a href="@Url.Action("Index", "Invoice")">
+                        Municipal Service Invoices
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>

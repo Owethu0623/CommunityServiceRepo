@@ -1,0 +1,369 @@
+﻿
+@model IEnumerable<CommunityServiceProject.Models.ServiceType>
+
+@{
+    ViewBag.Title = "Municipal Services";
+}
+
+<style>
+    .municipal-services-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .services-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+        padding: 24px 26px;
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .services-header-content {
+        min-width: 0;
+    }
+
+    .services-header h1 {
+        margin: 0 0 6px;
+        color: #16324f;
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .services-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .back-dashboard-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        box-sizing: border-box;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+    }
+
+        .back-dashboard-button:hover {
+            background: #f8fafc;
+            border-color: #aeb9c8;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    .back-icon {
+        font-size: 17px;
+        line-height: 1;
+    }
+
+    .services-section {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .section-heading {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            color: #16324f;
+            font-size: 19px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .services-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .service-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 19px 20px;
+        border: 1px solid #e1e7ef;
+        border-radius: 10px;
+        background: #fbfcfe;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .service-card:hover {
+            border-color: #c9d7e8;
+            box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+        }
+
+    .service-information {
+        min-width: 0;
+    }
+
+    .service-title-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 6px;
+    }
+
+    .service-name {
+        color: #16324f;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .service-code {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 5px;
+        background: #eef4fb;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .service-description {
+        margin: 0 0 10px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .chargeable-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 9px;
+        border-radius: 20px;
+        background: #e8f7ee;
+        border: 1px solid #bfe7cf;
+        color: #18794e;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .request-service-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 15px;
+        border: 1px solid #0D5CC1;
+        border-radius: 8px;
+        background: #0D5CC1;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+    }
+
+        .request-service-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+    .empty-services {
+        padding: 45px 25px;
+        text-align: center;
+        border: 1px dashed #cfd7e3;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+        .empty-services h3 {
+            margin: 0 0 7px;
+            color: #374151;
+            font-size: 16px;
+        }
+
+        .empty-services p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+    @@media (max-width: 750px) {
+        .services-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .back-dashboard-button {
+            width: 100%;
+        }
+
+        .service-card {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .request-service-button {
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 500px) {
+        .municipal-services-page {
+            padding: 20px 12px 35px;
+        }
+
+        .services-header,
+        .services-section {
+            padding: 19px;
+        }
+
+            .services-header h1 {
+                font-size: 22px;
+            }
+    }
+</style>
+
+<div class="municipal-services-page">
+
+    <div class="services-header">
+
+        <div class="services-header-content">
+
+            <h1>
+                Municipal Services
+            </h1>
+
+            <p>
+                Request a municipal service and view the services available to citizens.
+            </p>
+
+        </div>
+
+        <a href="@Url.Action("Index", "CitizenDashboard")"
+           class="back-dashboard-button">
+
+            <span class="back-icon">←</span>
+
+            Back to Citizen Dashboard
+
+        </a>
+
+    </div>
+
+
+    <div class="services-section">
+
+        <div class="section-heading">
+
+            <h2>
+                Available Municipal Services
+            </h2>
+
+            <p>
+                Select a service below to submit a municipal service request.
+            </p>
+
+        </div>
+
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="services-list">
+
+                @foreach (var service in Model)
+                {
+                    <div class="service-card">
+
+                        <div class="service-information">
+
+                            <div class="service-title-row">
+
+                                <span class="service-name">
+                                    @service.ServiceName
+                                </span>
+
+                                <span class="service-code">
+                                    @service.ServiceCode
+                                </span>
+
+                            </div>
+
+                            <p class="service-description">
+                                @service.Description
+                            </p>
+
+                            @if (service.IsChargeable)
+                            {
+                                <span class="chargeable-badge">
+                                    Chargeable Service
+                                </span>
+                            }
+
+                        </div>
+
+
+                        <a href="@Url.Action("Create", "MunicipalServiceRequest", new { serviceTypeId = service.ServiceTypeID })"
+                           class="request-service-button">
+
+                            Request Service
+
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-services">
+
+                <h3>
+                    No Municipal Services Available
+                </h3>
+
+                <p>
+                    There are currently no active municipal services available for requests.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+

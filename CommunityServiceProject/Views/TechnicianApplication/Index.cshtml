@@ -220,8 +220,7 @@
 
                             <span>
                                 Submitted
-                                @application.ApplicationDate
-                                .ToString("dd MMM yyyy")
+                                @application.ApplicationDate.ToString("dd MMM yyyy")
                             </span>
 
                         </div>
@@ -241,9 +240,7 @@
                         <div class="deadline-text">
 
                             Deadline:
-                            @application.ApplicationDeadline
-                            .ToString("dd MMM yyyy")
-
+                            @application.ApplicationDeadline.ToString("dd MMM yyyy")
                         </div>
 
                     </div>
@@ -305,7 +302,7 @@
         @Html.ActionLink(
             "Back",
             "Index",
-            "AdministratorDashboard",
+            "CitizenDashboard",
             null,
             new
             {

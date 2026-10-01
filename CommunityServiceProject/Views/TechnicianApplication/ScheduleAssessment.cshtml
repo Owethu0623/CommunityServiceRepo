@@ -1,0 +1,969 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationScheduleAssessmentViewModel
+
+@{
+    ViewBag.Title = "Schedule Applicant Assessment";
+}
+
+<div class="schedule-assessment-page">
+
+    <div class="schedule-header">
+        <div>
+            <div class="schedule-header-label">
+                RECRUITMENT
+            </div>
+
+            <h1>Schedule Applicant Assessment</h1>
+
+            <p>
+                Arrange the next recruitment assessment for the shortlisted applicant.
+            </p>
+        </div>
+
+        <div class="application-reference">
+            <span>Application</span>
+            <strong>@Model.ApplicationReference</strong>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="schedule-layout">
+
+        <main class="schedule-main">
+
+            <section class="content-card">
+
+                <div class="card-heading">
+                    <div>
+                        <h2>Applicant Information</h2>
+                        <p>Confirm the applicant before scheduling the assessment.</p>
+                    </div>
+                </div>
+
+                <div class="information-grid">
+
+                    <div class="information-item">
+                        <span class="information-label">Applicant Name</span>
+                        <strong>@Model.ApplicantName</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span class="information-label">Email Address</span>
+                        <strong>@Model.ApplicantEmail</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span class="information-label">Opportunity Code</span>
+                        <strong>@Model.OpportunityCode</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span class="information-label">Application Date</span>
+                        <strong>@Model.ApplicationDate.ToString("dd MMM yyyy")</strong>
+                    </div>
+
+                </div>
+
+                <div class="opportunity-information">
+                    <span class="information-label">Opportunity</span>
+                    <strong>@Model.OpportunityTitle</strong>
+                </div>
+
+            </section>
+
+            <section class="content-card">
+
+                <div class="card-heading">
+                    <div>
+                        <h2>Assessment Details</h2>
+                        <p>Provide the information required for the applicant to attend the assessment.</p>
+                    </div>
+                </div>
+
+                @using (Html.BeginForm(
+                    "ScheduleAssessment",
+                    "TechnicianApplication",
+                    FormMethod.Post,
+                    new
+                    {
+                        id = "scheduleAssessmentForm"
+                    }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(m => m.ApplicationID)
+
+                    <div class="validation-summary">
+                        @Html.ValidationSummary(
+                            true,
+                            "",
+                            new
+                            {
+                                @class = "validation-summary-errors"
+                            })
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            @Html.LabelFor(
+                                m => m.AssessmentType,
+                                new
+                                {
+                                    @class = "form-label"
+                                })
+
+                            @Html.DropDownListFor(
+                                m => m.AssessmentType,
+                                new List<SelectListItem>
+                                {
+                                    new SelectListItem
+                                    {
+                                        Text = "Select assessment type",
+                                        Value = ""
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Technical Assessment",
+                                        Value = "Technical Assessment"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Practical Assessment",
+                                        Value = "Practical Assessment"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Written Assessment",
+                                        Value = "Written Assessment"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Skills Assessment",
+                                        Value = "Skills Assessment"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Online Assessment",
+                                        Value = "Online Assessment"
+                                    },
+                                    new SelectListItem
+                                    {
+                                        Text = "Other",
+                                        Value = "Other"
+                                    }
+                                },
+                                new
+                                {
+                                    @class = "form-control"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.AssessmentType,
+                                "",
+                                new
+                                {
+                                    @class = "field-validation"
+                                })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(
+                                m => m.AssessmentDate,
+                                new
+                                {
+                                    @class = "form-label"
+                                })
+
+                            @Html.TextBoxFor(
+                                m => m.AssessmentDate,
+                                "{0:yyyy-MM-ddTHH:mm}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "datetime-local"
+                                })
+
+                            <span class="field-help">
+                                Select a future date and time for the assessment.
+                            </span>
+
+                            @Html.ValidationMessageFor(
+                                m => m.AssessmentDate,
+                                "",
+                                new
+                                {
+                                    @class = "field-validation"
+                                })
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            @Html.LabelFor(
+                                m => m.Location,
+                                new
+                                {
+                                    @class = "form-label"
+                                })
+
+                            @Html.TextBoxFor(
+                                m => m.Location,
+                                new
+                                {
+                                    @class = "form-control",
+                                    maxlength = "300",
+                                    placeholder = "e.g. Municipal Training Centre - Workshop 2"
+                                })
+
+                            <span class="field-help">
+                                Enter the physical venue or online assessment location.
+                            </span>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Location,
+                                "",
+                                new
+                                {
+                                    @class = "field-validation"
+                                })
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            @Html.LabelFor(
+                                m => m.Instructions,
+                                new
+                                {
+                                    @class = "form-label"
+                                })
+
+                            @Html.TextAreaFor(
+                                m => m.Instructions,
+                                7,
+                                1,
+                                new
+                                {
+                                    @class = "form-control form-textarea",
+                                    maxlength = "3000",
+                                    placeholder = "Provide any preparation requirements, documents to bring, arrival instructions, or other relevant information."
+                                })
+
+                            <span class="field-help">
+                                Optional. Include useful preparation or attendance instructions.
+                            </span>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Instructions,
+                                "",
+                                new
+                                {
+                                    @class = "field-validation"
+                                })
+                        </div>
+
+                    </div>
+
+                    <div class="confirmation-panel">
+
+                        <div>
+                            <h3>Confirm Assessment Scheduling</h3>
+
+                            <p>
+                                Confirm that the assessment details are correct before scheduling.
+                                The applicant's status will change to
+                                <strong>Assessment Scheduled</strong>.
+                            </p>
+                        </div>
+
+                        <label class="confirmation-check">
+                            <input type="checkbox" id="confirmSchedule" />
+
+                            <span>
+                                I confirm that the assessment details are correct and ready to be scheduled.
+                            </span>
+                        </label>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <a href="@Url.Action("ShortlistedApplicants", "TechnicianApplication")"
+                           class="secondary-button">
+                            Back to Shortlisted Applicants
+                        </a>
+
+                        <button type="submit"
+                                id="scheduleButton"
+                                class="primary-button"
+                                disabled>
+                            Schedule Assessment
+                        </button>
+
+                    </div>
+                }
+
+            </section>
+
+        </main>
+
+        <aside class="schedule-sidebar">
+
+            <section class="sidebar-card">
+
+                <h2>Scheduling Process</h2>
+
+                <div class="process-step active">
+                    <span class="step-number">1</span>
+
+                    <div>
+                        <strong>Shortlisted Applicant</strong>
+                        <p>Applicant has passed the required shortlisting checks.</p>
+                    </div>
+                </div>
+
+                <div class="process-line"></div>
+
+                <div class="process-step active">
+                    <span class="step-number">2</span>
+
+                    <div>
+                        <strong>Schedule Assessment</strong>
+                        <p>Record the assessment date, venue and instructions.</p>
+                    </div>
+                </div>
+
+                <div class="process-line"></div>
+
+                <div class="process-step">
+                    <span class="step-number">3</span>
+
+                    <div>
+                        <strong>Record Assessment Result</strong>
+                        <p>Assessment results will be recorded at the next stage.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="sidebar-card">
+
+                <h2>Scheduling Guidance</h2>
+
+                <ul class="guidance-list">
+                    <li>Only shortlisted applicants can be scheduled.</li>
+                    <li>The assessment date and time must be in the future.</li>
+                    <li>Provide a clear assessment venue or online location.</li>
+                    <li>Include preparation instructions where necessary.</li>
+                    <li>Assessment results are recorded separately.</li>
+                </ul>
+
+            </section>
+
+            <section class="sidebar-card navigation-card">
+
+                <h2>Navigation</h2>
+
+                <a href="@Url.Action("ShortlistedApplicants", "TechnicianApplication")"
+                   class="sidebar-link">
+                    Shortlisted Applicants
+                </a>
+
+                <a href="@Url.Action("ReviewApplications", "TechnicianApplication")"
+                   class="sidebar-link">
+                    Review Applications
+                </a>
+
+                <a href="@Url.Action("Manage", "TechnicianOpportunity")"
+                   class="sidebar-link">
+                    Opportunity Management
+                </a>
+
+                <a href="@Url.Action("Index", "AdministratorDashboard")"
+                   class="sidebar-link">
+                    Administrator Dashboard
+                </a>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</div>
+
+    <style>
+
+        .schedule-assessment-page {
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 30px;
+            color: #263238;
+        }
+
+        .schedule-header {
+            background: linear-gradient(135deg, #0D5CC1, #094b9f);
+            border-radius: 12px;
+            padding: 30px 34px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(13, 92, 193, 0.16);
+        }
+
+        .schedule-header-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            opacity: 0.85;
+            margin-bottom: 7px;
+        }
+
+        .schedule-header h1 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .schedule-header p {
+            margin: 8px 0 0;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .application-reference {
+            background: rgba(255, 255, 255, 0.13);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            padding: 15px 20px;
+            min-width: 180px;
+            text-align: right;
+        }
+
+        .application-reference span {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .application-reference strong {
+            font-size: 18px;
+            color: white;
+        }
+
+        .alert {
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .alert-error {
+            background: #fff1f1;
+            border: 1px solid #e1a4a4;
+            color: #9f2424;
+        }
+
+        .schedule-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .schedule-main {
+            min-width: 0;
+        }
+
+        .content-card,
+        .sidebar-card {
+            background: white;
+            border: 1px solid #e1e7ef;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(20, 40, 70, 0.06);
+        }
+
+        .content-card {
+            margin-bottom: 24px;
+            padding: 28px;
+        }
+
+        .card-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .card-heading h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+            color: #17365d;
+        }
+
+        .card-heading p {
+            margin: 0;
+            color: #6b7785;
+            font-size: 14px;
+        }
+
+        .information-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .information-item {
+            background: #f7f9fc;
+            border: 1px solid #e7ebf0;
+            border-radius: 8px;
+            padding: 15px 17px;
+        }
+
+        .information-label {
+            display: block;
+            color: #6b7785;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 6px;
+        }
+
+        .information-item strong,
+        .opportunity-information strong {
+            color: #263238;
+            font-size: 14px;
+        }
+
+        .opportunity-information {
+            margin-top: 18px;
+            padding: 16px 17px;
+            background: #f7f9fc;
+            border: 1px solid #e7ebf0;
+            border-radius: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            padding: 11px 13px;
+            font-size: 14px;
+            color: #263238;
+            background: white;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.1);
+        }
+
+        select.form-control {
+            min-height: 43px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 150px;
+            line-height: 1.55;
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #7a8794;
+        }
+
+        .field-validation {
+            display: block;
+            margin-top: 6px;
+            color: #b42318;
+            font-size: 12px;
+        }
+
+        .validation-summary {
+            margin-bottom: 18px;
+        }
+
+        .validation-summary-errors {
+            color: #b42318;
+            font-size: 13px;
+        }
+
+        .validation-summary-errors ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .confirmation-panel {
+            margin-top: 28px;
+            padding: 20px;
+            background: #f4f8fd;
+            border: 1px solid #d7e5f5;
+            border-left: 4px solid #0D5CC1;
+            border-radius: 8px;
+        }
+
+        .confirmation-panel h3 {
+            margin: 0 0 6px;
+            color: #17365d;
+            font-size: 16px;
+        }
+
+        .confirmation-panel p {
+            margin: 0;
+            color: #596776;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .confirmation-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 17px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.45;
+        }
+
+        .confirmation-check input {
+            width: 17px;
+            height: 17px;
+            margin-top: 1px;
+            accent-color: #0D5CC1;
+            cursor: pointer;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 26px;
+            padding-top: 22px;
+            border-top: 1px solid #edf0f4;
+        }
+
+        .primary-button,
+        .secondary-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 42px;
+            padding: 10px 18px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .primary-button {
+            border: 1px solid #0D5CC1;
+            background: #0D5CC1;
+            color: white;
+            cursor: pointer;
+        }
+
+        .primary-button:hover:not(:disabled) {
+            background: #094b9f;
+            border-color: #094b9f;
+        }
+
+        .primary-button:disabled {
+            background: #b8c4d1;
+            border-color: #b8c4d1;
+            color: #eef2f5;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            border: 1px solid #cbd5e1;
+            background: white;
+            color: #334155;
+        }
+
+        .secondary-button:hover {
+            background: #f5f7fa;
+            border-color: #aeb9c6;
+        }
+
+        .sidebar-card {
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-card h2 {
+            margin: 0 0 18px;
+            font-size: 17px;
+            color: #17365d;
+        }
+
+        .process-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 27px;
+            height: 27px;
+            min-width: 27px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9eef5;
+            color: #607080;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .process-step.active .step-number {
+            background: #0D5CC1;
+            color: white;
+        }
+
+        .process-step strong {
+            display: block;
+            color: #334155;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .process-step p {
+            margin: 0;
+            color: #718096;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .process-line {
+            width: 1px;
+            height: 20px;
+            background: #d7dee7;
+            margin: 4px 0 4px 13px;
+        }
+
+        .guidance-list {
+            margin: 0;
+            padding-left: 19px;
+            color: #687684;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .guidance-list li {
+            margin-bottom: 7px;
+        }
+
+        .navigation-card {
+            padding-bottom: 12px;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 11px 0;
+            border-bottom: 1px solid #edf0f4;
+            color: #0D5CC1;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .sidebar-link:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-link:hover {
+            color: #094b9f;
+        }
+
+        @@media (max-width: 1000px) {
+
+            .schedule-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-sidebar {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 20px;
+            }
+
+            .sidebar-card {
+                margin-bottom: 0;
+            }
+
+            .navigation-card {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @@media (max-width: 700px) {
+
+            .schedule-assessment-page {
+                padding: 18px;
+            }
+
+            .schedule-header {
+                padding: 24px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .application-reference {
+                width: 100%;
+                box-sizing: border-box;
+                text-align: left;
+            }
+
+            .information-grid,
+            .form-grid,
+            .schedule-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group-full {
+                grid-column: auto;
+            }
+
+            .content-card,
+            .sidebar-card {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .primary-button,
+            .secondary-button {
+                width: 100%;
+            }
+
+            .navigation-card {
+                grid-column: auto;
+            }
+        }
+
+    </style>
+}
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        $(function () {
+
+            var confirmationCheckbox =
+                $("#confirmSchedule");
+
+            var scheduleButton =
+                $("#scheduleButton");
+
+            var form =
+                $("#scheduleAssessmentForm");
+
+            function updateButtonState() {
+
+                scheduleButton.prop(
+                    "disabled",
+                    !confirmationCheckbox.is(":checked")
+                );
+            }
+
+            confirmationCheckbox.on(
+                "change",
+                updateButtonState
+            );
+
+            form.on(
+                "submit",
+                function (event) {
+
+                    if (!confirmationCheckbox.is(":checked")) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Please confirm that the assessment details are correct before scheduling."
+                        );
+
+                        return false;
+                    }
+
+                    var confirmed =
+                        confirm(
+                            "Are you sure you want to schedule this assessment? The applicant's status will change to Assessment Scheduled."
+                        );
+
+                    if (!confirmed) {
+
+                        event.preventDefault();
+
+                        return false;
+                    }
+
+                    scheduleButton.prop(
+                        "disabled",
+                        true
+                    );
+
+                    scheduleButton.text(
+                        "Scheduling..."
+                    );
+
+                    return true;
+                }
+            );
+
+            updateButtonState();
+
+        });
+
+    </script>
+}

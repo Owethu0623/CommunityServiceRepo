@@ -202,10 +202,14 @@
 
                                         <td>
                                             <a href="@Url.Action(
-                                                        "Details",
-                                                        "AdministratorRequests",
-                                                        new { id = request.RequestID }
-                                                     )"
+            "Details",
+            "AdministratorRequests",
+            new
+            {
+                id = request.RequestID,
+                returnUrl = Request.RawUrl
+            }
+         )"
                                                class="admin-view-button citizen-request-history-action">
                                                 View Request
                                             </a>

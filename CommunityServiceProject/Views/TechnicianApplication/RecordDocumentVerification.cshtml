@@ -1,0 +1,792 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationDocumentVerificationResultViewModel
+
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Record Document Verification";
+}
+
+<div class="record-verification-page">
+
+    <div class="verification-header">
+
+        <div>
+            <div class="page-kicker">
+                Recruitment Document Verification
+            </div>
+
+            <h1>Record Document Verification</h1>
+
+            <p>
+                Record the official verification result for this supporting document.
+            </p>
+        </div>
+
+        <div class="application-reference">
+            @Model.ApplicationReference
+        </div>
+
+    </div>
+
+
+    <div class="verification-layout">
+
+        <main class="main-card">
+
+            <div class="section-header">
+                <h2>Document Information</h2>
+                <p>
+                    Confirm the document details before recording the verification result.
+                </p>
+            </div>
+
+
+            <div class="information-grid">
+
+                <div class="information-row">
+                    <span>Applicant</span>
+                    <strong>@Model.ApplicantName</strong>
+                </div>
+
+                <div class="information-row">
+                    <span>Opportunity</span>
+                    <strong>
+                        @Model.OpportunityCode -
+                        @Model.OpportunityTitle
+                    </strong>
+                </div>
+
+                <div class="information-row">
+                    <span>Document Type</span>
+                    <strong>@Model.DocumentType</strong>
+                </div>
+
+                <div class="information-row">
+                    <span>Document Title</span>
+                    <strong>@Model.DocumentTitle</strong>
+                </div>
+
+                <div class="information-row">
+                    <span>File Name</span>
+                    <strong>@Model.FileName</strong>
+                </div>
+
+                <div class="information-row">
+                    <span>File Type</span>
+                    <strong>@Model.ContentType</strong>
+                </div>
+
+                <div class="information-row">
+                    <span>File Size</span>
+                    <strong>
+                        @((Model.FileSize / 1024.0 / 1024.0).ToString("0.##")) MB
+                    </strong>
+                </div>
+
+                <div class="information-row">
+                    <span>Date Submitted</span>
+                    <strong>
+                        @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="document-preview-section">
+
+                <div>
+                    <h2>Review Submitted Document</h2>
+
+                    <p>
+                        Open the submitted document before recording your decision.
+                    </p>
+                </div>
+
+                <a href="@Url.Action(
+                    "ViewApplicationDocument",
+                    "TechnicianApplication",
+                    new { id = Model.ApplicationDocumentID })"
+                   class="secondary-button"
+                   target="_blank"
+                   rel="noopener">
+                    View Document
+                </a>
+
+            </div>
+
+
+            @using (Html.BeginForm(
+                "RecordDocumentVerification",
+                "TechnicianApplication",
+                FormMethod.Post,
+                new { @class = "verification-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(
+                    m => m.ApplicationDocumentID)
+
+                @Html.HiddenFor(
+                    m => m.ApplicationID)
+
+
+                <div class="decision-section">
+
+                    <h2>Verification Decision</h2>
+
+                    <p>
+                        Select the official verification result for this document.
+                    </p>
+
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.VerificationStatus)
+
+                        @Html.DropDownListFor(
+                            m => m.VerificationStatus,
+                            new SelectList(
+                                Enum.GetValues(
+                                    typeof(ApplicationDocumentVerificationStatus)),
+                                ApplicationDocumentVerificationStatus.Pending),
+                            "Select verification result",
+                            new
+                            {
+                                @class = "form-control",
+                                id = "VerificationStatus"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.VerificationStatus,
+                            "",
+                            new { @class = "validation-message" })
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.VerificationComments)
+
+                        @Html.TextAreaFor(
+                            m => m.VerificationComments,
+                            new
+                            {
+                                @class = "form-control",
+                                rows = 6,
+                                maxlength = 1000,
+                                placeholder =
+                                    "Provide comments explaining the verification decision..."
+                            })
+
+                        <div class="field-help">
+                            Comments are required when a document is rejected.
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.VerificationComments,
+                            "",
+                            new { @class = "validation-message" })
+
+                    </div>
+
+                </div>
+
+
+                <div class="confirmation-box">
+
+                    <strong>Confirm verification decision</strong>
+
+                    <p>
+                        This result will be recorded against the document together
+                        with your administrator account and the verification date.
+                    </p>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <a href="@Url.Action(
+                        "VerifyDocuments",
+                        "TechnicianApplication",
+                        new { id = Model.ApplicationID })"
+                       class="secondary-button">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="primary-button"
+                            id="saveVerificationButton">
+                        Save Verification Result
+                    </button>
+
+                </div>
+            }
+
+        </main>
+
+
+        <aside class="sidebar">
+
+            <div class="sidebar-card">
+
+                <h2>Verification Guidance</h2>
+
+                <p>
+                    Review the document carefully against the requirements
+                    associated with the technician opportunity.
+                </p>
+
+                <div class="guidance-item">
+                    <strong>Accepted</strong>
+                    <span>
+                        Use when the submitted document satisfies the verification
+                        requirements.
+                    </span>
+                </div>
+
+                <div class="guidance-item">
+                    <strong>Rejected</strong>
+                    <span>
+                        Use when the document cannot be accepted. A reason must
+                        be provided.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-card process-card">
+
+                <h2>Application Progress</h2>
+
+                <div class="process-item active">
+                    <span>1</span>
+                    <div>
+                        <strong>Review Document</strong>
+                        <small>Current step</small>
+                    </div>
+                </div>
+
+                <div class="process-item">
+                    <span>2</span>
+                    <div>
+                        <strong>Record Result</strong>
+                        <small>This verification decision</small>
+                    </div>
+                </div>
+
+                <div class="process-item">
+                    <span>3</span>
+                    <div>
+                        <strong>Verify All Documents</strong>
+                        <small>Application progresses when complete</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <div class="page-navigation">
+
+        <a href="@Url.Action(
+            "VerifyDocuments",
+            "TechnicianApplication",
+            new { id = Model.ApplicationID })"
+           class="secondary-button">
+            Back to Documents
+        </a>
+
+        <a href="@Url.Action(
+            "Review",
+            "TechnicianApplication",
+            new { id = Model.ApplicationID })"
+           class="secondary-button">
+            Back to Application Review
+        </a>
+
+        <a href="@Url.Action(
+            "ReviewApplications",
+            "TechnicianApplication")"
+           class="secondary-button">
+            Back to Applications
+        </a>
+
+        <a href="@Url.Action(
+            "Manage",
+            "TechnicianOpportunity")"
+           class="secondary-button">
+            Opportunity Management
+        </a>
+
+        <a href="@Url.Action(
+            "Index",
+            "AdministratorDashboard")"
+           class="secondary-button">
+            Administrator Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var form =
+            document.querySelector(".verification-form");
+
+        var result =
+            document.getElementById("VerificationStatus");
+
+        var button =
+            document.getElementById("saveVerificationButton");
+
+        if (!form || !result || !button) {
+            return;
+        }
+
+        form.addEventListener("submit", function (event) {
+
+            var selected =
+                result.options[result.selectedIndex];
+
+            if (!selected ||
+                selected.value === "Pending") {
+
+                return;
+            }
+
+            var decision =
+                selected.text;
+
+            var confirmed =
+                window.confirm(
+                    "Are you sure you want to record this document as " +
+                    decision +
+                    "?"
+                );
+
+            if (!confirmed) {
+                event.preventDefault();
+                return;
+            }
+
+            button.disabled = true;
+            button.innerText = "Saving...";
+        });
+
+    });
+
+</script>
+
+
+<style>
+
+    .record-verification-page {
+        max-width: 1350px;
+        margin: 35px auto;
+        padding: 0 24px 50px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .verification-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 14px;
+        padding: 30px 34px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 24px;
+    }
+
+    .page-kicker {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: .85;
+        margin-bottom: 8px;
+    }
+
+    .verification-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+    }
+
+    .verification-header p {
+        margin: 0;
+        opacity: .94;
+        line-height: 1.6;
+    }
+
+    .application-reference {
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 8px;
+        padding: 13px 17px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .verification-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .main-card,
+    .sidebar-card {
+        background: white;
+        border: 1px solid #dfe5ec;
+        border-radius: 14px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+    }
+
+    .main-card {
+        padding: 28px;
+    }
+
+    .section-header {
+        padding-bottom: 22px;
+        border-bottom: 1px solid #e7ebf0;
+        margin-bottom: 24px;
+    }
+
+    .section-header h2,
+    .document-preview-section h2,
+    .decision-section h2,
+    .sidebar-card h2 {
+        margin: 0 0 7px;
+        color: #1d2939;
+        font-size: 21px;
+    }
+
+    .section-header p,
+    .document-preview-section p,
+    .decision-section > p,
+    .sidebar-card > p {
+        margin: 0;
+        color: #667085;
+        line-height: 1.6;
+    }
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border: 1px solid #e1e6ec;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .information-row {
+        padding: 17px;
+        border-bottom: 1px solid #e1e6ec;
+    }
+
+    .information-row:nth-child(odd) {
+        border-right: 1px solid #e1e6ec;
+    }
+
+    .information-row span {
+        display: block;
+        color: #667085;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        margin-bottom: 6px;
+    }
+
+    .information-row strong {
+        display: block;
+        color: #344054;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .document-preview-section {
+        margin-top: 25px;
+        padding: 20px;
+        background: #f7faff;
+        border: 1px solid #cfe0f7;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .decision-section {
+        margin-top: 28px;
+        padding-top: 28px;
+        border-top: 1px solid #e7ebf0;
+    }
+
+    .form-group {
+        margin-top: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #344054;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cfd6df;
+        border-radius: 7px;
+        padding: 11px 13px;
+        font-size: 14px;
+        color: #344054;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 130px;
+    }
+
+    .field-help {
+        margin-top: 6px;
+        color: #667085;
+        font-size: 12px;
+    }
+
+    .validation-message {
+        display: block;
+        color: #b42318;
+        margin-top: 6px;
+        font-size: 13px;
+    }
+
+    .confirmation-box {
+        margin-top: 25px;
+        padding: 17px 18px;
+        border-left: 4px solid #0D5CC1;
+        background: #f7faff;
+    }
+
+    .confirmation-box strong {
+        color: #344054;
+    }
+
+    .confirmation-box p {
+        margin: 5px 0 0;
+        color: #667085;
+        line-height: 1.5;
+        font-size: 13px;
+    }
+
+    .form-actions,
+    .page-navigation {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .form-actions {
+        justify-content: flex-end;
+        margin-top: 25px;
+    }
+
+    .page-navigation {
+        margin-top: 25px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        color: white;
+        border-color: #0D5CC1;
+    }
+
+    .primary-button:hover {
+        background: #094b9f;
+        color: white;
+        text-decoration: none;
+    }
+
+    .primary-button:disabled {
+        opacity: .7;
+        cursor: not-allowed;
+    }
+
+    .secondary-button {
+        background: white;
+        color: #344054;
+        border-color: #cfd6df;
+    }
+
+    .secondary-button:hover {
+        background: #f4f7fa;
+        color: #0D5CC1;
+        text-decoration: none;
+    }
+
+    .sidebar {
+        display: grid;
+        gap: 18px;
+    }
+
+    .sidebar-card {
+        padding: 22px;
+    }
+
+    .guidance-item {
+        padding: 17px 0;
+        border-bottom: 1px solid #e8ebef;
+    }
+
+    .guidance-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .guidance-item strong {
+        display: block;
+        color: #344054;
+        margin-bottom: 5px;
+    }
+
+    .guidance-item span {
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .process-card {
+        background: #f8fbff;
+        border-color: #cfe0f7;
+    }
+
+    .process-item {
+        display: flex;
+        gap: 12px;
+        padding: 15px 0;
+        border-bottom: 1px solid #dfe8f3;
+    }
+
+    .process-item:last-child {
+        border-bottom: none;
+    }
+
+    .process-item > span {
+        width: 27px;
+        height: 27px;
+        min-width: 27px;
+        border-radius: 50%;
+        background: #e5eefc;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .process-item.active > span {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .process-item strong {
+        display: block;
+        color: #344054;
+        font-size: 14px;
+    }
+
+    .process-item small {
+        display: block;
+        color: #667085;
+        margin-top: 4px;
+        line-height: 1.4;
+    }
+
+    @@media (max-width: 900px) {
+
+        .verification-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .record-verification-page {
+            padding: 0 14px 35px;
+            margin-top: 20px;
+        }
+
+        .verification-header {
+            padding: 24px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .information-row:nth-child(odd) {
+            border-right: none;
+        }
+
+        .document-preview-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions,
+        .page-navigation {
+            flex-direction: column;
+        }
+
+        .form-actions .primary-button,
+        .form-actions .secondary-button,
+        .page-navigation .secondary-button {
+            text-align: center;
+        }
+    }
+
+</style>

@@ -1,0 +1,2554 @@
+﻿
+@model CommunityServiceProject.ViewModels.MunicipalAssetProjectsViewModel
+
+@{
+    ViewBag.Title = "Link Project to Asset";
+}
+
+<div class="asset-project-page">
+
+    <!-- =========================================================
+         TOP NAVIGATION
+         ========================================================= -->
+
+    <div class="asset-project-navigation">
+
+        <div class="navigation-left">
+
+            <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-nav-btn">
+                ← Asset Details
+            </a>
+
+            <a href="@Url.Action("Index", "MunicipalAsset")"
+               class="asset-nav-btn">
+                Asset Register
+            </a>
+
+            <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+               class="asset-nav-btn">
+                Asset Dashboard
+            </a>
+
+        </div>
+
+        <div class="navigation-right">
+
+            <a href="@Url.Action("Edit", "MunicipalAsset", new { id = Model.AssetID })"
+               class="asset-action-btn asset-action-primary">
+                Edit Asset
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PAGE HEADER
+         ========================================================= -->
+
+    <div class="asset-project-hero">
+
+        <div class="asset-project-hero-main">
+
+            <div class="asset-project-eyebrow">
+                ASSET PROJECT MANAGEMENT
+            </div>
+
+            <div class="asset-project-code">
+                @Model.AssetCode
+            </div>
+
+            <h1>
+                Link Projects to Asset
+            </h1>
+
+            <p>
+                Manage the municipal projects associated with this asset.
+                Existing project relationships are shown below, while
+                available projects can be linked to the asset.
+            </p>
+
+        </div>
+
+        <div class="asset-project-hero-side">
+
+            <div class="hero-stat">
+
+                <span>
+                    Linked Projects
+                </span>
+
+                <strong>
+                    @Model.LinkedProjects.Count
+                </strong>
+
+            </div>
+
+            <div class="hero-stat">
+
+                <span>
+                    Available Projects
+                </span>
+
+                <strong>
+                    @Model.AvailableProjects.Count
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUCCESS / ERROR MESSAGES
+         ========================================================= -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="page-alert page-alert-success">
+
+            <div class="alert-icon">
+                ✓
+            </div>
+
+            <div>
+                <strong>
+                    Success
+                </strong>
+
+                <span>
+                    @TempData["SuccessMessage"]
+                </span>
+            </div>
+
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="page-alert page-alert-error">
+
+            <div class="alert-icon">
+                !
+            </div>
+
+            <div>
+                <strong>
+                    Action could not be completed
+                </strong>
+
+                <span>
+                    @TempData["ErrorMessage"]
+                </span>
+            </div>
+
+        </div>
+    }
+
+
+    <!-- =========================================================
+         ASSET CONTEXT
+         ========================================================= -->
+
+    <section class="asset-project-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Asset Information
+                </h2>
+
+                <p>
+                    Confirm the asset before managing its project relationships.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="asset-context-grid">
+
+            <div class="asset-context-item">
+
+                <span>
+                    Asset Code
+                </span>
+
+                <strong>
+                    @Model.AssetCode
+                </strong>
+
+            </div>
+
+            <div class="asset-context-item">
+
+                <span>
+                    Asset Name
+                </span>
+
+                <strong>
+                    @Model.AssetName
+                </strong>
+
+            </div>
+
+            <div class="asset-context-item">
+
+                <span>
+                    Asset Type
+                </span>
+
+                <strong>
+                    @Model.AssetType
+                </strong>
+
+            </div>
+
+            <div class="asset-context-item">
+
+                <span>
+                    Asset Category
+                </span>
+
+                <strong>
+                    @(string.IsNullOrWhiteSpace(Model.AssetCategory)
+                        ? "Not specified"
+                        : Model.AssetCategory)
+                </strong>
+
+            </div>
+
+            <div class="asset-context-item">
+
+                <span>
+                    Ward
+                </span>
+
+                <strong>
+                    @(string.IsNullOrWhiteSpace(Model.WardName)
+                        ? "Ward unavailable"
+                        : Model.WardName)
+                </strong>
+
+            </div>
+
+            <div class="asset-context-item asset-context-wide">
+
+                <span>
+                    Location
+                </span>
+
+                <strong>
+                    @(string.IsNullOrWhiteSpace(Model.LocationDescription)
+                        ? "Location not specified"
+                        : Model.LocationDescription)
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         CURRENTLY LINKED PROJECTS
+         ========================================================= -->
+
+    <section class="asset-project-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Currently Linked Projects
+                </h2>
+
+                <p>
+                    These projects are already associated with this municipal asset.
+                </p>
+
+            </div>
+
+            <span class="section-count">
+                @Model.LinkedProjects.Count
+                @(Model.LinkedProjects.Count == 1 ? "Project" : "Projects")
+            </span>
+
+        </div>
+
+
+        @if (Model.LinkedProjects != null &&
+             Model.LinkedProjects.Any())
+        {
+            <div class="linked-project-list">
+
+                @foreach (var project in Model.LinkedProjects)
+                {
+                    <div class="linked-project-card">
+
+                        <div class="linked-project-main">
+
+                            <div class="project-code">
+                                @project.ProjectCode
+                            </div>
+
+                            <h3>
+                                @project.ProjectName
+                            </h3>
+
+                            <div class="project-meta-grid">
+
+                                <div class="project-meta-item">
+
+                                    <span>
+                                        Project Type
+                                    </span>
+
+                                    <strong>
+                                        @project.ProjectType
+                                    </strong>
+
+                                </div>
+
+                                <div class="project-meta-item">
+
+                                    <span>
+                                        Ward
+                                    </span>
+
+                                    <strong>
+                                        @project.WardName
+                                    </strong>
+
+                                </div>
+
+                                <div class="project-meta-item">
+
+                                    <span>
+                                        Status
+                                    </span>
+
+                                    <strong>
+                                        <span class="project-status-badge project-status-@project.Status">
+                                            @project.Status
+                                        </span>
+                                    </strong>
+
+                                </div>
+
+                                <div class="project-meta-item">
+
+                                    <span>
+                                        Priority
+                                    </span>
+
+                                    <strong>
+                                        <span class="project-priority-badge project-priority-@project.Priority">
+                                            @project.Priority
+                                        </span>
+                                    </strong>
+
+                                </div>
+
+                                <div class="project-meta-item">
+
+                                    <span>
+                                        Start Date
+                                    </span>
+
+                                    <strong>
+                                        @project.StartDate.ToString("dd MMM yyyy")
+                                    </strong>
+
+                                </div>
+
+                                <div class="project-meta-item">
+
+                                    <span>
+                                        Expected Completion
+                                    </span>
+
+                                    <strong>
+                                        @(project.ExpectedCompletionDate.HasValue
+                                            ? project.ExpectedCompletionDate.Value.ToString("dd MMM yyyy")
+                                            : "Not specified")
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <div class="project-location">
+
+                                <span>
+                                    Location
+                                </span>
+
+                                <strong>
+                                    @(string.IsNullOrWhiteSpace(project.ProjectLocation)
+                                        ? "Location not specified"
+                                        : project.ProjectLocation)
+                                </strong>
+
+                            </div>
+
+                            <div class="link-information">
+
+                                <span>
+                                    Linked @project.LinkDate.ToString("dd MMM yyyy")
+                                </span>
+
+                                <span>
+                                    By @(string.IsNullOrWhiteSpace(project.LinkedByAdministratorName)
+                                        ? "Administrator"
+                                        : project.LinkedByAdministratorName)
+                                </span>
+
+                                @if (!string.IsNullOrWhiteSpace(project.Notes))
+                                {
+                                    <span>
+                                        Note: @project.Notes
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                        <div class="linked-project-actions">
+
+                            <a href="@Url.Action("Details", "MunicipalProject", new { id = project.ProjectID })"
+                               class="project-action-btn project-action-view">
+                                View Project
+                            </a>
+
+                            <button type="button"
+                                    class="project-action-btn project-action-danger unlink-project-button"
+                                    data-id="@project.AssetProjectID"
+                                    data-project-code="@project.ProjectCode"
+                                    data-project-name="@project.ProjectName">
+                                Unlink
+                            </button>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-project-state">
+
+                <div class="empty-state-icon">
+                    +
+                </div>
+
+                <strong>
+                    No projects linked to this asset
+                </strong>
+
+                <span>
+                    This asset is not currently associated with any municipal projects.
+                    Use the available projects section below to establish a relationship.
+                </span>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =========================================================
+         AVAILABLE PROJECTS
+         ========================================================= -->
+
+    <section class="asset-project-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Available Municipal Projects
+                </h2>
+
+                <p>
+                    Search and filter projects that are not currently linked to this asset.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SEARCH / FILTERS
+             ===================================================== -->
+
+        <div class="project-filter-panel">
+
+            @using (Html.BeginForm(
+                "LinkProject",
+                "MunicipalAsset",
+                FormMethod.Get,
+                new { @class = "project-filter-form" }))
+            {
+                <input type="hidden"
+                       name="id"
+                       value="@Model.AssetID" />
+
+                <div class="filter-group filter-search">
+
+                    <label for="searchTerm">
+                        Search
+                    </label>
+
+                    <input type="text"
+                           id="searchTerm"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="filter-control"
+                           placeholder="Project code, name, type or location..." />
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label for="projectType">
+                        Project Type
+                    </label>
+
+                    @Html.DropDownList(
+                        "projectType",
+                        Model.ProjectTypeOptions,
+                        "All Project Types",
+                        new { @class = "filter-control" })
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label for="projectStatus">
+                        Status
+                    </label>
+
+                    @Html.DropDownList(
+                        "projectStatus",
+                        Model.ProjectStatusOptions,
+                        "All Statuses",
+                        new { @class = "filter-control" })
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label for="projectPriority">
+                        Priority
+                    </label>
+
+                    @Html.DropDownList(
+                        "projectPriority",
+                        Model.ProjectPriorityOptions,
+                        "All Priorities",
+                        new { @class = "filter-control" })
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label for="ward">
+                        Ward
+                    </label>
+
+                    @Html.DropDownList(
+                        "ward",
+                        Model.WardOptions,
+                        "All Wards",
+                        new { @class = "filter-control" })
+
+                </div>
+
+
+                <div class="filter-actions">
+
+                    <button type="submit"
+                            class="filter-submit-btn">
+                        Apply Filters
+                    </button>
+
+                    <a href="@Url.Action("LinkProject", "MunicipalAsset", new { id = Model.AssetID })"
+                       class="filter-reset-btn">
+                        Reset
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             AVAILABLE PROJECT RESULTS
+             ===================================================== -->
+
+        @if (Model.AvailableProjects != null &&
+             Model.AvailableProjects.Any())
+        {
+            <div class="results-summary">
+
+                <span>
+                    Showing
+                    <strong>@Model.AvailableProjects.Count</strong>
+                    available
+                    @(Model.AvailableProjects.Count == 1 ? "project" : "projects")
+                </span>
+
+                <span class="results-note">
+                    Projects already linked to this asset are excluded.
+                </span>
+
+            </div>
+
+
+            <div class="available-projects-wrapper">
+
+                <table class="available-projects-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Project
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Location
+                            </th>
+
+                            <th>
+                                Ward
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Priority
+                            </th>
+
+                            <th>
+                                Start Date
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var project in Model.AvailableProjects)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="table-project">
+
+                                        <strong>
+                                            @project.ProjectCode
+                                        </strong>
+
+                                        <span>
+                                            @project.ProjectName
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    @project.ProjectType
+                                </td>
+
+                                <td>
+
+                                    @(string.IsNullOrWhiteSpace(project.ProjectLocation)
+                                        ? "Not specified"
+                                        : project.ProjectLocation)
+
+                                </td>
+
+                                <td>
+                                    @project.WardName
+                                </td>
+
+                                <td>
+
+                                    <span class="project-status-badge project-status-@project.Status">
+                                        @project.Status
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="project-priority-badge project-priority-@project.Priority">
+                                        @project.Priority
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @project.StartDate.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+
+                                    <button type="button"
+                                            class="link-project-button"
+                                            data-project-id="@project.ProjectID"
+                                            data-project-code="@project.ProjectCode"
+                                            data-project-name="@project.ProjectName">
+                                        Link Project
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-project-state">
+
+                <div class="empty-state-icon">
+                    ✓
+                </div>
+
+                <strong>
+                    No available projects found
+                </strong>
+
+                <span>
+                    There are no projects matching the current search and filters,
+                    or all matching projects are already linked to this asset.
+                </span>
+
+                <a href="@Url.Action("LinkProject", "MunicipalAsset", new { id = Model.AssetID })"
+                   class="asset-small-btn">
+                    View All Projects
+                </a>
+
+            </div>
+        }
+
+    </section>
+
+
+    <!-- =========================================================
+         BOTTOM NAVIGATION
+         ========================================================= -->
+
+    <div class="asset-project-bottom-navigation">
+
+        <a href="@Url.Action("Details", "MunicipalAsset", new { id = Model.AssetID })"
+           class="asset-nav-btn">
+            ← Back to Asset Details
+        </a>
+
+        <div class="bottom-navigation-actions">
+
+            <a href="@Url.Action("Index", "MunicipalAsset")"
+               class="asset-nav-btn">
+                Asset Register
+            </a>
+
+            <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+               class="asset-nav-btn">
+                Asset Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     LINK PROJECT MODAL
+     ============================================================= -->
+
+<div id="linkProjectModal"
+     class="project-modal-overlay">
+
+    <div class="project-modal">
+
+        <div class="modal-icon modal-icon-link">
+            +
+        </div>
+
+        <h3>
+            Link Project to Asset?
+        </h3>
+
+        <p>
+            You are about to associate the following project with this municipal asset.
+        </p>
+
+        <div class="modal-project-summary">
+
+            <span>
+                Project
+            </span>
+
+            <strong id="modalProjectCode">
+                —
+            </strong>
+
+            <span id="modalProjectName">
+                —
+            </span>
+
+        </div>
+
+        <div class="modal-note-section">
+
+            <label for="linkNotes">
+                Link Notes
+                <span>(Optional)</span>
+            </label>
+
+            <textarea id="linkNotes"
+                      maxlength="1000"
+                      rows="3"
+                      placeholder="Add an optional note about this project relationship..."></textarea>
+
+            <div class="character-counter">
+                <span id="linkNotesCount">0</span> / 1000
+            </div>
+
+        </div>
+
+        <div class="modal-warning">
+
+            <strong>
+                Relationship will be recorded
+            </strong>
+
+            <span>
+                The system will record the administrator and date
+                associated with this project link.
+            </span>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button type="button"
+                    id="cancelLinkProject"
+                    class="modal-secondary-btn">
+                Cancel
+            </button>
+
+            <button type="button"
+                    id="confirmLinkProject"
+                    class="modal-primary-btn">
+                Confirm Link
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     UNLINK PROJECT MODAL
+     ============================================================= -->
+
+<div id="unlinkProjectModal"
+     class="project-modal-overlay">
+
+    <div class="project-modal">
+
+        <div class="modal-icon modal-icon-danger">
+            !
+        </div>
+
+        <h3>
+            Unlink Project?
+        </h3>
+
+        <p>
+            You are about to remove the project relationship from this asset.
+        </p>
+
+        <div class="modal-project-summary">
+
+            <span>
+                Project
+            </span>
+
+            <strong id="unlinkProjectCode">
+                —
+            </strong>
+
+            <span id="unlinkProjectName">
+                —
+            </span>
+
+        </div>
+
+        <div class="modal-warning modal-warning-danger">
+
+            <strong>
+                This does not delete the project
+            </strong>
+
+            <span>
+                Only the relationship between this asset and the project
+                will be removed.
+            </span>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button type="button"
+                    id="cancelUnlinkProject"
+                    class="modal-secondary-btn">
+                Cancel
+            </button>
+
+            <button type="button"
+                    id="confirmUnlinkProject"
+                    class="modal-danger-btn">
+                Unlink Project
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     HIDDEN POST FOR LINK PROJECT
+     ============================================================= -->
+
+@using (Html.BeginForm(
+    "LinkProject",
+    "MunicipalAsset",
+    FormMethod.Post,
+    new { id = "linkProjectForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           id="linkAssetID"
+           name="AssetID"
+           value="@Model.AssetID" />
+
+    <input type="hidden"
+           id="linkProjectID"
+           name="ProjectID"
+           value="" />
+
+    <input type="hidden"
+           id="linkProjectNotes"
+           name="Notes"
+           value="" />
+}
+
+
+<!-- =============================================================
+     HIDDEN POST FOR UNLINK PROJECT
+     ============================================================= -->
+
+@using (Html.BeginForm(
+    "UnlinkProject",
+    "MunicipalAsset",
+    FormMethod.Post,
+    new { id = "unlinkProjectForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           id="unlinkAssetProjectID"
+           name="id"
+           value="" />
+
+    <input type="hidden"
+           id="unlinkAssetID"
+           name="assetID"
+           value="@Model.AssetID" />
+}
+
+
+<style>
+
+    /* ============================================================
+       PAGE
+       ============================================================ */
+
+    .asset-project-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 30px;
+        font-family: Arial, sans-serif;
+        color: #172033;
+    }
+
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+
+    .asset-project-navigation,
+    .asset-project-bottom-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .navigation-left,
+    .navigation-right,
+    .bottom-navigation-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .asset-nav-btn,
+    .asset-action-btn,
+    .asset-small-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: all .15s ease;
+    }
+
+    .asset-nav-btn {
+        min-height: 40px;
+        padding: 0 14px;
+        background: white;
+        color: #344054;
+        border: 1px solid #d0d5dd;
+    }
+
+        .asset-nav-btn:hover {
+            background: #f8fafc;
+            color: #172033;
+            text-decoration: none;
+        }
+
+    .asset-action-btn {
+        min-height: 40px;
+        padding: 0 15px;
+        border: 1px solid transparent;
+    }
+
+    .asset-action-primary {
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .asset-action-primary:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+
+    /* ============================================================
+       HERO
+       ============================================================ */
+
+    .asset-project-hero {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        padding: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+
+    .asset-project-hero-main {
+        min-width: 0;
+    }
+
+    .asset-project-eyebrow {
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        margin-bottom: 7px;
+    }
+
+    .asset-project-code {
+        color: #667085;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .asset-project-hero h1 {
+        margin: 0;
+        color: #172033;
+        font-size: 29px;
+        line-height: 1.25;
+    }
+
+    .asset-project-hero p {
+        margin: 9px 0 0;
+        max-width: 850px;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .asset-project-hero-side {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .hero-stat {
+        min-width: 120px;
+        padding: 15px 17px;
+        border: 1px solid #e4e7ec;
+        border-radius: 9px;
+        background: #f8fafc;
+    }
+
+        .hero-stat span {
+            display: block;
+            color: #667085;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .hero-stat strong {
+            display: block;
+            color: #0D5CC1;
+            font-size: 23px;
+        }
+
+
+    /* ============================================================
+       ALERTS
+       ============================================================ */
+
+    .page-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 9px;
+        margin-bottom: 20px;
+        border: 1px solid;
+        font-size: 13px;
+    }
+
+        .page-alert > div:last-child {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+    .page-alert-success {
+        background: #ecfdf3;
+        border-color: #abefc6;
+        color: #067647;
+    }
+
+    .page-alert-error {
+        background: #fef3f2;
+        border-color: #fecdca;
+        color: #b42318;
+    }
+
+    .alert-icon {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .page-alert-success .alert-icon {
+        background: #12b76a;
+        color: white;
+    }
+
+    .page-alert-error .alert-icon {
+        background: #f04438;
+        color: white;
+    }
+
+
+    /* ============================================================
+       SECTIONS
+       ============================================================ */
+
+    .asset-project-section {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.035);
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0;
+            color: #172033;
+            font-size: 19px;
+        }
+
+        .section-heading p {
+            margin: 5px 0 0;
+            color: #667085;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .section-count {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 11px;
+        border-radius: 20px;
+        background: #eff6ff;
+        color: #0D5CC1;
+        border: 1px solid #c7d9f2;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+
+    /* ============================================================
+       ASSET CONTEXT
+       ============================================================ */
+
+    .asset-context-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        background: #eaecf0;
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .asset-context-item {
+        background: white;
+        padding: 17px;
+    }
+
+    .asset-context-wide {
+        grid-column: span 2;
+    }
+
+    .asset-context-item span {
+        display: block;
+        color: #667085;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+    }
+
+    .asset-context-item strong {
+        display: block;
+        color: #172033;
+        font-size: 14px;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+
+    /* ============================================================
+       LINKED PROJECT CARDS
+       ============================================================ */
+
+    .linked-project-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .linked-project-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 19px;
+        border: 1px solid #e4e7ec;
+        border-radius: 9px;
+        background: #fff;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+        .linked-project-card:hover {
+            border-color: #c7d9f2;
+            box-shadow: 0 3px 10px rgba(15, 23, 42, .04);
+        }
+
+    .linked-project-main {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .project-code {
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .linked-project-main h3 {
+        margin: 0 0 15px;
+        color: #172033;
+        font-size: 17px;
+        line-height: 1.35;
+    }
+
+    .project-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px 18px;
+    }
+
+    .project-meta-item span,
+    .project-location span {
+        display: block;
+        color: #667085;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .project-meta-item strong,
+    .project-location strong {
+        display: block;
+        color: #344054;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .project-location {
+        margin-top: 15px;
+        padding-top: 13px;
+        border-top: 1px solid #eaecf0;
+    }
+
+    .link-information {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        margin-top: 13px;
+        padding-top: 12px;
+        border-top: 1px solid #eaecf0;
+        color: #98a2b3;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .linked-project-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+
+    /* ============================================================
+       STATUS / PRIORITY BADGES
+       ============================================================ */
+
+    .project-status-badge,
+    .project-priority-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 8px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .project-status-Pending,
+    .project-status-Draft {
+        background: #f2f4f7;
+        color: #475467;
+    }
+
+    .project-status-Planned {
+        background: #eff8ff;
+        color: #175cd3;
+    }
+
+    .project-status-InProgress,
+    .project-status-Active {
+        background: #ecfdf3;
+        color: #027a48;
+    }
+
+    .project-status-Completed {
+        background: #ecfdf3;
+        color: #067647;
+    }
+
+    .project-status-OnHold {
+        background: #fffaeb;
+        color: #b54708;
+    }
+
+    .project-status-Cancelled {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+    .project-priority-Low {
+        background: #f2f4f7;
+        color: #475467;
+    }
+
+    .project-priority-Medium {
+        background: #eff8ff;
+        color: #175cd3;
+    }
+
+    .project-priority-High {
+        background: #fffaeb;
+        color: #b54708;
+    }
+
+    .project-priority-Critical {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+
+    /* ============================================================
+       PROJECT ACTIONS
+       ============================================================ */
+
+    .project-action-btn {
+        min-height: 34px;
+        padding: 0 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        box-sizing: border-box;
+        transition: all .15s ease;
+    }
+
+    .project-action-view {
+        background: #eff6ff;
+        border: 1px solid #c7d9f2;
+        color: #0D5CC1;
+    }
+
+        .project-action-view:hover {
+            background: #dcecff;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+    .project-action-danger {
+        background: white;
+        border: 1px solid #f0b8b4;
+        color: #b42318;
+    }
+
+        .project-action-danger:hover {
+            background: #fef3f2;
+        }
+
+
+    /* ============================================================
+       FILTER PANEL
+       ============================================================ */
+
+    .project-filter-panel {
+        background: #f8fafc;
+        border: 1px solid #e4e7ec;
+        border-radius: 9px;
+        padding: 17px;
+        margin-bottom: 18px;
+    }
+
+    .project-filter-form {
+        display: grid;
+        grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(130px, 1fr)) auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .filter-group {
+        min-width: 0;
+    }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #475467;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+    .filter-control {
+        width: 100%;
+        min-height: 38px;
+        box-sizing: border-box;
+        padding: 0 10px;
+        border: 1px solid #d0d5dd;
+        border-radius: 7px;
+        background: white;
+        color: #344054;
+        font-size: 12px;
+    }
+
+        .filter-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13,92,193,.09);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 7px;
+    }
+
+    .filter-submit-btn,
+    .filter-reset-btn {
+        min-height: 38px;
+        padding: 0 12px;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+
+    .filter-submit-btn {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+        cursor: pointer;
+    }
+
+        .filter-submit-btn:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+        }
+
+    .filter-reset-btn {
+        border: 1px solid #d0d5dd;
+        background: white;
+        color: #475467;
+    }
+
+        .filter-reset-btn:hover {
+            background: #f2f4f7;
+            color: #344054;
+            text-decoration: none;
+        }
+
+
+    /* ============================================================
+       RESULTS
+       ============================================================ */
+
+    .results-summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 11px;
+        color: #667085;
+        font-size: 12px;
+    }
+
+        .results-summary strong {
+            color: #172033;
+        }
+
+    .results-note {
+        color: #98a2b3;
+    }
+
+    .available-projects-wrapper {
+        overflow-x: auto;
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+    }
+
+    .available-projects-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+        .available-projects-table th {
+            background: #f8fafc;
+            color: #475467;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eaecf0;
+            white-space: nowrap;
+        }
+
+        .available-projects-table td {
+            padding: 13px 12px;
+            color: #344054;
+            font-size: 12px;
+            border-bottom: 1px solid #eaecf0;
+            vertical-align: middle;
+        }
+
+        .available-projects-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .available-projects-table tbody tr:hover {
+            background: #fbfcfe;
+        }
+
+    .table-project {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 180px;
+    }
+
+        .table-project strong {
+            color: #0D5CC1;
+            font-size: 11px;
+        }
+
+        .table-project span {
+            color: #344054;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+    .link-project-button {
+        min-height: 32px;
+        padding: 0 11px;
+        border-radius: 7px;
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all .15s ease;
+    }
+
+        .link-project-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+        }
+
+
+    /* ============================================================
+       EMPTY STATE
+       ============================================================ */
+
+    .empty-project-state {
+        background: #f8fafc;
+        border: 1px dashed #d0d5dd;
+        border-radius: 8px;
+        padding: 35px 25px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .empty-state-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #eff6ff;
+        color: #0D5CC1;
+        border: 1px solid #c7d9f2;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .empty-project-state strong {
+        color: #344054;
+        font-size: 14px;
+    }
+
+    .empty-project-state span {
+        max-width: 620px;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.55;
+        margin-bottom: 7px;
+    }
+
+    .asset-small-btn {
+        min-height: 33px;
+        padding: 0 11px;
+        color: #0D5CC1;
+        background: white;
+        border: 1px solid #c7d9f2;
+        font-size: 11px;
+    }
+
+        .asset-small-btn:hover {
+            background: #eff6ff;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+
+    /* ============================================================
+       MODALS
+       ============================================================ */
+
+    .project-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15,23,42,.58);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+        .project-modal-overlay.active {
+            display: flex;
+        }
+
+    .project-modal {
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 12px;
+        padding: 26px;
+        box-shadow: 0 20px 55px rgba(15,23,42,.25);
+    }
+
+    .modal-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 21px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .modal-icon-link {
+        background: #eff6ff;
+        color: #0D5CC1;
+        border: 1px solid #c7d9f2;
+    }
+
+    .modal-icon-danger {
+        background: #fef3f2;
+        color: #b42318;
+        border: 1px solid #fecdca;
+    }
+
+    .project-modal h3 {
+        margin: 0 0 9px;
+        color: #172033;
+        font-size: 19px;
+    }
+
+    .project-modal > p {
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .modal-project-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        background: #f8fafc;
+        border: 1px solid #eaecf0;
+        border-radius: 8px;
+        padding: 14px;
+        margin: 17px 0;
+    }
+
+        .modal-project-summary span:first-child {
+            color: #667085;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .modal-project-summary strong {
+            color: #0D5CC1;
+            font-size: 13px;
+        }
+
+        .modal-project-summary span:last-child {
+            color: #344054;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .modal-note-section {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+        .modal-note-section label {
+            display: block;
+            color: #344054;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+            .modal-note-section label span {
+                color: #98a2b3;
+                font-weight: 500;
+            }
+
+        .modal-note-section textarea {
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+            border: 1px solid #d0d5dd;
+            border-radius: 7px;
+            padding: 10px;
+            color: #344054;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+            .modal-note-section textarea:focus {
+                outline: none;
+                border-color: #0D5CC1;
+                box-shadow: 0 0 0 3px rgba(13,92,193,.09);
+            }
+
+    .character-counter {
+        text-align: right;
+        color: #98a2b3;
+        font-size: 10px;
+        margin-top: 4px;
+    }
+
+    .modal-warning {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        background: #fffaeb;
+        border: 1px solid #fedf89;
+        border-radius: 8px;
+        padding: 11px 13px;
+        color: #7a5d00;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .modal-warning-danger {
+        background: #fef3f2;
+        border-color: #fecdca;
+        color: #912018;
+    }
+
+    .modal-warning strong {
+        font-size: 11px;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 20px;
+    }
+
+    .modal-secondary-btn,
+    .modal-primary-btn,
+    .modal-danger-btn {
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .modal-secondary-btn {
+        background: white;
+        border: 1px solid #d0d5dd;
+        color: #344054;
+    }
+
+        .modal-secondary-btn:hover {
+            background: #f8fafc;
+        }
+
+    .modal-primary-btn {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .modal-primary-btn:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+        }
+
+    .modal-danger-btn {
+        background: #b42318;
+        border: 1px solid #b42318;
+        color: white;
+    }
+
+        .modal-danger-btn:hover {
+            background: #912018;
+            border-color: #912018;
+        }
+
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
+    @@media (max-width: 1200px) {
+
+        .project-filter-form {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .filter-search {
+            grid-column: span 2;
+        }
+
+        .filter-actions {
+            align-self: end;
+        }
+    }
+
+
+    @@media (max-width: 1000px) {
+
+        .asset-project-hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .asset-project-hero-side {
+            width: 100%;
+        }
+
+        .hero-stat {
+            flex: 1;
+        }
+
+        .asset-context-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .asset-context-wide {
+            grid-column: span 2;
+        }
+
+        .project-meta-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .project-filter-form {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-search {
+            grid-column: span 2;
+        }
+
+        .filter-actions {
+            grid-column: span 2;
+        }
+    }
+
+
+    @@media (max-width: 700px) {
+
+        .asset-project-page {
+            padding: 18px;
+        }
+
+        .asset-project-navigation,
+        .asset-project-bottom-navigation {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .navigation-left,
+        .navigation-right,
+        .bottom-navigation-actions {
+            width: 100%;
+        }
+
+            .navigation-left .asset-nav-btn,
+            .navigation-right .asset-action-btn,
+            .bottom-navigation-actions .asset-nav-btn {
+                flex: 1;
+            }
+
+        .asset-project-hero {
+            padding: 21px;
+        }
+
+            .asset-project-hero h1 {
+                font-size: 23px;
+            }
+
+        .asset-project-hero-side {
+            flex-direction: column;
+        }
+
+        .hero-stat {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .asset-project-section {
+            padding: 19px;
+        }
+
+        .section-heading {
+            flex-direction: column;
+        }
+
+        .asset-context-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .asset-context-wide {
+            grid-column: auto;
+        }
+
+        .linked-project-card {
+            flex-direction: column;
+        }
+
+        .project-meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .linked-project-actions {
+            width: 100%;
+            flex-direction: row;
+        }
+
+            .linked-project-actions .project-action-btn {
+                flex: 1;
+            }
+
+        .project-filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-search,
+        .filter-actions {
+            grid-column: auto;
+        }
+
+        .filter-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .results-summary {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-actions {
+            flex-direction: column-reverse;
+        }
+
+        .modal-secondary-btn,
+        .modal-primary-btn,
+        .modal-danger-btn {
+            width: 100%;
+        }
+
+        .bottom-navigation-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // =====================================================
+        // LINK PROJECT ELEMENTS
+        // =====================================================
+
+        var linkModal =
+            document.getElementById("linkProjectModal");
+
+        var linkProjectForm =
+            document.getElementById("linkProjectForm");
+
+        var linkProjectID =
+            document.getElementById("linkProjectID");
+
+        var linkProjectNotes =
+            document.getElementById("linkProjectNotes");
+
+        var modalProjectCode =
+            document.getElementById("modalProjectCode");
+
+        var modalProjectName =
+            document.getElementById("modalProjectName");
+
+        var linkNotes =
+            document.getElementById("linkNotes");
+
+        var linkNotesCount =
+            document.getElementById("linkNotesCount");
+
+        var cancelLinkProject =
+            document.getElementById("cancelLinkProject");
+
+        var confirmLinkProject =
+            document.getElementById("confirmLinkProject");
+
+
+        // =====================================================
+        // UNLINK PROJECT ELEMENTS
+        // =====================================================
+
+        var unlinkModal =
+            document.getElementById("unlinkProjectModal");
+
+        var unlinkProjectForm =
+            document.getElementById("unlinkProjectForm");
+
+        var unlinkAssetProjectID =
+            document.getElementById("unlinkAssetProjectID");
+
+        var unlinkProjectCode =
+            document.getElementById("unlinkProjectCode");
+
+        var unlinkProjectName =
+            document.getElementById("unlinkProjectName");
+
+        var cancelUnlinkProject =
+            document.getElementById("cancelUnlinkProject");
+
+        var confirmUnlinkProject =
+            document.getElementById("confirmUnlinkProject");
+
+
+        // =====================================================
+        // OPEN LINK MODAL
+        // =====================================================
+
+        var linkButtons =
+            document.querySelectorAll(".link-project-button");
+
+        linkButtons.forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                var projectID =
+                    button.getAttribute("data-project-id");
+
+                var projectCode =
+                    button.getAttribute("data-project-code");
+
+                var projectName =
+                    button.getAttribute("data-project-name");
+
+
+                linkProjectID.value =
+                    projectID;
+
+                modalProjectCode.textContent =
+                    projectCode;
+
+                modalProjectName.textContent =
+                    projectName;
+
+                linkNotes.value =
+                    "";
+
+                linkNotesCount.textContent =
+                    "0";
+
+                linkModal.classList.add("active");
+
+            });
+
+        });
+
+
+        // =====================================================
+        // LINK NOTES COUNTER
+        // =====================================================
+
+        if (linkNotes) {
+
+            linkNotes.addEventListener(
+                "input",
+                function () {
+
+                    linkNotesCount.textContent =
+                        linkNotes.value.length;
+
+                });
+
+        }
+
+
+        // =====================================================
+        // CANCEL LINK
+        // =====================================================
+
+        if (cancelLinkProject) {
+
+            cancelLinkProject.addEventListener(
+                "click",
+                function () {
+
+                    linkModal.classList.remove(
+                        "active"
+                    );
+
+                });
+
+        }
+
+
+        // =====================================================
+        // CONFIRM LINK
+        // =====================================================
+
+        if (confirmLinkProject) {
+
+            confirmLinkProject.addEventListener(
+                "click",
+                function () {
+
+                    linkProjectNotes.value =
+                        linkNotes.value.trim();
+
+                    confirmLinkProject.disabled =
+                        true;
+
+                    confirmLinkProject.textContent =
+                        "Linking...";
+
+                    linkProjectForm.submit();
+
+                });
+
+        }
+
+
+        // =====================================================
+        // OPEN UNLINK MODAL
+        // =====================================================
+
+        var unlinkButtons =
+            document.querySelectorAll(
+                ".unlink-project-button"
+            );
+
+        unlinkButtons.forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    var assetProjectID =
+                        button.getAttribute(
+                            "data-id"
+                        );
+
+                    var projectCode =
+                        button.getAttribute(
+                            "data-project-code"
+                        );
+
+                    var projectName =
+                        button.getAttribute(
+                            "data-project-name"
+                        );
+
+
+                    unlinkAssetProjectID.value =
+                        assetProjectID;
+
+                    unlinkProjectCode.textContent =
+                        projectCode;
+
+                    unlinkProjectName.textContent =
+                        projectName;
+
+                    unlinkModal.classList.add(
+                        "active"
+                    );
+
+                });
+
+        });
+
+
+        // =====================================================
+        // CANCEL UNLINK
+        // =====================================================
+
+        if (cancelUnlinkProject) {
+
+            cancelUnlinkProject.addEventListener(
+                "click",
+                function () {
+
+                    unlinkModal.classList.remove(
+                        "active"
+                    );
+
+                });
+
+        }
+
+
+        // =====================================================
+        // CONFIRM UNLINK
+        // =====================================================
+
+        if (confirmUnlinkProject) {
+
+            confirmUnlinkProject.addEventListener(
+                "click",
+                function () {
+
+                    confirmUnlinkProject.disabled =
+                        true;
+
+                    confirmUnlinkProject.textContent =
+                        "Unlinking...";
+
+                    unlinkProjectForm.submit();
+
+                });
+
+        }
+
+
+        // =====================================================
+        // CLOSE MODALS WHEN CLICKING OUTSIDE
+        // =====================================================
+
+        if (linkModal) {
+
+            linkModal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === linkModal) {
+
+                        linkModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                });
+
+        }
+
+
+        if (unlinkModal) {
+
+            unlinkModal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === unlinkModal) {
+
+                        unlinkModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                });
+
+        }
+
+
+        // =====================================================
+        // ESCAPE KEY
+        // =====================================================
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+
+                    if (linkModal) {
+
+                        linkModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                    if (unlinkModal) {
+
+                        unlinkModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                }
+
+            });
+
+
+        // =====================================================
+        // AUTO HIDE ALERTS
+        // =====================================================
+
+        var alerts =
+            document.querySelectorAll(
+                ".page-alert"
+            );
+
+        alerts.forEach(function (alert) {
+
+            setTimeout(
+                function () {
+
+                    alert.style.transition =
+                        "opacity .3s ease";
+
+                    alert.style.opacity =
+                        "0";
+
+                    setTimeout(
+                        function () {
+
+                            if (alert.parentNode) {
+
+                                alert.parentNode.removeChild(
+                                    alert
+                                );
+
+                            }
+
+                        },
+                        350
+                    );
+
+                },
+                5000
+            );
+
+        });
+
+    });
+
+</script>
+

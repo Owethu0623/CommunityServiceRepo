@@ -1,0 +1,2072 @@
+﻿```cshtml
+@model CommunityServiceProject.Models.MunicipalServiceRequest
+
+@{
+    ViewBag.Title = "View Municipal Service Request";
+
+    var statusClass = Model.Status
+        .ToString()
+        .ToLowerInvariant()
+        .Replace(" ", "");
+
+    var statusTitle = "Municipal Service Request";
+    var statusDescription = "Review the municipal service request and its current position in the municipal service workflow.";
+
+    if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Submitted)
+    {
+        statusTitle = "Submitted Municipal Service Request";
+        statusDescription = "This request has been submitted by the citizen and is awaiting administrative review. Finance can view the request but cannot begin financial processing yet.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+    {
+        statusTitle = "Municipal Service Request Under Review";
+        statusDescription = "This request is currently being reviewed by an Administrator. Financial processing will only become available after administrative approval.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+    {
+        statusTitle = "Approved Municipal Service Request";
+        statusDescription = "This request has been approved by an Administrator and is now eligible for financial processing.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+    {
+        statusTitle = "Rejected Municipal Service Request";
+        statusDescription = "This request was rejected during administrative review. No financial processing is available for the rejected request.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+    {
+        statusTitle = "Invoice Issued";
+        statusDescription = "An invoice has been issued for this approved municipal service request. Finance can continue monitoring the invoice and payment lifecycle.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+    {
+        statusTitle = "Payment Required";
+        statusDescription = "The invoice has been issued and payment is required before the municipal service can proceed.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+    {
+        statusTitle = "Payment Processing";
+        statusDescription = "A payment is currently being processed for this municipal service request.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+    {
+        statusTitle = "Payment Failed";
+        statusDescription = "The latest payment attempt was unsuccessful. The existing request remains active and requires payment recovery.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+    {
+        statusTitle = "Payment Completed";
+        statusDescription = "Payment has been successfully recorded. The municipal service request can now proceed to service processing.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+    {
+        statusTitle = "Municipal Service In Progress";
+        statusDescription = "Payment has been completed and the municipal service is currently being processed.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+    {
+        statusTitle = "Completed Municipal Service Request";
+        statusDescription = "The municipal service has been completed. This page provides the request and financial history for reference.";
+    }
+    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Cancelled)
+    {
+        statusTitle = "Cancelled Municipal Service Request";
+        statusDescription = "This municipal service request has been cancelled and is no longer active in the service workflow.";
+    }
+}
+
+<style>
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .finance-request-details-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 20px 50px;
+        color: #1f2937;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .page-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 27px 30px;
+        color: #ffffff;
+        margin-bottom: 22px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.17);
+    }
+
+        .page-header h1 {
+            margin: 0 0 7px;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header p {
+            margin: 0;
+            max-width: 800px;
+            font-size: 13px;
+            line-height: 1.55;
+            opacity: 0.92;
+        }
+
+    .header-reference {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 17px;
+    }
+
+        .header-reference span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 0 11px;
+            border-radius: 7px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.22);
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+
+    .page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 285px;
+        gap: 20px;
+        align-items: start;
+    }
+
+    .main-column {
+        display: flex;
+        flex-direction: column;
+        gap: 17px;
+        min-width: 0;
+    }
+
+    /* =========================================================
+       SECTION CARDS
+       ========================================================= */
+
+    .section-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        padding: 21px 22px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.045);
+    }
+
+    .section-heading {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-bottom: 14px;
+        margin-bottom: 17px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .section-heading h2 {
+            margin: 0;
+            color: #16324f;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #718096;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+    /* =========================================================
+       INFORMATION GRID
+       ========================================================= */
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .information-item {
+        min-width: 0;
+        padding: 12px 13px;
+        border: 1px solid #e8edf3;
+        border-radius: 8px;
+        background: #fbfcfe;
+    }
+
+        .information-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+    .information-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #7b8794;
+        font-size: 10px;
+        line-height: 1.2;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+    }
+
+    .information-value {
+        color: #263445;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    /* =========================================================
+       DESCRIPTION
+       ========================================================= */
+
+    .description-box {
+        padding: 13px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #3f4b5a;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.65;
+        white-space: pre-line;
+    }
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 25px;
+        padding: 0 9px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .status-submitted,
+    .status-underreview {
+        background: #fff7e6;
+        border: 1px solid #f0dcae;
+        color: #9a6700;
+    }
+
+    .status-approved,
+    .status-paid,
+    .status-completed {
+        background: #e8f7ee;
+        border: 1px solid #bfe7cf;
+        color: #18794e;
+    }
+
+    .status-rejected,
+    .status-paymentfailed,
+    .status-cancelled {
+        background: #fff1f0;
+        border: 1px solid #f0b8b4;
+        color: #b42318;
+    }
+
+    .status-invoiceissued,
+    .status-paymentrequired,
+    .status-paymentprocessing,
+    .status-serviceinprogress {
+        background: #edf5ff;
+        border: 1px solid #c9ddf8;
+        color: #0D5CC1;
+    }
+
+    /* =========================================================
+       STATUS INFORMATION PANEL
+       ========================================================= */
+
+    .status-information-panel {
+        padding: 15px;
+        border-radius: 9px;
+        border: 1px solid #dbe5ef;
+        background: #f8fafc;
+    }
+
+        .status-information-panel.approved {
+            background: #f2fbf5;
+            border-color: #cce8d6;
+        }
+
+        .status-information-panel.warning {
+            background: #fffaf0;
+            border-color: #f0dfb8;
+        }
+
+        .status-information-panel.danger {
+            background: #fff5f4;
+            border-color: #f0c9c5;
+        }
+
+        .status-information-panel.processing {
+            background: #f3f8ff;
+            border-color: #d2e2f7;
+        }
+
+    .status-panel-title {
+        margin-bottom: 6px;
+        color: #16324f;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .status-panel-text {
+        margin: 0;
+        color: #5f6b7a;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    /* =========================================================
+       APPROVAL PANEL
+       ========================================================= */
+
+    .approval-panel {
+        padding: 15px;
+        background: #f5f9ff;
+        border: 1px solid #d5e4f7;
+        border-radius: 9px;
+    }
+
+    .approval-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 13px;
+        color: #16324f;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+        .approval-panel-title::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            flex: 0 0 8px;
+            border-radius: 50%;
+            background: #198754;
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.10);
+        }
+
+    .approval-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+        .approval-grid .information-item {
+            background: #ffffff;
+        }
+
+    /* =========================================================
+       REJECTION PANEL
+       ========================================================= */
+
+    .rejection-panel {
+        padding: 15px;
+        background: #fff5f4;
+        border: 1px solid #f0c9c5;
+        border-radius: 9px;
+    }
+
+    .rejection-panel-title {
+        margin-bottom: 7px;
+        color: #9b1c1c;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .rejection-panel-text {
+        color: #6f3a38;
+        font-size: 12px;
+        line-height: 1.55;
+        white-space: pre-line;
+    }
+
+    /* =========================================================
+       FINANCIAL PROCESSING PANEL
+       ========================================================= */
+
+    .finance-panel {
+        padding: 15px;
+        background: #f3f8ff;
+        border: 1px solid #d2e2f7;
+        border-radius: 9px;
+    }
+
+    .finance-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 7px;
+        color: #16324f;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+        .finance-panel-title::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            flex: 0 0 8px;
+            border-radius: 50%;
+            background: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+        }
+
+    .finance-panel-text {
+        margin: 0;
+        color: #5f6b7a;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    /* =========================================================
+       WORKFLOW SIDEBAR
+       ========================================================= */
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .workflow-card,
+    .navigation-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.045);
+    }
+
+    .workflow-card {
+        padding: 20px;
+    }
+
+        .workflow-card h3 {
+            margin: 0 0 17px;
+            color: #16324f;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+    .workflow-step {
+        position: relative;
+        min-height: 42px;
+        padding-left: 27px;
+        padding-bottom: 18px;
+    }
+
+        .workflow-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 17px;
+            bottom: 0;
+            width: 1px;
+            background: #d7dee8;
+        }
+
+    .workflow-dot {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #d5dde7;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 0 1px #c9d2de;
+    }
+
+    .workflow-step.completed .workflow-dot {
+        background: #198754;
+        box-shadow: 0 0 0 1px #198754;
+    }
+
+    .workflow-step.current .workflow-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.13);
+    }
+
+    .workflow-step.rejected .workflow-dot,
+    .workflow-step.cancelled .workflow-dot {
+        background: #b42318;
+        box-shadow: 0 0 0 1px #b42318;
+    }
+
+    .workflow-title {
+        margin-bottom: 2px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .workflow-step.completed .workflow-title {
+        color: #18794e;
+    }
+
+    .workflow-step.current .workflow-title {
+        color: #0D5CC1;
+    }
+
+    .workflow-step.rejected .workflow-title,
+    .workflow-step.cancelled .workflow-title {
+        color: #b42318;
+    }
+
+    .workflow-description {
+        color: #7b8794;
+        font-size: 10.5px;
+        line-height: 1.45;
+    }
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    .navigation-card {
+        margin-top: 15px;
+        padding: 17px;
+    }
+
+        .navigation-card h3 {
+            margin: 0 0 10px;
+            color: #16324f;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+    .navigation-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .navigation-links a {
+            padding: 9px 0;
+            border-bottom: 1px solid #edf0f4;
+            color: #0D5CC1;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+            .navigation-links a:last-child {
+                border-bottom: none;
+            }
+
+            .navigation-links a:hover {
+                color: #094b9f;
+                text-decoration: none;
+            }
+
+    /* =========================================================
+       ACTION AREA
+       ========================================================= */
+
+    .action-card {
+        padding: 17px 21px;
+    }
+
+    .action-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .action-info {
+        color: #718096;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 9px;
+        flex-shrink: 0;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 0 15px;
+        border-radius: 7px;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+    .secondary-button {
+        background: #ffffff;
+        border: 1px solid #cfd7e3;
+        color: #374151;
+    }
+
+        .secondary-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1000px) {
+
+        .page-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: static;
+        }
+
+        .workflow-card {
+            max-width: none;
+        }
+    }
+
+    @@media (max-width: 720px) {
+
+        .finance-request-details-page {
+            padding: 20px 12px 35px;
+        }
+
+        .page-header {
+            padding: 22px;
+        }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+        .information-grid,
+        .approval-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .information-item.full-width {
+            grid-column: auto;
+        }
+
+        .section-card {
+            padding: 18px;
+        }
+
+        .action-area {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="finance-request-details-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="page-header">
+
+        <h1>
+            @statusTitle
+        </h1>
+
+        <p>
+            @statusDescription
+        </p>
+
+        <div class="header-reference">
+
+            <span>
+                Reference: @Model.ReferenceNumber
+            </span>
+
+            <span>
+                @Model.ServiceType.ServiceName
+            </span>
+
+            <span>
+                @Model.Status
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="page-layout">
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+        <div class="main-column">
+
+            <!-- =================================================
+                 CURRENT STATUS
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Current Request Status</h2>
+
+                    <p>
+                        The current status determines what financial processing
+                        can be performed by Finance.
+                    </p>
+
+                </div>
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Submitted)
+                {
+                    <div class="status-information-panel warning">
+
+                        <div class="status-panel-title">
+                            Awaiting Administrator Review
+                        </div>
+
+                        <p class="status-panel-text">
+                            This request has been submitted by the citizen but has
+                            not yet been approved by an Administrator. Finance can
+                            review the request information, but invoice processing
+                            cannot begin at this stage.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+                {
+                    <div class="status-information-panel warning">
+
+                        <div class="status-panel-title">
+                            Administrator Review In Progress
+                        </div>
+
+                        <p class="status-panel-text">
+                            The request is currently under administrative review.
+                            Finance does not make the operational approval decision.
+                            Financial processing becomes available after approval.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                {
+                    <div class="status-information-panel approved">
+
+                        <div class="status-panel-title">
+                            Approved for Financial Processing
+                        </div>
+
+                        <p class="status-panel-text">
+                            The Administrator has approved this request. Finance
+                            may now proceed with the applicable invoicing process.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+                {
+                    <div class="status-information-panel danger">
+
+                        <div class="status-panel-title">
+                            Request Rejected
+                        </div>
+
+                        <p class="status-panel-text">
+                            This request was rejected during administrative review.
+                            No invoice should be generated for this request unless
+                            the request is subsequently changed through the
+                            appropriate administrative workflow.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+                {
+                    <div class="status-information-panel processing">
+
+                        <div class="status-panel-title">
+                            Invoice Issued
+                        </div>
+
+                        <p class="status-panel-text">
+                            An invoice has already been issued for this approved
+                            municipal service request. Finance should monitor the
+                            invoice and payment lifecycle rather than generate
+                            another invoice.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+                {
+                    <div class="status-information-panel processing">
+
+                        <div class="status-panel-title">
+                            Payment Required
+                        </div>
+
+                        <p class="status-panel-text">
+                            The invoice has been issued and the citizen is required
+                            to make payment before the municipal service can proceed.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+                {
+                    <div class="status-information-panel processing">
+
+                        <div class="status-panel-title">
+                            Payment Processing
+                        </div>
+
+                        <p class="status-panel-text">
+                            A payment transaction is currently being processed.
+                            Finance can monitor the payment outcome from the
+                            payment workflow.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+                {
+                    <div class="status-information-panel danger">
+
+                        <div class="status-panel-title">
+                            Payment Failed
+                        </div>
+
+                        <p class="status-panel-text">
+                            The payment attempt failed. The municipal service request
+                            remains active and requires payment recovery. A new service
+                            request should not be created solely because of the failed
+                            payment.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                {
+                    <div class="status-information-panel approved">
+
+                        <div class="status-panel-title">
+                            Payment Successfully Recorded
+                        </div>
+
+                        <p class="status-panel-text">
+                            Payment has been successfully recorded against the
+                            request. Payment completion does not itself mean that
+                            the municipal service has been completed.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                {
+                    <div class="status-information-panel processing">
+
+                        <div class="status-panel-title">
+                            Service Processing In Progress
+                        </div>
+
+                        <p class="status-panel-text">
+                            The financial payment stage has been completed and
+                            the municipal service is currently being processed.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                {
+                    <div class="status-information-panel approved">
+
+                        <div class="status-panel-title">
+                            Municipal Service Completed
+                        </div>
+
+                        <p class="status-panel-text">
+                            The municipal service has been completed. Finance can
+                            retain the request as part of the financial and
+                            service transaction history.
+                        </p>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Cancelled)
+                {
+                    <div class="status-information-panel danger">
+
+                        <div class="status-panel-title">
+                            Request Cancelled
+                        </div>
+
+                        <p class="status-panel-text">
+                            This municipal service request has been cancelled and
+                            is no longer active in the service workflow.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+
+            <!-- =================================================
+                 REQUEST INFORMATION
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Request Information</h2>
+
+                    <p>
+                        Core information submitted by the citizen.
+                    </p>
+
+                </div>
+
+                <div class="information-grid">
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Reference Number
+                        </span>
+
+                        <div class="information-value">
+                            @Model.ReferenceNumber
+                        </div>
+
+                    </div>
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Request Status
+                        </span>
+
+                        <div class="information-value">
+
+                            <span class="status-badge status-@statusClass">
+                                @Model.Status
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Request Title
+                        </span>
+
+                        <div class="information-value">
+                            @Model.Title
+                        </div>
+
+                    </div>
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Date Submitted
+                        </span>
+
+                        <div class="information-value">
+                            @Model.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                    @if (Model.DateReviewed.HasValue)
+                    {
+                        <div class="information-item">
+
+                            <span class="information-label">
+                                Date Reviewed
+                            </span>
+
+                            <div class="information-value">
+                                @Model.DateReviewed.Value.ToString("dd MMM yyyy HH:mm")
+                            </div>
+
+                        </div>
+                    }
+
+                    @if (Model.DateApproved.HasValue)
+                    {
+                        <div class="information-item">
+
+                            <span class="information-label">
+                                Date Approved
+                            </span>
+
+                            <div class="information-value">
+                                @Model.DateApproved.Value.ToString("dd MMM yyyy HH:mm")
+                            </div>
+
+                        </div>
+                    }
+
+                    @if (Model.DateCompleted.HasValue)
+                    {
+                        <div class="information-item">
+
+                            <span class="information-label">
+                                Date Completed
+                            </span>
+
+                            <div class="information-value">
+                                @Model.DateCompleted.Value.ToString("dd MMM yyyy HH:mm")
+                            </div>
+
+                        </div>
+                    }
+
+                    <div class="information-item full-width">
+
+                        <span class="information-label">
+                            Description
+                        </span>
+
+                        <div class="description-box">
+                            @Model.Description
+                        </div>
+
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.AdditionalInformation))
+                    {
+                        <div class="information-item full-width">
+
+                            <span class="information-label">
+                                Additional Information
+                            </span>
+
+                            <div class="description-box">
+                                @Model.AdditionalInformation
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 CITIZEN INFORMATION
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Citizen Information</h2>
+
+                    <p>
+                        Citizen details associated with this municipal service request.
+                    </p>
+
+                </div>
+
+                <div class="information-grid">
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Citizen Name
+                        </span>
+
+                        <div class="information-value">
+                            @Model.Citizen.FirstName @Model.Citizen.LastName
+                        </div>
+
+                    </div>
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Email Address
+                        </span>
+
+                        <div class="information-value">
+                            @Model.Citizen.EmailAddress
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 MUNICIPAL SERVICE
+                 ================================================= -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <h2>Municipal Service</h2>
+
+                    <p>
+                        Service information associated with this request.
+                    </p>
+
+                </div>
+
+                <div class="information-grid">
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Service Name
+                        </span>
+
+                        <div class="information-value">
+                            @Model.ServiceType.ServiceName
+                        </div>
+
+                    </div>
+
+                    <div class="information-item">
+
+                        <span class="information-label">
+                            Service Type ID
+                        </span>
+
+                        <div class="information-value">
+                            @Model.ServiceTypeID
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 ADMINISTRATOR DECISION
+                 ================================================= -->
+
+            @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ||
+                 Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Administrator Approval</h2>
+
+                        <p>
+                            Administrative approval that allowed this request
+                            to proceed into the financial and service workflow.
+                        </p>
+
+                    </div>
+
+                    <div class="approval-panel">
+
+                        <div class="approval-panel-title">
+                            Approved for Financial Processing
+                        </div>
+
+                        <div class="approval-grid">
+
+                            <div class="information-item">
+
+                                <span class="information-label">
+                                    Approval Status
+                                </span>
+
+                                <div class="information-value">
+
+                                    <span class="status-badge status-approved">
+                                        Approved
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="information-item">
+
+                                <span class="information-label">
+                                    Date Approved
+                                </span>
+
+                                <div class="information-value">
+
+                                    @if (Model.DateApproved.HasValue)
+                                    {
+                                        @Model.DateApproved.Value.ToString("dd MMM yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span>Not recorded</span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                            <div class="information-item">
+
+                                <span class="information-label">
+                                    Reviewed By
+                                </span>
+
+                                <div class="information-value">
+
+                                    @if (Model.ReviewedByAdministrator != null)
+                                    {
+                                        @Model.ReviewedByAdministrator.FirstName @Model.ReviewedByAdministrator.LastName
+                                    }
+                                    else
+                                    {
+                                        <span>Administrator</span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Administrator Decision</h2>
+
+                        <p>
+                            Information recorded when the request was rejected.
+                        </p>
+
+                    </div>
+
+                    <div class="rejection-panel">
+
+                        <div class="rejection-panel-title">
+                            Request Rejected
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+                        {
+                            <div class="rejection-panel-text">
+                                @Model.RejectionReason
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="rejection-panel-text">
+                                No rejection reason was recorded.
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="information-grid" style="margin-top: 12px;">
+
+                        <div class="information-item">
+
+                            <span class="information-label">
+                                Date Reviewed
+                            </span>
+
+                            <div class="information-value">
+
+                                @if (Model.DateReviewed.HasValue)
+                                {
+                                    @Model.DateReviewed.Value.ToString("dd MMM yyyy HH:mm")
+                                }
+                                else
+                                {
+                                    <span>Not recorded</span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                        <div class="information-item">
+
+                            <span class="information-label">
+                                Reviewed By
+                            </span>
+
+                            <div class="information-value">
+
+                                @if (Model.ReviewedByAdministrator != null)
+                                {
+                                    @Model.ReviewedByAdministrator.FirstName @Model.ReviewedByAdministrator.LastName
+                                }
+                                else
+                                {
+                                    <span>Administrator</span>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Administrator Decision</h2>
+
+                        <p>
+                            Administrative review has not produced a final
+                            approval or rejection for this request yet.
+                        </p>
+
+                    </div>
+
+                    <div class="status-information-panel warning">
+
+                        <div class="status-panel-title">
+                            Administrative Decision Pending
+                        </div>
+
+                        <p class="status-panel-text">
+                            The current request status does not contain a final
+                            administrative approval or rejection. Finance is
+                            therefore limited to viewing the request information.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+
+            <!-- =================================================
+                 FINANCIAL PROCESSING STATUS
+                 ================================================= -->
+
+            @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Financial Processing</h2>
+
+                        <p>
+                            The request has reached the stage where Finance can
+                            begin the invoicing process.
+                        </p>
+
+                    </div>
+
+                    <div class="finance-panel">
+
+                        <div class="finance-panel-title">
+                            Ready for Invoice Processing
+                        </div>
+
+                        <p class="finance-panel-text">
+                            This approved request is eligible for invoice generation.
+                            The applicable active fee schedule should be used when
+                            creating the invoice.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Financial Processing</h2>
+
+                        <p>
+                            Invoice processing has already taken place for this request.
+                        </p>
+
+                    </div>
+
+                    <div class="finance-panel">
+
+                        <div class="finance-panel-title">
+                            Invoice Already Issued
+                        </div>
+
+                        <p class="finance-panel-text">
+                            An invoice has already been issued. Finance should
+                            monitor the invoice and payment status rather than
+                            generate another invoice for the same request.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Financial Processing</h2>
+
+                        <p>
+                            The request is currently waiting for payment.
+                        </p>
+
+                    </div>
+
+                    <div class="finance-panel">
+
+                        <div class="finance-panel-title">
+                            Payment Required
+                        </div>
+
+                        <p class="finance-panel-text">
+                            An invoice has been issued and the outstanding balance
+                            must be settled before service processing can continue.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Financial Processing</h2>
+
+                        <p>
+                            A payment transaction is currently being processed.
+                        </p>
+
+                    </div>
+
+                    <div class="finance-panel">
+
+                        <div class="finance-panel-title">
+                            Payment Processing
+                        </div>
+
+                        <p class="finance-panel-text">
+                            Finance can monitor the payment transaction and verify
+                            the eventual payment outcome.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Financial Processing</h2>
+
+                        <p>
+                            The latest payment attempt was unsuccessful.
+                        </p>
+
+                    </div>
+
+                    <div class="status-information-panel danger">
+
+                        <div class="status-panel-title">
+                            Payment Recovery Required
+                        </div>
+
+                        <p class="status-panel-text">
+                            The payment failed, but the municipal service request
+                            remains active. The payment workflow should allow the
+                            outstanding payment to be recovered.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+            {
+                <div class="section-card">
+
+                    <div class="section-heading">
+
+                        <h2>Financial Processing</h2>
+
+                        <p>
+                            Payment has been successfully recorded.
+                        </p>
+
+                    </div>
+
+                    <div class="status-information-panel approved">
+
+                        <div class="status-panel-title">
+                            Payment Complete
+                        </div>
+
+                        <p class="status-panel-text">
+                            The financial payment stage has been completed.
+                            The municipal service itself may still be in progress.
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="section-card action-card">
+
+                <div class="action-area">
+
+                    <div class="action-info">
+
+                        @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                        {
+                            <span>
+                                This request is eligible for financial processing.
+                            </span>
+                        }
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+                        {
+                            <span>
+                                Invoice already issued — continue monitoring payment activity.
+                            </span>
+                        }
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+                        {
+                            <span>
+                                Payment is currently outstanding for this request.
+                            </span>
+                        }
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+                        {
+                            <span>
+                                Payment transaction is currently being processed.
+                            </span>
+                        }
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+                        {
+                            <span>
+                                Payment recovery is required.
+                            </span>
+                        }
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                        {
+                            <span>
+                                Payment has been completed successfully.
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                Viewing only — no request information is changed from this page.
+                            </span>
+                        }
+
+                    </div>
+
+                    <div class="action-buttons">
+
+                        <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")"
+                           class="secondary-button">
+                            Back to Municipal Service Requests
+                        </a>
+
+                       
+                        @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                        {
+                            <a href="@Url.Action("Generate","Invoice", new { id = Model.MunicipalServiceRequestID })"
+                               class="primary-button">
+                                Generate Invoice
+                            </a>
+                        }
+                        ```
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+                        {
+                        <a href="@Url.Action("Index", "Invoice")"
+                           class="primary-button">
+                            View Invoice
+                        </a>
+                        }
+                        else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed ||
+                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                        {
+                        <a href="@Url.Action("Index", "Payment")"
+                           class="primary-button">
+                            View Payments
+                        </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="sidebar">
+
+            <!-- =================================================
+                 FINANCIAL WORKFLOW
+                 ================================================= -->
+
+            <div class="workflow-card">
+
+                <h3>Financial Workflow</h3>
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Submitted)
+                {
+                    <div class="workflow-step current">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Submitted
+                        </div>
+
+                        <div class="workflow-description">
+                            Citizen submitted the municipal service request.
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Administrator Review
+                        </div>
+
+                        <div class="workflow-description">
+                            Administrative review is required.
+                        </div>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+                {
+                    <div class="workflow-step completed">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Submitted
+                        </div>
+
+                        <div class="workflow-description">
+                            Citizen submitted the municipal service request.
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step current">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Administrator Review
+                        </div>
+
+                        <div class="workflow-description">
+                            Request is currently under administrative review.
+                        </div>
+
+                    </div>
+                }
+                else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+                {
+                    <div class="workflow-step completed">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Submitted
+                        </div>
+
+                        <div class="workflow-description">
+                            Citizen submitted the municipal service request.
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step rejected">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Rejected
+                        </div>
+
+                        <div class="workflow-description">
+                            Request was rejected during administrative review.
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="workflow-step completed">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Submitted
+                        </div>
+
+                        <div class="workflow-description">
+                            Citizen submitted the municipal service request.
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step completed">
+
+                        <span class="workflow-dot"></span>
+
+                        <div class="workflow-title">
+                            Administrator Review
+                        </div>
+
+                        <div class="workflow-description">
+                            Request passed through administrative review.
+                        </div>
+
+                    </div>
+
+                    if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                    {
+                        <div class="workflow-step current">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Approved
+                            </div>
+
+                            <div class="workflow-description">
+                                Finance can begin invoice processing.
+                            </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="workflow-step completed">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Approved
+                            </div>
+
+                            <div class="workflow-description">
+                                Request received administrative approval.
+                            </div>
+
+                        </div>
+                    }
+
+                    if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued)
+                    {
+                        <div class="workflow-step current">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Invoice Issued
+                            </div>
+
+                            <div class="workflow-description">
+                                Invoice has been generated for the service.
+                            </div>
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                    {
+                        <div class="workflow-step completed">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Invoice Issued
+                            </div>
+
+                            <div class="workflow-description">
+                                Invoice was generated for the service.
+                            </div>
+
+                        </div>
+                    }
+
+                    if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+                    {
+                        <div class="workflow-step current">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Payment Required
+                            </div>
+
+                            <div class="workflow-description">
+                                Citizen payment is outstanding.
+                            </div>
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+                    {
+                        <div class="workflow-step current">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Payment Processing
+                            </div>
+
+                            <div class="workflow-description">
+                                Payment transaction is being processed.
+                            </div>
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+                    {
+                        <div class="workflow-step rejected">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Payment Failed
+                            </div>
+
+                            <div class="workflow-description">
+                                Payment requires recovery.
+                            </div>
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ||
+                             Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                    {
+                        <div class="workflow-step completed">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Paid
+                            </div>
+
+                            <div class="workflow-description">
+                                Payment was successfully recorded.
+                            </div>
+
+                        </div>
+                    }
+
+                    if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                    {
+                        <div class="workflow-step current">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Service In Progress
+                            </div>
+
+                            <div class="workflow-description">
+                                Municipal service is currently being processed.
+                            </div>
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                    {
+                        <div class="workflow-step completed">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Service In Progress
+                            </div>
+
+                            <div class="workflow-description">
+                                Municipal service proceeded after payment.
+                            </div>
+
+                        </div>
+
+                        <div class="workflow-step current">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Completed
+                            </div>
+
+                            <div class="workflow-description">
+                                Municipal service has been completed.
+                            </div>
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Cancelled)
+                    {
+                        <div class="workflow-step cancelled">
+
+                            <span class="workflow-dot"></span>
+
+                            <div class="workflow-title">
+                                Cancelled
+                            </div>
+
+                            <div class="workflow-description">
+                                Municipal service request was cancelled.
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+            <!-- =================================================
+                 NAVIGATION
+                 ================================================= -->
+
+            <div class="navigation-card">
+
+                <h3>Navigation</h3>
+
+                <div class="navigation-links">
+
+                    <a href="@Url.Action("Index", "FinanceDashboard")">
+                        Finance Dashboard
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")">
+                        Municipal Service Requests
+                    </a>
+
+                    <a href="@Url.Action("Index", "Invoice")">
+                        Municipal Service Invoices
+                    </a>
+
+                    <a href="@Url.Action("Index", "Payment")">
+                        Payment Transactions
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>

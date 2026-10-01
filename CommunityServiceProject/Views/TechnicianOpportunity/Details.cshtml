@@ -1,5 +1,4 @@
-﻿
-@model CommunityServiceProject.ViewModels.TechnicianOpportunityDetailsViewModel
+﻿@model CommunityServiceProject.ViewModels.TechnicianOpportunityDetailsViewModel
 
 @{
     ViewBag.Title = "Opportunity Details";
@@ -8,7 +7,7 @@
 <div class="opportunity-details-page">
 
     <!-- ============================================================
-         HEADER
+         PAGE HEADER
          ============================================================ -->
 
     <div class="opportunity-details-header">
@@ -28,8 +27,8 @@
             </h1>
 
             <p>
-                Review the opportunity details, requirements,
-                responsibilities and application period below.
+                Review the opportunity, responsibilities, requirements
+                and application period before starting your application.
             </p>
 
         </div>
@@ -77,13 +76,12 @@
         @if (Model.IsOpenForApplications)
         {
             @Html.ActionLink(
-                "Apply",
+                "Start Application",
                 "Create",
                 "TechnicianApplication",
                 new
                 {
-                    opportunityID =
-                        Model.OpportunityID
+                    opportunityID = Model.OpportunityID
                 },
                 new
                 {
@@ -91,10 +89,16 @@
                 }
             )
         }
+        else if (DateTime.Today < Model.ApplicationStartDate.Date)
+        {
+            <span class="application-unavailable upcoming-label">
+                Applications have not opened yet.
+            </span>
+        }
         else
         {
             <span class="application-unavailable">
-                Applications are not currently open.
+                Applications are closed.
             </span>
         }
 
@@ -134,7 +138,9 @@
                 }
                 else
                 {
-                    <span>Not specified</span>
+                    <span class="muted-value">
+                        Not specified
+                    </span>
                 }
 
             </div>
@@ -149,8 +155,7 @@
             </div>
 
             <div class="summary-value">
-                @Model.ApplicationStartDate
-                .ToString("dd MMM yyyy")
+                @Model.ApplicationStartDate.ToString("dd MMM yyyy")
             </div>
 
         </div>
@@ -163,8 +168,7 @@
             </div>
 
             <div class="summary-value deadline-value">
-                @Model.ApplicationDeadline
-                .ToString("dd MMM yyyy")
+                @Model.ApplicationDeadline.ToString("dd MMM yyyy")
             </div>
 
         </div>
@@ -180,7 +184,8 @@
     {
         <div class="application-open-notice">
 
-            <div>
+            <div class="notice-content">
+
                 <strong>
                     Applications are currently open.
                 </strong>
@@ -190,21 +195,26 @@
                     day@(Model.DaysRemaining == 1 ? "" : "s")
                     remaining before the application deadline.
                 </span>
+
             </div>
 
-            @Html.ActionLink(
-                "Apply Now",
-                "Create",
-                "TechnicianApplication",
-                new
-                {
-                    opportunityID = Model.OpportunityID
-                },
-                new
-                {
-                    @class = "btn-primary notice-button"
-                }
-            )
+            <div class="notice-action">
+
+                @Html.ActionLink(
+                    "Start Application",
+                    "Create",
+                    "TechnicianApplication",
+                    new
+                    {
+                        opportunityID = Model.OpportunityID
+                    },
+                    new
+                    {
+                        @class = "btn-primary notice-button"
+                    }
+                )
+
+            </div>
 
         </div>
     }
@@ -212,14 +222,22 @@
     {
         <div class="application-upcoming-notice">
 
-            <strong>
-                Applications have not opened yet.
-            </strong>
+            <div class="notice-icon">
+                i
+            </div>
 
-            <span>
-                Applications will open on
-                @Model.ApplicationStartDate.ToString("dd MMM yyyy").
-            </span>
+            <div>
+
+                <strong>
+                    Applications have not opened yet.
+                </strong>
+
+                <span>
+                    Applications will open on
+                    @Model.ApplicationStartDate.ToString("dd MMM yyyy").
+                </span>
+
+            </div>
 
         </div>
     }
@@ -227,36 +245,167 @@
     {
         <div class="application-closed-notice">
 
-            <strong>
-                Applications are closed.
-            </strong>
+            <div class="notice-icon">
+                !
+            </div>
 
-            <span>
-                The application deadline was
-                @Model.ApplicationDeadline.ToString("dd MMM yyyy").
-            </span>
+            <div>
+
+                <strong>
+                    Applications are closed.
+                </strong>
+
+                <span>
+                    The application deadline was
+                    @Model.ApplicationDeadline.ToString("dd MMM yyyy").
+                </span>
+
+            </div>
 
         </div>
     }
 
 
     <!-- ============================================================
-         OPPORTUNITY INFORMATION
+         APPLICATION PROCESS INFORMATION
+         ============================================================ -->
+
+    @if (Model.IsOpenForApplications)
+    {
+        <div class="application-process-card">
+
+            <div class="process-header">
+
+                <div>
+                    <div class="process-eyebrow">
+                        APPLICATION PROCESS
+                    </div>
+
+                    <h2>
+                        Before you apply
+                    </h2>
+                </div>
+
+            </div>
+
+            <div class="process-steps">
+
+                <div class="process-step">
+
+                    <div class="process-number">
+                        1
+                    </div>
+
+                    <div class="process-text">
+
+                        <strong>
+                            Start your application
+                        </strong>
+
+                        <span>
+                            Provide your cover letter and save your application as a draft.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <div class="process-number">
+                        2
+                    </div>
+
+                    <div class="process-text">
+
+                        <strong>
+                            Upload supporting documents
+                        </strong>
+
+                        <span>
+                            Add at least one supporting document before final submission.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <div class="process-number">
+                        3
+                    </div>
+
+                    <div class="process-text">
+
+                        <strong>
+                            Submit your application
+                        </strong>
+
+                        <span>
+                            Review your application and submit it before the deadline.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="process-note">
+
+                <strong>
+                    Important:
+                </strong>
+
+                Starting an application does not submit it.
+                Your application remains a draft until you complete
+                the required information, upload supporting documents
+                and select <strong>Submit Application</strong>.
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- ============================================================
+         MAIN CONTENT
          ============================================================ -->
 
     <div class="details-content-grid">
 
         <main class="details-main-content">
 
-            <!-- DESCRIPTION -->
+
+            <!-- ====================================================
+                 OPPORTUNITY OVERVIEW
+                 ==================================================== -->
 
             <section class="details-section">
 
                 <div class="section-heading">
-                    <h2>Opportunity Overview</h2>
+
+                    <div class="section-number">
+                        01
+                    </div>
+
+                    <div>
+                        <h2>
+                            Opportunity Overview
+                        </h2>
+
+                        <p>
+                            General information about the technician opportunity.
+                        </p>
+                    </div>
+
                 </div>
 
                 <div class="section-body">
+
                     @Html.Raw(
                         HttpUtility.HtmlEncode(
                             Model.Description
@@ -265,20 +414,38 @@
                             "<br />"
                         )
                     )
+
                 </div>
 
             </section>
 
 
-            <!-- RESPONSIBILITIES -->
+            <!-- ====================================================
+                 RESPONSIBILITIES
+                 ==================================================== -->
 
             <section class="details-section">
 
                 <div class="section-heading">
-                    <h2>Responsibilities</h2>
+
+                    <div class="section-number">
+                        02
+                    </div>
+
+                    <div>
+                        <h2>
+                            Responsibilities
+                        </h2>
+
+                        <p>
+                            Main duties and responsibilities associated with the role.
+                        </p>
+                    </div>
+
                 </div>
 
                 <div class="section-body">
+
                     @Html.Raw(
                         HttpUtility.HtmlEncode(
                             Model.Responsibilities
@@ -287,20 +454,38 @@
                             "<br />"
                         )
                     )
+
                 </div>
 
             </section>
 
 
-            <!-- REQUIREMENTS -->
+            <!-- ====================================================
+                 REQUIREMENTS
+                 ==================================================== -->
 
             <section class="details-section">
 
                 <div class="section-heading">
-                    <h2>Requirements</h2>
+
+                    <div class="section-number">
+                        03
+                    </div>
+
+                    <div>
+                        <h2>
+                            Requirements
+                        </h2>
+
+                        <p>
+                            Requirements applicants should meet for this opportunity.
+                        </p>
+                    </div>
+
                 </div>
 
                 <div class="section-body">
+
                     @Html.Raw(
                         HttpUtility.HtmlEncode(
                             Model.Requirements
@@ -309,20 +494,38 @@
                             "<br />"
                         )
                     )
+
                 </div>
 
             </section>
 
 
-            <!-- QUALIFICATIONS -->
+            <!-- ====================================================
+                 QUALIFICATIONS
+                 ==================================================== -->
 
             <section class="details-section">
 
                 <div class="section-heading">
-                    <h2>Required Qualifications</h2>
+
+                    <div class="section-number">
+                        04
+                    </div>
+
+                    <div>
+                        <h2>
+                            Required Qualifications
+                        </h2>
+
+                        <p>
+                            Qualifications required for consideration.
+                        </p>
+                    </div>
+
                 </div>
 
                 <div class="section-body">
+
                     @Html.Raw(
                         HttpUtility.HtmlEncode(
                             Model.RequiredQualifications
@@ -331,12 +534,15 @@
                             "<br />"
                         )
                     )
+
                 </div>
 
             </section>
 
 
-            <!-- EXPERIENCE -->
+            <!-- ====================================================
+                 EXPERIENCE
+                 ==================================================== -->
 
             @if (!string.IsNullOrWhiteSpace(
                 Model.RequiredExperience))
@@ -344,10 +550,25 @@
                 <section class="details-section">
 
                     <div class="section-heading">
-                        <h2>Required Experience</h2>
+
+                        <div class="section-number">
+                            05
+                        </div>
+
+                        <div>
+                            <h2>
+                                Required Experience
+                            </h2>
+
+                            <p>
+                                Previous experience expected for this opportunity.
+                            </p>
+                        </div>
+
                     </div>
 
                     <div class="section-body">
+
                         @Html.Raw(
                             HttpUtility.HtmlEncode(
                                 Model.RequiredExperience
@@ -356,13 +577,16 @@
                                 "<br />"
                             )
                         )
+
                     </div>
 
                 </section>
             }
 
 
-            <!-- APPLICATION INSTRUCTIONS -->
+            <!-- ====================================================
+                 APPLICATION INSTRUCTIONS
+                 ==================================================== -->
 
             @if (!string.IsNullOrWhiteSpace(
                 Model.ApplicationInstructions))
@@ -370,10 +594,25 @@
                 <section class="details-section">
 
                     <div class="section-heading">
-                        <h2>Application Instructions</h2>
+
+                        <div class="section-number">
+                            06
+                        </div>
+
+                        <div>
+                            <h2>
+                                Application Instructions
+                            </h2>
+
+                            <p>
+                                Instructions for completing the application.
+                            </p>
+                        </div>
+
                     </div>
 
                     <div class="section-body">
+
                         @Html.Raw(
                             HttpUtility.HtmlEncode(
                                 Model.ApplicationInstructions
@@ -382,6 +621,7 @@
                                 "<br />"
                             )
                         )
+
                     </div>
 
                 </section>
@@ -396,9 +636,40 @@
 
         <aside class="details-sidebar">
 
+
+            <!-- ====================================================
+                 APPLICATION PERIOD
+                 ==================================================== -->
+
             <div class="sidebar-card">
 
-                <h2>Application Period</h2>
+                <div class="sidebar-card-heading">
+
+                    <h2>
+                        Application Period
+                    </h2>
+
+                    @if (Model.IsOpenForApplications)
+                    {
+                        <span class="sidebar-status-open">
+                            Open
+                        </span>
+                    }
+                    else if (DateTime.Today < Model.ApplicationStartDate.Date)
+                    {
+                        <span class="sidebar-status-upcoming">
+                            Upcoming
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="sidebar-status-closed">
+                            Closed
+                        </span>
+                    }
+
+                </div>
+
 
                 <div class="sidebar-row">
 
@@ -407,43 +678,44 @@
                     </span>
 
                     <strong>
-                        @Model.ApplicationStartDate
-                        .ToString("dd MMM yyyy")
+                        @Model.ApplicationStartDate.ToString("dd MMM yyyy")
                     </strong>
 
                 </div>
 
+
                 <div class="sidebar-row">
 
                     <span>
-                        Closes
+                        Deadline
                     </span>
 
-                    <strong>
-                        @Model.ApplicationDeadline
-                        .ToString("dd MMM yyyy")
+                    <strong class="deadline-text">
+                        @Model.ApplicationDeadline.ToString("dd MMM yyyy")
                     </strong>
 
                 </div>
 
+
                 <div class="sidebar-row">
 
                     <span>
-                        Status
+                        Remaining
                     </span>
 
                     <strong>
 
                         @if (Model.IsOpenForApplications)
                         {
-                            <span class="text-open">
-                                Open
+                            @Model.DaysRemaining
+                            <span>
+                                day@(Model.DaysRemaining == 1 ? "" : "s")
                             </span>
                         }
                         else
                         {
-                            <span class="text-closed">
-                                Closed
+                            <span class="muted-value">
+                                Not applicable
                             </span>
                         }
 
@@ -454,9 +726,16 @@
             </div>
 
 
+            <!-- ====================================================
+                 OPPORTUNITY INFORMATION
+                 ==================================================== -->
+
             <div class="sidebar-card">
 
-                <h2>Opportunity Information</h2>
+                <h2>
+                    Opportunity Information
+                </h2>
+
 
                 <div class="sidebar-row">
 
@@ -470,6 +749,7 @@
 
                 </div>
 
+
                 <div class="sidebar-row">
 
                     <span>
@@ -482,12 +762,13 @@
 
                 </div>
 
+
                 @if (Model.NumberOfPositions.HasValue)
                 {
                     <div class="sidebar-row">
 
                         <span>
-                            Positions
+                            Positions Available
                         </span>
 
                         <strong>
@@ -500,27 +781,47 @@
             </div>
 
 
+            <!-- ====================================================
+                 APPLY CARD
+                 ==================================================== -->
+
             @if (Model.IsOpenForApplications)
             {
                 <div class="sidebar-apply-card">
 
+                    <div class="apply-card-eyebrow">
+                        READY TO APPLY?
+                    </div>
+
                     <h2>
-                        Interested in this opportunity?
+                        Start your application
                     </h2>
 
                     <p>
-                        Make sure you meet the requirements before
-                        submitting your application.
+                        You can save your application as a draft,
+                        upload supporting documents and submit it
+                        before the application deadline.
                     </p>
 
+                    <div class="apply-card-note">
+
+                        <span class="note-icon">
+                            i
+                        </span>
+
+                        <span>
+                            Starting an application does not submit it.
+                        </span>
+
+                    </div>
+
                     @Html.ActionLink(
-                        "Apply for Opportunity",
+                        "Start Application",
                         "Create",
                         "TechnicianApplication",
                         new
                         {
-                            opportunityID =
-                                Model.OpportunityID
+                            opportunityID = Model.OpportunityID
                         },
                         new
                         {
@@ -528,6 +829,54 @@
                                 "btn-primary sidebar-apply-button"
                         }
                     )
+
+                </div>
+            }
+
+
+            <!-- ====================================================
+                 CLOSED / UPCOMING INFORMATION
+                 ==================================================== -->
+
+            @if (!Model.IsOpenForApplications)
+            {
+                <div class="sidebar-information-card">
+
+                    @if (DateTime.Today < Model.ApplicationStartDate.Date)
+                    {
+                        <div class="information-icon upcoming-icon">
+                            i
+                        </div>
+
+                        <h2>
+                            Applications Not Yet Open
+                        </h2>
+
+                        <p>
+                            This opportunity will accept applications
+                            from
+                            <strong>
+                                @Model.ApplicationStartDate.ToString("dd MMM yyyy")
+                            </strong>.
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="information-icon closed-icon">
+                            !
+                        </div>
+
+                        <h2>
+                            Applications Closed
+                        </h2>
+
+                        <p>
+                            The application deadline was
+                            <strong>
+                                @Model.ApplicationDeadline.ToString("dd MMM yyyy")
+                            </strong>.
+                        </p>
+                    }
 
                 </div>
             }
@@ -551,12 +900,33 @@
             new { @class = "btn-secondary" }
         )
 
+        @if (Model.IsOpenForApplications)
+        {
+            @Html.ActionLink(
+                "Start Application",
+                "Create",
+                "TechnicianApplication",
+                new
+                {
+                    opportunityID = Model.OpportunityID
+                },
+                new
+                {
+                    @class = "btn-primary"
+                }
+            )
+        }
+
     </div>
 
 </div>
 
 
 <style>
+
+    /* ================================================================
+       PAGE
+       ================================================================ */
 
     .opportunity-details-page {
         max-width: 1200px;
@@ -567,12 +937,12 @@
     }
 
 
-    /* ============================================================
+    /* ================================================================
        HEADER
-       ============================================================ */
+       ================================================================ */
 
     .opportunity-details-header {
-        background: linear-gradient( 135deg, #0D5CC1, #094b9f );
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
         color: white;
         border-radius: 12px;
         padding: 32px;
@@ -618,9 +988,9 @@
     }
 
 
-    /* ============================================================
-       STATUS
-       ============================================================ */
+    /* ================================================================
+       HEADER STATUS
+       ================================================================ */
 
     .header-status {
         flex-shrink: 0;
@@ -653,9 +1023,9 @@
     }
 
 
-    /* ============================================================
+    /* ================================================================
        NAVIGATION
-       ============================================================ */
+       ================================================================ */
 
     .details-navigation {
         display: flex;
@@ -665,10 +1035,20 @@
         margin: 18px 0;
     }
 
+    .application-unavailable {
+        font-size: 13px;
+        font-weight: 600;
+        color: #697784;
+    }
 
-    /* ============================================================
+    .upcoming-label {
+        color: #0D5CC1;
+    }
+
+
+    /* ================================================================
        SUMMARY
-       ============================================================ */
+       ================================================================ */
 
     .opportunity-summary-grid {
         display: grid;
@@ -702,10 +1082,15 @@
         color: #a76400;
     }
 
+    .muted-value {
+        color: #7a8792;
+        font-weight: 600;
+    }
 
-    /* ============================================================
+
+    /* ================================================================
        APPLICATION NOTICES
-       ============================================================ */
+       ================================================================ */
 
     .application-open-notice,
     .application-upcoming-notice,
@@ -738,20 +1123,149 @@
         color: #5c6872;
     }
 
-        .application-open-notice strong,
-        .application-upcoming-notice strong,
-        .application-closed-notice strong {
-            margin-right: 6px;
+    .notice-content {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .notice-content strong {
+            font-size: 14px;
         }
+
+        .notice-content span {
+            font-size: 13px;
+        }
+
+    .application-upcoming-notice,
+    .application-closed-notice {
+        justify-content: flex-start;
+    }
+
+        .application-upcoming-notice > div:last-child,
+        .application-closed-notice > div:last-child {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+    .notice-icon {
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 700;
+        background: white;
+        border: 1px solid currentColor;
+    }
 
     .notice-button {
         flex-shrink: 0;
     }
 
 
-    /* ============================================================
+    /* ================================================================
+       APPLICATION PROCESS
+       ================================================================ */
+
+    .application-process-card {
+        background: white;
+        border: 1px solid #d9e2ec;
+        border-radius: 11px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .process-header {
+        background: #f7faff;
+        border-bottom: 1px solid #e0e8f1;
+        padding: 20px 22px;
+    }
+
+    .process-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.1px;
+        color: #0D5CC1;
+        margin-bottom: 5px;
+    }
+
+    .process-header h2 {
+        margin: 0;
+        font-size: 19px;
+        color: #263b50;
+    }
+
+    .process-steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+    }
+
+    .process-step {
+        display: flex;
+        gap: 13px;
+        padding: 21px;
+        border-right: 1px solid #edf0f3;
+    }
+
+        .process-step:last-child {
+            border-right: none;
+        }
+
+    .process-number {
+        width: 29px;
+        height: 29px;
+        min-width: 29px;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .process-text {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .process-text strong {
+            font-size: 13px;
+            color: #263b50;
+        }
+
+        .process-text span {
+            font-size: 12px;
+            line-height: 1.55;
+            color: #697784;
+        }
+
+    .process-note {
+        padding: 14px 21px;
+        background: #fafbfd;
+        border-top: 1px solid #edf0f3;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #647280;
+    }
+
+        .process-note strong {
+            color: #394957;
+        }
+
+
+    /* ================================================================
        CONTENT
-       ============================================================ */
+       ================================================================ */
 
     .details-content-grid {
         display: grid;
@@ -778,13 +1292,32 @@
         background: #f6f8fb;
         border-bottom: 1px solid #e3e8ee;
         padding: 15px 19px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
     }
 
-        .section-heading h2 {
-            margin: 0;
-            font-size: 17px;
-            color: #263b50;
-        }
+    .section-number {
+        font-size: 11px;
+        font-weight: 700;
+        color: #0D5CC1;
+        background: #eaf2fc;
+        border: 1px solid #c9dcf2;
+        border-radius: 5px;
+        padding: 5px 7px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        font-size: 17px;
+        color: #263b50;
+    }
+
+    .section-heading p {
+        margin: 3px 0 0;
+        font-size: 12px;
+        color: #788692;
+    }
 
     .section-body {
         padding: 19px;
@@ -796,9 +1329,9 @@
     }
 
 
-    /* ============================================================
+    /* ================================================================
        SIDEBAR
-       ============================================================ */
+       ================================================================ */
 
     .details-sidebar {
         display: flex;
@@ -807,7 +1340,8 @@
     }
 
     .sidebar-card,
-    .sidebar-apply-card {
+    .sidebar-apply-card,
+    .sidebar-information-card {
         background: white;
         border: 1px solid #e0e6ed;
         border-radius: 10px;
@@ -816,11 +1350,48 @@
     }
 
         .sidebar-card h2,
-        .sidebar-apply-card h2 {
+        .sidebar-apply-card h2,
+        .sidebar-information-card h2 {
             margin: 0 0 15px;
             font-size: 17px;
             color: #263b50;
         }
+
+    .sidebar-card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 3px;
+    }
+
+        .sidebar-card-heading h2 {
+            margin-bottom: 0;
+        }
+
+    .sidebar-status-open,
+    .sidebar-status-upcoming,
+    .sidebar-status-closed {
+        padding: 4px 8px;
+        border-radius: 5px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .sidebar-status-open {
+        background: #e8f7ee;
+        color: #187a43;
+    }
+
+    .sidebar-status-upcoming {
+        background: #eef5ff;
+        color: #0D5CC1;
+    }
+
+    .sidebar-status-closed {
+        background: #f2f4f6;
+        color: #596773;
+    }
 
     .sidebar-row {
         display: flex;
@@ -844,34 +1415,121 @@
             color: #34495a;
         }
 
-    .text-open {
-        color: #187a43;
+    .deadline-text {
+        color: #a76400 !important;
     }
 
-    .text-closed {
-        color: #687580;
-    }
+
+    /* ================================================================
+       APPLY CARD
+       ================================================================ */
 
     .sidebar-apply-card {
         background: #f7faff;
         border-color: #cbdcf1;
     }
 
-        .sidebar-apply-card p {
-            margin: 0 0 17px;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #657381;
-        }
+    .apply-card-eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #0D5CC1;
+        margin-bottom: 7px;
+    }
+
+    .sidebar-apply-card h2 {
+        margin-bottom: 10px;
+    }
+
+    .sidebar-apply-card p {
+        margin: 0 0 15px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #657381;
+    }
+
+    .apply-card-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px;
+        margin-bottom: 16px;
+        background: white;
+        border: 1px solid #dce7f2;
+        border-radius: 6px;
+        font-size: 11px;
+        line-height: 1.5;
+        color: #617181;
+    }
+
+    .note-icon {
+        width: 17px;
+        height: 17px;
+        min-width: 17px;
+        border-radius: 50%;
+        background: #eaf2fc;
+        color: #0D5CC1;
+        border: 1px solid #c9dcf2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+    }
 
     .sidebar-apply-button {
         width: 100%;
     }
 
 
-    /* ============================================================
+    /* ================================================================
+       SIDEBAR INFORMATION
+       ================================================================ */
+
+    .sidebar-information-card {
+        background: #fafbfd;
+    }
+
+        .sidebar-information-card h2 {
+            margin-top: 12px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .sidebar-information-card p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #697784;
+        }
+
+    .information-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .upcoming-icon {
+        background: #eef5ff;
+        color: #0D5CC1;
+        border: 1px solid #c8dcf5;
+    }
+
+    .closed-icon {
+        background: #f1f3f5;
+        color: #65717c;
+        border: 1px solid #d9dfe4;
+    }
+
+
+    /* ================================================================
        BUTTONS
-       ============================================================ */
+       ================================================================ */
 
     .btn-primary,
     .btn-secondary {
@@ -887,7 +1545,7 @@
         border: 1px solid transparent;
         box-sizing: border-box;
         white-space: nowrap;
-        transition: background 0.18s ease, border-color 0.18s ease;
+        transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
     }
 
     .btn-primary {
@@ -901,6 +1559,7 @@
             border-color: #094b9f;
             color: white;
             text-decoration: none;
+            transform: translateY(-1px);
         }
 
     .btn-secondary {
@@ -916,20 +1575,24 @@
         }
 
 
-    /* ============================================================
+    /* ================================================================
        FOOTER
-       ============================================================ */
+       ================================================================ */
 
     .details-footer-navigation {
         margin-top: 22px;
         padding-top: 20px;
         border-top: 1px solid #e3e8ee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
     }
 
 
-    /* ============================================================
+    /* ================================================================
        RESPONSIVE
-       ============================================================ */
+       ================================================================ */
 
     @@media (max-width: 900px) {
 
@@ -945,6 +1608,24 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
         }
+
+        .sidebar-apply-card,
+        .sidebar-information-card {
+            grid-column: span 2;
+        }
+
+        .process-steps {
+            grid-template-columns: 1fr;
+        }
+
+        .process-step {
+            border-right: none;
+            border-bottom: 1px solid #edf0f3;
+        }
+
+            .process-step:last-child {
+                border-bottom: none;
+            }
     }
 
 
@@ -992,5 +1673,20 @@
         .details-sidebar {
             grid-template-columns: 1fr;
         }
+
+        .sidebar-apply-card,
+        .sidebar-information-card {
+            grid-column: span 1;
+        }
+
+        .details-footer-navigation {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .details-footer-navigation .btn-primary,
+            .details-footer-navigation .btn-secondary {
+                width: 100%;
+            }
     }
 </style>

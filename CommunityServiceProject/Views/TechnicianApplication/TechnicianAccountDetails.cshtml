@@ -1,0 +1,437 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianAccountDetailsViewModel
+
+@{
+    ViewBag.Title = "Technician Account Details";
+}
+
+<style>
+    .technician-account-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 35px 20px 50px;
+        color: #1f2937;
+    }
+
+    .account-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 14px;
+        padding: 28px 30px;
+        margin-bottom: 22px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+    .account-header h1 {
+        margin: 0 0 7px;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .account-header p {
+        margin: 0;
+        font-size: 13px;
+        opacity: 0.92;
+    }
+
+    .account-status {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.28);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .content-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .card-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 14px;
+        margin-bottom: 20px;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 5px;
+        color: #16324f;
+        font-size: 18px;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 25px;
+    }
+
+    .detail-item {
+        min-width: 0;
+    }
+
+    .detail-item.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .detail-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .detail-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .credentials-card {
+        border-color: #c9ddf8;
+        background: #f8fbff;
+    }
+
+    .credential-row {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 15px;
+        align-items: center;
+        padding: 13px 0;
+        border-bottom: 1px solid #e3ebf5;
+    }
+
+    .credential-row:last-child {
+        border-bottom: none;
+    }
+
+    .credential-label {
+        color: #52657a;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .credential-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .temporary-password {
+        display: inline-block;
+        background: #fff8e8;
+        border: 1px solid #efd79e;
+        color: #6b531c;
+        border-radius: 7px;
+        padding: 8px 11px;
+        font-family: Consolas, monospace;
+        letter-spacing: 0.03em;
+    }
+
+    .password-warning {
+        margin-top: 18px;
+        background: #fff8e8;
+        border: 1px solid #efd79e;
+        border-radius: 8px;
+        padding: 13px 15px;
+        color: #6b531c;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .instructions {
+        margin: 0;
+        padding-left: 20px;
+        color: #374151;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .instructions strong {
+        color: #1f2937;
+    }
+
+    .active-status {
+        display: inline-block;
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+        border-radius: 20px;
+        padding: 5px 11px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .action-area {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 5px;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+    .primary-button:hover {
+        background: #094b9f;
+        border-color: #094b9f;
+        color: white;
+        text-decoration: none;
+    }
+
+    .secondary-button {
+        background: white;
+        border: 1px solid #cfd7e3;
+        color: #374151;
+    }
+
+    .secondary-button:hover {
+        background: #f5f7fa;
+        color: #1f2937;
+        text-decoration: none;
+    }
+
+    @@media (max-width: 700px) {
+        .technician-account-page {
+            padding: 20px 12px 35px;
+        }
+
+        .account-header {
+            padding: 22px;
+        }
+
+        .account-header h1 {
+            font-size: 22px;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-item.full-width {
+            grid-column: auto;
+        }
+
+        .credential-row {
+            grid-template-columns: 1fr;
+            gap: 5px;
+        }
+
+        .action-area {
+            flex-direction: column-reverse;
+        }
+
+        .action-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="technician-account-page">
+
+    <div class="account-header">
+        <h1>Technician Account Created</h1>
+
+        <p>
+            Your Technician account is active. Please review your information
+            and login details below.
+        </p>
+
+        <span class="account-status">
+            @Model.AccountStatus
+        </span>
+    </div>
+
+    <!-- PERSONAL INFORMATION -->
+
+    <div class="content-card">
+
+        <div class="card-heading">
+            <h2>Personal Information</h2>
+
+            <p>
+                This information has been carried over from your Citizen account.
+            </p>
+        </div>
+
+        <div class="details-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Full Name</span>
+
+                <div class="detail-value">
+                    @Model.FirstName @Model.LastName
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Phone Number</span>
+
+                <div class="detail-value">
+                    @Model.PhoneNumber
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Personal Email</span>
+
+                <div class="detail-value">
+                    @Model.PersonalEmail
+                </div>
+            </div>
+
+            <div class="detail-item full-width">
+                <span class="detail-label">Residential Address</span>
+
+                <div class="detail-value">
+                    @Model.ResidentialAddress
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LOGIN INFORMATION -->
+
+    <div class="content-card credentials-card">
+
+        <div class="card-heading">
+            <h2>Technician Login</h2>
+
+            <p>
+                Use these credentials for your first Technician login.
+            </p>
+        </div>
+
+        <div class="credential-row">
+
+            <div class="credential-label">
+                Municipal Email
+            </div>
+
+            <div class="credential-value">
+                @Model.MunicipalEmail
+            </div>
+
+        </div>
+
+        <div class="credential-row">
+
+            <div class="credential-label">
+                Temporary Password
+            </div>
+
+            <div class="credential-value">
+                <span class="temporary-password">
+                    @Model.TemporaryPassword
+                </span>
+            </div>
+
+        </div>
+
+        <div class="credential-row">
+
+            <div class="credential-label">
+                Account Status
+            </div>
+
+            <div>
+                <span class="active-status">
+                    @Model.AccountStatus
+                </span>
+            </div>
+
+        </div>
+
+        <div class="password-warning">
+            <strong>Important:</strong>
+            This is a temporary password. You must change it after your first login.
+        </div>
+
+    </div>
+
+    <!-- FIRST LOGIN -->
+
+    <div class="content-card">
+
+        <div class="card-heading">
+            <h2>First Login</h2>
+
+            <p>
+                Complete these steps before using the Technician portal.
+            </p>
+        </div>
+
+        <ol class="instructions">
+
+            <li>Open the <strong>Technician Login</strong> page.</li>
+
+            <li>Enter your municipal email and temporary password.</li>
+
+            <li>Sign in to your Technician account.</li>
+
+            <li>Change your password when prompted.</li>
+
+            <li>Use your new password for future logins.</li>
+
+        </ol>
+
+    </div>
+
+ 
+    <!-- ACTIONS -->
+
+    <div class="action-area">
+
+        <a href="@Url.Action("Status", "TechnicianApplication", new { id = Model.ApplicationID })"
+           class="action-button secondary-button">
+            Back
+        </a>
+
+        <a href="@Url.Action("Login", "Technicians")"
+           class="action-button primary-button">
+            Technician Login
+        </a>
+
+    </div>
+
+
+
+</div>
+
+
+

@@ -1,0 +1,1047 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianOpportunityCreateViewModel
+
+@{
+    ViewBag.Title = "Edit Technician Opportunity";
+
+    var opportunityID =
+        ViewBag.OpportunityID != null
+            ? (int)ViewBag.OpportunityID
+            : 0;
+
+    var opportunityCode =
+        ViewBag.OpportunityCode as string ?? "N/A";
+
+    var currentStatus =
+        ViewBag.CurrentStatus as string ?? "Draft";
+}
+
+<div class="technician-opportunity-edit-page">
+
+    <div class="edit-page-header">
+
+        <div>
+            <div class="page-eyebrow">
+                TECHNICIAN RECRUITMENT
+            </div>
+
+            <h1>Edit Technician Opportunity</h1>
+
+            <p>
+                Update the recruitment information for this municipal
+                technician opportunity.
+            </p>
+        </div>
+
+        <div class="header-reference">
+            <strong>@opportunityCode</strong>
+            <span>@currentStatus</span>
+        </div>
+
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-message error-message">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="edit-layout">
+
+        <main class="edit-form-card">
+
+            <div class="section-heading">
+                <h2>Opportunity Information</h2>
+                <p>
+                    Update the information that applicants will use
+                    to understand the opportunity.
+                </p>
+            </div>
+
+            @using (Html.BeginForm(
+                "Edit",
+                "TechnicianOpportunity",
+                new { id = opportunityID },
+                FormMethod.Post,
+                new { @class = "opportunity-edit-form", id = "editOpportunityForm" }
+            ))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "validation-summary" }
+                )
+
+                <div class="form-section">
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.Title,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextBoxFor(
+                            m => m.Title,
+                            new
+                            {
+                                @class = "form-control",
+                                maxlength = "200",
+                                autocomplete = "off",
+                                placeholder = "Enter the opportunity title"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.Title,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.Description,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.Description,
+                            new
+                            {
+                                @class = "form-control textarea-large",
+                                maxlength = "4000",
+                                rows = "7",
+                                placeholder = "Describe the technician opportunity"
+                            }
+                        )
+
+                        <div class="character-row">
+                            <span>
+                                Provide enough information for applicants
+                                to understand the purpose of the role.
+                            </span>
+
+                            <span id="descriptionCounter">
+                                0 / 4000
+                            </span>
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.Description,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.Responsibilities,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.Responsibilities,
+                            new
+                            {
+                                @class = "form-control textarea-large",
+                                maxlength = "4000",
+                                rows = "7",
+                                placeholder = "Describe the main responsibilities"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.Responsibilities,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.Requirements,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.Requirements,
+                            new
+                            {
+                                @class = "form-control textarea-large",
+                                maxlength = "4000",
+                                rows = "7",
+                                placeholder = "Describe the requirements for applicants"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.Requirements,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.RequiredQualifications,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.RequiredQualifications,
+                            new
+                            {
+                                @class = "form-control textarea-medium",
+                                maxlength = "2000",
+                                rows = "5",
+                                placeholder = "Enter required qualifications"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.RequiredQualifications,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.RequiredExperience,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.RequiredExperience,
+                            new
+                            {
+                                @class = "form-control textarea-medium",
+                                maxlength = "2000",
+                                rows = "5",
+                                placeholder = "Enter required experience"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.RequiredExperience,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(
+                            m => m.ApplicationInstructions,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.ApplicationInstructions,
+                            new
+                            {
+                                @class = "form-control textarea-medium",
+                                maxlength = "2000",
+                                rows = "5",
+                                placeholder = "Provide instructions for applicants"
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.ApplicationInstructions,
+                            "",
+                            new { @class = "field-validation" }
+                        )
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="section-heading compact">
+                        <h2>Position Details</h2>
+                        <p>
+                            Keep the advertised position information accurate.
+                        </p>
+                    </div>
+
+                    <div class="two-column">
+
+                        <div class="form-group">
+                            @Html.LabelFor(
+                                m => m.EmploymentType,
+                                new { @class = "form-label" }
+                            )
+
+                            @Html.DropDownListFor(
+                                m => m.EmploymentType,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        "Permanent",
+                                        "Temporary",
+                                        "Contract",
+                                        "Part-Time"
+                                    },
+                                    Model.EmploymentType
+                                ),
+                                "Select employment type",
+                                new { @class = "form-control" }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.EmploymentType,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(
+                                m => m.NumberOfPositions,
+                                new { @class = "form-label" }
+                            )
+
+                            @Html.TextBoxFor(
+                                m => m.NumberOfPositions,
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "number",
+                                    min = "1",
+                                    max = "999",
+                                    placeholder = "Number of positions"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.NumberOfPositions,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="section-heading compact">
+                        <h2>Application Period</h2>
+                        <p>
+                            The application deadline must be after the start date.
+                        </p>
+                    </div>
+
+                    <div class="two-column">
+
+                        <div class="form-group">
+                            @Html.LabelFor(
+                                m => m.ApplicationStartDate,
+                                new { @class = "form-label" }
+                            )
+
+                            @Html.TextBoxFor(
+                                m => m.ApplicationStartDate,
+                                "{0:yyyy-MM-dd}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "date"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.ApplicationStartDate,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(
+                                m => m.ApplicationDeadline,
+                                new { @class = "form-label" }
+                            )
+
+                            @Html.TextBoxFor(
+                                m => m.ApplicationDeadline,
+                                "{0:yyyy-MM-dd}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "date"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.ApplicationDeadline,
+                                "",
+                                new { @class = "field-validation" }
+                            )
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="edit-confirmation">
+                    <div>
+                        <strong>Review before saving</strong>
+
+                        <p>
+                            Confirm that the opportunity information and
+                            application period are correct before saving
+                            your changes.
+                        </p>
+                    </div>
+
+                    <label class="confirmation-check">
+                        <input type="checkbox"
+                               id="confirmChanges" />
+
+                        <span>
+                            I have reviewed the changes and confirm that
+                            the information is correct.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+
+                    @Html.ActionLink(
+                        "Cancel",
+                        "Manage",
+                        "TechnicianOpportunity",
+                        null,
+                        new { @class = "btn-secondary" }
+                    )
+
+                    <button type="submit"
+                            id="saveChangesButton"
+                            class="btn-primary"
+                            disabled>
+                        Save Changes
+                    </button>
+
+                </div>
+            }
+
+        </main>
+
+        <aside class="edit-sidebar">
+
+            <div class="sidebar-card">
+
+                <h3>Opportunity Details</h3>
+
+                <div class="sidebar-item">
+                    <span class="sidebar-label">
+                        Opportunity Code
+                    </span>
+
+                    <strong>
+                        @opportunityCode
+                    </strong>
+                </div>
+
+                <div class="sidebar-item">
+                    <span class="sidebar-label">
+                        Current Status
+                    </span>
+
+                    <span class="status-badge">
+                        @currentStatus
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="sidebar-card">
+
+                <h3>Editing Rules</h3>
+
+                <ul class="rules-list">
+                    <li>
+                        Closed opportunities cannot be edited.
+                    </li>
+
+                    <li>
+                        Cancelled opportunities cannot be edited.
+                    </li>
+
+                    <li>
+                        Application deadlines must follow the start date.
+                    </li>
+
+                    <li>
+                        Draft opportunities cannot have a start date in the past.
+                    </li>
+
+                    <li>
+                        Changes are recorded against the administrator account.
+                    </li>
+                </ul>
+
+            </div>
+
+            <div class="sidebar-card navigation-card">
+
+                <h3>Navigation</h3>
+
+                @Html.ActionLink(
+                    "Back to Manage Opportunities",
+                    "Manage",
+                    "TechnicianOpportunity",
+                    null,
+                    new { @class = "sidebar-link" }
+                )
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        (function () {
+
+            var form =
+                document.getElementById("editOpportunityForm");
+
+            var confirmation =
+                document.getElementById("confirmChanges");
+
+            var saveButton =
+                document.getElementById("saveChangesButton");
+
+            if (confirmation && saveButton) {
+
+                confirmation.addEventListener(
+                    "change",
+                    function () {
+
+                        saveButton.disabled =
+                            !confirmation.checked;
+
+                    }
+                );
+            }
+
+            var description =
+                document.getElementById("Description");
+
+            var descriptionCounter =
+                document.getElementById("descriptionCounter");
+
+            function updateCounter() {
+
+                if (!description ||
+                    !descriptionCounter) {
+                    return;
+                }
+
+                descriptionCounter.textContent =
+                    description.value.length + " / 4000";
+            }
+
+            if (description) {
+
+                description.addEventListener(
+                    "input",
+                    updateCounter
+                );
+
+                updateCounter();
+            }
+
+            if (form && saveButton) {
+
+                form.addEventListener(
+                    "submit",
+                    function () {
+
+                        if (!confirmation.checked) {
+
+                            event.preventDefault();
+
+                            return;
+                        }
+
+                        saveButton.disabled = true;
+                        saveButton.textContent =
+                            "Saving Changes...";
+                    }
+                );
+            }
+
+        })();
+
+    </script>
+}
+
+<style>
+
+    .technician-opportunity-edit-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 35px 25px 60px;
+    }
+
+    .edit-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 30px;
+        padding: 30px;
+        background: #0D5CC1;
+        border-radius: 14px;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(13, 92, 193, 0.16);
+    }
+
+    .page-eyebrow {
+        margin-bottom: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        color: rgba(255,255,255,0.78);
+    }
+
+    .edit-page-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .edit-page-header p {
+        margin: 0;
+        max-width: 700px;
+        color: rgba(255,255,255,0.88);
+        line-height: 1.6;
+    }
+
+    .header-reference {
+        min-width: 180px;
+        padding: 15px 18px;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 10px;
+        text-align: right;
+    }
+
+    .header-reference strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #fff;
+        font-size: 16px;
+    }
+
+    .header-reference span {
+        color: rgba(255,255,255,0.78);
+        font-size: 13px;
+    }
+
+    .alert-message {
+        margin-bottom: 25px;
+        padding: 14px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .error-message {
+        background: #fff1f1;
+        border: 1px solid #efc3c3;
+        color: #a42626;
+    }
+
+    .edit-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .edit-form-card {
+        background: #fff;
+        border: 1px solid #e1e6ec;
+        border-radius: 14px;
+        padding: 32px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .section-heading {
+        margin-bottom: 25px;
+    }
+
+    .section-heading.compact {
+        margin-top: 5px;
+        margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 7px;
+        color: #172033;
+        font-size: 21px;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #687385;
+        line-height: 1.55;
+        font-size: 14px;
+    }
+
+    .form-section {
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #e9edf2;
+    }
+
+    .form-section:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #263246;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 13px;
+        border: 1px solid #ccd4de;
+        border-radius: 8px;
+        background: #fff;
+        color: #1f2937;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color .2s ease,
+                    box-shadow .2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,0.10);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .textarea-large {
+        min-height: 150px;
+    }
+
+    .textarea-medium {
+        min-height: 115px;
+    }
+
+    .character-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 7px;
+        color: #7a8492;
+        font-size: 12px;
+    }
+
+    .character-row span:last-child {
+        white-space: nowrap;
+        font-weight: 700;
+    }
+
+    .field-validation {
+        display: block;
+        margin-top: 6px;
+        color: #b42318;
+        font-size: 12px;
+    }
+
+    .validation-summary {
+        margin-bottom: 25px;
+        padding: 14px 18px;
+        border-radius: 8px;
+        background: #fff4f4;
+        border: 1px solid #efcccc;
+        color: #a42626;
+        font-size: 13px;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .edit-confirmation {
+        display: flex;
+        justify-content: space-between;
+        gap: 25px;
+        margin-top: 28px;
+        padding: 20px;
+        border: 1px solid #d8e2ef;
+        border-radius: 10px;
+        background: #f7faff;
+    }
+
+    .edit-confirmation strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #1d2a3a;
+    }
+
+    .edit-confirmation p {
+        margin: 0;
+        color: #657286;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .confirmation-check {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        max-width: 350px;
+        color: #344054;
+        font-size: 13px;
+        line-height: 1.45;
+        cursor: pointer;
+    }
+
+    .confirmation-check input {
+        width: 17px;
+        height: 17px;
+        margin-top: 1px;
+        flex-shrink: 0;
+        accent-color: #0D5CC1;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 25px;
+        border-top: 1px solid #e9edf2;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 22px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background: #094b9f;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn-primary:disabled {
+        background: #aeb8c5;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary {
+        background: #fff;
+        border: 1px solid #cbd3dd;
+        color: #344054;
+    }
+
+    .btn-secondary:hover {
+        background: #f5f7fa;
+        color: #1f2937;
+        text-decoration: none;
+    }
+
+    .edit-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .sidebar-card {
+        padding: 22px;
+        background: #fff;
+        border: 1px solid #e1e6ec;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    .sidebar-card h3 {
+        margin: 0 0 18px;
+        color: #1d2a3a;
+        font-size: 16px;
+    }
+
+    .sidebar-item {
+        padding: 13px 0;
+        border-top: 1px solid #edf0f4;
+    }
+
+    .sidebar-item:first-of-type {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .sidebar-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #7a8492;
+        font-size: 12px;
+    }
+
+    .sidebar-item strong {
+        color: #243244;
+        font-size: 14px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: #eaf2ff;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .rules-list {
+        margin: 0;
+        padding-left: 18px;
+        color: #596678;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .rules-list li {
+        margin-bottom: 9px;
+    }
+
+    .rules-list li:last-child {
+        margin-bottom: 0;
+    }
+
+    .sidebar-link {
+        display: block;
+        padding: 11px 13px;
+        border: 1px solid #d3dbe5;
+        border-radius: 7px;
+        color: #344054;
+        text-decoration: none;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .sidebar-link:hover {
+        background: #f5f8fc;
+        color: #0D5CC1;
+        text-decoration: none;
+    }
+
+    @@media (max-width: 1000px) {
+
+        .edit-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-sidebar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .navigation-card {
+            grid-column: 1 / -1;
+        }
+
+    }
+
+    @@media (max-width: 700px) {
+
+        .technician-opportunity-edit-page {
+            padding: 20px 15px 40px;
+        }
+
+        .edit-page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 24px;
+        }
+
+        .header-reference {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .edit-form-card {
+            padding: 22px;
+        }
+
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-confirmation {
+            flex-direction: column;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+        }
+
+        .edit-sidebar {
+            display: flex;
+        }
+
+    }
+
+</style>

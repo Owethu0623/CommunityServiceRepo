@@ -1,0 +1,568 @@
+﻿
+@model CommunityServiceProject.ViewModels.InvoiceDetailsViewModel
+
+@{
+    ViewBag.Title = "Invoice Details";
+
+    var statusText =
+        Model.Status.ToString();
+}
+
+<style>
+    .invoice-details-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 22px 50px;
+        color: #1f2937;
+    }
+
+    .success-header {
+        background: linear-gradient(135deg, #0D5CC1, #083f8a);
+        border-radius: 15px;
+        padding: 29px 31px;
+        color: white;
+        margin-bottom: 23px;
+        box-shadow: 0 10px 26px rgba(13,92,193,.18);
+    }
+
+        .success-header h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+        }
+
+        .success-header p {
+            margin: 0;
+            opacity: .92;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+    .success-reference {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 18px;
+    }
+
+    .reference-pill {
+        display: inline-flex;
+        padding: 7px 11px;
+        border-radius: 20px;
+        background: rgba(255,255,255,.13);
+        border: 1px solid rgba(255,255,255,.25);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .success-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 13px;
+        box-shadow: 0 4px 15px rgba(15,23,42,.05);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+        .card-header h2 {
+            margin: 0 0 5px;
+            color: #16324f;
+            font-size: 19px;
+        }
+
+        .card-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+    .invoice-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .summary-item {
+        padding: 21px 23px;
+        border-right: 1px solid #e8edf3;
+    }
+
+        .summary-item:last-child {
+            border-right: none;
+        }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .summary-value {
+        color: #16324f;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        background: #e8f7ee;
+        border: 1px solid #bfe7cf;
+        color: #18794e;
+        border-radius: 20px;
+        padding: 6px 11px;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .details-section {
+        padding: 23px 24px;
+    }
+
+        .details-section + .details-section {
+            border-top: 1px solid #e8edf3;
+        }
+
+        .details-section h3 {
+            margin: 0 0 17px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 17px 28px;
+    }
+
+    .detail-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 650;
+        word-break: break-word;
+    }
+
+    .financial-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .financial-table tr {
+            border-bottom: 1px solid #edf0f4;
+        }
+
+            .financial-table tr:last-child {
+                border-bottom: none;
+            }
+
+        .financial-table th,
+        .financial-table td {
+            padding: 13px 0;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .financial-table th {
+            width: 55%;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .financial-table td {
+            color: #1f2937;
+            font-weight: 700;
+            text-align: right;
+        }
+
+    .balance {
+        color: #0D5CC1 !important;
+        font-size: 15px !important;
+    }
+
+    .workflow-notice {
+        margin-top: 20px;
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+        padding: 14px 15px;
+        color: #24415f;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .action-area {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 20px 24px;
+        background: #f8fafc;
+        border-top: 1px solid #e8edf3;
+    }
+
+    .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 41px;
+        padding: 0 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        box-sizing: border-box;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+        }
+
+    .secondary-button {
+        background: white;
+        border: 1px solid #cfd7e3;
+        color: #374151;
+    }
+
+        .secondary-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+    @@media (max-width: 750px) {
+        .invoice-details-page {
+            padding: 20px 12px 35px;
+        }
+
+        .invoice-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-item {
+            border-right: none;
+            border-bottom: 1px solid #e8edf3;
+        }
+
+            .summary-item:last-child {
+                border-bottom: none;
+            }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-area {
+            flex-direction: column-reverse;
+        }
+
+        .button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="invoice-details-page">
+
+    <div class="success-header">
+
+        <h1>Invoice Generated</h1>
+
+        <p>
+            The invoice has been successfully created for the approved
+            municipal service request.
+        </p>
+
+        <div class="success-reference">
+
+            <span class="reference-pill">
+                Invoice: @Model.InvoiceNumber
+            </span>
+
+            <span class="reference-pill">
+                Request: @Model.RequestReference
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="success-card">
+
+        <div class="card-header">
+
+            <h2>Invoice Summary</h2>
+
+            <p>
+                Financial information recorded for this municipal service request.
+            </p>
+
+        </div>
+
+        <div class="invoice-summary">
+
+            <div class="summary-item">
+
+                <span class="summary-label">
+                    Invoice Amount
+                </span>
+
+                <div class="summary-value">
+                    @String.Format(
+                        System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                        "R {0:N2}",
+                        Model.Amount)
+                </div>
+
+            </div>
+
+            <div class="summary-item">
+
+                <span class="summary-label">
+                    Outstanding Balance
+                </span>
+
+                <div class="summary-value">
+                    @String.Format(
+                        System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                        "R {0:N2}",
+                        Model.Balance)
+                </div>
+
+            </div>
+
+            <div class="summary-item">
+
+                <span class="summary-label">
+                    Invoice Status
+                </span>
+
+                <div>
+                    <span class="status-badge">
+                        @statusText
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="details-section">
+
+            <h3>Invoice Information</h3>
+
+            <div class="details-grid">
+
+                <div>
+                    <span class="detail-label">
+                        Invoice Number
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.InvoiceNumber
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label">
+                        Request Reference
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.RequestReference
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label">
+                        Issue Date
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.IssueDate.ToString("dd MMM yyyy HH:mm")
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label">
+                        Due Date
+                    </span>
+
+                    <div class="detail-value">
+                        @if (Model.DueDate.HasValue)
+                        {
+                            @Model.DueDate.Value.ToString("dd MMM yyyy")
+                        }
+                        else
+                        {
+                            <span>Not specified</span>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="details-section">
+
+            <h3>Citizen</h3>
+
+            <div class="details-grid">
+
+                <div>
+                    <span class="detail-label">
+                        Name
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.CitizenName
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label">
+                        Email
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.CitizenEmail
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="details-section">
+
+            <h3>Municipal Service</h3>
+
+            <div class="details-grid">
+
+                <div>
+                    <span class="detail-label">
+                        Service
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.ServiceName
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label">
+                        Service Code
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.ServiceCode
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label">
+                        Fee Type
+                    </span>
+
+                    <div class="detail-value">
+                        @Model.FeeType
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="details-section">
+
+            <h3>Financial Summary</h3>
+
+            <table class="financial-table">
+
+                <tr>
+                    <th>Invoice Amount</th>
+                    <td>
+                        @String.Format(
+                            System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                            "R {0:N2}",
+                            Model.Amount)
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Amount Paid</th>
+                    <td>
+                        @String.Format(
+                            System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                            "R {0:N2}",
+                            Model.AmountPaid)
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Outstanding Balance</th>
+                    <td class="balance">
+                        @String.Format(
+                            System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                            "R {0:N2}",
+                            Model.Balance)
+                    </td>
+                </tr>
+
+            </table>
+
+            <div class="workflow-notice">
+                <strong>Next stage:</strong>
+                The invoice has been issued and the municipal service request
+                is now awaiting payment. Payment processing is handled through
+                the Finance workflow. An issued invoice does not mean that
+                payment has been completed, and payment does not automatically
+                mark the municipal service as completed.
+            </div>
+
+        </div>
+
+        <div class="action-area">
+
+            <a href="@Url.Action(
+                "Index",
+                "FinanceDashboard")"
+               class="button secondary-button">
+                ← Finance Dashboard
+            </a>
+
+            <a href="@Url.Action(
+                "Index",
+                "Invoice")"
+               class="button primary-button">
+                Back to Invoices
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+

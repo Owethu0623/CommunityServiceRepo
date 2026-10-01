@@ -1,0 +1,486 @@
+﻿
+@model IEnumerable<CommunityServiceProject.ViewModels.GenerateInvoiceListViewModel>
+
+@{
+    ViewBag.Title = "Generate Invoices";
+
+    var pendingInvoiceCount =
+        ViewBag.PendingInvoiceCount ?? 0;
+
+    var totalAmount =
+        ViewBag.TotalAmount ?? 0m;
+}
+
+<style>
+    .finance-invoice-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 22px 50px;
+        color: #1f2937;
+    }
+
+    .finance-page-header {
+        background: linear-gradient(135deg, #0D5CC1, #083f8a);
+        border-radius: 15px;
+        padding: 30px 32px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 26px rgba(13, 92, 193, 0.18);
+    }
+
+    .finance-page-header h1 {
+        margin: 0 0 7px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .finance-page-header p {
+        margin: 0;
+        opacity: .92;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    .header-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .header-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,.3);
+        background: rgba(255,255,255,.12);
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .header-button:hover {
+        background: rgba(255,255,255,.2);
+        color: white;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(15,23,42,.05);
+    }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 7px;
+    }
+
+    .summary-value {
+        color: #16324f;
+        font-size: 26px;
+        font-weight: 750;
+    }
+
+    .summary-description {
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .invoice-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 13px;
+        box-shadow: 0 4px 15px rgba(15,23,42,.05);
+        overflow: hidden;
+    }
+
+    .invoice-card-header {
+        padding: 21px 23px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .invoice-card-header h2 {
+        margin: 0 0 5px;
+        color: #16324f;
+        font-size: 19px;
+    }
+
+    .invoice-card-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 950px;
+    }
+
+    .invoice-table th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        font-weight: 700;
+        padding: 13px 16px;
+        text-align: left;
+        white-space: nowrap;
+        border-bottom: 1px solid #e5eaf0;
+    }
+
+    .invoice-table td {
+        padding: 16px;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .invoice-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .reference {
+        color: #0D5CC1;
+        font-weight: 700;
+    }
+
+    .service-name {
+        color: #1f2937;
+        font-weight: 650;
+    }
+
+    .secondary-text {
+        color: #64748b;
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    .amount {
+        color: #16324f;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 37px;
+        padding: 0 13px;
+        border-radius: 7px;
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .action-button:hover {
+        background: #094b9f;
+        border-color: #094b9f;
+        color: white;
+    }
+
+    .alert-message {
+        background: #fff8e8;
+        border: 1px solid #f1d99b;
+        color: #70551c;
+        border-radius: 9px;
+        padding: 13px 15px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: #eef5ff;
+        color: #0D5CC1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 750;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+        color: #16324f;
+        font-size: 18px;
+    }
+
+    .empty-state p {
+        max-width: 560px;
+        margin: 0 auto;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    @@media (max-width: 700px) {
+        .finance-invoice-page {
+            padding: 20px 12px 35px;
+        }
+
+        .finance-page-header {
+            padding: 23px;
+        }
+
+        .finance-page-header h1 {
+            font-size: 23px;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="finance-invoice-page">
+
+    <div class="finance-page-header">
+
+        <h1>Generate Invoices</h1>
+
+        <p>
+            Review approved chargeable municipal service requests and
+            generate the invoices required before payment processing.
+        </p>
+
+        <div class="header-actions">
+
+            <a href="@Url.Action("Index", "FinanceDashboard")"
+               class="header-button">
+                ← Finance Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+    @if (TempData["InvoiceError"] != null)
+    {
+        <div class="alert-message">
+            @TempData["InvoiceError"]
+        </div>
+    }
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Awaiting Invoice
+            </span>
+
+            <div class="summary-value">
+                @pendingInvoiceCount
+            </div>
+
+            <div class="summary-description">
+                Approved chargeable requests ready for financial processing.
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Amount to Invoice
+            </span>
+
+            <div class="summary-value">
+                @String.Format(
+                    System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                    "R {0:N2}",
+                    totalAmount)
+            </div>
+
+            <div class="summary-description">
+                Combined value of the currently available invoice requests.
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="invoice-card">
+
+        <div class="invoice-card-header">
+
+            <h2>Approved Requests Awaiting Invoicing</h2>
+
+            <p>
+                Only active, chargeable services with an approved request
+                and no existing invoice are displayed.
+            </p>
+
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-wrapper">
+
+                <table class="invoice-table">
+
+                    <thead>
+                        <tr>
+                            <th>Request</th>
+                            <th>Citizen</th>
+                            <th>Service</th>
+                            <th>Approval Date</th>
+                            <th>Fee Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <div class="reference">
+                                        @item.RequestReference
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @item.CitizenName
+                                </td>
+
+                                <td>
+                                    <div class="service-name">
+                                        @item.ServiceName
+                                    </div>
+
+                                    <div class="secondary-text">
+                                        @item.ServiceCode
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (item.DateApproved.HasValue)
+                                    {
+                                        @item.DateApproved.Value.ToString("dd MMM yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="secondary-text">
+                                            Not recorded
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.FeeType
+                                </td>
+
+                                <td>
+                                    <span class="amount">
+                                        @String.Format(
+                                            System.Globalization.CultureInfo.GetCultureInfo("en-ZA"),
+                                            "R {0:N2}",
+                                            item.Amount)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge">
+                                        Approved
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a href="@Url.Action(
+                                        "Generate",
+                                        "Invoice",
+                                        new
+                                        {
+                                            id = item.MunicipalServiceRequestID
+                                        })"
+                                       class="action-button">
+                                        Review &amp; Generate
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    ✓
+                </div>
+
+                <h3>No invoices require generation</h3>
+
+                <p>
+                    There are currently no approved chargeable municipal
+                    service requests waiting for invoice processing.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+

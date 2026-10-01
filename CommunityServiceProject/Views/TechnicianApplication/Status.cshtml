@@ -1,4 +1,5 @@
-﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationDetailsViewModel
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianApplicationDetailsViewModel
 
 @{
     ViewBag.Title = "Application Status";
@@ -46,11 +47,267 @@
     }
 
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    @* =========================================================
+         DRAFT APPLICATION MESSAGE
+        ========================================================= *@
+
+    @if (Model.Status ==
+        CommunityServiceProject.Models.TechnicianApplicationStatus.Draft)
+    {
+        <div class="draft-message">
+
+            <div class="draft-message-content">
+
+                <h2>
+                    Application Not Yet Submitted
+                </h2>
+
+                <p>
+                    Your application has been saved as a draft.
+                    You can still edit your application and upload
+                    supporting documents before submitting it.
+                </p>
+
+            </div>
+
+        </div>
+    }
+
+
+    @* =========================================================
+         DOCUMENTS PENDING MESSAGE
+        ========================================================= *@
+
+    @if (Model.Status ==
+        CommunityServiceProject.Models.TechnicianApplicationStatus.DocumentsPending)
+    {
+        <div class="documents-pending-message">
+
+            <div class="documents-pending-icon">
+                !
+            </div>
+
+            <div class="documents-pending-content">
+
+                <h2>
+                    Supporting Documents Require Attention
+                </h2>
+
+                <p>
+                    One or more supporting documents submitted with your
+                    application were rejected by the administrator.
+                    Please review the administrator's comments and replace
+                    the rejected documents before your application can continue.
+                </p>
+
+                <div class="documents-pending-action">
+
+                    @Html.ActionLink(
+                        "Update Documents",
+                        "Documents",
+                        "TechnicianApplication",
+                        new
+                        {
+                            id = Model.ApplicationID
+                        },
+                        new
+                        {
+                            @class = "update-documents-button"
+                        }
+                    )
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    @* =========================================================
+         REPLACEMENT DOCUMENT SUBMITTED / UNDER REVIEW
+        ========================================================= *@
+
+    @if (Model.Status ==
+        CommunityServiceProject.Models.TechnicianApplicationStatus.UnderReview)
+    {
+        <div class="replacement-review-message">
+
+            <div class="replacement-review-icon">
+                ✓
+            </div>
+
+            <div class="replacement-review-content">
+
+                <h2>
+                    Replacement Document Submitted
+                </h2>
+
+                <p>
+                    Your replacement supporting document has been
+                    submitted successfully and is now awaiting
+                    administrator review.
+                </p>
+
+                <p>
+                    You do not need to submit a new application.
+                    The administrator will review the replacement
+                    document as part of your existing application.
+                </p>
+
+                <div class="replacement-review-action">
+
+                    @Html.ActionLink(
+                        "View Supporting Documents",
+                        "Documents",
+                        "TechnicianApplication",
+                        new
+                        {
+                            id = Model.ApplicationID
+                        },
+                        new
+                        {
+                            @class = "replacement-documents-button"
+                        }
+                    )
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    @* =========================================================
+         TECHNICIAN ONBOARDING / ACCOUNT CREATED
+        ========================================================= *@
+
+    @if (Model.Status ==
+        CommunityServiceProject.Models.TechnicianApplicationStatus.Onboarded)
+    {
+        <div class="technician-onboarded-message">
+
+            <div class="technician-onboarded-icon">
+                ✓
+            </div>
+
+            <div class="technician-onboarded-content">
+
+                <div class="technician-onboarded-eyebrow">
+                    ONBOARDING COMPLETE
+                </div>
+
+                <h2>
+                    Your Technician Account Has Been Created
+                </h2>
+
+                <p>
+                    Your application has successfully completed the
+                    technician onboarding process. Your municipal
+                    Technician account has been created.
+                </p>
+
+                <p>
+                    Select a Technician account below to view its
+                    municipal login details.
+                </p>
+
+
+                @if (Model.TechnicianOnboardings != null &&
+                     Model.TechnicianOnboardings.Count > 0)
+                {
+                    <div class="technician-onboarding-list">
+
+                        @foreach (var onboarding in Model.TechnicianOnboardings)
+                        {
+                            <div class="technician-onboarding-item">
+
+                                <div class="technician-onboarding-info">
+
+                                    <div class="technician-onboarding-name">
+                                        @onboarding.TechnicianName
+                                    </div>
+
+                                    <div class="technician-onboarding-email">
+                                        @onboarding.MunicipalEmail
+                                    </div>
+
+                                    <div class="technician-onboarding-meta">
+                                        Onboarded
+                                        @onboarding.OnboardingDate.ToString(
+                                            "dd MMM yyyy HH:mm")
+                                    </div>
+
+                                </div>
+
+                                <div class="technician-onboarding-action">
+
+                                    @Html.ActionLink(
+                                        "View Account Details",
+                                        "TechnicianAccountDetails",
+                                        "TechnicianApplication",
+                                        new
+                                        {
+                                            onboardingId =
+                                                onboarding.OnboardingID
+                                        },
+                                        new
+                                        {
+                                            @class =
+                                                "technician-details-button"
+                                        }
+                                    )
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <div class="technician-account-pending">
+
+                        Technician account details are currently being
+                        prepared. Please refresh this page shortly.
+
+                    </div>
+                }
+
+
+                <div class="technician-onboarded-note">
+
+                    <strong>Important:</strong>
+
+                    Each Technician account uses a temporary password.
+                    The temporary password must be changed during the
+                    first Technician login.
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
     @if (Model.IsSuccessful)
     {
         <div class="decision-message success">
 
-            <h2>Application Progressed</h2>
+            <h2>
+                Application Progressed
+            </h2>
 
             <p>
                 Your application has progressed in the recruitment process.
@@ -64,7 +321,9 @@
     {
         <div class="decision-message unsuccessful">
 
-            <h2>Application Not Selected</h2>
+            <h2>
+                Application Not Selected
+            </h2>
 
             <p>
                 Your application was not selected for this opportunity.
@@ -82,34 +341,53 @@
             <div class="content-card">
 
                 <div class="card-header">
-                    <h2>Application Information</h2>
+
+                    <h2>
+                        Application Information
+                    </h2>
+
                 </div>
 
                 <div class="information-grid">
 
                     <div>
-                        <span>Application Reference</span>
+                        <span>
+                            Application Reference
+                        </span>
+
                         <strong>
                             @Model.ApplicationReference
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Opportunity Code</span>
+                        <span>
+                            Opportunity Code
+                        </span>
+
                         <strong>
                             @Model.OpportunityCode
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Employment Type</span>
+                        <span>
+                            Employment Type
+                        </span>
+
                         <strong>
                             @Model.EmploymentType
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Positions</span>
+                        <span>
+                            Positions
+                        </span>
+
                         <strong>
                             @(Model.NumberOfPositions.HasValue
                                 ? Model.NumberOfPositions.ToString()
@@ -117,26 +395,55 @@
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Application Date</span>
+                        <span>
+                            Application Date
+                        </span>
+
                         <strong>
-                            @Model.ApplicationDate.ToString("dd MMM yyyy HH:mm")
+                            @Model.ApplicationDate.ToString(
+                                "dd MMM yyyy HH:mm")
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Application Deadline</span>
+                        <span>
+                            Application Deadline
+                        </span>
+
                         <strong>
-                            @Model.ApplicationDeadline.ToString("dd MMM yyyy")
+                            @Model.ApplicationDeadline.ToString(
+                                "dd MMM yyyy")
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Last Updated</span>
+                        <span>
+                            Last Updated
+                        </span>
+
                         <strong>
                             @(Model.LastUpdatedDate.HasValue
-                                ? Model.LastUpdatedDate.Value.ToString("dd MMM yyyy HH:mm")
+                                ? Model.LastUpdatedDate.Value.ToString(
+                                    "dd MMM yyyy HH:mm")
                                 : "Not updated")
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>
+                            Supporting Documents
+                        </span>
+
+                        <strong>
+                            @Model.DocumentCount
+                            @(Model.DocumentCount == 1
+                                ? "document"
+                                : "documents")
                         </strong>
                     </div>
 
@@ -145,10 +452,18 @@
             </div>
 
 
+            @* =================================================
+                 COVER LETTER
+                ================================================= *@
+
             <div class="content-card">
 
                 <div class="card-header">
-                    <h2>Submitted Cover Letter</h2>
+
+                    <h2>
+                        Application Cover Letter
+                    </h2>
+
                 </div>
 
                 <div class="cover-letter-content">
@@ -163,6 +478,118 @@
 
             </div>
 
+
+            @* =================================================
+                 SUPPORTING DOCUMENTS / SUBMISSION READINESS
+                ================================================= *@
+
+            @if (Model.Status ==
+                CommunityServiceProject.Models.TechnicianApplicationStatus.Draft)
+            {
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <h2>
+                            Application Completion
+                        </h2>
+
+                    </div>
+
+                    <div class="completion-content">
+
+                        <div class="completion-item completed">
+
+                            <div class="completion-icon">
+                                ✓
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Application details saved
+                                </strong>
+
+                                <p>
+                                    Your cover letter has been saved successfully.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="completion-item @(Model.HasDocuments ? "completed" : "incomplete")">
+
+                            <div class="completion-icon">
+                                @(Model.HasDocuments ? "✓" : "!")
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Supporting documents
+                                </strong>
+
+                                @if (Model.HasDocuments)
+                                {
+                                    <p>
+                                        @Model.DocumentCount
+                                        @(Model.DocumentCount == 1
+                                            ? "supporting document has"
+                                            : "supporting documents have")
+                                        been uploaded.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        At least one supporting document
+                                        is required before you can submit
+                                        your application.
+                                    </p>
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="completion-item @(Model.CanSubmit ? "completed" : "incomplete")">
+
+                            <div class="completion-icon">
+                                @(Model.CanSubmit ? "✓" : "!")
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Final submission
+                                </strong>
+
+                                @if (Model.CanSubmit)
+                                {
+                                    <p>
+                                        Your application is ready for final submission.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        Complete the required supporting documents
+                                        before submitting your application.
+                                    </p>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
         </div>
 
 
@@ -170,7 +597,9 @@
 
             <div class="sidebar-card">
 
-                <h2>Application Status</h2>
+                <h2>
+                    Application Status
+                </h2>
 
                 <div class="current-status">
 
@@ -180,17 +609,305 @@
 
                 </div>
 
-                <p>
-                    Your application status will change as the
-                    recruitment process progresses.
-                </p>
+
+                @if (Model.Status ==
+                    CommunityServiceProject.Models.TechnicianApplicationStatus.Draft)
+                {
+                    <p>
+                        Your application is currently saved as a draft.
+                        Complete your supporting documents and submit the
+                        application before the deadline.
+                    </p>
+                }
+                else if (Model.Status ==
+                    CommunityServiceProject.Models.TechnicianApplicationStatus.DocumentsPending)
+                {
+                    <p>
+                        One or more supporting documents require replacement.
+                        Review the rejected documents and submit updated
+                        copies for administrator verification.
+                    </p>
+                }
+                else if (Model.Status ==
+                    CommunityServiceProject.Models.TechnicianApplicationStatus.UnderReview)
+                {
+                    <p>
+                        Your application is currently under administrator
+                        review. If you recently replaced a rejected document,
+                        the replacement is awaiting verification.
+                    </p>
+                }
+                else if (Model.Status ==
+                    CommunityServiceProject.Models.TechnicianApplicationStatus.Onboarded)
+                {
+                    <p>
+                        Your application has completed the onboarding process.
+                        Your municipal Technician account has been created.
+                        View the Technician account details below to access
+                        your login information.
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        Your application status will change as the
+                        recruitment process progresses.
+                    </p>
+                }
 
             </div>
 
 
+            @* =================================================
+                 ONBOARDED TECHNICIAN ACCOUNT ACTION
+                ================================================= *@
+
+            @if (Model.Status ==
+                CommunityServiceProject.Models.TechnicianApplicationStatus.Onboarded &&
+                Model.TechnicianOnboardings != null &&
+                Model.TechnicianOnboardings.Count > 0)
+            {
+                <div class="sidebar-card technician-account-card">
+
+                    <div class="technician-account-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        Technician Accounts
+                    </h2>
+
+                    <p>
+                        Your municipal Technician account has been created.
+                        Select an account below to view its login details.
+                    </p>
+
+
+                    @foreach (var onboarding in Model.TechnicianOnboardings)
+                    {
+                        <div class="technician-sidebar-account">
+
+                            <strong>
+                                @onboarding.TechnicianName
+                            </strong>
+
+                            <span>
+                                @onboarding.MunicipalEmail
+                            </span>
+
+                            @Html.ActionLink(
+                                "View Account Details",
+                                "TechnicianAccountDetails",
+                                "TechnicianApplication",
+                                new
+                                {
+                                    onboardingId =
+                                        onboarding.OnboardingID
+                                },
+                                new
+                                {
+                                    @class =
+                                        "action-button technician-details-action"
+                                }
+                            )
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+
+            @* =================================================
+                 DOCUMENTS PENDING ACTIONS
+                ================================================= *@
+
+            @if (Model.Status ==
+                CommunityServiceProject.Models.TechnicianApplicationStatus.DocumentsPending)
+            {
+                <div class="sidebar-card documents-update-card">
+
+                    <div class="documents-update-icon">
+                        !
+                    </div>
+
+                    <h2>
+                        Action Required
+                    </h2>
+
+                    <p>
+                        Your application cannot continue until the rejected
+                        supporting documents have been replaced.
+                    </p>
+
+                    @Html.ActionLink(
+                        "Update Documents",
+                        "Documents",
+                        "TechnicianApplication",
+                        new
+                        {
+                            id = Model.ApplicationID
+                        },
+                        new
+                        {
+                            @class =
+                                "action-button update-documents-action"
+                        }
+                    )
+
+                </div>
+            }
+
+
+            @* =================================================
+                 UNDER REVIEW ACTIONS
+                ================================================= *@
+
+            @if (Model.Status ==
+                CommunityServiceProject.Models.TechnicianApplicationStatus.UnderReview)
+            {
+                <div class="sidebar-card replacement-review-card">
+
+                    <div class="replacement-review-sidebar-icon">
+                        ✓
+                    </div>
+
+                    <h2>
+                        Awaiting Review
+                    </h2>
+
+                    <p>
+                        Your application is being reviewed by the
+                        administrator. You can view your submitted
+                        supporting documents below.
+                    </p>
+
+                    @Html.ActionLink(
+                        "Supporting Documents",
+                        "Documents",
+                        "TechnicianApplication",
+                        new
+                        {
+                            id = Model.ApplicationID
+                        },
+                        new
+                        {
+                            @class =
+                                "action-button replacement-documents-action"
+                        }
+                    )
+
+                </div>
+            }
+
+
+            @* =================================================
+                 DRAFT ACTIONS
+                ================================================= *@
+
+            @if (Model.Status ==
+                CommunityServiceProject.Models.TechnicianApplicationStatus.Draft)
+            {
+                <div class="sidebar-card">
+
+                    <h2>
+                        Application Actions
+                    </h2>
+
+                    <p>
+                        You can update your application and manage
+                        supporting documents while it remains a draft.
+                    </p>
+
+                    @if (Model.IsEditable)
+                    {
+                        @Html.ActionLink(
+                            "Edit Application",
+                            "Edit",
+                            "TechnicianApplication",
+                            new
+                            {
+                                id = Model.ApplicationID
+                            },
+                            new
+                            {
+                                @class =
+                                    "action-button secondary-action"
+                            }
+                        )
+                    }
+
+
+                    @Html.ActionLink(
+                        "Supporting Documents",
+                        "Documents",
+                        "TechnicianApplication",
+                        new
+                        {
+                            id = Model.ApplicationID
+                        },
+                        new
+                        {
+                            @class =
+                                "action-button secondary-action"
+                        }
+                    )
+
+
+                    @if (Model.CanSubmit)
+                    {
+                        using (Html.BeginForm(
+                            "Submit",
+                            "TechnicianApplication",
+                            new
+                            {
+                                id = Model.ApplicationID
+                            },
+                            FormMethod.Post,
+                            new
+                            {
+                                @class =
+                                    "submit-application-form"
+                            }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="action-button primary-action"
+                                    onclick="return confirm('Are you sure you want to submit this application? You will not be able to edit it after submission.');">
+                                Submit Application
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <div class="submission-requirement">
+
+                            <strong>
+                                Final submission unavailable
+                            </strong>
+
+                            <p>
+                                Upload at least one supporting document
+                                before submitting your application.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+
+            @* =================================================
+                 OPPORTUNITY
+                ================================================= *@
+
             <div class="sidebar-card">
 
-                <h2>Opportunity</h2>
+                <h2>
+                    Opportunity
+                </h2>
 
                 <p class="sidebar-opportunity-title">
                     @Model.OpportunityTitle
@@ -206,7 +923,8 @@
                     },
                     new
                     {
-                        @class = "sidebar-link"
+                        @class =
+                            "sidebar-link"
                     }
                 )
 
@@ -216,6 +934,33 @@
 
     </div>
 
+
+    @* =========================================================
+         APPLICATION LOCKED MESSAGE
+        ========================================================= *@
+
+    @if (!Model.IsEditable &&
+        Model.Status !=
+            CommunityServiceProject.Models.TechnicianApplicationStatus.Draft &&
+        Model.Status !=
+            CommunityServiceProject.Models.TechnicianApplicationStatus.DocumentsPending &&
+        Model.Status !=
+            CommunityServiceProject.Models.TechnicianApplicationStatus.NotSelected &&
+        Model.Status !=
+            CommunityServiceProject.Models.TechnicianApplicationStatus.Withdrawn)
+    {
+        <div class="edit-status-note">
+
+            This application has been submitted and can no longer
+            be edited while it is being processed.
+
+        </div>
+    }
+
+
+    @* =========================================================
+         PAGE NAVIGATION
+        ========================================================= *@
 
     <div class="page-navigation">
 
@@ -302,6 +1047,12 @@
         white-space: nowrap;
     }
 
+    .status-draft {
+        background: #fff7e6;
+        color: #9a6700;
+        border-color: #f1d59b;
+    }
+
     .status-submitted,
     .status-underreview,
     .status-screening,
@@ -357,6 +1108,340 @@
         color: #25643c;
     }
 
+    .alert-error {
+        background: #fff5f5;
+        border: 1px solid #efc4c4;
+        color: #8e2424;
+    }
+
+    /* =========================================================
+       TECHNICIAN ONBOARDING
+       ========================================================= */
+
+    .technician-onboarded-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        background: #f1faf5;
+        border: 1px solid #c5e5d1;
+        border-left: 5px solid #198754;
+        border-radius: 10px;
+        padding: 22px;
+        margin-bottom: 20px;
+    }
+
+    .technician-onboarded-icon {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #198754;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .technician-onboarded-content {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .technician-onboarded-eyebrow {
+        color: #198754;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+    }
+
+    .technician-onboarded-content h2 {
+        margin: 0 0 7px;
+        color: #176b42;
+        font-size: 19px;
+    }
+
+    .technician-onboarded-content p {
+        margin: 0 0 7px;
+        color: #456557;
+        font-size: 13px;
+        line-height: 1.65;
+        max-width: 780px;
+    }
+
+    .technician-onboarded-note {
+        margin-top: 15px;
+        padding: 11px 13px;
+        background: #ffffff;
+        border: 1px solid #cfe4d6;
+        border-radius: 7px;
+        color: #4b6657;
+        font-size: 11px;
+        line-height: 1.55;
+        max-width: 780px;
+    }
+
+        .technician-onboarded-note strong {
+            color: #176b42;
+        }
+
+    .technician-onboarding-list {
+        margin-top: 17px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 780px;
+    }
+
+    .technician-onboarding-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 14px 15px;
+        background: #ffffff;
+        border: 1px solid #cfe4d6;
+        border-radius: 8px;
+    }
+
+    .technician-onboarding-info {
+        min-width: 0;
+    }
+
+    .technician-onboarding-name {
+        color: #176b42;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .technician-onboarding-email {
+        color: #456557;
+        font-size: 12px;
+        word-break: break-word;
+    }
+
+    .technician-onboarding-meta {
+        margin-top: 4px;
+        color: #71808e;
+        font-size: 11px;
+    }
+
+    .technician-onboarding-action {
+        flex-shrink: 0;
+    }
+
+    .technician-account-pending {
+        margin-top: 17px;
+        max-width: 780px;
+        padding: 12px 14px;
+        background: #ffffff;
+        border: 1px solid #cfe4d6;
+        border-radius: 7px;
+        color: #5b7165;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .technician-details-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 19px;
+        border-radius: 7px;
+        background: #198754;
+        border: 1px solid #198754;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+        .technician-details-button:hover {
+            background: #146c43;
+            border-color: #146c43;
+            color: #ffffff;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+
+    /* =========================================================
+       DOCUMENTS PENDING
+       ========================================================= */
+
+    .documents-pending-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        background: #fff5f5;
+        border: 1px solid #efc4c4;
+        border-left: 5px solid #c33b3b;
+        border-radius: 9px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .documents-pending-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #c33b3b;
+        color: #ffffff;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .documents-pending-content h2 {
+        margin: 0 0 6px;
+        color: #922d2d;
+        font-size: 18px;
+    }
+
+    .documents-pending-content p {
+        margin: 0;
+        color: #694747;
+        font-size: 13px;
+        line-height: 1.65;
+        max-width: 760px;
+    }
+
+    .documents-pending-action {
+        margin-top: 14px;
+    }
+
+    .update-documents-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 18px;
+        border-radius: 7px;
+        background: #c33b3b;
+        border: 1px solid #c33b3b;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .update-documents-button:hover {
+            background: #a12626;
+            border-color: #a12626;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       REPLACEMENT DOCUMENT SUBMITTED
+       ========================================================= */
+
+    .replacement-review-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        background: #edf9f1;
+        border: 1px solid #c4e6cf;
+        border-left: 5px solid #198754;
+        border-radius: 9px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .replacement-review-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #198754;
+        color: #ffffff;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .replacement-review-content h2 {
+        margin: 0 0 7px;
+        color: #176b42;
+        font-size: 18px;
+    }
+
+    .replacement-review-content p {
+        margin: 0 0 7px;
+        color: #456557;
+        font-size: 13px;
+        line-height: 1.65;
+        max-width: 760px;
+    }
+
+        .replacement-review-content p:last-of-type {
+            margin-bottom: 0;
+        }
+
+    .replacement-review-action {
+        margin-top: 15px;
+    }
+
+    .replacement-documents-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 18px;
+        border-radius: 7px;
+        background: #198754;
+        border: 1px solid #198754;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .replacement-documents-button:hover {
+            background: #146c43;
+            border-color: #146c43;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       DRAFT / DECISION MESSAGE
+       ========================================================= */
+
+    .draft-message {
+        background: #fffaf0;
+        border: 1px solid #f0d9a7;
+        border-left: 4px solid #d89b21;
+        border-radius: 9px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+    }
+
+        .draft-message h2 {
+            margin: 0 0 6px;
+            color: #815900;
+            font-size: 17px;
+        }
+
+        .draft-message p {
+            margin: 0;
+            color: #725f3b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
     .decision-message {
         border-radius: 9px;
         padding: 18px 20px;
@@ -385,6 +1470,11 @@
             border: 1px solid #efc4c4;
             color: #8e2424;
         }
+
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
 
     .details-grid {
         display: grid;
@@ -446,6 +1536,63 @@
         white-space: normal;
     }
 
+    .completion-content {
+        padding: 18px 20px;
+    }
+
+    .completion-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+        .completion-item:last-child {
+            border-bottom: none;
+        }
+
+    .completion-icon {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .completion-item.completed .completion-icon {
+        background: #eaf7ef;
+        color: #187a43;
+    }
+
+    .completion-item.incomplete .completion-icon {
+        background: #fff4df;
+        color: #9a6700;
+    }
+
+    .completion-item strong {
+        display: block;
+        color: #344454;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .completion-item p {
+        margin: 0;
+        color: #71808e;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
     .sidebar-card {
         padding: 20px;
         margin-bottom: 18px;
@@ -487,6 +1634,254 @@
             text-decoration: underline;
         }
 
+
+    /* =========================================================
+       TECHNICIAN ACCOUNT SIDEBAR
+       ========================================================= */
+
+    .technician-account-card {
+        background: #f4fbf7;
+        border-color: #cce6d5;
+        border-left: 4px solid #198754;
+    }
+
+    .technician-account-icon {
+        width: 31px;
+        height: 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #198754;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 11px;
+    }
+
+    .technician-account-card h2 {
+        color: #176b42;
+    }
+
+    .technician-account-card p {
+        color: #456557;
+    }
+
+    .technician-sidebar-account {
+        padding: 12px 0;
+        border-top: 1px solid #dcece2;
+    }
+
+        .technician-sidebar-account:first-of-type {
+            margin-top: 12px;
+        }
+
+        .technician-sidebar-account strong {
+            display: block;
+            color: #176b42;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .technician-sidebar-account span {
+            display: block;
+            color: #71808e;
+            font-size: 11px;
+            word-break: break-word;
+        }
+
+        .technician-sidebar-account .action-button {
+            margin-top: 9px;
+        }
+
+    .technician-details-action {
+        background: #198754;
+        border: 1px solid #198754;
+        color: #ffffff;
+    }
+
+        .technician-details-action:hover {
+            background: #146c43;
+            border-color: #146c43;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       DOCUMENTS UPDATE SIDEBAR
+       ========================================================= */
+
+    .documents-update-card {
+        background: #fff8f8;
+        border-color: #efd1d1;
+        border-left: 4px solid #c33b3b;
+    }
+
+    .documents-update-icon {
+        width: 31px;
+        height: 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #c33b3b;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 11px;
+    }
+
+    .documents-update-card h2 {
+        color: #922d2d;
+    }
+
+    .documents-update-card p {
+        color: #694747;
+    }
+
+    .update-documents-action {
+        background: #c33b3b;
+        border: 1px solid #c33b3b;
+        color: #ffffff;
+    }
+
+        .update-documents-action:hover {
+            background: #a12626;
+            border-color: #a12626;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       REPLACEMENT REVIEW SIDEBAR
+       ========================================================= */
+
+    .replacement-review-card {
+        background: #f3fbf6;
+        border-color: #cce7d5;
+        border-left: 4px solid #198754;
+    }
+
+    .replacement-review-sidebar-icon {
+        width: 31px;
+        height: 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #198754;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 11px;
+    }
+
+    .replacement-review-card h2 {
+        color: #176b42;
+    }
+
+    .replacement-review-card p {
+        color: #456557;
+    }
+
+    .replacement-documents-action {
+        background: #198754;
+        border: 1px solid #198754;
+        color: #ffffff;
+    }
+
+        .replacement-documents-action:hover {
+            background: #146c43;
+            border-color: #146c43;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+
+    /* =========================================================
+       ACTION BUTTONS
+       ========================================================= */
+
+    .action-button {
+        width: 100%;
+        min-height: 40px;
+        margin-top: 10px;
+        padding: 9px 14px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .secondary-action {
+        background: white;
+        border: 1px solid #cbd5df;
+        color: #394957;
+    }
+
+        .secondary-action:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+    .primary-action {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: white;
+    }
+
+        .primary-action:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+        }
+
+    .submit-application-form {
+        margin: 0;
+    }
+
+    .submission-requirement {
+        margin-top: 14px;
+        padding: 12px 13px;
+        background: #fffaf0;
+        border: 1px solid #f0d9a7;
+        border-radius: 7px;
+    }
+
+        .submission-requirement strong {
+            display: block;
+            color: #815900;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .submission-requirement p {
+            margin: 0;
+            color: #725f3b;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+    .edit-status-note {
+        margin-top: 20px;
+        padding: 13px 16px;
+        background: #f5f7fa;
+        border: 1px solid #dfe5eb;
+        border-radius: 8px;
+        color: #657381;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
     .page-navigation {
         display: flex;
         gap: 10px;
@@ -526,9 +1921,14 @@
 
         .btn-secondary:hover {
             background: #f5f7fa;
-            color: #263238;
+            color: #394957;
             text-decoration: none;
         }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
 
     @@media (max-width: 800px) {
 
@@ -548,7 +1948,12 @@
         .details-grid {
             grid-template-columns: 1fr;
         }
+
+        .technician-onboarded-message {
+            flex-direction: column;
+        }
     }
+
 
     @@media (max-width: 600px) {
 
@@ -564,5 +1969,38 @@
             .page-navigation .btn-secondary {
                 width: 100%;
             }
+
+        .documents-pending-message,
+        .replacement-review-message {
+            flex-direction: column;
+        }
+
+        .documents-pending-action,
+        .replacement-review-action,
+        .technician-onboarded-action {
+            width: 100%;
+        }
+
+        .update-documents-button,
+        .replacement-documents-button,
+        .technician-details-button {
+            width: 100%;
+        }
+
+        .technician-onboarding-item {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .technician-onboarding-action {
+            width: 100%;
+        }
+
+            .technician-onboarding-action
+            .technician-details-button {
+                width: 100%;
+            }
     }
 </style>
+
+

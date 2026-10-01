@@ -1,0 +1,432 @@
+﻿
+@model CommunityServiceProject.Models.MunicipalServiceRequest
+
+@{
+    ViewBag.Title = "Request Municipal Service";
+}
+
+<style>
+    .municipal-request-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .request-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+        padding: 24px 26px;
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .request-header-content {
+        min-width: 0;
+    }
+
+    .request-header h1 {
+        margin: 0 0 6px;
+        color: #16324f;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .request-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+        .back-button:hover {
+            background: #f8fafc;
+            border-color: #aeb9c8;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    .request-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 26px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .service-summary {
+        padding: 17px;
+        margin-bottom: 24px;
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+    }
+
+    .service-summary-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .service-summary-name {
+        display: block;
+        color: #16324f;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .service-summary-code {
+        display: inline-block;
+        margin-top: 6px;
+        padding: 4px 8px;
+        border-radius: 5px;
+        background: #ffffff;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1f2937;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+        }
+
+    textarea.form-control {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .additional-information {
+        min-height: 100px !important;
+    }
+
+    .field-help {
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .field-validation {
+        display: block;
+        margin-top: 5px;
+        color: #b42318;
+        font-size: 12px;
+    }
+
+    .validation-summary {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        background: #fff1f0;
+        border: 1px solid #f0b8b4;
+        border-radius: 9px;
+        color: #9b1c1c;
+        font-size: 13px;
+    }
+
+        .validation-summary ul {
+            margin: 7px 0 0 18px;
+            padding: 0;
+        }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 20px;
+        margin-top: 24px;
+        border-top: 1px solid #e8edf3;
+    }
+
+    .secondary-button,
+    .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .secondary-button {
+        border: 1px solid #cfd7e3;
+        background: #ffffff;
+        color: #475569;
+    }
+
+        .secondary-button:hover {
+            background: #f8fafc;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    .primary-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+        .primary-button:hover {
+            border-color: #094b9f;
+            background: #094b9f;
+            color: #ffffff;
+        }
+
+    @@media (max-width: 700px) {
+        .municipal-request-page {
+            padding: 20px 12px 35px;
+        }
+
+        .request-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .back-button {
+            width: 100%;
+        }
+
+        .request-card {
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .secondary-button,
+        .primary-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="municipal-request-page">
+
+    <div class="request-header">
+
+        <div class="request-header-content">
+
+            <h1>
+                Request Municipal Service
+            </h1>
+
+            <p>
+                Submit a request for the selected municipal service.
+            </p>
+
+        </div>
+
+        <a href="@Url.Action("Index", "MunicipalServices")"
+           class="back-button">
+
+            <span>←</span>
+
+            Back to Municipal Services
+
+        </a>
+
+    </div>
+
+
+    @using (Html.BeginForm("Create", "MunicipalServiceRequest", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.ServiceTypeID)
+
+        <div class="request-card">
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-summary">
+
+                    <strong>Please correct the following information:</strong>
+
+                    @Html.ValidationSummary(true, "", new { })
+
+                </div>
+            }
+
+
+            <div class="service-summary">
+
+                <span class="service-summary-label">
+                    Selected Service
+                </span>
+
+                <span class="service-summary-name">
+                    @Model.ServiceType.ServiceName
+                </span>
+
+                <span class="service-summary-code">
+                    @Model.ServiceType.ServiceCode
+                </span>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Request Title
+                </label>
+
+                @Html.TextBoxFor(
+                    m => m.Title,
+                    new
+                    {
+                        @class = "form-control",
+                        maxlength = "200",
+                        placeholder = "Enter a title for your request"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Title,
+                    "",
+                    new { @class = "field-validation" }
+                )
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Description
+                </label>
+
+                @Html.TextAreaFor(
+                    m => m.Description,
+                    new
+                    {
+                        @class = "form-control",
+                        maxlength = "2000",
+                        placeholder = "Provide details about the municipal service you require."
+                    }
+                )
+
+                <div class="field-help">
+                    Provide enough information for the municipality to review your request.
+                </div>
+
+                @Html.ValidationMessageFor(
+                    m => m.Description,
+                    "",
+                    new { @class = "field-validation" }
+                )
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Additional Information
+                </label>
+
+                @Html.TextAreaFor(
+                    m => m.AdditionalInformation,
+                    new
+                    {
+                        @class = "form-control additional-information",
+                        maxlength = "500",
+                        placeholder = "Add any additional information relevant to your request (optional)."
+                    }
+                )
+
+                <div class="field-help">
+                    This field is optional.
+                </div>
+
+                @Html.ValidationMessageFor(
+                    m => m.AdditionalInformation,
+                    "",
+                    new { @class = "field-validation" }
+                )
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a href="@Url.Action("Index", "MunicipalServices")"
+                   class="secondary-button">
+
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="primary-button">
+
+                    Submit Service Request
+
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+

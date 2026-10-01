@@ -1,0 +1,684 @@
+﻿
+@model CommunityServiceProject.ViewModels.AdministratorMunicipalServiceRequestsViewModel
+
+@{
+    ViewBag.Title = "Municipal Service Requests";
+}
+
+<style>
+    .admin-msr-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 22px 50px;
+        color: #1f2937;
+    }
+
+    .admin-msr-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+    .admin-msr-header h1 {
+        margin: 0 0 7px;
+        font-size: 27px;
+        font-weight: 700;
+    }
+
+    .admin-msr-header p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.92;
+        line-height: 1.5;
+    }
+
+    .header-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 18px;
+    }
+
+    .header-meta span {
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.23);
+        border-radius: 7px;
+        padding: 7px 11px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .back-row {
+        margin-bottom: 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .back-button:hover {
+        color: #094b9f;
+    }
+
+    .back-icon {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        padding: 18px;
+        box-shadow: 0 4px 13px rgba(15, 23, 42, 0.045);
+    }
+
+    .summary-label {
+        display: block;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: 0.035em;
+        margin-bottom: 8px;
+    }
+
+    .summary-number {
+        display: block;
+        color: #16324f;
+        font-size: 25px;
+        font-weight: 750;
+    }
+
+    .summary-card.highlight .summary-number {
+        color: #0D5CC1;
+    }
+
+    .workspace-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+    }
+
+    .workspace-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .workspace-header h2 {
+        margin: 0 0 5px;
+        color: #16324f;
+        font-size: 19px;
+    }
+
+    .workspace-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: minmax(220px, 1.5fr) minmax(170px, 1fr) minmax(190px, 1fr) auto;
+        gap: 12px;
+        padding: 18px 24px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .filter-control {
+        width: 100%;
+        min-height: 40px;
+        box-sizing: border-box;
+        border: 1px solid #cfd7e3;
+        border-radius: 7px;
+        background: white;
+        padding: 9px 11px;
+        color: #374151;
+        font-size: 13px;
+    }
+
+    .filter-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.09);
+    }
+
+    .filter-button {
+        min-height: 40px;
+        padding: 0 17px;
+        border: 1px solid #0D5CC1;
+        border-radius: 7px;
+        background: #0D5CC1;
+        color: white;
+        font-size: 13px;
+        font-weight: 650;
+        cursor: pointer;
+    }
+
+    .filter-button:hover {
+        background: #094b9f;
+        border-color: #094b9f;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .request-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 980px;
+    }
+
+    .request-table th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.035em;
+        text-align: left;
+        padding: 13px 16px;
+        border-bottom: 1px solid #e3e8ef;
+        white-space: nowrap;
+    }
+
+    .request-table td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #edf0f4;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .request-table tbody tr:hover {
+        background: #fbfdff;
+    }
+
+    .reference {
+        color: #0D5CC1;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .citizen-name {
+        color: #1f2937;
+        font-weight: 650;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .citizen-email {
+        color: #718096;
+        font-size: 11px;
+    }
+
+    .service-name {
+        color: #374151;
+        font-weight: 650;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .service-code {
+        color: #718096;
+        font-size: 11px;
+    }
+
+    .request-title {
+        color: #374151;
+        font-weight: 600;
+        max-width: 230px;
+        line-height: 1.4;
+    }
+
+    .date-value {
+        color: #4b5563;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-submitted {
+        background: #eef4ff;
+        color: #275ea8;
+        border: 1px solid #cdddf5;
+    }
+
+    .status-under-review {
+        background: #fff8e8;
+        color: #8a6514;
+        border: 1px solid #eed79e;
+    }
+
+    .status-approved {
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+    }
+
+    .status-rejected {
+        background: #fff1f0;
+        color: #a12620;
+        border: 1px solid #efc0bc;
+    }
+
+    .status-default {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #dbe2ea;
+    }
+
+    .review-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 0 13px;
+        border: 1px solid #0D5CC1;
+        border-radius: 7px;
+        background: white;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .review-button:hover {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 13px;
+        border-radius: 50%;
+        background: #eef4ff;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: #374151;
+        font-size: 17px;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 1050px) {
+        .summary-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .filters {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .admin-msr-page {
+            padding: 20px 12px 35px;
+        }
+
+        .admin-msr-header {
+            padding: 22px;
+        }
+
+        .admin-msr-header h1 {
+            font-size: 23px;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .filters {
+            grid-template-columns: 1fr;
+        }
+
+        .workspace-header,
+        .filters {
+            padding-left: 17px;
+            padding-right: 17px;
+        }
+    }
+
+    @@media (max-width: 450px) {
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-msr-page">
+
+    <div class="back-row">
+        <a href="@Url.Action("Index", "AdministratorDashboard")"
+           class="back-button">
+            <span class="back-icon">←</span>
+            Back to Administrator Dashboard
+        </a>
+    </div>
+
+    <div class="admin-msr-header">
+        <h1>Municipal Service Requests</h1>
+
+        <p>
+            Review and manage citizen requests for chargeable municipal services.
+        </p>
+
+        <div class="header-meta">
+            <span>Administrator Workspace</span>
+            <span>Service Request Management</span>
+        </div>
+    </div>
+
+    <div class="summary-grid">
+
+        <div class="summary-card highlight">
+            <span class="summary-label">Total Requests</span>
+            <span class="summary-number">@Model.TotalRequests</span>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Submitted</span>
+            <span class="summary-number">@Model.SubmittedRequests</span>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Under Review</span>
+            <span class="summary-number">@Model.UnderReviewRequests</span>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Approved</span>
+            <span class="summary-number">@Model.ApprovedRequests</span>
+        </div>
+
+        <div class="summary-card">
+            <span class="summary-label">Rejected</span>
+            <span class="summary-number">@Model.RejectedRequests</span>
+        </div>
+
+    </div>
+
+    <div class="workspace-card">
+
+        <div class="workspace-header">
+            <h2>Service Request Register</h2>
+
+            <p>
+                Search requests and filter the register by workflow status or municipal service.
+            </p>
+        </div>
+
+        @using (Html.BeginForm(
+            "Index",
+            "AdministratorMunicipalServiceRequests",
+            FormMethod.Get))
+        {
+            <div class="filters">
+
+                <input type="text"
+                       name="searchTerm"
+                       value="@Model.SearchTerm"
+                       class="filter-control"
+                       placeholder="Search reference, citizen or request title..." />
+
+                <select name="statusFilter"
+                        class="filter-control">
+
+                    <option value="">All Statuses</option>
+
+                    <option value="Submitted"
+                            @(Model.StatusFilter == "Submitted" ? "selected" : "")>
+                        Submitted
+                    </option>
+
+                    <option value="UnderReview"
+                            @(Model.StatusFilter == "UnderReview" ? "selected" : "")>
+                        Under Review
+                    </option>
+
+                    <option value="Approved"
+                            @(Model.StatusFilter == "Approved" ? "selected" : "")>
+                        Approved
+                    </option>
+
+                    <option value="Rejected"
+                            @(Model.StatusFilter == "Rejected" ? "selected" : "")>
+                        Rejected
+                    </option>
+
+                    <option value="InvoiceIssued"
+                            @(Model.StatusFilter == "InvoiceIssued" ? "selected" : "")>
+                        Invoice Issued
+                    </option>
+
+                    <option value="PaymentRequired"
+                            @(Model.StatusFilter == "PaymentRequired" ? "selected" : "")>
+                        Payment Required
+                    </option>
+
+                    <option value="PaymentProcessing"
+                            @(Model.StatusFilter == "PaymentProcessing" ? "selected" : "")>
+                        Payment Processing
+                    </option>
+
+                    <option value="PaymentFailed"
+                            @(Model.StatusFilter == "PaymentFailed" ? "selected" : "")>
+                        Payment Failed
+                    </option>
+
+                    <option value="Paid"
+                            @(Model.StatusFilter == "Paid" ? "selected" : "")>
+                        Paid
+                    </option>
+
+                    <option value="ServiceInProgress"
+                            @(Model.StatusFilter == "ServiceInProgress" ? "selected" : "")>
+                        Service In Progress
+                    </option>
+
+                    <option value="Completed"
+                            @(Model.StatusFilter == "Completed" ? "selected" : "")>
+                        Completed
+                    </option>
+
+                    <option value="Cancelled"
+                            @(Model.StatusFilter == "Cancelled" ? "selected" : "")>
+                        Cancelled
+                    </option>
+
+                </select>
+
+                <select name="serviceTypeFilter"
+                        class="filter-control">
+
+                    <option value="">All Municipal Services</option>
+
+                    @foreach (var service in Model.ServiceTypes)
+                    {
+                        <option value="@service.ServiceTypeID"
+                                @(Model.ServiceTypeFilter == service.ServiceTypeID ? "selected" : "")>
+                            @service.ServiceName
+                        </option>
+                    }
+
+                </select>
+
+                <button type="submit"
+                        class="filter-button">
+                    Apply Filters
+                </button>
+
+            </div>
+        }
+
+        <div class="table-wrapper">
+
+            @if (Model.Requests.Any())
+            {
+                <table class="request-table">
+
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Citizen</th>
+                            <th>Municipal Service</th>
+                            <th>Request</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var request in Model.Requests)
+                        {
+                            var statusClass = "status-default";
+
+                            if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Submitted)
+                            {
+                                statusClass = "status-submitted";
+                            }
+                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.UnderReview)
+                            {
+                                statusClass = "status-under-review";
+                            }
+                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved)
+                            {
+                                statusClass = "status-approved";
+                            }
+                            else if (request.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Rejected)
+                            {
+                                statusClass = "status-rejected";
+                            }
+
+                            <tr>
+
+                                <td>
+                                    <span class="reference">
+                                        @request.ReferenceNumber
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="citizen-name">
+                                        @request.CitizenName
+                                    </span>
+
+                                    <span class="citizen-email">
+                                        @request.CitizenEmail
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="service-name">
+                                        @request.ServiceName
+                                    </span>
+
+                                    <span class="service-code">
+                                        @request.ServiceCode
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="request-title">
+                                        @request.Title
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge @statusClass">
+                                        @request.Status
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="date-value">
+                                        @request.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a href="@Url.Action("Review", "AdministratorMunicipalServiceRequests", new { id = request.MunicipalServiceRequestID })"
+                                       class="review-button">
+                                        Review
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ⌕
+                    </div>
+
+                    <h3>No municipal service requests found</h3>
+
+                    <p>
+                        No requests match the selected search or filter criteria.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+

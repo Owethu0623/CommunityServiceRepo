@@ -1,258 +1,646 @@
-﻿@model IEnumerable<CommunityServiceProject.Models.Notification>
-
+﻿@model IEnumerable<CommunityServiceProject.ViewModels.CitizenNotificationViewModel>
+    
 @{
     ViewBag.Title = "Notifications";
+
+    var selectedCategory =
+        ViewBag.Category as string ?? "All";
+
+    var totalCount =
+        ViewBag.TotalCount ?? 0;
+
+    var unreadCount =
+        ViewBag.UnreadCount ?? 0;
+
+    var maintenanceUnreadCount =
+        ViewBag.MaintenanceUnreadCount ?? 0;
+
+    var applicationUnreadCount =
+        ViewBag.ApplicationUnreadCount ?? 0;
+
+    var municipalServiceUnreadCount =
+    ViewBag.MunicipalServiceUnreadCount ?? 0;
 }
 
-<div class="notifications-page">
+<style>
+    .notification-centre-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .notification-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+    .notification-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .notification-header h1 {
+        margin: 0 0 7px;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .notification-header p {
+        margin: 0;
+        opacity: 0.92;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .header-count {
+        min-width: 70px;
+        text-align: center;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.24);
+        border-radius: 9px;
+        padding: 10px 13px;
+    }
+
+        .header-count strong {
+            display: block;
+            font-size: 22px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .header-count span {
+            font-size: 10px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+    .notification-toolbar {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .notification-tabs {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .notification-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 7px;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 650;
+        transition: all 0.15s ease;
+    }
+
+        .notification-tab:hover {
+            background: #f1f5f9;
+            color: #0D5CC1;
+        }
+
+        .notification-tab.active {
+            background: #eaf2fc;
+            color: #0D5CC1;
+        }
+
+    .tab-count {
+        background: #e2e8f0;
+        color: #475569;
+        border-radius: 12px;
+        padding: 2px 6px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .notification-tab.active .tab-count {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .mark-all-form {
+        margin: 0;
+    }
+
+    .mark-all-button {
+        border: 1px solid #cfd7e3;
+        background: white;
+        color: #374151;
+        border-radius: 7px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 650;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+        .mark-all-button:hover {
+            border-color: #0D5CC1;
+            color: #0D5CC1;
+            background: #f8fbff;
+        }
+
+    .notifications-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 19px 22px;
+        border-bottom: 1px solid #edf0f4;
+        text-decoration: none;
+        color: inherit;
+        transition: background 0.15s ease;
+    }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background: #f8fbff;
+        }
+
+        .notification-item.unread {
+            background: #fbfdff;
+        }
+
+            .notification-item.unread:hover {
+                background: #f5f9ff;
+            }
+
+    .notification-indicator {
+        width: 9px;
+        height: 9px;
+        margin-top: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: #cbd5e1;
+    }
+
+    .notification-item.unread .notification-indicator {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 4px rgba(13, 92, 193, 0.10);
+    }
+
+    .notification-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 5px;
+    }
+
+    .notification-title {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .notification-item.unread .notification-title {
+        color: #16324f;
+    }
+
+    .notification-date {
+        color: #94a3b8;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .notification-category {
+        display: inline-flex;
+        align-items: center;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 5px;
+        padding: 4px 7px;
+        font-size: 10px;
+        font-weight: 650;
+        margin-bottom: 7px;
+    }
+
+    .notification-item.unread .notification-category {
+        background: #eaf2fc;
+        color: #0D5CC1;
+    }
+
+    .notification-message {
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.55;
+        max-width: 820px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .notification-related {
+        margin-top: 9px;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .notification-arrow {
+        color: #94a3b8;
+        font-size: 18px;
+        margin-top: 13px;
+        flex-shrink: 0;
+    }
+
+    .empty-notifications {
+        padding: 65px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 52px;
+        height: 52px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    .empty-notifications h3 {
+        margin: 0 0 6px;
+        color: #334155;
+        font-size: 17px;
+    }
+
+    .empty-notifications p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .notification-footer {
+        margin-top: 18px;
+    }
+
+    .back-dashboard {
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+    }
+
+        .back-dashboard:hover {
+            color: #094b9f;
+        }
+
+    @@media (max-width: 700px) {
+        .notification-centre-page {
+            padding: 20px 12px 35px;
+        }
+
+        .notification-header {
+            padding: 22px;
+        }
+
+            .notification-header h1 {
+                font-size: 23px;
+            }
+
+        .notification-header-content {
+            align-items: center;
+        }
+
+        .notification-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .notification-tabs {
+            width: 100%;
+        }
+
+        .notification-tab {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .mark-all-form {
+            width: 100%;
+        }
+
+        .mark-all-button {
+            width: 100%;
+        }
+
+        .notification-item {
+            padding: 17px 15px;
+        }
+
+        .notification-topline {
+            align-items: flex-start;
+        }
+
+        .notification-date {
+            white-space: normal;
+            text-align: right;
+        }
+
+        .notification-arrow {
+            display: none;
+        }
+    }
+</style>
+
+<div class="notification-centre-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="notification-header">
+
+        <div class="notification-header-content">
+
+            <div>
+                <h1>Notifications</h1>
+
+                <p>
+                    Stay updated with activity related to your
+                    service requests and technician applications.
+                </p>
+            </div>
+
+            <div class="header-count">
+                <strong>@unreadCount</strong>
+                <span>Unread</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         FILTERS / ACTIONS
+         ========================================================= -->
+
+    <div class="notification-toolbar">
+
+        <div class="notification-tabs">
+
+            <a href="@Url.Action(
+                    "Index",
+                    "CitizenNotification",
+                    new { category = "All" })"
+               class="notification-tab @(selectedCategory.Equals("All", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+
+                All
+
+                <span class="tab-count">
+                    @totalCount
+                </span>
+
+            </a>
+
+            <a href="@Url.Action(
+                    "Index",
+                    "CitizenNotification",
+                    new { category = "Maintenance" })"
+               class="notification-tab @(selectedCategory.Equals("Maintenance", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+
+                Maintenance
+
+                @if (maintenanceUnreadCount > 0)
+                {
+                    <span class="tab-count">
+                        @maintenanceUnreadCount
+                    </span>
+                }
+
+            </a>
+
+            <a href="@Url.Action(
+                    "Index",
+                    "CitizenNotification",
+                    new { category = "Applications" })"
+               class="notification-tab @(selectedCategory.Equals("Applications", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+
+                Applications
+
+                @if (applicationUnreadCount > 0)
+                {
+                    <span class="tab-count">
+                        @applicationUnreadCount
+                    </span>
+                }
+
+            </a>
+
+
+            <a href="@Url.Action(
+        "Index",
+        "CitizenNotification",
+        new
+        {
+            category = "MunicipalServices"
+        })"
+               class="notification-tab @(selectedCategory.Equals(
+       "MunicipalServices",
+       StringComparison.OrdinalIgnoreCase)
+       ? "active"
+       : "")">
+
+                Municipal Services
+
+                @if (municipalServiceUnreadCount > 0)
+                {
+                    <span class="tab-count">
+                        @municipalServiceUnreadCount
+                    </span>
+                }
+
+            </a>
+        </div>
+
+        @if (Convert.ToInt32(unreadCount) > 0)
+        {
+            using (Html.BeginForm(
+                "MarkAllAsRead",
+                "CitizenNotification",
+                FormMethod.Post,
+                new { @class = "mark-all-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <button type="submit"
+                        class="mark-all-button">
+                    Mark all as read
+                </button>
+            }
+        }
+
+    </div>
+
+    <!-- =========================================================
+         NOTIFICATION LIST
+         ========================================================= -->
 
     <div class="notifications-card">
 
-        <div class="notifications-header">
-            <div>
-                <h2>Notifications</h2>
-                <p>Stay updated with the latest activity on your service requests.</p>
-            </div>
+        @if (Model != null && Model.Any())
+        {
+            <div class="notification-list">
 
-            @if (Model != null && Model.Any(n => !n.IsRead))
-            {
-                using (Html.BeginForm(
-                    "MarkAllAsRead",
-                    "CitizenNotification",
-                    FormMethod.Post,
-                    new { @class = "mark-read-form" }))
+                @foreach (var notification in Model)
                 {
-                    @Html.AntiForgeryToken()
-
-                    <button type="submit" class="mark-all-btn">
-                        ✓ Mark All as Read
-                    </button>
-                }
-            }
-        </div>
-
-        <div class="notifications-list">
-
-            @if (Model != null && Model.Any())
-            {
-                foreach (var notification in Model)
-                {
-                    <div class="notification-item @(notification.IsRead ? "read" : "unread")">
-
-                        <div class="notification-status">
-                            @if (!notification.IsRead)
+                    <a href="@Url.Action(
+                            "Details",
+                            "CitizenNotification",
+                            new
                             {
-                                <span class="new-indicator">🔵 NEW</span>
-                            }
-                            else
-                            {
-                                <span class="read-indicator">✓</span>
-                            }
-                        </div>
+                                source = notification.NotificationSource,
+                                id = notification.NotificationID
+                            })"
+                       class="notification-item @(notification.IsRead ? "read" : "unread")">
 
-                        <div class="notification-content">
+                        <span class="notification-indicator"></span>
+
+                        <div class="notification-main">
+
+                            <div class="notification-topline">
+
+                                <div class="notification-title">
+                                    @notification.Title
+                                </div>
+
+                                <div class="notification-date">
+                                    @notification.DateCreated.ToString("dd MMM yyyy · HH:mm")
+                                </div>
+
+                            </div>
+
+                            <div class="notification-category">
+                                @notification.Category
+                            </div>
 
                             <div class="notification-message">
                                 @notification.Message
                             </div>
 
-                            <div class="notification-date">
-                                @notification.DateCreated.ToString("dd MMM yyyy")
-                            </div>
+                            @if (notification.NotificationSource == "Applications")
+                            {
+                                if (!string.IsNullOrWhiteSpace(notification.ApplicationReference))
+                                {
+                                    <div class="notification-related">
+                                        Application:
+                                        @notification.ApplicationReference
+
+                                        @if (!string.IsNullOrWhiteSpace(notification.OpportunityTitle))
+                                        {
+                                            @: · @notification.OpportunityTitle
+                                        }
+                                    </div>
+                                }
+                            }
+                            else if (notification.NotificationSource == "Maintenance")
+                            {
+                                if (!string.IsNullOrWhiteSpace(notification.RequestReference))
+                                {
+                                    <div class="notification-related">
+                                        Request:
+                                        @notification.RequestReference
+                                    </div>
+                                }
+                            }
+
+                            else if (notification.NotificationSource == "MunicipalServices")
+                            {
+                                if (!string.IsNullOrWhiteSpace(
+                                    notification.MunicipalServiceRequestReference))
+                                {
+                                    <div class="notification-related">
+                                        Municipal Service Request:
+                                        @notification.MunicipalServiceRequestReference
+                                    </div>
+                                }
+                            }
 
                         </div>
 
-                    </div>
+                        <div class="notification-arrow">
+                            ›
+                        </div>
+
+                    </a>
                 }
-            }
-            else
-            {
-                <div class="empty-notifications">
-                    <div class="empty-icon">🔔</div>
-                    <h3>No Notifications</h3>
-                    <p>You currently have no notifications.</p>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-notifications">
+
+                <div class="empty-icon">
+                    🔔
                 </div>
-            }
 
-        </div>
+                <h3>No notifications</h3>
 
-        <div class="notifications-footer">
-            <a href="@Url.Action("Index", "CitizenDashboard")"
-               class="back-btn">
-                ← Back to Dashboard
-            </a>
-        </div>
+                <p>
+                    You currently have no notifications to review.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+    <div class="notification-footer">
+
+        <a href="@Url.Action(
+                "Index",
+                "CitizenDashboard")"
+           class="back-dashboard">
+            ← Back to Dashboard
+        </a>
 
     </div>
 
 </div>
-
-<style>
-
-    .notifications-page {
-        min-height: 100vh;
-        background: #F4F7FB;
-        padding: 40px 20px;
-    }
-
-    .notifications-card {
-        max-width: 900px;
-        margin: 0 auto;
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-    }
-
-    .notifications-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        padding: 25px 30px;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-        .notifications-header h2 {
-            margin: 0 0 6px;
-            color: #0D5CC1;
-            font-size: 26px;
-        }
-
-        .notifications-header p {
-            margin: 0;
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-    .mark-all-btn {
-        border: none;
-        background: #0D5CC1;
-        color: white;
-        padding: 10px 18px;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-        .mark-all-btn:hover {
-            background: #094a9d;
-        }
-
-    .notifications-list {
-        padding: 0;
-    }
-
-    .notification-item {
-        display: flex;
-        gap: 18px;
-        padding: 22px 30px;
-        border-bottom: 1px solid #edf0f4;
-        transition: background 0.2s ease;
-    }
-
-        .notification-item:hover {
-            background: #f8fafc;
-        }
-
-        .notification-item.unread {
-            background: #f5f9ff;
-        }
-
-    .notification-status {
-        min-width: 75px;
-        padding-top: 2px;
-    }
-
-    .new-indicator {
-        color: #0D5CC1;
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .read-indicator {
-        color: #6b7280;
-        font-size: 17px;
-        font-weight: 700;
-    }
-
-    .notification-content {
-        flex: 1;
-    }
-
-    .notification-message {
-        color: #1f2937;
-        font-size: 15px;
-        line-height: 1.5;
-        font-weight: 500;
-    }
-
-    .notification-date {
-        margin-top: 6px;
-        color: #6b7280;
-        font-size: 13px;
-    }
-
-    .empty-notifications {
-        text-align: center;
-        padding: 70px 20px;
-    }
-
-    .empty-icon {
-        font-size: 35px;
-        margin-bottom: 12px;
-    }
-
-    .empty-notifications h3 {
-        margin: 0 0 8px;
-        color: #374151;
-    }
-
-    .empty-notifications p {
-        margin: 0;
-        color: #6b7280;
-    }
-
-    .notifications-footer {
-        padding: 20px 30px;
-        background: #fafbfc;
-        border-top: 1px solid #edf0f4;
-    }
-
-    .back-btn {
-        display: inline-block;
-        text-decoration: none;
-        color: #0D5CC1;
-        font-weight: 600;
-    }
-
-        .back-btn:hover {
-            text-decoration: underline;
-        }
-
-    @@media (max-width: 700px) {
-
-        .notifications-page {
-            padding: 20px 10px;
-        }
-
-        .notifications-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .mark-all-btn {
-            width: 100%;
-        }
-
-        .notification-item {
-            padding: 18px;
-            gap: 10px;
-        }
-
-        .notification-status {
-            min-width: 55px;
-        }
-    }
-</style>

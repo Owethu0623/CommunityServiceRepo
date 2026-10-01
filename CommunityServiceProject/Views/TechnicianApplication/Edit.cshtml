@@ -1,0 +1,651 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationEditViewModel
+
+@{
+    ViewBag.Title = "Edit Application";
+}
+
+<div class="application-edit-page">
+
+    <div class="edit-header">
+
+        <div>
+            <div class="edit-eyebrow">
+                TECHNICIAN RECRUITMENT
+            </div>
+
+            <h1>Edit Application</h1>
+
+            <p>
+                Update your application information while your application
+                remains eligible for editing.
+            </p>
+        </div>
+
+        <div class="header-reference">
+            @Model.ApplicationReference
+        </div>
+
+    </div>
+
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    @using (Html.BeginForm(
+        "Edit",
+        "TechnicianApplication",
+        FormMethod.Post,
+        new { id = "applicationEditForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.ApplicationID)
+
+
+        <div class="edit-layout">
+
+            <main class="edit-main">
+
+                <section class="edit-card">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Application Information</h2>
+
+                            <p>
+                                Review the position details before updating
+                                your application.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="information-grid">
+
+                        <div class="information-item">
+                            <span>Opportunity</span>
+                            <strong>@Model.OpportunityTitle</strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Opportunity Code</span>
+                            <strong>@Model.OpportunityCode</strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Employment Type</span>
+                            <strong>@Model.EmploymentType</strong>
+                        </div>
+
+                        <div class="information-item">
+                            <span>Application Reference</span>
+                            <strong>@Model.ApplicationReference</strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="edit-card">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Cover Letter</h2>
+
+                            <p>
+                                Update your cover letter before submitting
+                                your changes.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.CoverLetter,
+                            new { @class = "form-label" }
+                        )
+
+                        @Html.TextAreaFor(
+                            m => m.CoverLetter,
+                            new
+                            {
+                                @class = "form-control cover-letter-input",
+                                rows = "14",
+                                maxlength = "4000",
+                                id = "CoverLetter",
+                                placeholder =
+                                    "Explain your interest in the opportunity and describe the relevant skills and experience you bring."
+                            }
+                        )
+
+                        @Html.ValidationMessageFor(
+                            m => m.CoverLetter,
+                            "",
+                            new { @class = "field-validation-error" }
+                        )
+
+                        <div class="character-row">
+
+                            <span>
+                                Minimum 50 characters
+                            </span>
+
+                            <span id="characterCount">
+                                0 / 4000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="notice-card">
+
+                    <h3>Before saving your changes</h3>
+
+                    <p>
+                        Your application can only be edited while it remains
+                        in the Submitted status and before the application
+                        deadline. Once recruitment review begins, further
+                        changes will no longer be permitted.
+                    </p>
+
+                </section>
+
+
+                <div class="form-actions">
+
+                    @Html.ActionLink(
+                        "Cancel",
+                        "Status",
+                        "TechnicianApplication",
+                        new { id = Model.ApplicationID },
+                        new { @class = "btn-secondary" }
+                    )
+
+                    <button type="submit"
+                            class="btn-primary"
+                            id="saveButton">
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </main>
+
+
+            <aside class="edit-sidebar">
+
+                <div class="sidebar-card">
+
+                    <div class="sidebar-label">
+                        APPLICATION
+                    </div>
+
+                    <div class="sidebar-reference">
+                        @Model.ApplicationReference
+                    </div>
+
+                    <div class="sidebar-status">
+                        Submitted
+                    </div>
+
+                </div>
+
+
+                <div class="sidebar-card">
+
+                    <h3>Editing allowed</h3>
+
+                    <p>
+                        You can update your cover letter while the application
+                        remains submitted and the deadline has not passed.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </div>
+    }
+
+</div>
+
+
+<style>
+
+    .application-edit-page {
+        max-width: 1120px;
+        margin: 30px auto 60px;
+        padding: 0 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #263238;
+    }
+
+    .edit-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 18px rgba(0,0,0,.08);
+    }
+
+    .edit-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
+
+    .edit-header h1 {
+        color: white;
+        margin: 0 0 8px;
+        font-size: 29px;
+    }
+
+    .edit-header p {
+        color: white;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        max-width: 700px;
+    }
+
+    .header-reference {
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 7px;
+        padding: 10px 13px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .alert {
+        padding: 13px 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .alert-error {
+        background: #fff1f1;
+        border: 1px solid #efc4c4;
+        color: #a32121;
+    }
+
+    .edit-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 290px;
+        gap: 20px;
+        align-items: start;
+    }
+
+    .edit-main {
+        min-width: 0;
+    }
+
+    .edit-card,
+    .notice-card,
+    .sidebar-card {
+        background: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.04);
+    }
+
+    .edit-card {
+        padding: 24px;
+        margin-bottom: 18px;
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #edf0f3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            color: #263b50;
+            font-size: 19px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #71808e;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .information-item {
+        background: #f7f9fb;
+        border: 1px solid #e5eaf0;
+        border-radius: 7px;
+        padding: 13px;
+    }
+
+        .information-item span {
+            display: block;
+            color: #778592;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+
+        .information-item strong {
+            display: block;
+            color: #2f4152;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        color: #394957;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ccd5df;
+        border-radius: 7px;
+        padding: 11px 12px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+        color: #263238;
+        background: white;
+        resize: vertical;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 2px rgba(13,92,193,.08);
+        }
+
+    .cover-letter-input {
+        min-height: 270px;
+        line-height: 1.6;
+    }
+
+    .field-validation-error {
+        display: block;
+        color: #b42318;
+        font-size: 12px;
+        margin-top: 6px;
+        font-weight: 600;
+    }
+
+    .character-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 7px;
+        color: #7a8792;
+        font-size: 11px;
+    }
+
+    .notice-card {
+        padding: 18px 20px;
+        margin-bottom: 18px;
+        background: #f7faff;
+        border-color: #d7e4f5;
+    }
+
+        .notice-card h3 {
+            margin: 0 0 6px;
+            color: #264d79;
+            font-size: 14px;
+        }
+
+        .notice-card p {
+            margin: 0;
+            color: #5c6d7d;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 17px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #0D5CC1;
+        color: white;
+        border-color: #0D5CC1;
+    }
+
+        .btn-primary:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-secondary {
+        background: white;
+        color: #394957;
+        border-color: #cbd5df;
+    }
+
+        .btn-secondary:hover {
+            background: #f5f7fa;
+            color: #263238;
+            text-decoration: none;
+        }
+
+    .sidebar-card {
+        padding: 18px;
+        margin-bottom: 15px;
+    }
+
+    .sidebar-label {
+        color: #7b8792;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+    }
+
+    .sidebar-reference {
+        color: #0D5CC1;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-status {
+        display: inline-block;
+        background: #eaf7ef;
+        border: 1px solid #bfe2ca;
+        color: #187a43;
+        border-radius: 5px;
+        padding: 6px 9px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .sidebar-card h3 {
+        margin: 0 0 7px;
+        color: #344454;
+        font-size: 14px;
+    }
+
+    .sidebar-card p {
+        margin: 0;
+        color: #71808e;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    @@media (max-width: 850px) {
+
+        .edit-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-sidebar {
+            order: -1;
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .application-edit-page {
+            padding: 0 12px;
+            margin-top: 18px;
+        }
+
+        .edit-header {
+            flex-direction: column;
+            padding: 23px;
+        }
+
+            .edit-header h1 {
+                font-size: 24px;
+            }
+
+        .header-reference {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .edit-card {
+            padding: 18px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+            .form-actions .btn-primary,
+            .form-actions .btn-secondary {
+                width: 100%;
+            }
+    }
+</style>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            var coverLetter =
+                document.getElementById("CoverLetter");
+
+            var characterCount =
+                document.getElementById("characterCount");
+
+            var form =
+                document.getElementById("applicationEditForm");
+
+            var saveButton =
+                document.getElementById("saveButton");
+
+
+            function updateCharacterCount() {
+
+                if (!coverLetter || !characterCount) {
+                    return;
+                }
+
+                var count = coverLetter.value.length;
+
+                characterCount.textContent =
+                    count + " / 4000";
+
+            }
+
+
+            if (coverLetter) {
+
+                coverLetter.addEventListener(
+                    "input",
+                    updateCharacterCount
+                );
+
+                updateCharacterCount();
+
+            }
+
+
+            if (form && saveButton) {
+
+                form.addEventListener(
+                    "submit",
+                    function () {
+
+                        if (coverLetter &&
+                            coverLetter.value.trim().length < 50) {
+
+                            return;
+                        }
+
+                        saveButton.disabled = true;
+                        saveButton.textContent =
+                            "Saving...";
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>

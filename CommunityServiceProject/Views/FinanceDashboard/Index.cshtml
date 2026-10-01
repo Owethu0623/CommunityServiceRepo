@@ -1,0 +1,1393 @@
+﻿@model CommunityServiceProject.ViewModels.FinanceDashboardViewModel
+
+@{
+    ViewBag.Title = "Finance Dashboard";
+}
+
+<style>
+    .finance-dashboard-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px 22px 50px;
+        color: #1f2937;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .finance-dashboard-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 15px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 24px rgba(13, 92, 193, 0.18);
+    }
+
+    .finance-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 25px;
+    }
+
+    .finance-dashboard-header h1 {
+        margin: 0 0 7px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .finance-dashboard-header p {
+        margin: 0;
+        opacity: 0.91;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .finance-user-card {
+        min-width: 230px;
+        padding: 13px 15px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.20);
+    }
+
+        .finance-user-card .label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.75;
+            margin-bottom: 4px;
+        }
+
+        .finance-user-card .name {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .finance-user-card .email {
+            display: block;
+            font-size: 11px;
+            opacity: 0.82;
+            margin-top: 2px;
+            word-break: break-word;
+        }
+
+    /* =========================================================
+       SUMMARY CARDS
+       ========================================================= */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 17px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        min-height: 125px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .summary-card::after {
+            content: "";
+            position: absolute;
+            right: -22px;
+            bottom: -25px;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(13, 92, 193, 0.05);
+        }
+
+        .summary-card .summary-label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 650;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .summary-value {
+            font-size: 27px;
+            line-height: 1.1;
+            font-weight: 750;
+            color: #16324f;
+            margin-bottom: 7px;
+        }
+
+        .summary-card .summary-description {
+            font-size: 11px;
+            color: #7b8794;
+        }
+
+        .summary-card.primary .summary-value {
+            color: #0D5CC1;
+        }
+
+        .summary-card.warning .summary-value {
+            color: #a66b00;
+        }
+
+        .summary-card.success .summary-value {
+            color: #18794e;
+        }
+
+        .summary-card.danger .summary-value {
+            color: #b42318;
+        }
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .dashboard-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        overflow: hidden;
+    }
+
+    .dashboard-card-header {
+        padding: 19px 21px;
+        border-bottom: 1px solid #e9edf2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+        .dashboard-card-header h2 {
+            margin: 0;
+            font-size: 17px;
+            color: #16324f;
+        }
+
+        .dashboard-card-header p {
+            margin: 3px 0 0;
+            font-size: 11px;
+            color: #7b8794;
+        }
+
+        .dashboard-card-header a {
+            color: #0D5CC1;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+            .dashboard-card-header a:hover {
+                color: #094b9f;
+            }
+
+    /* =========================================================
+       TABLES
+       ========================================================= */
+
+    .dashboard-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .dashboard-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 11px 17px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .dashboard-table td {
+            padding: 13px 17px;
+            border-top: 1px solid #edf0f4;
+            color: #374151;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .dashboard-table tbody tr:hover {
+            background: #fbfdff;
+        }
+
+    .reference-text {
+        color: #0D5CC1;
+        font-weight: 700;
+    }
+
+    .primary-text {
+        color: #1f2937;
+        font-weight: 650;
+    }
+
+    .muted-text {
+        color: #7b8794;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 5px 9px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-submitted,
+    .status-underreview,
+    .status-pending {
+        background: #fff7e6;
+        color: #9a6700;
+        border: 1px solid #f0dcae;
+    }
+
+    .status-approved,
+    .status-successful,
+    .status-paid,
+    .status-completed {
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+    }
+
+    .status-rejected,
+    .status-failed,
+    .status-cancelled {
+        background: #fff1f0;
+        color: #b42318;
+        border: 1px solid #f0b8b4;
+    }
+
+    .status-processing,
+    .status-invoiceissued,
+    .status-paymentrequired {
+        background: #edf5ff;
+        color: #0D5CC1;
+        border: 1px solid #c9ddf8;
+    }
+
+    .status-issued,
+    .status-partiallypaid,
+    .status-overdue {
+        background: #fff8e8;
+        color: #8a6413;
+        border: 1px solid #ead59d;
+    }
+
+    /* =========================================================
+       FINANCIAL SNAPSHOT
+       ========================================================= */
+
+    .financial-snapshot {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 15px;
+        padding: 19px;
+    }
+
+    .snapshot-item {
+        border: 1px solid #e5eaf0;
+        border-radius: 9px;
+        padding: 16px;
+        background: #f8fafc;
+    }
+
+        .snapshot-item .snapshot-label {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 7px;
+        }
+
+        .snapshot-item .snapshot-value {
+            display: block;
+            color: #16324f;
+            font-size: 21px;
+            font-weight: 750;
+        }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    .dashboard-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .quick-actions {
+        padding: 19px;
+    }
+
+        .quick-actions h2 {
+            margin: 0 0 4px;
+            font-size: 17px;
+            color: #16324f;
+        }
+
+    .quick-actions-description {
+        margin: 0 0 15px;
+        font-size: 11px;
+        color: #7b8794;
+        line-height: 1.5;
+    }
+
+    .action-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        text-decoration: none;
+        color: #374151;
+        padding: 12px 0;
+        border-top: 1px solid #edf0f4;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+        .action-link:first-of-type {
+            border-top: none;
+        }
+
+        .action-link:hover {
+            color: #0D5CC1;
+        }
+
+        .action-link .arrow {
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .action-link:hover .arrow {
+            color: #0D5CC1;
+        }
+
+    .finance-status-card {
+        padding: 19px;
+    }
+
+        .finance-status-card h3 {
+            margin: 0 0 14px;
+            color: #16324f;
+            font-size: 16px;
+        }
+
+    .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #edf0f4;
+        gap: 10px;
+    }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-row .label {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .status-row .value {
+            font-size: 13px;
+            font-weight: 750;
+            color: #16324f;
+        }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 35px 20px;
+        text-align: center;
+        color: #7b8794;
+    }
+
+    .empty-state-title {
+        color: #475569;
+        font-size: 13px;
+        font-weight: 650;
+        margin-bottom: 4px;
+    }
+
+    .empty-state-text {
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       LOGOUT BUTTON
+       ========================================================= */
+
+    .finance-logout-area {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+
+    .finance-logout-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+        .finance-logout-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: #ffffff;
+            text-decoration: none;
+            transform: translateX(-2px);
+        }
+
+        .finance-logout-button .logout-arrow {
+            font-size: 15px;
+            line-height: 1;
+            color: #ffffff;
+        }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1150px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-sidebar {
+            position: static;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 750px) {
+        .finance-dashboard-page {
+            padding: 20px 12px 35px;
+        }
+
+        .finance-header-content {
+            flex-direction: column;
+        }
+
+        .finance-user-card {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .summary-grid,
+        .financial-snapshot,
+        .dashboard-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .finance-dashboard-header {
+            padding: 22px;
+        }
+
+            .finance-dashboard-header h1 {
+                font-size: 23px;
+            }
+
+        .dashboard-card-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .finance-logout-area {
+            justify-content: flex-end;
+        }
+    }
+</style>
+
+<div class="finance-dashboard-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="finance-dashboard-header">
+
+        <div class="finance-header-content">
+
+            <div>
+                <h1>Finance Dashboard</h1>
+
+                <p>
+                    Monitor municipal service requests, invoices, payments and
+                    financial activities from one central workspace.
+                </p>
+            </div>
+
+            <div class="finance-user-card">
+
+                <span class="label">
+                    Finance Officer
+                </span>
+
+                <span class="name">
+                    @Model.FinanceOfficerName
+                </span>
+
+                <span class="email">
+                    @Model.FinanceOfficerEmail
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         SUMMARY CARDS
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card primary">
+
+            <div class="summary-label">
+                Service Requests
+            </div>
+
+            <div class="summary-value">
+                @Model.TotalServiceRequests
+            </div>
+
+            <div class="summary-description">
+                Municipal service requests recorded
+            </div>
+
+        </div>
+
+        <div class="summary-card warning">
+
+            <div class="summary-label">
+                Awaiting Review
+            </div>
+
+            <div class="summary-value">
+                @Model.ServiceRequestsAwaitingReview
+            </div>
+
+            <div class="summary-description">
+                Submitted or under review
+            </div>
+
+        </div>
+
+        <div class="summary-card primary">
+
+            <div class="summary-label">
+                Total Invoices
+            </div>
+
+            <div class="summary-value">
+                @Model.TotalInvoices
+            </div>
+
+            <div class="summary-description">
+                Invoices currently recorded
+            </div>
+
+        </div>
+
+        <div class="summary-card warning">
+
+            <div class="summary-label">
+                Outstanding Balance
+            </div>
+
+            <div class="summary-value">
+                R @Model.OutstandingInvoiceBalance.ToString("N2")
+            </div>
+
+            <div class="summary-description">
+                Unpaid invoice balance
+            </div>
+
+        </div>
+
+        <div class="summary-card success">
+
+            <div class="summary-label">
+                Successful Payments
+            </div>
+
+            <div class="summary-value">
+                @Model.SuccessfulPayments
+            </div>
+
+            <div class="summary-description">
+                Successfully recorded payments
+            </div>
+
+        </div>
+
+        <div class="summary-card primary">
+
+            <div class="summary-label">
+                Payment Activity
+            </div>
+
+            <div class="summary-value">
+                @Model.PendingPayments
+            </div>
+
+            <div class="summary-description">
+                Payments pending or processing
+            </div>
+
+        </div>
+
+        <div class="summary-card success">
+
+            <div class="summary-label">
+                Payments Received
+            </div>
+
+            <div class="summary-value">
+                R @Model.SuccessfulPaymentAmount.ToString("N2")
+            </div>
+
+            <div class="summary-description">
+                Successful payment value
+            </div>
+
+        </div>
+
+        <div class="summary-card danger">
+
+            <div class="summary-label">
+                Pending Refunds
+            </div>
+
+            <div class="summary-value">
+                @Model.PendingRefunds
+            </div>
+
+            <div class="summary-description">
+                Refunds requiring attention
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-layout">
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+        <main class="main-content">
+
+            <!-- =================================================
+                 FINANCIAL SNAPSHOT
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+                        <h2>Finance Activity Overview</h2>
+
+                        <p>
+                            Current activity across municipal service transactions.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="financial-snapshot">
+
+                    <div class="snapshot-item">
+
+                        <span class="snapshot-label">
+                            Approved Service Requests
+                        </span>
+
+                        <span class="snapshot-value">
+                            @Model.ApprovedServiceRequests
+                        </span>
+
+                    </div>
+
+                    <div class="snapshot-item">
+
+                        <span class="snapshot-label">
+                            Outstanding Invoices
+                        </span>
+
+                        <span class="snapshot-value">
+                            @Model.OutstandingInvoices
+                        </span>
+
+                    </div>
+
+                    <div class="snapshot-item">
+
+                        <span class="snapshot-label">
+                            Successful Payment Value
+                        </span>
+
+                        <span class="snapshot-value">
+                            R @Model.SuccessfulPaymentAmount.ToString("N2")
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 RECENT SERVICE REQUESTS
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+                        <h2>Recent Municipal Service Requests</h2>
+
+                        <p>
+                            Latest service requests available within the finance workflow.
+                        </p>
+                    </div>
+
+                    <a href="@Url.Action("Index","FinanceMunicipalServiceRequest")">
+                        View All
+                    </a>
+
+                </div>
+
+                @if (Model.RecentServiceRequests.Any())
+                {
+                    <div class="dashboard-table-wrapper">
+
+                        <table class="dashboard-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Service</th>
+                                    <th>Citizen</th>
+                                    <th>Status</th>
+                                    <th>Date Submitted</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var request in Model.RecentServiceRequests)
+                                {
+                                    var statusClass = request.Status
+                                        .ToString()
+                                        .ToLowerInvariant()
+                                        .Replace(" ", "");
+
+                                    <tr>
+
+                                        <td>
+                                            <span class="reference-text">
+                                                @request.ReferenceNumber
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="primary-text">
+                                                @request.ServiceName
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            @request.CitizenName
+                                        </td>
+
+                                        <td>
+                                            <span class="status-badge status-@statusClass">
+                                                @request.Status
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="muted-text">
+                                                @request.DateSubmitted.ToString("dd MMM yyyy HH:mm")
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+
+                        <div class="empty-state-title">
+                            No municipal service requests yet
+                        </div>
+
+                        <div class="empty-state-text">
+                            Service requests will appear here once they are submitted.
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <!-- =================================================
+                 RECENT INVOICES
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+                        <h2>Recent Invoices</h2>
+
+                        <p>
+                            Latest invoices generated for municipal services.
+                        </p>
+                    </div>
+
+                   
+                    <a href="@Url.Action("Issued", "Invoice")">
+                        View All
+                    </a>
+              
+
+                </div>
+
+                @if (Model.RecentInvoices.Any())
+                {
+                    <div class="dashboard-table-wrapper">
+
+                        <table class="dashboard-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Service Request</th>
+                                    <th>Amount</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                    <th>Issue Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var invoice in Model.RecentInvoices)
+                                {
+                                    var statusClass = invoice.Status
+                                        .ToString()
+                                        .ToLowerInvariant()
+                                        .Replace(" ", "");
+
+                                    <tr>
+
+                                        <td>
+                                            <span class="reference-text">
+                                                @invoice.InvoiceNumber
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            @invoice.ServiceRequestReference
+                                        </td>
+
+                                        <td>
+                                            <span class="primary-text">
+                                                R @invoice.Amount.ToString("N2")
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            R @invoice.Balance.ToString("N2")
+                                        </td>
+
+                                        <td>
+                                            <span class="status-badge status-@statusClass">
+                                                @invoice.Status
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="muted-text">
+                                                @invoice.IssueDate.ToString("dd MMM yyyy")
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+
+                        <div class="empty-state-title">
+                            No invoices available
+                        </div>
+
+                        <div class="empty-state-text">
+                            Generated invoices will appear here.
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            <!-- =================================================
+                 RECENT PAYMENTS
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+                        <h2>Recent Payments</h2>
+
+                        <p>
+                            Latest payment activity recorded in the system.
+                        </p>
+                    </div>
+
+                    <a href="@Url.Action("Index","Payment")">
+                        View All
+                    </a>
+
+                </div>
+
+                @if (Model.RecentPayments.Any())
+                {
+                    <div class="dashboard-table-wrapper">
+
+                        <table class="dashboard-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Transaction</th>
+                                    <th>Invoice</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var payment in Model.RecentPayments)
+                                {
+                                    var statusClass = payment.Status
+                                        .ToString()
+                                        .ToLowerInvariant()
+                                        .Replace(" ", "");
+
+                                    <tr>
+
+                                        <td>
+                                            <span class="reference-text">
+                                                @payment.TransactionReference
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            @payment.InvoiceNumber
+                                        </td>
+
+                                        <td>
+                                            <span class="primary-text">
+                                                R @payment.Amount.ToString("N2")
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            @(String.IsNullOrWhiteSpace(payment.PaymentMethod)
+                                                ? "Not specified"
+                                                : payment.PaymentMethod)
+                                        </td>
+
+                                        <td>
+                                            <span class="status-badge status-@statusClass">
+                                                @payment.Status
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <span class="muted-text">
+                                                @payment.PaymentDate.ToString("dd MMM yyyy HH:mm")
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+
+                        <div class="empty-state-title">
+                            No payment activity yet
+                        </div>
+
+                        <div class="empty-state-text">
+                            Payment transactions will appear here once recorded.
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </main>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="dashboard-sidebar">
+
+            <!-- =================================================
+                 FINANCE WORKSPACE
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+                <div class="quick-actions">
+
+                    <h2>Finance Workspace</h2>
+
+                    <p class="quick-actions-description">
+                        Access the main finance management areas from one place.
+                    </p>
+
+                    <a href="@Url.Action("Index", "ServiceType")"
+                       class="action-link">
+
+                        <span>
+                            Service Types
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "FeeSchedule")"
+                       class="action-link">
+
+                        <span>
+                            Fee Schedules
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinanceMunicipalServiceRequest")"
+                       class="action-link">
+
+                        <span>
+                            Municipal Service Requests
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "Invoice")"
+                       class="action-link">
+
+                        <span>
+                            Invoices
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Outstanding", "Invoice")"
+                       class="action-link">
+
+                        <span>
+                            Outstanding Invoices
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Outstanding", "Payments")"
+                       class="action-link">
+
+                        <span>
+                            Outstanding Payments
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "Payment")"
+                       class="action-link">
+
+                        <span>
+                            Payment Transactions
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "Refund")"
+                       class="action-link">
+
+                        <span>
+                            Refunds
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinancialTransaction")"
+                       class="action-link">
+
+                        <span>
+                            Financial Transactions
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinancialReport")"
+                       class="action-link">
+
+                        <span>
+                            Financial Reports
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "FinancialAudit")"
+                       class="action-link">
+
+                        <span>
+                            Financial Audit History
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 CURRENT ACTIVITY
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+                <div class="finance-status-card">
+
+                    <h3>Current Activity</h3>
+
+                    <div class="status-row">
+
+                        <span class="label">
+                            Requests Awaiting Review
+                        </span>
+
+                        <span class="value">
+                            @Model.ServiceRequestsAwaitingReview
+                        </span>
+
+                    </div>
+
+                    <div class="status-row">
+
+                        <span class="label">
+                            Approved Requests
+                        </span>
+
+                        <span class="value">
+                            @Model.ApprovedServiceRequests
+                        </span>
+
+                    </div>
+
+                    <div class="status-row">
+
+                        <span class="label">
+                            Outstanding Invoices
+                        </span>
+
+                        <span class="value">
+                            @Model.OutstandingInvoices
+                        </span>
+
+                    </div>
+
+                    <div class="status-row">
+
+                        <span class="label">
+                            Pending Payments
+                        </span>
+
+                        <span class="value">
+                            @Model.PendingPayments
+                        </span>
+
+                    </div>
+
+                    <div class="status-row">
+
+                        <span class="label">
+                            Pending Refunds
+                        </span>
+
+                        <span class="value">
+                            @Model.PendingRefunds
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- =========================================================
+         LOGOUT
+         ========================================================= -->
+
+    <div class="finance-logout-area">
+
+        <a href="@Url.Action("Index", "Home")"
+           class="finance-logout-button">
+
+            <span>
+                Logout
+            </span>
+
+            <span class="logout-arrow">
+                →
+            </span>
+
+        </a>
+
+    </div>
+
+</div>

@@ -1,0 +1,867 @@
+﻿@model CommunityServiceProject.ViewModels.TechnicianApplicationAssessmentResultViewModel
+
+@{
+    ViewBag.Title = "Record Assessment Result";
+}
+
+<div class="assessment-result-page">
+
+    <div class="result-header">
+
+        <div>
+            <div class="result-header-label">
+                RECRUITMENT
+            </div>
+
+            <h1>Record Assessment Result</h1>
+
+            <p>
+                Record the outcome of the completed applicant assessment.
+            </p>
+        </div>
+
+        <div class="application-reference">
+            <span>Application</span>
+            <strong>@Model.ApplicationReference</strong>
+        </div>
+
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="result-layout">
+
+        <main>
+
+            <section class="content-card">
+
+                <div class="card-heading">
+                    <h2>Applicant Information</h2>
+                    <p>Confirm the applicant and assessment being evaluated.</p>
+                </div>
+
+                <div class="information-grid">
+
+                    <div class="information-item">
+                        <span>Applicant Name</span>
+                        <strong>@Model.ApplicantName</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Email Address</span>
+                        <strong>@Model.ApplicantEmail</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Opportunity</span>
+                        <strong>@Model.OpportunityCode</strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Opportunity Title</span>
+                        <strong>@Model.OpportunityTitle</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="content-card">
+
+                <div class="card-heading">
+                    <h2>Assessment Information</h2>
+                    <p>Review the scheduled assessment before recording its result.</p>
+                </div>
+
+                <div class="assessment-summary">
+
+                    <div>
+                        <span>Assessment Type</span>
+                        <strong>@Model.AssessmentType</strong>
+                    </div>
+
+                    <div>
+                        <span>Assessment Date</span>
+                        <strong>@Model.AssessmentDate.ToString("dd MMM yyyy HH:mm")</strong>
+                    </div>
+
+                    <div>
+                        <span>Location</span>
+                        <strong>@Model.Location</strong>
+                    </div>
+
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Instructions))
+                {
+                    <div class="instructions-box">
+                        <span>Assessment Instructions</span>
+                        <p>@Model.Instructions</p>
+                    </div>
+                }
+
+            </section>
+
+            <section class="content-card">
+
+                <div class="card-heading">
+                    <h2>Assessment Result</h2>
+                    <p>Record the outcome and supporting evaluation information.</p>
+                </div>
+
+                @using (Html.BeginForm(
+                    "RecordAssessmentResult",
+                    "TechnicianApplication",
+                    FormMethod.Post,
+                    new
+                    {
+                        id = "assessmentResultForm"
+                    }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(m => m.AssessmentID)
+
+                    <div class="validation-summary">
+                        @Html.ValidationSummary(
+                            true,
+                            "",
+                            new
+                            {
+                                @class = "validation-summary-errors"
+                            })
+                    </div>
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.Result,
+                            new
+                            {
+                                @class = "form-label"
+                            })
+
+                        @Html.TextAreaFor(
+                            m => m.Result,
+                            6,
+                            1,
+                            new
+                            {
+                                @class = "form-control form-textarea",
+                                maxlength = "2000",
+                                placeholder = "Describe the assessment outcome and whether the applicant met the assessment requirements."
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Result,
+                            "",
+                            new
+                            {
+                                @class = "field-validation"
+                            })
+
+                    </div>
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.Score,
+                            new
+                            {
+                                @class = "form-label"
+                            })
+
+                        @Html.TextBoxFor(
+                            m => m.Score,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                min = "0",
+                                max = "100",
+                                step = "0.01",
+                                placeholder = "0 - 100"
+                            })
+
+                        <span class="field-help">
+                            Optional. Enter the assessment score as a percentage.
+                        </span>
+
+                        @Html.ValidationMessageFor(
+                            m => m.Score,
+                            "",
+                            new
+                            {
+                                @class = "field-validation"
+                            })
+
+                    </div>
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.Comments,
+                            new
+                            {
+                                @class = "form-label"
+                            })
+
+                        @Html.TextAreaFor(
+                            m => m.Comments,
+                            6,
+                            1,
+                            new
+                            {
+                                @class = "form-control form-textarea",
+                                maxlength = "3000",
+                                placeholder = "Record observations, strengths, weaknesses, or other relevant assessment comments."
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Comments,
+                            "",
+                            new
+                            {
+                                @class = "field-validation"
+                            })
+
+                    </div>
+
+                    <div class="confirmation-panel">
+
+                        <h3>Confirm Assessment Result</h3>
+
+                        <p>
+                            Confirm that the assessment has been completed and the information
+                            entered above accurately records the applicant's result.
+                            The application status will change to
+                            <strong>Assessed</strong>.
+                        </p>
+
+                        <label class="confirmation-check">
+
+                            <input type="checkbox"
+                                   id="confirmResult" />
+
+                            <span>
+                                I confirm that the assessment result is accurate and ready to be recorded.
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <a href="@Url.Action("Review", "TechnicianApplication", new { id = Model.ApplicationID })"
+                           class="secondary-button">
+                            Back to Application
+                        </a>
+
+                        <button type="submit"
+                                id="saveResultButton"
+                                class="primary-button"
+                                disabled>
+                            Record Assessment Result
+                        </button>
+
+                    </div>
+                }
+
+            </section>
+
+        </main>
+
+        <aside>
+
+            <section class="sidebar-card">
+
+                <h2>Recruitment Progress</h2>
+
+                <div class="progress-step completed">
+                    <span>1</span>
+                    <div>
+                        <strong>Shortlisted</strong>
+                        <p>Applicant passed the shortlisting stage.</p>
+                    </div>
+                </div>
+
+                <div class="progress-line"></div>
+
+                <div class="progress-step completed">
+                    <span>2</span>
+                    <div>
+                        <strong>Assessment Scheduled</strong>
+                        <p>The applicant has been scheduled for assessment.</p>
+                    </div>
+                </div>
+
+                <div class="progress-line"></div>
+
+                <div class="progress-step current">
+                    <span>3</span>
+                    <div>
+                        <strong>Record Assessment Result</strong>
+                        <p>Record the completed assessment outcome.</p>
+                    </div>
+                </div>
+
+                <div class="progress-line"></div>
+
+                <div class="progress-step">
+                    <span>4</span>
+                    <div>
+                        <strong>Interview</strong>
+                        <p>Interview processing occurs at the next recruitment stage.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="sidebar-card">
+
+                <h2>Result Guidance</h2>
+
+                <ul>
+                    <li>Record the actual assessment outcome.</li>
+                    <li>Scores must be between 0 and 100.</li>
+                    <li>Use comments to provide supporting observations.</li>
+                    <li>Recording the result changes the application to Assessed.</li>
+                    <li>Final applicant selection happens separately.</li>
+                </ul>
+
+            </section>
+
+            <section class="sidebar-card">
+
+                <h2>Navigation</h2>
+
+                <a href="@Url.Action("ShortlistedApplicants", "TechnicianApplication")">
+                    Shortlisted Applicants
+                </a>
+
+                <a href="@Url.Action("ReviewApplications", "TechnicianApplication")">
+                    Review Applications
+                </a>
+
+                <a href="@Url.Action("Manage", "TechnicianOpportunity")">
+                    Opportunity Management
+                </a>
+
+                <a href="@Url.Action("Index", "AdministratorDashboard")">
+                    Administrator Dashboard
+                </a>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</div>
+
+<style>
+
+    .assessment-result-page {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 30px;
+        color: #263238;
+    }
+
+    .result-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 12px;
+        padding: 30px 34px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 24px rgba(13, 92, 193, 0.16);
+    }
+
+    .result-header-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        opacity: 0.85;
+        margin-bottom: 7px;
+    }
+
+    .result-header h1 {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    .result-header p {
+        margin: 8px 0 0;
+        opacity: 0.9;
+        font-size: 15px;
+    }
+
+    .application-reference {
+        background: rgba(255,255,255,0.13);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 10px;
+        padding: 15px 20px;
+        min-width: 180px;
+        text-align: right;
+    }
+
+    .application-reference span {
+        display: block;
+        font-size: 12px;
+        opacity: 0.8;
+        margin-bottom: 4px;
+    }
+
+    .application-reference strong {
+        color: white;
+        font-size: 18px;
+    }
+
+    .alert {
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .alert-error {
+        background: #fff1f1;
+        border: 1px solid #e1a4a4;
+        color: #9f2424;
+    }
+
+    .result-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .content-card,
+    .sidebar-card {
+        background: white;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(20,40,70,0.06);
+    }
+
+    .content-card {
+        padding: 28px;
+        margin-bottom: 24px;
+    }
+
+    .card-heading {
+        padding-bottom: 18px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 5px;
+        color: #17365d;
+        font-size: 20px;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: #6b7785;
+        font-size: 14px;
+    }
+
+    .information-grid {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 16px;
+    }
+
+    .information-item {
+        background: #f7f9fc;
+        border: 1px solid #e7ebf0;
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .information-item span,
+    .assessment-summary span,
+    .instructions-box span {
+        display: block;
+        color: #6b7785;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        margin-bottom: 6px;
+    }
+
+    .information-item strong,
+    .assessment-summary strong {
+        font-size: 14px;
+        color: #263238;
+    }
+
+    .assessment-summary {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 16px;
+    }
+
+    .assessment-summary > div {
+        background: #f7f9fc;
+        border: 1px solid #e7ebf0;
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .instructions-box {
+        margin-top: 18px;
+        background: #f4f8fd;
+        border: 1px solid #d7e5f5;
+        border-left: 4px solid #0D5CC1;
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+    .instructions-box p {
+        margin: 0;
+        color: #596776;
+        font-size: 13px;
+        line-height: 1.55;
+        white-space: pre-line;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 7px;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        padding: 11px 13px;
+        font-size: 14px;
+        color: #263238;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,.1);
+    }
+
+    .form-textarea {
+        min-height: 140px;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #7a8794;
+    }
+
+    .field-validation,
+    .validation-summary-errors {
+        color: #b42318;
+        font-size: 12px;
+    }
+
+    .validation-summary-errors ul {
+        padding-left: 20px;
+    }
+
+    .confirmation-panel {
+        padding: 20px;
+        background: #f4f8fd;
+        border: 1px solid #d7e5f5;
+        border-left: 4px solid #0D5CC1;
+        border-radius: 8px;
+    }
+
+    .confirmation-panel h3 {
+        margin: 0 0 6px;
+        color: #17365d;
+        font-size: 16px;
+    }
+
+    .confirmation-panel p {
+        margin: 0;
+        color: #596776;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .confirmation-check {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+        font-size: 13px;
+        color: #334155;
+    }
+
+    .confirmation-check input {
+        width: 17px;
+        height: 17px;
+        accent-color: #0D5CC1;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 25px;
+        padding-top: 22px;
+        border-top: 1px solid #edf0f4;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 42px;
+        padding: 10px 18px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .primary-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+        cursor: pointer;
+    }
+
+    .primary-button:disabled {
+        background: #b8c4d1;
+        border-color: #b8c4d1;
+        cursor: not-allowed;
+    }
+
+    .primary-button:hover:not(:disabled) {
+        background: #094b9f;
+    }
+
+    .secondary-button {
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        background: white;
+    }
+
+    .sidebar-card {
+        padding: 22px;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-card h2 {
+        margin: 0 0 18px;
+        color: #17365d;
+        font-size: 17px;
+    }
+
+    .progress-step {
+        display: flex;
+        gap: 12px;
+    }
+
+    .progress-step > span {
+        width: 27px;
+        height: 27px;
+        min-width: 27px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e9eef5;
+        color: #607080;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .progress-step.completed > span,
+    .progress-step.current > span {
+        background: #0D5CC1;
+        color: white;
+    }
+
+    .progress-step strong {
+        display: block;
+        color: #334155;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .progress-step p {
+        margin: 0;
+        color: #718096;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .progress-line {
+        width: 1px;
+        height: 20px;
+        background: #d7dee7;
+        margin: 4px 0 4px 13px;
+    }
+
+    .sidebar-card ul {
+        margin: 0;
+        padding-left: 19px;
+        color: #687684;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .sidebar-card li {
+        margin-bottom: 7px;
+    }
+
+    .sidebar-card a {
+        display: block;
+        padding: 11px 0;
+        border-bottom: 1px solid #edf0f4;
+        color: #0D5CC1;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 1000px) {
+        .result-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .assessment-result-page {
+            padding: 18px;
+        }
+
+        .result-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 24px;
+        }
+
+        .application-reference {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .information-grid,
+        .assessment-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var confirmationCheckbox =
+            document.getElementById("confirmResult");
+
+        var saveButton =
+            document.getElementById("saveResultButton");
+
+        var form =
+            document.getElementById("assessmentResultForm");
+
+        if (!confirmationCheckbox ||
+            !saveButton ||
+            !form) {
+            return;
+        }
+
+        function updateSaveButton() {
+
+            if (confirmationCheckbox.checked) {
+
+                saveButton.disabled = false;
+
+            } else {
+
+                saveButton.disabled = true;
+            }
+        }
+
+        confirmationCheckbox.addEventListener(
+            "change",
+            updateSaveButton
+        );
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                if (!confirmationCheckbox.checked) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please confirm the assessment result before saving."
+                    );
+
+                    return;
+                }
+
+                var confirmed =
+                    window.confirm(
+                        "Are you sure you want to record this assessment result? The application status will change to Assessed."
+                    );
+
+                if (!confirmed) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+                saveButton.disabled = true;
+
+                saveButton.innerText =
+                    "Saving...";
+            }
+        );
+
+        updateSaveButton();
+
+    });
+</script>

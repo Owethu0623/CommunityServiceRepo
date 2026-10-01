@@ -1,5 +1,6 @@
 ﻿namespace CommunityServiceProject.Migrations
 {
+    using CommunityServiceProject.Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -33,6 +34,19 @@
                 context.Administrators.Add(administrator);
                 context.SaveChanges();
             }
+
+            context.FinanceOfficers.AddOrUpdate(
+f => f.EmailAddress,
+new FinanceOfficer
+{
+FirstName = "Municipal",
+LastName = "Finance Officer",
+EmailAddress = "finance@municipality.co.za",
+Password = "Finance123",
+AccountStatus = AccountStatus.Active,
+DateCreated = DateTime.Now
+}
+);
 
 
             // ===========================================================

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityServiceProject.Models;
+using CommunityServiceProject.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
@@ -6,8 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using CommunityServiceProject.Models;
-using CommunityServiceProject.ViewModels;
+using static System.Web.Razor.Parser.SyntaxConstants;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -2237,6 +2238,14 @@ namespace CommunityServiceProject.Controllers
                     .Select(ap => ap.AssetID)
                     .ToList();
 
+           
+                var suggestedAssets =
+                GetPotentiallyRelatedAssets(
+                project,
+                 linkedAssetIds);
+
+
+
             var linkedAssets =
                 db.AssetProjects
                     .AsNoTracking()
@@ -2453,6 +2462,9 @@ namespace CommunityServiceProject.Controllers
 
                     LinkedAssetCount =
                         linkedAssetItems.Count,
+
+                    SuggestedAssets =
+                             suggestedAssets,
 
                     SearchTerm =
                         searchTerm,
@@ -2705,6 +2717,502 @@ namespace CommunityServiceProject.Controllers
                 "Assets",
                 new { id = projectID.Value });
         }
+
+        
+// =========================================================
+// US96 — FIND POTENTIALLY RELATED MUNICIPAL ASSETS
+// =========================================================
+
+private List<ProjectAssetSuggestedItemViewModel>
+    GetPotentiallyRelatedAssets(
+        MunicipalProject project,
+        List<int> linkedAssetIds)
+        {
+            if (project == null)
+                return new List<ProjectAssetSuggestedItemViewModel>();
+
+            var assets =
+                db.MunicipalAssets
+                    .AsNoTracking()
+                    .Include(a => a.Ward)
+                    .Where(a =>
+                        !linkedAssetIds.Contains(a.AssetID))
+                    .ToList();
+
+            var suggestions =
+                new List<ProjectAssetSuggestedItemViewModel>();
+
+            foreach (var asset in assets)
+            {
+                int score = 0;
+
+                var reasons =
+                    new List<string>();
+
+                // =====================================================
+                // 1. SAME WARD
+                // =====================================================
+
+                if (asset.WardID == project.WardID)
+                {
+                    score += 30;
+
+                    reasons.Add(
+                        "Same municipal ward");
+                }
+
+                // =====================================================
+                // 2. PROJECT / ASSET TEXT
+                // =====================================================
+
+                var projectText =
+                    BuildProjectSearchText(project);
+
+                var assetText =
+                    BuildAssetSearchText(asset);
+
+                var projectKeywords =
+                    ExtractKeywords(projectText);
+
+                var assetKeywords =
+                    ExtractKeywords(assetText);
+
+                var sharedKeywords =
+                    projectKeywords
+                        .Intersect(assetKeywords)
+                        .ToList();
+
+                if (sharedKeywords.Any())
+                {
+                    score += 20;
+
+                    reasons.Add(
+                        "Similar project and asset naming");
+                }
+
+                // =====================================================
+                // 3. RELATED CATEGORY / TYPE
+                // =====================================================
+
+                if (HasRelatedCategory(
+                    project,
+                    asset))
+                {
+                    score += 25;
+
+                    reasons.Add(
+                        "Related service category");
+                }
+
+                // =====================================================
+                // 4. LOCATION TEXT
+                // =====================================================
+
+                if (HasSimilarLocation(
+                    project,
+                    asset))
+                {
+                    score += 15;
+
+                    reasons.Add(
+                        "Similar location");
+                }
+
+                // =====================================================
+                // 5. GEOGRAPHIC DISTANCE
+                // =====================================================
+
+                if (project.Latitude.HasValue &&
+                    project.Longitude.HasValue &&
+                    asset.Latitude.HasValue &&
+                    asset.Longitude.HasValue)
+                {
+                    var distance =
+                        CalculateDistanceInKilometres(
+                            project.Latitude.Value,
+                            project.Longitude.Value,
+                            asset.Latitude.Value,
+                            asset.Longitude.Value);
+
+                    if (distance <= 1)
+                    {
+                        score += 20;
+
+                        reasons.Add(
+                            "Within 1 km of project location");
+                    }
+                    else if (distance <= 5)
+                    {
+                        score += 10;
+
+                        reasons.Add(
+                            "Within 5 km of project location");
+                    }
+                }
+
+                // =====================================================
+                // ONLY SHOW MEANINGFUL MATCHES
+                // =====================================================
+
+                if (score < 30)
+                    continue;
+
+                suggestions.Add(
+                    new ProjectAssetSuggestedItemViewModel
+                    {
+                        AssetID =
+                            asset.AssetID,
+
+                        AssetCode =
+                            asset.AssetCode,
+
+                        AssetName =
+                            asset.AssetName,
+
+                        AssetType =
+                            asset.AssetType,
+
+                        AssetCategory =
+                            asset.AssetCategory,
+
+                        WardName =
+                            asset.Ward != null
+                                ? "Ward " +
+                                  asset.Ward.WardNumber +
+                                  " – " +
+                                  asset.Ward.WardName
+                                : "Ward unavailable",
+
+                        LocationDescription =
+                            asset.LocationDescription,
+
+                        Condition =
+                            asset.Condition.ToString(),
+
+                        Status =
+                            asset.Status.ToString(),
+
+                        DateRegistered =
+                            asset.DateRegistered,
+
+                        LastInspectionDate =
+                            asset.LastInspectionDate,
+
+                        LastMaintenanceDate =
+                            asset.LastMaintenanceDate,
+
+                        MatchScore =
+                            Math.Min(score, 100),
+
+                        MatchReason =
+                            string.Join(
+                                " • ",
+                                reasons)
+                    });
+            }
+
+            return suggestions
+                .OrderByDescending(x => x.MatchScore)
+                .ThenBy(x => x.AssetCode)
+                .Take(10)
+                .ToList();
+        }
+
+
+        // =========================================================
+        // BUILD PROJECT SEARCH TEXT
+        // =========================================================
+
+        private string BuildProjectSearchText(
+            MunicipalProject project)
+        {
+            return string.Join(
+                " ",
+                project.ProjectName,
+                project.ProjectType,
+                project.ProjectScope,
+                project.Description,
+                project.ProjectLocation,
+                project.LocationDescription);
+        }
+
+
+        // =========================================================
+        // BUILD ASSET SEARCH TEXT
+        // =========================================================
+
+        private string BuildAssetSearchText(
+            MunicipalAsset asset)
+        {
+            return string.Join(
+                " ",
+                asset.AssetName,
+                asset.AssetType,
+                asset.AssetCategory,
+                asset.Description,
+                asset.LocationDescription);
+        }
+
+
+        // =========================================================
+        // EXTRACT RELEVANT KEYWORDS
+        // =========================================================
+
+        private List<string> ExtractKeywords(
+            string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return new List<string>();
+
+            var stopWords =
+                new HashSet<string>(
+                    StringComparer.OrdinalIgnoreCase)
+                {
+            "the",
+            "and",
+            "for",
+            "with",
+            "from",
+            "project",
+            "municipal",
+            "asset",
+            "upgrade",
+            "maintenance",
+            "area",
+            "site",
+            "new",
+            "existing",
+            "works",
+            "work"
+                };
+
+            return text
+                .ToLowerInvariant()
+                .Split(
+                    new[]
+                    {
+                ' ',
+                ',',
+                '.',
+                '/',
+                '-',
+                '_',
+                '(',
+                ')',
+                ':',
+                ';'
+                    },
+                    StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x =>
+                    x.Length >= 3 &&
+                    !stopWords.Contains(x))
+                .Distinct()
+                .ToList();
+        }
+
+
+        // =========================================================
+        // RELATED SERVICE CATEGORY
+        // =========================================================
+
+        private bool HasRelatedCategory(
+            MunicipalProject project,
+            MunicipalAsset asset)
+        {
+            var projectText =
+                BuildProjectSearchText(project)
+                    .ToLowerInvariant();
+
+            var assetText =
+                BuildAssetSearchText(asset)
+                    .ToLowerInvariant();
+
+            var categoryGroups =
+                new[]
+                {
+            new[]
+            {
+                "water",
+                "sanitation",
+                "wastewater",
+                "sewer",
+                "pipeline",
+                "water infrastructure"
+            },
+
+            new[]
+            {
+                "stormwater",
+                "storm water",
+                "drainage",
+                "culvert",
+                "stormwater pipe",
+                "stormwater manhole"
+            },
+
+            new[]
+            {
+                "electrical",
+                "electric",
+                "street light",
+                "area light",
+                "high mast",
+                "lighting"
+            },
+
+            new[]
+            {
+                "road",
+                "roads",
+                "transport",
+                "street",
+                "bridge",
+                "road structure"
+            },
+
+            new[]
+            {
+                "park",
+                "parks",
+                "garden",
+                "open space"
+            },
+
+            new[]
+            {
+                "sport",
+                "sports",
+                "recreation",
+                "stadium",
+                "sports facility"
+            },
+
+            new[]
+            {
+                "building",
+                "public building",
+                "community facility",
+                "municipal facility"
+            }
+                };
+
+            foreach (var group in categoryGroups)
+            {
+                bool projectMatches =
+                    group.Any(keyword =>
+                        projectText.Contains(keyword));
+
+                bool assetMatches =
+                    group.Any(keyword =>
+                        assetText.Contains(keyword));
+
+                if (projectMatches &&
+                    assetMatches)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        // =========================================================
+        // SIMILAR LOCATION
+        // =========================================================
+
+        private bool HasSimilarLocation(
+            MunicipalProject project,
+            MunicipalAsset asset)
+        {
+            var projectLocation =
+                string.Join(
+                    " ",
+                    project.ProjectLocation,
+                    project.LocationDescription)
+                    .ToLowerInvariant();
+
+            var assetLocation =
+                asset.LocationDescription?
+                    .ToLowerInvariant();
+
+            if (string.IsNullOrWhiteSpace(
+                projectLocation) ||
+                string.IsNullOrWhiteSpace(
+                assetLocation))
+            {
+                return false;
+            }
+
+            var projectLocationKeywords =
+                ExtractKeywords(projectLocation);
+
+            var assetLocationKeywords =
+                ExtractKeywords(assetLocation);
+
+            return projectLocationKeywords
+                .Intersect(assetLocationKeywords)
+                .Any();
+        }
+
+
+        // =========================================================
+        // CALCULATE DISTANCE BETWEEN TWO COORDINATES
+        // HAVERSINE FORMULA
+        // =========================================================
+
+        private double CalculateDistanceInKilometres(
+            double latitude1,
+            double longitude1,
+            double latitude2,
+            double longitude2)
+        {
+            const double earthRadius = 6371.0;
+
+            double latitudeDifference =
+                DegreesToRadians(
+                    latitude2 - latitude1);
+
+            double longitudeDifference =
+                DegreesToRadians(
+                    longitude2 - longitude1);
+
+            double a =
+                Math.Sin(latitudeDifference / 2) *
+                Math.Sin(latitudeDifference / 2)
+                +
+                Math.Cos(
+                    DegreesToRadians(latitude1))
+                *
+                Math.Cos(
+                    DegreesToRadians(latitude2))
+                *
+                Math.Sin(longitudeDifference / 2)
+                *
+                Math.Sin(longitudeDifference / 2);
+
+            double c =
+                2 *
+                Math.Atan2(
+                    Math.Sqrt(a),
+                    Math.Sqrt(1 - a));
+
+            return earthRadius * c;
+        }
+
+
+        // =========================================================
+        // DEGREES TO RADIANS
+        // =========================================================
+
+        private double DegreesToRadians(
+            double degrees)
+        {
+            return degrees *
+                   (Math.PI / 180.0);
+        }
+
 
         // =========================================================
         // US97 — DEFINE PROJECT MILESTONES

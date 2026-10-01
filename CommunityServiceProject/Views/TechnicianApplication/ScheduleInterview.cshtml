@@ -1,0 +1,1463 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianApplicationScheduleInterviewViewModel
+
+@using CommunityServiceProject.Models
+
+@{
+    ViewBag.Title = "Schedule Interview";
+}
+
+<style>
+    /* =========================================================
+       SCHEDULE INTERVIEW PAGE
+       ========================================================= */
+
+    .schedule-interview-page {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .schedule-interview-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: #ffffff;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+    .schedule-interview-header-eyebrow {
+        display: inline-block;
+        margin-bottom: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.82;
+    }
+
+    .schedule-interview-header h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .schedule-interview-header-description {
+        margin: 0;
+        max-width: 760px;
+        color: rgba(255,255,255,0.92);
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    .schedule-interview-header-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 19px;
+    }
+
+        .schedule-interview-header-meta span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 0 11px;
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 7px;
+            background: rgba(255,255,255,0.12);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+    .schedule-interview-header-status {
+        background: rgba(255,255,255,0.20) !important;
+    }
+
+    /* =========================================================
+       PAGE LAYOUT
+       ========================================================= */
+
+    .schedule-interview-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 315px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .schedule-interview-main {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 0;
+    }
+
+    .schedule-interview-sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    /* =========================================================
+       CARDS
+       ========================================================= */
+
+    .schedule-interview-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .schedule-interview-card-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .schedule-interview-card-heading h2 {
+            margin: 0 0 5px;
+            color: #16324f;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .schedule-interview-card-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    /* =========================================================
+       VALIDATION
+       ========================================================= */
+
+    .schedule-interview-validation-summary {
+        background: #fff1f0;
+        border: 1px solid #f0b8b4;
+        border-radius: 9px;
+        padding: 14px 16px;
+        color: #9b1c1c;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+        .schedule-interview-validation-summary ul {
+            margin: 7px 0 0 18px;
+            padding: 0;
+        }
+
+    .schedule-interview-validation-message {
+        display: block;
+        margin-top: 5px;
+        color: #b42318;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    /* =========================================================
+       INFORMATION GRID
+       ========================================================= */
+
+    .schedule-interview-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+    }
+
+    .schedule-interview-info-item {
+        min-width: 0;
+    }
+
+    .schedule-interview-info-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .schedule-interview-info-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    .schedule-interview-status-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 25px;
+        padding: 0 9px;
+        border-radius: 20px;
+        background: #fff4df;
+        border: 1px solid #f1d49b;
+        color: #805b13;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+
+    .schedule-interview-form {
+        margin: 0;
+    }
+
+    .schedule-interview-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 19px 22px;
+    }
+
+    .schedule-interview-form-group {
+        margin: 0;
+        min-width: 0;
+    }
+
+    .schedule-interview-form-group-full {
+        grid-column: 1 / -1;
+    }
+
+    .schedule-interview-form-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .schedule-interview-control {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 43px;
+        padding: 10px 12px;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #1f2937;
+        font-family: inherit;
+        font-size: 14px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .schedule-interview-control:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+        }
+
+    textarea.schedule-interview-control {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .schedule-interview-field-help {
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* =========================================================
+       REVIEW NOTICE
+       ========================================================= */
+
+    .schedule-interview-review-panel {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 22px;
+        padding: 15px 16px;
+        border: 1px solid #c9ddf8;
+        border-radius: 9px;
+        background: #f0f6ff;
+        color: #24415f;
+    }
+
+    .schedule-interview-review-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 25px;
+        height: 25px;
+        flex: 0 0 25px;
+        border-radius: 50%;
+        background: #0D5CC1;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .schedule-interview-review-content strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #16324f;
+        font-size: 13px;
+    }
+
+    .schedule-interview-review-content span {
+        display: block;
+        color: #50657b;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       ACTION AREA
+       ========================================================= */
+
+    .schedule-interview-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        margin-top: 22px;
+        padding-top: 20px;
+        border-top: 1px solid #e8edf3;
+    }
+
+    .schedule-interview-button,
+    .schedule-interview-secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .schedule-interview-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+        .schedule-interview-button:hover {
+            border-color: #094b9f;
+            background: #094b9f;
+            color: #ffffff;
+        }
+
+    .schedule-interview-secondary-button {
+        border: 1px solid #cfd7e3;
+        background: #ffffff;
+        color: #374151;
+    }
+
+        .schedule-interview-secondary-button:hover {
+            background: #f5f7fa;
+            color: #1f2937;
+        }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    .schedule-interview-sidebar-card {
+        margin-bottom: 18px;
+        padding: 20px;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+        .schedule-interview-sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .schedule-interview-sidebar-card h3 {
+            margin: 0 0 15px;
+            color: #16324f;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+    .schedule-interview-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .schedule-interview-summary-row {
+        padding-bottom: 11px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+        .schedule-interview-summary-row:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+    .schedule-interview-summary-label {
+        display: block;
+        margin-bottom: 4px;
+        color: #6b7280;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .schedule-interview-summary-value {
+        color: #374151;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    /* =========================================================
+       WORKFLOW
+       ========================================================= */
+
+    .schedule-interview-workflow {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .schedule-interview-workflow-step {
+        position: relative;
+        padding-left: 28px;
+        padding-bottom: 20px;
+    }
+
+        .schedule-interview-workflow-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .schedule-interview-workflow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 18px;
+            bottom: 0;
+            left: 7px;
+            width: 1px;
+            background: #d7dee8;
+        }
+
+    .schedule-interview-workflow-dot {
+        position: absolute;
+        top: 3px;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        box-sizing: border-box;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        background: #d3dbe5;
+        box-shadow: 0 0 0 1px #c9d2de;
+    }
+
+    .schedule-interview-workflow-step.completed
+    .schedule-interview-workflow-dot {
+        background: #198754;
+        box-shadow: 0 0 0 1px #198754;
+    }
+
+    .schedule-interview-workflow-step.current
+    .schedule-interview-workflow-dot {
+        background: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.13);
+    }
+
+    .schedule-interview-workflow-title {
+        margin-bottom: 3px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .schedule-interview-workflow-step.completed
+    .schedule-interview-workflow-title {
+        color: #18794e;
+    }
+
+    .schedule-interview-workflow-step.current
+    .schedule-interview-workflow-title {
+        color: #0D5CC1;
+    }
+
+    .schedule-interview-workflow-description {
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* =========================================================
+       WHAT HAPPENS NEXT
+       ========================================================= */
+
+    .schedule-interview-next-list {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .schedule-interview-next-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .schedule-interview-next-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 23px;
+        height: 23px;
+        flex: 0 0 23px;
+        border-radius: 50%;
+        background: #eaf2fd;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .schedule-interview-next-text strong {
+        display: block;
+        margin-bottom: 2px;
+        color: #374151;
+        font-size: 12px;
+    }
+
+    .schedule-interview-next-text span {
+        display: block;
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    .schedule-interview-navigation {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+        .schedule-interview-navigation a {
+            display: block;
+            padding: 10px 0;
+            border-bottom: 1px solid #edf0f4;
+            color: #0D5CC1;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+            .schedule-interview-navigation a:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .schedule-interview-navigation a:first-child {
+                padding-top: 0;
+            }
+
+            .schedule-interview-navigation a:hover {
+                color: #094b9f;
+            }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1050px) {
+
+        .schedule-interview-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .schedule-interview-sidebar {
+            position: static;
+        }
+
+        .schedule-interview-sidebar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .schedule-interview-sidebar-card {
+            margin-bottom: 0;
+        }
+    }
+
+    @@media (max-width: 760px) {
+
+        .schedule-interview-page {
+            padding: 20px 12px 35px;
+        }
+
+        .schedule-interview-header {
+            padding: 22px;
+        }
+
+            .schedule-interview-header h1 {
+                font-size: 23px;
+            }
+
+        .schedule-interview-info-grid,
+        .schedule-interview-form-grid,
+        .schedule-interview-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .schedule-interview-card {
+            padding: 19px;
+        }
+
+        .schedule-interview-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .schedule-interview-button,
+        .schedule-interview-secondary-button {
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 500px) {
+
+        .schedule-interview-header {
+            padding: 20px;
+        }
+
+        .schedule-interview-header-meta {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .schedule-interview-header-meta span {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+        .schedule-interview-card-heading h2 {
+            font-size: 17px;
+        }
+    }
+</style>
+
+<div class="schedule-interview-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="schedule-interview-header">
+
+        <span class="schedule-interview-header-eyebrow">
+            Technician Recruitment
+        </span>
+
+        <h1>
+            Schedule Interview
+        </h1>
+
+        <p class="schedule-interview-header-description">
+            Schedule the applicant's interview and provide the information
+            required for the interview to take place.
+        </p>
+
+        <div class="schedule-interview-header-meta">
+
+            <span>
+                Application:
+                @Model.ApplicationReference
+            </span>
+
+            <span>
+                @Model.OpportunityCode
+            </span>
+
+            <span class="schedule-interview-header-status">
+                @Model.ApplicationStatus
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         MAIN LAYOUT
+         ========================================================= -->
+
+    <div class="schedule-interview-layout">
+
+        <!-- =====================================================
+             MAIN COLUMN
+             ===================================================== -->
+
+        <main class="schedule-interview-main">
+
+            <!-- =================================================
+                 VALIDATION SUMMARY
+                 ================================================= -->
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="schedule-interview-validation-summary">
+
+                    <strong>
+                        Please correct the following before scheduling the interview:
+                    </strong>
+
+                    @Html.ValidationSummary(
+                        true,
+                        "",
+                        new
+                        {
+                            @class = ""
+                        }
+                    )
+
+                </div>
+            }
+
+            <!-- =================================================
+                 APPLICANT INFORMATION
+                 ================================================= -->
+
+            <div class="schedule-interview-card">
+
+                <div class="schedule-interview-card-heading">
+
+                    <h2>
+                        Applicant Information
+                    </h2>
+
+                    <p>
+                        Review the applicant and opportunity details before
+                        scheduling the interview.
+                    </p>
+
+                </div>
+
+                <div class="schedule-interview-info-grid">
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Applicant
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+                            @Model.ApplicantName
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Application Reference
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+                            @Model.ApplicationReference
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Applicant Email
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+                            @Model.ApplicantEmail
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Application Date
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+                            @Model.ApplicationDate.ToString("dd MMM yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Opportunity
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+                            @Model.OpportunityTitle
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Opportunity Code
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+                            @Model.OpportunityCode
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-info-item">
+
+                        <span class="schedule-interview-info-label">
+                            Current Application Status
+                        </span>
+
+                        <div class="schedule-interview-info-value">
+
+                            <span class="schedule-interview-status-badge">
+                                @Model.ApplicationStatus
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 INTERVIEW DETAILS
+                 ================================================= -->
+
+            <div class="schedule-interview-card">
+
+                <div class="schedule-interview-card-heading">
+
+                    <h2>
+                        Interview Details
+                    </h2>
+
+                    <p>
+                        Provide the date, method, location and instructions
+                        for the applicant's interview.
+                    </p>
+
+                </div>
+
+                @using (Html.BeginForm(
+                    "ScheduleInterview",
+                    "TechnicianApplication",
+                    FormMethod.Post,
+                    new
+                    {
+                        @class = "schedule-interview-form"
+                    }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.HiddenFor(
+                        m => m.ApplicationID
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.ApplicationReference
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.ApplicantName
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.ApplicantEmail
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.OpportunityCode
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.OpportunityTitle
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.ApplicationDate
+                    )
+
+                    @Html.HiddenFor(
+                        m => m.ApplicationStatus
+                    )
+
+                    <div class="schedule-interview-form-grid">
+
+                        <!-- =====================================
+                             INTERVIEW METHOD
+                             ===================================== -->
+
+                        <div class="schedule-interview-form-group">
+
+                            <label class="schedule-interview-form-label"
+                                   for="InterviewMethod">
+                                @Html.DisplayNameFor(
+                                    m => m.InterviewMethod
+                                )
+                            </label>
+
+                            @Html.DropDownListFor(
+                                m => m.InterviewMethod,
+                                new SelectList(
+                                    new[]
+                                    {
+                                        "In-Person",
+                                        "Online",
+                                        "Telephone"
+                                    }
+                                ),
+                                "Select interview method",
+                                new
+                                {
+                                    id = "InterviewMethod",
+                                    @class = "schedule-interview-control"
+                                }
+                            )
+
+                            @Html.ValidationMessageFor(
+                                m => m.InterviewMethod,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "schedule-interview-validation-message"
+                                }
+                            )
+
+                        </div>
+
+                        <!-- =====================================
+                             INTERVIEW DATE
+                             ===================================== -->
+
+                        <div class="schedule-interview-form-group">
+
+                            <label class="schedule-interview-form-label"
+                                   for="InterviewDate">
+                                @Html.DisplayNameFor(
+                                    m => m.InterviewDate
+                                )
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.InterviewDate,
+                                "{0:yyyy-MM-ddTHH:mm}",
+                                new
+                                {
+                                    type = "datetime-local",
+                                    id = "InterviewDate",
+                                    @class = "schedule-interview-control"
+                                }
+                            )
+
+                            <div class="schedule-interview-field-help">
+                                Select the date and time at which the interview
+                                will take place.
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.InterviewDate,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "schedule-interview-validation-message"
+                                }
+                            )
+
+                        </div>
+
+                        <!-- =====================================
+                             LOCATION
+                             ===================================== -->
+
+                        <div class="schedule-interview-form-group">
+
+                            <label class="schedule-interview-form-label"
+                                   for="Location">
+                                @Html.DisplayNameFor(
+                                    m => m.Location
+                                )
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.Location,
+                                new
+                                {
+                                    id = "Location",
+                                    @class = "schedule-interview-control",
+                                    maxlength = "300",
+                                    placeholder =
+                                        "e.g. Municipal Offices, Room 204"
+                                }
+                            )
+
+                            <div class="schedule-interview-field-help">
+                                For online or telephone interviews, provide
+                                the relevant meeting or contact details.
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Location,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "schedule-interview-validation-message"
+                                }
+                            )
+
+                        </div>
+
+                        <!-- =====================================
+                             INSTRUCTIONS
+                             ===================================== -->
+
+                        <div class="schedule-interview-form-group">
+
+                            <label class="schedule-interview-form-label"
+                                   for="Instructions">
+                                @Html.DisplayNameFor(
+                                    m => m.Instructions
+                                )
+                            </label>
+
+                            @Html.TextAreaFor(
+                                m => m.Instructions,
+                                new
+                                {
+                                    id = "Instructions",
+                                    @class = "schedule-interview-control",
+                                    maxlength = "3000",
+                                    placeholder =
+                                        "Provide any instructions the applicant should know before attending the interview."
+                                }
+                            )
+
+                            <div class="schedule-interview-field-help">
+                                Optional. Maximum 3000 characters.
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Instructions,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "schedule-interview-validation-message"
+                                }
+                            )
+
+                        </div>
+
+                    </div>
+
+                    <!-- =========================================
+                         REVIEW NOTICE
+                         ========================================= -->
+
+                    <div class="schedule-interview-review-panel">
+
+                        <div class="schedule-interview-review-icon">
+                            ✓
+                        </div>
+
+                        <div class="schedule-interview-review-content">
+
+                            <strong>
+                                Application status after scheduling
+                            </strong>
+
+                            <span>
+                                Once the interview is successfully scheduled,
+                                this application will move from
+                                <strong>Assessed</strong> to
+                                <strong>Interview Scheduled</strong>.
+                                The interview outcome can then be recorded
+                                after the interview has taken place.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =========================================
+                         ACTIONS
+                         ========================================= -->
+
+                    <div class="schedule-interview-actions">
+
+                        <a href="@Url.Action(
+                                    "Review",
+                                    "TechnicianApplication",
+                                    new
+                                    {
+                                        id = Model.ApplicationID
+                                    })"
+                           class="schedule-interview-secondary-button">
+                            Back to Application Review
+                        </a>
+
+                        <button type="submit"
+                                class="schedule-interview-button">
+                            Schedule Interview
+                        </button>
+
+                    </div>
+                }
+
+            </div>
+
+        </main>
+
+        <!-- =====================================================
+             SIDEBAR
+             ===================================================== -->
+
+        <aside class="schedule-interview-sidebar">
+
+            <!-- =================================================
+                 APPLICATION SUMMARY
+                 ================================================= -->
+
+            <div class="schedule-interview-sidebar-card">
+
+                <h3>
+                    Application Summary
+                </h3>
+
+                <div class="schedule-interview-summary">
+
+                    <div class="schedule-interview-summary-row">
+
+                        <span class="schedule-interview-summary-label">
+                            Applicant
+                        </span>
+
+                        <span class="schedule-interview-summary-value">
+                            @Model.ApplicantName
+                        </span>
+
+                    </div>
+
+                    <div class="schedule-interview-summary-row">
+
+                        <span class="schedule-interview-summary-label">
+                            Reference
+                        </span>
+
+                        <span class="schedule-interview-summary-value">
+                            @Model.ApplicationReference
+                        </span>
+
+                    </div>
+
+                    <div class="schedule-interview-summary-row">
+
+                        <span class="schedule-interview-summary-label">
+                            Opportunity
+                        </span>
+
+                        <span class="schedule-interview-summary-value">
+                            @Model.OpportunityTitle
+                        </span>
+
+                    </div>
+
+                    <div class="schedule-interview-summary-row">
+
+                        <span class="schedule-interview-summary-label">
+                            Current Status
+                        </span>
+
+                        <span class="schedule-interview-summary-value">
+                            @Model.ApplicationStatus
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 RECRUITMENT PROGRESS
+                 ================================================= -->
+
+            <div class="schedule-interview-sidebar-card">
+
+                <h3>
+                    Recruitment Progress
+                </h3>
+
+                <div class="schedule-interview-workflow">
+
+                    <!-- Application -->
+
+                    <div class="schedule-interview-workflow-step completed">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Application
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Application submitted and reviewed.
+                        </div>
+
+                    </div>
+
+                    <!-- Screening -->
+
+                    <div class="schedule-interview-workflow-step completed">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Screening
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Applicant screening completed.
+                        </div>
+
+                    </div>
+
+                    <!-- Assessment -->
+
+                    <div class="schedule-interview-workflow-step completed">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Assessment
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Applicant assessment completed.
+                        </div>
+
+                    </div>
+
+                    <!-- Interview -->
+
+                    <div class="schedule-interview-workflow-step current">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Interview
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Schedule the applicant's interview.
+                        </div>
+
+                    </div>
+
+                    <!-- Selection -->
+
+                    <div class="schedule-interview-workflow-step">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Selection
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Record the final interview outcome and selection decision.
+                        </div>
+
+                    </div>
+
+                    <!-- Final Verification -->
+
+                    <div class="schedule-interview-workflow-step">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Final Verification
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Verify the selected applicant before onboarding.
+                        </div>
+
+                    </div>
+
+                    <!-- Onboarding -->
+
+                    <div class="schedule-interview-workflow-step">
+
+                        <span class="schedule-interview-workflow-dot"></span>
+
+                        <div class="schedule-interview-workflow-title">
+                            Technician Onboarding
+                        </div>
+
+                        <div class="schedule-interview-workflow-description">
+                            Create the technician account after approval.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 WHAT HAPPENS NEXT
+                 ================================================= -->
+
+            <div class="schedule-interview-sidebar-card">
+
+                <h3>
+                    What Happens After Scheduling?
+                </h3>
+
+                <div class="schedule-interview-next-list">
+
+                    <div class="schedule-interview-next-item">
+
+                        <div class="schedule-interview-next-number">
+                            1
+                        </div>
+
+                        <div class="schedule-interview-next-text">
+
+                            <strong>
+                                Interview Scheduled
+                            </strong>
+
+                            <span>
+                                The application moves to Interview Scheduled.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-next-item">
+
+                        <div class="schedule-interview-next-number">
+                            2
+                        </div>
+
+                        <div class="schedule-interview-next-text">
+
+                            <strong>
+                                Conduct Interview
+                            </strong>
+
+                            <span>
+                                The applicant attends the scheduled interview.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="schedule-interview-next-item">
+
+                        <div class="schedule-interview-next-number">
+                            3
+                        </div>
+
+                        <div class="schedule-interview-next-text">
+
+                            <strong>
+                                Record Outcome
+                            </strong>
+
+                            <span>
+                                Record the interview result and comments.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================
+                 NAVIGATION
+                 ================================================= -->
+
+            <div class="schedule-interview-sidebar-card">
+
+                <h3>
+                    Navigation
+                </h3>
+
+                <div class="schedule-interview-navigation">
+
+                    <a href="@Url.Action(
+                                "Review",
+                                "TechnicianApplication",
+                                new
+                                {
+                                    id = Model.ApplicationID
+                                })">
+                        Application Review
+                    </a>
+
+                    <a href="@Url.Action(
+                                "ReviewApplications",
+                                "TechnicianApplication")">
+                        Review Applications
+                    </a>
+
+                    <a href="@Url.Action(
+                                "Index",
+                                "TechnicianApplication")">
+                        Technician Applications
+                    </a>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+

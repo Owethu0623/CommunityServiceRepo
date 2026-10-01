@@ -1,0 +1,920 @@
+﻿
+@model CommunityServiceProject.ViewModels.TechnicianApplicationDocumentVerificationViewModel
+
+@using CommunityServiceProject.Models
+@using System.Linq
+
+@{
+    ViewBag.Title = "Verify Applicant Documents";
+}
+
+<div class="document-verification-page">
+
+    <div class="document-verification-header">
+
+        <div>
+            <div class="page-kicker">
+                Applicant Document Verification
+            </div>
+
+            <h1>Verify Applicant Documents</h1>
+
+            <p>
+                Review each supporting document and record whether it is accepted
+                or rejected. All supporting documents must be accepted before
+                the applicant can proceed to screening.
+            </p>
+        </div>
+
+        <div class="application-reference">
+            @Model.ApplicationReference
+        </div>
+
+    </div>
+
+
+    <div class="application-summary">
+
+        <div class="summary-block">
+            <span class="summary-label">Applicant</span>
+            <strong>@Model.ApplicantName</strong>
+            <span>@Model.ApplicantEmail</span>
+        </div>
+
+        <div class="summary-block">
+            <span class="summary-label">Opportunity</span>
+            <strong>@Model.OpportunityCode</strong>
+            <span>@Model.OpportunityTitle</span>
+        </div>
+
+        <div class="summary-block">
+            <span class="summary-label">Application Status</span>
+
+            <span class="status-badge status-@Model.ApplicationStatus.ToString().ToLowerInvariant()">
+                @Model.ApplicationStatus
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="verification-summary">
+
+        <div class="verification-card">
+            <span>Total Documents</span>
+            <strong>@Model.TotalDocuments</strong>
+        </div>
+
+        <div class="verification-card pending">
+            <span>Pending</span>
+            <strong>@Model.PendingDocuments</strong>
+        </div>
+
+        <div class="verification-card accepted">
+            <span>Accepted</span>
+            <strong>@Model.AcceptedDocuments</strong>
+        </div>
+
+        <div class="verification-card rejected">
+            <span>Rejected</span>
+            <strong>@Model.RejectedDocuments</strong>
+        </div>
+
+    </div>
+
+
+    @if (Model.ApplicationStatus ==
+        TechnicianApplicationStatus.DocumentsVerified)
+    {
+        <div class="verification-success-banner">
+
+            <div>
+                <strong>All Supporting Documents Verified</strong>
+
+                <p>
+                    All submitted supporting documents have been accepted.
+                    This applicant is now ready for screening.
+                </p>
+            </div>
+
+            <a href="@Url.Action(
+                "Screen",
+                "TechnicianApplication",
+                new { id = Model.ApplicationID })"
+               class="primary-button">
+                Screen Applicant
+            </a>
+
+        </div>
+    }
+
+
+    <div class="verification-content">
+
+        <div class="documents-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2>Supporting Documents</h2>
+
+                    <p>
+                        Review each submitted document and record its verification
+                        result when appropriate.
+                    </p>
+                </div>
+            </div>
+
+
+            @if (Model.Documents.Any())
+            {
+                <div class="document-list">
+
+                    @foreach (var document in Model.Documents)
+                    {
+                        <div class="document-card">
+
+                            <div class="document-card-header">
+
+                                <div>
+                                    <span class="document-type">
+                                        @document.DocumentType
+                                    </span>
+
+                                    <h3>
+                                        @document.DocumentTitle
+                                    </h3>
+                                </div>
+
+                                <span class="verification-status
+                                    verification-@document.VerificationStatus.ToString().ToLowerInvariant()">
+
+                                    @document.VerificationStatus
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="document-details">
+
+                                <div class="document-detail">
+                                    <span>File Name</span>
+                                    <strong>
+                                        @document.FileName
+                                    </strong>
+                                </div>
+
+                                <div class="document-detail">
+                                    <span>File Type</span>
+                                    <strong>
+                                        @document.ContentType
+                                    </strong>
+                                </div>
+
+                                <div class="document-detail">
+                                    <span>File Size</span>
+                                    <strong>
+                                        @((document.FileSize / 1024.0 / 1024.0).ToString("0.##")) MB
+                                    </strong>
+                                </div>
+
+                                <div class="document-detail">
+                                    <span>Submitted</span>
+                                    <strong>
+                                        @document.DateSubmitted.ToString(
+                                            "dd MMM yyyy HH:mm")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                document.VerificationComments))
+                            {
+                                <div class="verification-comments">
+
+                                    <span>
+                                        Verification Comments
+                                    </span>
+
+                                    <p>
+                                        @document.VerificationComments
+                                    </p>
+
+                                </div>
+                            }
+
+
+                            @if (document.VerificationDate.HasValue)
+                            {
+                                <div class="verification-meta">
+
+                                    <span>
+                                        Verified on
+                                        @document.VerificationDate.Value.ToString(
+                                            "dd MMM yyyy HH:mm")
+                                    </span>
+
+                                    @if (!string.IsNullOrWhiteSpace(
+                                        document.VerifiedByAdministratorName))
+                                    {
+                                        <span>
+                                            by
+                                            @document.VerifiedByAdministratorName
+                                        </span>
+                                    }
+
+                                </div>
+                            }
+
+
+                            <div class="document-actions">
+
+                                <a href="@Url.Action(
+                                    "ViewApplicationDocument",
+                                    "TechnicianApplication",
+                                    new { id = document.ApplicationDocumentID })"
+                                   class="secondary-button"
+                                   target="_blank"
+                                   rel="noopener">
+                                    View Document
+                                </a>
+
+
+                                @if (document.CanRecordVerification &&
+                                     Model.ApplicationStatus !=
+                                     TechnicianApplicationStatus.DocumentsVerified)
+                                {
+                                    <a href="@Url.Action(
+                                        "RecordDocumentVerification",
+                                        "TechnicianApplication",
+                                        new { id = document.ApplicationDocumentID })"
+                                       class="primary-button">
+                                        Record Verification
+                                    </a>
+                                }
+                                else if (document.VerificationStatus ==
+                                         ApplicationDocumentVerificationStatus.Accepted)
+                                {
+                                    <span class="verification-complete">
+                                        Document Accepted
+                                    </span>
+                                }
+                                else if (document.VerificationStatus ==
+                                         ApplicationDocumentVerificationStatus.Rejected)
+                                {
+                                    <span class="verification-complete">
+                                        Verification Recorded
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="verification-complete">
+                                        Verification Recorded
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h3>No Supporting Documents Submitted</h3>
+
+                    <p>
+                        This applicant has not submitted any supporting documents
+                        for this application.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+
+        <aside class="verification-sidebar">
+
+            <div class="sidebar-card">
+
+                <h2>Verification Process</h2>
+
+                <p>
+                    Each submitted document should be reviewed before a
+                    verification result is recorded.
+                </p>
+
+
+                <div class="process-step">
+
+                    <span>1</span>
+
+                    <div>
+                        <strong>Review</strong>
+
+                        <p>
+                            Open and inspect the submitted document.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>2</span>
+
+                    <div>
+                        <strong>Record Result</strong>
+
+                        <p>
+                            Record whether the document is accepted or rejected.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>3</span>
+
+                    <div>
+                        <strong>Continue to Screening</strong>
+
+                        <p>
+                            Once all documents are accepted, the applicant can
+                            proceed to screening.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-card notice-card">
+
+                <h2>Verification Guidance</h2>
+
+                <p>
+                    Document verification should be based on the submitted
+                    document and the requirements defined for the opportunity.
+                </p>
+
+                <p>
+                    Opening a document does not automatically change its
+                    verification status.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <div class="page-navigation">
+
+        <a href="@Url.Action(
+            "Review",
+            "TechnicianApplication",
+            new { id = Model.ApplicationID })"
+           class="secondary-button">
+            Back to Application Review
+        </a>
+
+        <a href="@Url.Action(
+            "ReviewApplications",
+            "TechnicianApplication")"
+           class="secondary-button">
+            Back to Applications
+        </a>
+
+        <a href="@Url.Action(
+            "Manage",
+            "TechnicianOpportunity")"
+           class="secondary-button">
+            Opportunity Management
+        </a>
+
+        <a href="@Url.Action(
+            "Index",
+            "AdministratorDashboard")"
+           class="secondary-button">
+            Administrator Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .document-verification-page {
+        max-width: 1450px;
+        margin: 35px auto;
+        padding: 0 24px 50px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .document-verification-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: white;
+        border-radius: 14px;
+        padding: 30px 34px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 22px;
+    }
+
+    .page-kicker {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: .85;
+        margin-bottom: 8px;
+    }
+
+    .document-verification-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+    }
+
+    .document-verification-header p {
+        margin: 0;
+        max-width: 760px;
+        line-height: 1.6;
+        opacity: .94;
+    }
+
+    .application-reference {
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.3);
+        border-radius: 9px;
+        padding: 14px 18px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .application-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr 220px;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .summary-block {
+        background: white;
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    }
+
+        .summary-block span {
+            display: block;
+            color: #687384;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .summary-block strong {
+            display: block;
+            color: #1d2939;
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+    .summary-label {
+        text-transform: uppercase;
+        font-size: 11px !important;
+        font-weight: 700;
+        letter-spacing: .6px;
+        color: #0D5CC1 !important;
+        margin-bottom: 9px;
+    }
+
+    .verification-summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .verification-card {
+        background: white;
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+        .verification-card span {
+            display: block;
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .verification-card strong {
+            font-size: 27px;
+            color: #1d2939;
+        }
+
+        .verification-card.pending {
+            border-left: 4px solid #d89b00;
+        }
+
+        .verification-card.accepted {
+            border-left: 4px solid #238636;
+        }
+
+        .verification-card.rejected {
+            border-left: 4px solid #c62828;
+        }
+
+    .verification-success-banner {
+        background: #eaf7ee;
+        border: 1px solid #b9dfc2;
+        border-left: 5px solid #238636;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+        .verification-success-banner strong {
+            display: block;
+            color: #176b2c;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .verification-success-banner p {
+            margin: 0;
+            color: #47604d;
+            line-height: 1.5;
+        }
+
+    .verification-content {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 330px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .documents-panel,
+    .sidebar-card {
+        background: white;
+        border: 1px solid #dfe5ec;
+        border-radius: 14px;
+        box-shadow: 0 3px 14px rgba(0,0,0,.04);
+    }
+
+    .panel-header {
+        padding: 24px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+        .panel-header h2,
+        .sidebar-card h2 {
+            margin: 0 0 7px;
+            color: #1d2939;
+            font-size: 21px;
+        }
+
+        .panel-header p,
+        .sidebar-card > p {
+            margin: 0;
+            color: #667085;
+            line-height: 1.6;
+        }
+
+    .document-list {
+        padding: 20px;
+        display: grid;
+        gap: 18px;
+    }
+
+    .document-card {
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        padding: 21px;
+        background: #fbfcfe;
+    }
+
+    .document-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 18px;
+    }
+
+    .document-type {
+        display: inline-block;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 6px;
+    }
+
+    .document-card h3 {
+        margin: 0;
+        color: #1d2939;
+        font-size: 18px;
+    }
+
+    .verification-status,
+    .status-badge {
+        display: inline-block;
+        padding: 7px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .verification-pending {
+        background: #fff4d6;
+        color: #8a5a00;
+    }
+
+    .verification-accepted {
+        background: #e8f6ec;
+        color: #176b2c;
+    }
+
+    .verification-rejected {
+        background: #fdeaea;
+        color: #a32121;
+    }
+
+    .status-submitted,
+    .status-underreview,
+    .status-screening,
+    .status-documentspending {
+        background: #eaf2ff;
+        color: #0D5CC1;
+    }
+
+    .status-documentsverified,
+    .status-shortlisted {
+        background: #e8f6ec;
+        color: #176b2c;
+    }
+
+    .document-details {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        border-top: 1px solid #e5e9ef;
+        border-bottom: 1px solid #e5e9ef;
+        padding: 16px 0;
+        gap: 18px;
+    }
+
+    .document-detail span,
+    .verification-comments > span {
+        display: block;
+        color: #667085;
+        font-size: 12px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+    }
+
+    .document-detail strong {
+        color: #344054;
+        font-size: 14px;
+        word-break: break-word;
+    }
+
+    .verification-comments {
+        padding: 15px 0 4px;
+    }
+
+        .verification-comments p {
+            margin: 0;
+            color: #475467;
+            line-height: 1.6;
+        }
+
+    .verification-meta {
+        display: flex;
+        gap: 5px;
+        color: #667085;
+        font-size: 13px;
+        margin-top: 12px;
+    }
+
+    .document-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        transition: .2s ease;
+        cursor: pointer;
+    }
+
+    .primary-button {
+        background: #0D5CC1;
+        color: white;
+        border: 1px solid #0D5CC1;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .secondary-button {
+        background: white;
+        color: #344054;
+        border: 1px solid #cfd6df;
+    }
+
+        .secondary-button:hover {
+            background: #f4f7fa;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+    .verification-complete {
+        padding: 10px 15px;
+        border-radius: 7px;
+        background: #edf7ef;
+        color: #237a35;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .verification-sidebar {
+        display: grid;
+        gap: 18px;
+    }
+
+    .sidebar-card {
+        padding: 22px;
+    }
+
+    .process-step {
+        display: flex;
+        gap: 12px;
+        padding: 17px 0;
+        border-bottom: 1px solid #e8ebef;
+    }
+
+        .process-step:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .process-step > span {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border-radius: 50%;
+            background: #eaf2ff;
+            color: #0D5CC1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .process-step strong {
+            color: #344054;
+            font-size: 14px;
+        }
+
+        .process-step p {
+            margin: 4px 0 0;
+            color: #667085;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+
+    .notice-card {
+        background: #f8fbff;
+        border-color: #cfe0f7;
+    }
+
+        .notice-card p + p {
+            margin-top: 12px;
+        }
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+        .empty-state h3 {
+            margin: 0 0 8px;
+            color: #344054;
+        }
+
+        .empty-state p {
+            margin: 0;
+            color: #667085;
+        }
+
+    .page-navigation {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    @@media (max-width: 1050px) {
+
+        .application-summary {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .verification-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .verification-content {
+            grid-template-columns: 1fr;
+        }
+
+        .document-details {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 700px) {
+
+        .document-verification-page {
+            padding: 0 14px 35px;
+            margin-top: 20px;
+        }
+
+        .document-verification-header {
+            padding: 24px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .application-summary,
+        .verification-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .document-card-header {
+            flex-direction: column;
+        }
+
+        .document-details {
+            grid-template-columns: 1fr;
+        }
+
+        .document-actions {
+            justify-content: flex-start;
+        }
+
+        .verification-success-banner {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-navigation {
+            flex-direction: column;
+        }
+
+            .page-navigation .secondary-button {
+                text-align: center;
+            }
+    }
+</style>
+

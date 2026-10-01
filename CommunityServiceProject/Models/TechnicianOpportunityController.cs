@@ -11,9 +11,7 @@ namespace CommunityServiceProject.Controllers
     {
         private readonly Community db = new Community();
 
-        // ============================================================
-        // US105 - VIEW TECHNICIAN OPPORTUNITIES
-        // ============================================================
+        
 
         [HttpGet]
         public ActionResult Index(
@@ -27,7 +25,6 @@ namespace CommunityServiceProject.Controllers
                 .AsNoTracking()
                 .Where(o =>
                     o.Status == TechnicianOpportunityStatus.Published &&
-                    o.ApplicationStartDate <= today &&
                     o.ApplicationDeadline >= today);
 
             // --------------------------------------------------------
@@ -65,29 +62,39 @@ namespace CommunityServiceProject.Controllers
             switch (closingFilter)
             {
                 case "7":
+
                     query = query.Where(o =>
+                        o.ApplicationStartDate <= today &&
                         DbFunctions.DiffDays(
                             today,
                             o.ApplicationDeadline) <= 7);
+
                     break;
 
                 case "14":
+
                     query = query.Where(o =>
+                        o.ApplicationStartDate <= today &&
                         DbFunctions.DiffDays(
                             today,
                             o.ApplicationDeadline) <= 14);
+
                     break;
 
                 case "30":
+
                     query = query.Where(o =>
+                        o.ApplicationStartDate <= today &&
                         DbFunctions.DiffDays(
                             today,
                             o.ApplicationDeadline) <= 30);
+
                     break;
             }
 
             var opportunities = query
-                .OrderBy(o => o.ApplicationDeadline)
+                .OrderBy(o => o.ApplicationStartDate > today)
+                .ThenBy(o => o.ApplicationDeadline)
                 .ThenBy(o => o.Title)
                 .ToList();
 
@@ -103,8 +110,14 @@ namespace CommunityServiceProject.Controllers
             foreach (var opportunity in opportunities)
             {
                 var daysRemaining =
-                    (opportunity.ApplicationDeadline.Date -
-                     today).Days;
+                    (opportunity.ApplicationDeadline.Date - today).Days;
+
+                var isUpcoming =
+                    opportunity.ApplicationStartDate.Date > today;
+
+                var isOpenForApplications =
+                    !isUpcoming &&
+                    opportunity.ApplicationDeadline.Date >= today;
 
                 model.Opportunities.Add(
                     new TechnicianOpportunityListItemViewModel
@@ -140,10 +153,7 @@ namespace CommunityServiceProject.Controllers
                             opportunity.Status,
 
                         IsOpenForApplications =
-                            opportunity.Status ==
-                            TechnicianOpportunityStatus.Published &&
-                            opportunity.ApplicationStartDate.Date <= today &&
-                            opportunity.ApplicationDeadline.Date >= today,
+                            isOpenForApplications,
 
                         DaysRemaining =
                             Math.Max(0, daysRemaining)
@@ -613,28 +623,20 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(
-     int id,
-     TechnicianOpportunityCreateViewModel model)
+        [HttpGet]
+        public ActionResult Edit(int? id)
         {
             if (!IsAdministrator())
                 return new HttpUnauthorizedResult();
 
-            if (model == null)
+            if (!id.HasValue)
                 return HttpNotFound();
-
-            var administratorID =
-                GetAdministratorID();
-
-            if (!administratorID.HasValue)
-                return new HttpUnauthorizedResult();
 
             var opportunity =
                 db.TechnicianOpportunities
+                    .AsNoTracking()
                     .FirstOrDefault(
-                        o => o.OpportunityID == id
+                        o => o.OpportunityID == id.Value
                     );
 
             if (opportunity == null)
@@ -651,91 +653,45 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Manage");
             }
 
-            model.Title = model.Title?.Trim();
-            model.Description = model.Description?.Trim();
-            model.Responsibilities = model.Responsibilities?.Trim();
-            model.Requirements = model.Requirements?.Trim();
-            model.RequiredQualifications =
-                model.RequiredQualifications?.Trim();
-            model.RequiredExperience =
-                model.RequiredExperience?.Trim();
-            model.ApplicationInstructions =
-                model.ApplicationInstructions?.Trim();
-            model.EmploymentType =
-                model.EmploymentType?.Trim();
+            var model =
+                new TechnicianOpportunityCreateViewModel
+                {
+                    Title = opportunity.Title,
+                    Description = opportunity.Description,
+                    Responsibilities = opportunity.Responsibilities,
+                    Requirements = opportunity.Requirements,
+                    RequiredQualifications =
+                        opportunity.RequiredQualifications,
+                    RequiredExperience =
+                        opportunity.RequiredExperience,
+                    ApplicationInstructions =
+                        opportunity.ApplicationInstructions,
+                    EmploymentType =
+                        opportunity.EmploymentType,
+                    NumberOfPositions =
+                        opportunity.NumberOfPositions,
+                    ApplicationStartDate =
+                        opportunity.ApplicationStartDate,
+                    ApplicationDeadline =
+                        opportunity.ApplicationDeadline
+                };
 
-            var today = DateTime.Today;
+            ViewBag.OpportunityID =
+                opportunity.OpportunityID;
 
-            if (opportunity.Status ==
-                TechnicianOpportunityStatus.Draft &&
-                model.ApplicationStartDate.Date < today)
-            {
-                ModelState.AddModelError(
-                    "ApplicationStartDate",
-                    "The application start date cannot be in the past."
-                );
-            }
+            ViewBag.OpportunityCode =
+                opportunity.OpportunityCode;
 
-            if (model.ApplicationDeadline.Date <=
-                model.ApplicationStartDate.Date)
-            {
-                ModelState.AddModelError(
-                    "ApplicationDeadline",
-                    "The application deadline must be after the application start date."
-                );
-            }
+            ViewBag.CurrentStatus =
+                opportunity.Status.ToString();
 
-            if (!ModelState.IsValid)
-            {
-                ViewBag.OpportunityID = id;
-                ViewBag.OpportunityCode =
-                    opportunity.OpportunityCode;
-                ViewBag.CurrentStatus =
-                    opportunity.Status.ToString();
-
-                return View(model);
-            }
-
-            opportunity.Title = model.Title;
-            opportunity.Description = model.Description;
-            opportunity.Responsibilities =
-                model.Responsibilities;
-            opportunity.Requirements =
-                model.Requirements;
-            opportunity.RequiredQualifications =
-                model.RequiredQualifications;
-            opportunity.RequiredExperience =
-                model.RequiredExperience;
-            opportunity.ApplicationInstructions =
-                model.ApplicationInstructions;
-            opportunity.EmploymentType =
-                model.EmploymentType;
-            opportunity.NumberOfPositions =
-                model.NumberOfPositions;
-            opportunity.ApplicationStartDate =
-                model.ApplicationStartDate.Date;
-            opportunity.ApplicationDeadline =
-                model.ApplicationDeadline.Date;
-
-            opportunity.LastUpdatedDate =
-                DateTime.Now;
-
-            opportunity.LastUpdatedByAdministratorID =
-                administratorID.Value;
-
-            db.SaveChanges();
-
-            TempData["SuccessMessage"] =
-                "Technician opportunity has been updated successfully.";
-
-            return RedirectToAction(
-                "Manage"
-            );
+            return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditPost(
+        public ActionResult Edit(
     int id,
     TechnicianOpportunityCreateViewModel model)
         {
@@ -771,16 +727,27 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Manage");
             }
 
-            model.Title = model.Title?.Trim();
-            model.Description = model.Description?.Trim();
-            model.Responsibilities = model.Responsibilities?.Trim();
-            model.Requirements = model.Requirements?.Trim();
+            model.Title =
+                model.Title?.Trim();
+
+            model.Description =
+                model.Description?.Trim();
+
+            model.Responsibilities =
+                model.Responsibilities?.Trim();
+
+            model.Requirements =
+                model.Requirements?.Trim();
+
             model.RequiredQualifications =
                 model.RequiredQualifications?.Trim();
+
             model.RequiredExperience =
                 model.RequiredExperience?.Trim();
+
             model.ApplicationInstructions =
                 model.ApplicationInstructions?.Trim();
+
             model.EmploymentType =
                 model.EmploymentType?.Trim();
 
@@ -807,33 +774,48 @@ namespace CommunityServiceProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.OpportunityID = id;
+                ViewBag.OpportunityID =
+                    id;
+
                 ViewBag.OpportunityCode =
                     opportunity.OpportunityCode;
+
                 ViewBag.CurrentStatus =
                     opportunity.Status.ToString();
 
                 return View(model);
             }
 
-            opportunity.Title = model.Title;
-            opportunity.Description = model.Description;
+            opportunity.Title =
+                model.Title;
+
+            opportunity.Description =
+                model.Description;
+
             opportunity.Responsibilities =
                 model.Responsibilities;
+
             opportunity.Requirements =
                 model.Requirements;
+
             opportunity.RequiredQualifications =
                 model.RequiredQualifications;
+
             opportunity.RequiredExperience =
                 model.RequiredExperience;
+
             opportunity.ApplicationInstructions =
                 model.ApplicationInstructions;
+
             opportunity.EmploymentType =
                 model.EmploymentType;
+
             opportunity.NumberOfPositions =
                 model.NumberOfPositions;
+
             opportunity.ApplicationStartDate =
                 model.ApplicationStartDate.Date;
+
             opportunity.ApplicationDeadline =
                 model.ApplicationDeadline.Date;
 
@@ -848,9 +830,7 @@ namespace CommunityServiceProject.Controllers
             TempData["SuccessMessage"] =
                 "Technician opportunity has been updated successfully.";
 
-            return RedirectToAction(
-                "Manage"
-            );
+            return RedirectToAction("Manage");
         }
 
         [HttpPost]

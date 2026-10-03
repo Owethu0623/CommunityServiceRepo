@@ -1,0 +1,1379 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Payment>
+
+@{
+    ViewBag.Title = "All Payments";
+
+    var payments = Model != null
+        ? Model.ToList()
+        : new List<CommunityServiceProject.Models.Payment>();
+
+    var totalPayments = payments.Count;
+
+    var pendingCount = payments.Count(p =>
+        p.Status == CommunityServiceProject.Models.PaymentStatus.Pending);
+
+    var processingCount = payments.Count(p =>
+        p.Status == CommunityServiceProject.Models.PaymentStatus.Processing);
+
+    var successfulCount = payments.Count(p =>
+        p.Status == CommunityServiceProject.Models.PaymentStatus.Successful);
+
+    var failedCount = payments.Count(p =>
+        p.Status == CommunityServiceProject.Models.PaymentStatus.Failed);
+
+    var totalSuccessfulAmount = payments
+        .Where(p => p.Status == CommunityServiceProject.Models.PaymentStatus.Successful)
+        .Sum(p => p.Amount);
+
+    var totalFailedAmount = payments
+        .Where(p => p.Status == CommunityServiceProject.Models.PaymentStatus.Failed)
+        .Sum(p => p.Amount);
+}
+
+<div class="all-payments-page">
+
+    <div class="all-payments-shell">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <div class="all-payments-header">
+
+            <div>
+
+                <div class="all-payments-kicker">
+                    FINANCE • PAYMENT REGISTER
+                </div>
+
+                <h1>All Payments</h1>
+
+                <p>
+                    View and monitor all payment transactions recorded by
+                    the municipality, including pending, processing,
+                    successful and failed payments.
+                </p>
+
+            </div>
+
+            <div class="all-payments-header-actions">
+
+                <a href="@Url.Action("Index", "FinancePayment")"
+                   class="payment-back-button">
+
+                    <span class="back-arrow">←</span>
+                    Payment Verification
+
+                </a>
+
+                <a href="@Url.Action("Index", "FinanceDashboard")"
+                   class="payment-dashboard-button">
+
+                    Finance Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SUMMARY CARDS
+             ===================================================== -->
+
+        <div class="payment-summary-grid">
+
+            <div class="payment-summary-card">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">
+                        TOTAL PAYMENTS
+                    </span>
+
+                    <span class="summary-icon summary-icon-total">
+                        #
+                    </span>
+                </div>
+
+                <strong class="summary-number">
+                    @totalPayments
+                </strong>
+
+                <span class="summary-description">
+                    All recorded transactions
+                </span>
+
+            </div>
+
+
+            <div class="payment-summary-card">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">
+                        PROCESSING
+                    </span>
+
+                    <span class="summary-icon summary-icon-processing">
+                        ◌
+                    </span>
+                </div>
+
+                <strong class="summary-number">
+                    @processingCount
+                </strong>
+
+                <span class="summary-description">
+                    Awaiting verification
+                </span>
+
+            </div>
+
+
+            <div class="payment-summary-card">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">
+                        SUCCESSFUL
+                    </span>
+
+                    <span class="summary-icon summary-icon-success">
+                        ✓
+                    </span>
+                </div>
+
+                <strong class="summary-number">
+                    @successfulCount
+                </strong>
+
+                <span class="summary-description">
+                    R @totalSuccessfulAmount.ToString("N2") recorded
+                </span>
+
+            </div>
+
+
+            <div class="payment-summary-card">
+
+                <div class="summary-card-top">
+                    <span class="summary-label">
+                        FAILED
+                    </span>
+
+                    <span class="summary-icon summary-icon-failed">
+                        !
+                    </span>
+                </div>
+
+                <strong class="summary-number">
+                    @failedCount
+                </strong>
+
+                <span class="summary-description">
+                    R @totalFailedAmount.ToString("N2") unsuccessful
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             REGISTER CARD
+             ===================================================== -->
+
+        <div class="payment-register-card">
+
+            <div class="payment-register-header">
+
+                <div>
+
+                    <div class="register-kicker">
+                        PAYMENT TRANSACTIONS
+                    </div>
+
+                    <h2>Payment Register</h2>
+
+                    <p>
+                        A complete record of payments submitted through
+                        the municipal payment workflow.
+                    </p>
+
+                </div>
+
+                <div class="register-count">
+
+                    <strong>
+                        @totalPayments
+                    </strong>
+
+                    <span>
+                        Transactions
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STATUS LEGEND
+                 ================================================= -->
+
+            <div class="payment-status-legend">
+
+                <div class="legend-item">
+                    <span class="legend-dot legend-dot-pending"></span>
+                    Pending
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot legend-dot-processing"></span>
+                    Processing
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot legend-dot-successful"></span>
+                    Successful
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot legend-dot-failed"></span>
+                    Failed
+                </div>
+
+            </div>
+
+
+            @if (payments.Any())
+            {
+                <div class="payment-register-table-wrapper">
+
+                    <table class="payment-register-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Transaction
+                                </th>
+
+                                <th>
+                                    Invoice
+                                </th>
+
+                                <th>
+                                    Citizen
+                                </th>
+
+                                <th>
+                                    Service
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Payment Date
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Receipt
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var payment in payments)
+                            {
+                                var receipt =
+                                    payment.Receipts != null
+                                        ? payment.Receipts.FirstOrDefault()
+                                        : null;
+
+                                var statusClass =
+                                    payment.Status ==
+                                        CommunityServiceProject.Models.PaymentStatus.Pending
+                                        ? "status-pending"
+                                        :
+                                    payment.Status ==
+                                        CommunityServiceProject.Models.PaymentStatus.Processing
+                                        ? "status-processing"
+                                        :
+                                    payment.Status ==
+                                        CommunityServiceProject.Models.PaymentStatus.Successful
+                                        ? "status-successful"
+                                        : "status-failed";
+
+                                var serviceName =
+                                    payment.Invoice != null &&
+                                    payment.Invoice.FeeSchedule != null &&
+                                    payment.Invoice.FeeSchedule.ServiceType != null
+                                        ? payment.Invoice.FeeSchedule.ServiceType.ServiceName
+                                        : "Municipal Service";
+
+                                <tr>
+
+                                    <!-- TRANSACTION -->
+
+                                    <td>
+
+                                        <div class="transaction-cell">
+
+                                            <span class="transaction-reference">
+                                                @payment.TransactionReference
+                                            </span>
+
+                                            <small>
+                                                Payment #@payment.PaymentID
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- INVOICE -->
+
+                                    <td>
+
+                                        @if (payment.Invoice != null)
+                                        {
+                                            <span class="invoice-number">
+                                                @payment.Invoice.InvoiceNumber
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="muted-value">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- CITIZEN -->
+
+                                    <td>
+
+                                        @if (payment.Citizen != null)
+                                        {
+                                            <div class="citizen-cell">
+
+                                                <strong>
+                                                    @payment.Citizen.FirstName
+                                                    @payment.Citizen.LastName
+                                                </strong>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="muted-value">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- SERVICE -->
+
+                                    <td>
+
+                                        <span class="service-name">
+                                            @serviceName
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- AMOUNT -->
+
+                                    <td>
+
+                                        <strong class="amount-value">
+                                            R @payment.Amount.ToString("N2")
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- PAYMENT DATE -->
+
+                                    <td>
+
+                                        <div class="date-cell">
+
+                                            <strong>
+                                                @payment.PaymentDate.ToString("dd MMM yyyy")
+                                            </strong>
+
+                                            <small>
+                                                @payment.PaymentDate.ToString("HH:mm")
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        <span class="payment-status @statusClass">
+
+                                            @if (payment.Status ==
+                                                CommunityServiceProject.Models.PaymentStatus.Pending)
+                                            {
+                                                <span class="status-symbol">○</span>
+                                                <span>Pending</span>
+                                            }
+                                            else if (payment.Status ==
+                                                CommunityServiceProject.Models.PaymentStatus.Processing)
+                                            {
+                                                <span class="status-symbol">◌</span>
+                                                <span>Processing</span>
+                                            }
+                                            else if (payment.Status ==
+                                                CommunityServiceProject.Models.PaymentStatus.Successful)
+                                            {
+                                                <span class="status-symbol">✓</span>
+                                                <span>Successful</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-symbol">!</span>
+                                                <span>Failed</span>
+                                            }
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- RECEIPT -->
+
+                                    <td>
+
+                                        @if (payment.Status ==
+                                            CommunityServiceProject.Models.PaymentStatus.Successful)
+                                        {
+                                            if (receipt != null)
+                                            {
+                                                <span class="receipt-status receipt-created">
+                                                    ✓ Available
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="receipt-status receipt-not-created">
+                                                    Not Generated
+                                                </span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="receipt-status receipt-not-applicable">
+                                                —
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- ACTION -->
+
+                                    <td>
+
+                                        @if (payment.Status ==
+                                            CommunityServiceProject.Models.PaymentStatus.Processing)
+                                        {
+                                            <a href="@Url.Action("Review", "FinancePayment", new { id = payment.PaymentID })"
+                                               class="payment-action payment-action-review">
+
+                                                Review
+
+                                            </a>
+                                        }
+                                        else if (payment.Status ==
+                                            CommunityServiceProject.Models.PaymentStatus.Successful)
+                                        {
+                                            if (receipt != null)
+                                            {
+                                                <a href="@Url.Action("GenerateReceipt", "FinancePayment", new { id = payment.PaymentID })"
+                                                   class="payment-action payment-action-receipt">
+
+                                                    View Receipt
+
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("GenerateReceipt", "FinancePayment", new { id = payment.PaymentID })"
+                                                   class="payment-action payment-action-generate">
+
+                                                    Generate Receipt
+
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="no-payment-action">
+                                                No Action
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="payment-empty-state">
+
+                    <div class="empty-payment-icon">
+                        $
+                    </div>
+
+                    <h3>
+                        No Payments Recorded
+                    </h3>
+
+                    <p>
+                        There are currently no payment transactions
+                        available in the payment register.
+                    </p>
+
+                    <a href="@Url.Action("Index", "FinancePayment")"
+                       class="empty-back-button">
+                        ← Back to Payment Verification
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             INFORMATION NOTICE
+             ===================================================== -->
+
+        <div class="payment-register-notice">
+
+            <div class="notice-icon">
+                i
+            </div>
+
+            <div>
+
+                <strong>
+                    Payment Register Information
+                </strong>
+
+                <p>
+                    Successful payments may have an associated official
+                    receipt. Receipts are available only for payments
+                    that have been successfully verified by the Finance Office.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             BOTTOM NAVIGATION
+             ===================================================== -->
+
+        <div class="payment-bottom-navigation">
+
+            <a href="@Url.Action("Index", "FinancePayment")"
+               class="bottom-back-link">
+
+                <span class="bottom-arrow">
+                    ←
+                </span>
+
+                Back to Payment Verification
+
+            </a>
+
+            <a href="@Url.Action("Index", "FinanceDashboard")"
+               class="bottom-dashboard-link">
+
+                Finance Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .all-payments-page {
+        min-height: 100vh;
+        padding: 38px 27px 60px;
+        background: #f4f6f9;
+    }
+
+    .all-payments-shell {
+        width: min(1450px, 100%);
+        margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .all-payments-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 25px;
+    }
+
+    .all-payments-kicker,
+    .register-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .all-payments-header h1 {
+        margin: 7px 0 7px;
+        color: #172033;
+        font-size: 31px;
+        font-weight: 850;
+    }
+
+    .all-payments-header p {
+        max-width: 800px;
+        margin: 0;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .all-payments-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .payment-back-button,
+    .payment-dashboard-button,
+    .empty-back-button,
+    .bottom-back-link,
+    .bottom-dashboard-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .payment-back-button {
+        background: #ffffff;
+        border: 1px solid #d7dde6;
+        color: #344054;
+    }
+
+    .payment-back-button:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .payment-dashboard-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+    .payment-dashboard-button:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .back-arrow {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+
+    /* =========================================================
+       SUMMARY CARDS
+       ========================================================= */
+
+    .payment-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .payment-summary-card {
+        min-height: 135px;
+        padding: 19px;
+        background: #ffffff;
+        border: 1px solid #e1e6ec;
+        border-radius: 13px;
+        box-shadow: 0 6px 20px rgba(20, 29, 44, .05);
+    }
+
+    .summary-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }
+
+    .summary-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 31px;
+        height: 31px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+    .summary-icon-total {
+        background: #eef4fc;
+        color: #0D5CC1;
+    }
+
+    .summary-icon-processing {
+        background: #fff7e6;
+        color: #9a6700;
+    }
+
+    .summary-icon-success {
+        background: #ecfdf3;
+        color: #176b42;
+    }
+
+    .summary-icon-failed {
+        background: #fff1f0;
+        color: #b42318;
+    }
+
+    .summary-number {
+        display: block;
+        margin-top: 14px;
+        color: #172033;
+        font-size: 27px;
+        line-height: 1;
+        font-weight: 850;
+    }
+
+    .summary-description {
+        display: block;
+        margin-top: 8px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+
+    /* =========================================================
+       REGISTER
+       ========================================================= */
+
+    .payment-register-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e1e6ec;
+        border-radius: 15px;
+        box-shadow: 0 8px 28px rgba(20, 29, 44, .06);
+    }
+
+    .payment-register-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        padding: 23px 25px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .payment-register-header h2 {
+        margin: 6px 0 5px;
+        color: #172033;
+        font-size: 20px;
+        font-weight: 850;
+    }
+
+    .payment-register-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .register-count {
+        min-width: 105px;
+        padding: 10px 14px;
+        border: 1px solid #dce7f5;
+        border-radius: 9px;
+        background: #f5f8fc;
+        text-align: center;
+    }
+
+    .register-count strong {
+        display: block;
+        color: #0D5CC1;
+        font-size: 21px;
+        font-weight: 900;
+    }
+
+    .register-count span {
+        color: #667085;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+
+    /* =========================================================
+       STATUS LEGEND
+       ========================================================= */
+
+    .payment-status-legend {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 13px 25px;
+        border-bottom: 1px solid #edf0f3;
+        background: #fafbfc;
+    }
+
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: #667085;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .legend-dot-pending {
+        background: #98a2b3;
+    }
+
+    .legend-dot-processing {
+        background: #d48b00;
+    }
+
+    .legend-dot-successful {
+        background: #16844c;
+    }
+
+    .legend-dot-failed {
+        background: #c43228;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .payment-register-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .payment-register-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1180px;
+    }
+
+    .payment-register-table th {
+        padding: 13px 16px;
+        border-bottom: 1px solid #e7ebf0;
+        background: #ffffff;
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-align: left;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .payment-register-table td {
+        padding: 16px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 12px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .payment-register-table tbody tr:hover {
+        background: #fbfcfe;
+    }
+
+    .payment-register-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* =========================================================
+       TABLE CONTENT
+       ========================================================= */
+
+    .transaction-cell small,
+    .date-cell small {
+        display: block;
+        margin-top: 3px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .transaction-reference {
+        color: #0D5CC1;
+        font-weight: 850;
+    }
+
+    .invoice-number {
+        color: #344054;
+        font-weight: 750;
+    }
+
+    .citizen-cell strong {
+        color: #253044;
+        font-weight: 800;
+    }
+
+    .service-name {
+        color: #506071;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .amount-value {
+        color: #172033;
+        font-size: 13px;
+        font-weight: 850;
+    }
+
+    .date-cell strong {
+        color: #344054;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .muted-value {
+        color: #98a2b3;
+    }
+
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .payment-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 27px;
+        padding: 0 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 850;
+    }
+
+    .status-symbol {
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .status-pending {
+        background: #f2f4f7;
+        border: 1px solid #dfe3e8;
+        color: #667085;
+    }
+
+    .status-processing {
+        background: #fff7e6;
+        border: 1px solid #f1d79d;
+        color: #956700;
+    }
+
+    .status-successful {
+        background: #ecfdf3;
+        border: 1px solid #bee5ce;
+        color: #176b42;
+    }
+
+    .status-failed {
+        background: #fff1f0;
+        border: 1px solid #f0c4c0;
+        color: #b42318;
+    }
+
+
+    /* =========================================================
+       RECEIPTS
+       ========================================================= */
+
+    .receipt-status {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        padding: 0 8px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .receipt-created {
+        color: #176b42;
+        background: #ecfdf3;
+        border: 1px solid #bee5ce;
+    }
+
+    .receipt-not-created {
+        color: #667085;
+        background: #f5f6f8;
+        border: 1px solid #e1e4e8;
+    }
+
+    .receipt-not-applicable {
+        color: #98a2b3;
+        background: transparent;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .payment-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 0 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 850;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .payment-action-review {
+        background: #eef4fc;
+        border: 1px solid #d5e3f6;
+        color: #0D5CC1;
+    }
+
+    .payment-action-review:hover {
+        background: #e1ecfa;
+        color: #083f8a;
+        text-decoration: none;
+    }
+
+    .payment-action-receipt {
+        background: #ecfdf3;
+        border: 1px solid #c5e8d3;
+        color: #176b42;
+    }
+
+    .payment-action-receipt:hover {
+        background: #ddf8e9;
+        color: #125735;
+        text-decoration: none;
+    }
+
+    .payment-action-generate {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+    .payment-action-generate:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .no-payment-action {
+        color: #98a2b3;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .payment-empty-state {
+        padding: 70px 25px;
+        text-align: center;
+    }
+
+    .empty-payment-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 15px;
+        border: 1px solid #d8e4f1;
+        border-radius: 50%;
+        background: #eef4fc;
+        color: #0D5CC1;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .payment-empty-state h3 {
+        margin: 0 0 6px;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 850;
+    }
+
+    .payment-empty-state p {
+        max-width: 500px;
+        margin: 0 auto 20px;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .empty-back-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+    .empty-back-button:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       NOTICE
+       ========================================================= */
+
+    .payment-register-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 18px;
+        padding: 16px 18px;
+        border: 1px solid #dbe5f0;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .notice-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 25px;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #eaf2fb;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .payment-register-notice strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+    .payment-register-notice p {
+        margin: 0;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       BOTTOM NAVIGATION
+       ========================================================= */
+
+    .payment-bottom-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .bottom-back-link {
+        background: #ffffff;
+        border: 1px solid #d7dde6;
+        color: #344054;
+    }
+
+    .bottom-back-link:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .bottom-dashboard-link {
+        background: #eef4fc;
+        border: 1px solid #d5e3f6;
+        color: #0D5CC1;
+    }
+
+    .bottom-dashboard-link:hover {
+        background: #e3edf9;
+        color: #083f8a;
+        text-decoration: none;
+    }
+
+    .bottom-arrow {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1050px) {
+
+        .payment-summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+    @@media (max-width: 850px) {
+
+        .all-payments-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .all-payments-header-actions {
+            width: 100%;
+        }
+
+    }
+
+    @@media (max-width: 620px) {
+
+        .all-payments-page {
+            padding: 22px 13px 40px;
+        }
+
+        .all-payments-header h1 {
+            font-size: 26px;
+        }
+
+        .payment-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .all-payments-header-actions {
+            flex-direction: column;
+        }
+
+        .all-payments-header-actions a {
+            width: 100%;
+        }
+
+        .payment-register-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .payment-status-legend {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .payment-bottom-navigation {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .bottom-back-link,
+        .bottom-dashboard-link {
+            width: 100%;
+        }
+
+    }
+
+</style>

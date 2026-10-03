@@ -506,6 +506,32 @@
             .rejection-reason-display b {
                 color: #1f2937;
             }
+        .payment-button {
+            background: #18794e;
+            border-color: #18794e;
+        }
+
+            .payment-button:hover {
+                background: #12613d;
+                border-color: #12613d;
+                color: white;
+            }
+        .refund-button {
+            background: #8b5e00;
+            border-color: #8b5e00;
+        }
+
+            .refund-button:hover {
+                background: #6f4b00;
+                border-color: #6f4b00;
+                color: white;
+                text-decoration: none;
+            }
+
+        .refund-button-icon {
+            font-size: 16px;
+            line-height: 1;
+        }
     }
 </style>
 
@@ -997,27 +1023,95 @@
 
             <div class="action-area">
 
-                @{
-                    bool canViewInvoice =
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Approved ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ||
-                        Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed;
-                }
 
-                @if (canViewInvoice)
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.InvoiceIssued ||
+Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired ||
+Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing ||
+Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid ||
+Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress ||
+Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
                 {
-                    <a href="@Url.Action("Invoice", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                    <a href="@Url.Action("Invoice","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
                        class="primary-button invoice-button">
                         View Invoice
                     </a>
                 }
 
-                <a href="@Url.Action("Index", "MunicipalServices")"
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentRequired)
+                {
+                    <a href="@Url.Action("MakePayment","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-button">
+                        Make Payment
+                    </a>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentProcessing)
+                {
+                    <a href="@Url.Action("PaymentStatus","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-status-button">
+                        View Payment Status
+                    </a>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.PaymentFailed)
+                {
+                    <a href="@Url.Action("PaymentStatus","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-status-button">
+                        View Payment Status
+                    </a>
+
+                    <a href="@Url.Action("MakePayment","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-button">
+                        Make Payment Again
+                    </a>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                {
+                    <a href="@Url.Action("PaymentStatus","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-status-button">
+                        View Payment Status
+                    </a>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                {
+                    <a href="@Url.Action("PaymentStatus","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-status-button">
+                        View Payment Status
+                    </a>
+                }
+
+                @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                {
+                    <a href="@Url.Action("PaymentStatus","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                       class="primary-button payment-status-button">
+                        View Payment Status
+                    </a>
+                }
+
+                @if (Model.Status ==
+CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                {
+                    <a href="@Url.Action(
+        "Index",
+        "CitizenRefund",
+        new
+        {
+            id = Model.MunicipalServiceRequestID
+        })"
+                       class="primary-button refund-button">
+
+                        <span class="refund-button-icon">
+                            ↩
+                        </span>
+
+                        Request Refund
+
+                    </a>
+                }
+
+                <a href="@Url.Action("Index","MunicipalServices")"
                    class="primary-button">
                     Back to Municipal Services
                 </a>

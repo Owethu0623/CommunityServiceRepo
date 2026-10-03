@@ -1,0 +1,1101 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Refund>
+
+@{
+    ViewBag.Title = "Process Refunds";
+
+    var refunds = Model != null
+        ? Model.ToList()
+        : new List<CommunityServiceProject.Models.Refund>();
+
+    var approvedRefunds = refunds
+        .Where(r =>
+            r.Status ==
+                CommunityServiceProject.Models.RefundStatus.Approved)
+        .ToList();
+
+    var processedRefunds = refunds
+        .Where(r =>
+            r.Status ==
+                CommunityServiceProject.Models.RefundStatus.Refunded)
+        .ToList();
+
+    var approvedAmount =
+        approvedRefunds.Sum(r => r.Amount);
+
+    var refundedAmount =
+        processedRefunds.Sum(r => r.Amount);
+}
+
+<div class="refund-management-page">
+
+    <div class="refund-management-shell">
+
+        <!-- =====================================================
+             PAGE HEADER
+             ===================================================== -->
+
+        <div class="refund-management-header">
+
+            <div>
+
+                <div class="refund-management-kicker">
+                    US144 • REFUND PROCESSING
+                </div>
+
+                <h1>
+                    Process Refunds
+                </h1>
+
+                <p>
+                    Process approved municipal payment refunds and maintain
+                    accurate financial records for reversed transactions.
+                </p>
+
+            </div>
+
+            <div class="refund-management-actions">
+
+                <a href="@Url.Action("Index", "FinancePayment")"
+                   class="refund-nav-back">
+
+                    <span class="refund-arrow">
+                        ←
+                    </span>
+
+                    Payment Verification
+
+                </a>
+
+                <a href="@Url.Action("Index", "FinanceDashboard")"
+                   class="refund-nav-dashboard">
+
+                    Finance Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ALERTS
+             ===================================================== -->
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="refund-alert refund-alert-success">
+
+                <span class="refund-alert-icon">
+                    ✓
+                </span>
+
+                <span>
+                    @TempData["SuccessMessage"]
+                </span>
+
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="refund-alert refund-alert-error">
+
+                <span class="refund-alert-icon">
+                    !
+                </span>
+
+                <span>
+                    @TempData["ErrorMessage"]
+                </span>
+
+            </div>
+        }
+
+
+        <!-- =====================================================
+             SUMMARY
+             ===================================================== -->
+
+        <div class="refund-stat-grid">
+
+            <div class="refund-stat-card">
+
+                <div class="refund-stat-label">
+                    APPROVED REFUNDS
+                </div>
+
+                <div class="refund-stat-number">
+                    @approvedRefunds.Count
+                </div>
+
+                <div class="refund-stat-description">
+                    R @approvedAmount.ToString("N2")
+                    awaiting processing
+                </div>
+
+            </div>
+
+
+            <div class="refund-stat-card">
+
+                <div class="refund-stat-label">
+                    PROCESSED REFUNDS
+                </div>
+
+                <div class="refund-stat-number">
+                    @processedRefunds.Count
+                </div>
+
+                <div class="refund-stat-description">
+                    R @refundedAmount.ToString("N2")
+                    successfully refunded
+                </div>
+
+            </div>
+
+
+            <div class="refund-stat-card">
+
+                <div class="refund-stat-label">
+                    TOTAL REFUND RECORDS
+                </div>
+
+                <div class="refund-stat-number">
+                    @refunds.Count
+                </div>
+
+                <div class="refund-stat-description">
+                    Approved and completed refunds
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             REFUND REGISTER
+             ===================================================== -->
+
+        <div class="refund-register">
+
+            <div class="refund-register-header">
+
+                <div>
+
+                    <div class="refund-register-kicker">
+                        MUNICIPAL REFUND REGISTER
+                    </div>
+
+                    <h2>
+                        Approved &amp; Processed Refunds
+                    </h2>
+
+                    <p>
+                        Approved refunds are available for processing.
+                        Completed refunds remain visible as part of the financial record.
+                    </p>
+
+                </div>
+
+                <div class="refund-register-badge">
+
+                    <strong>
+                        @approvedRefunds.Count
+                    </strong>
+
+                    <span>
+                        Awaiting Action
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            @if (refunds.Any())
+            {
+                <div class="refund-table-wrapper">
+
+                    <table class="refund-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Refund Reference
+                                </th>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th>
+                                    Citizen
+                                </th>
+
+                                <th>
+                                    Invoice
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Request Date
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var refund in refunds)
+                            {
+                                <tr>
+
+                                    <!-- REFUND REFERENCE -->
+
+                                    <td>
+
+                                        <div class="refund-reference-cell">
+
+                                            <strong>
+                                                @refund.RefundReference
+                                            </strong>
+
+                                            <small>
+                                                Refund #@refund.RefundID
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- PAYMENT -->
+
+                                    <td>
+
+                                        @if (refund.Payment != null)
+                                        {
+                                            <div class="payment-reference-cell">
+
+                                                <strong>
+                                                    @refund.Payment.TransactionReference
+                                                </strong>
+
+                                                <small>
+                                                    Payment verified
+                                                </small>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="refund-muted">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- CITIZEN -->
+
+                                    <td>
+
+                                        @if (refund.Payment != null &&
+                                             refund.Payment.Citizen != null)
+                                        {
+                                            <strong class="citizen-value">
+                                                @refund.Payment.Citizen.FirstName
+                                                @refund.Payment.Citizen.LastName
+                                            </strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="refund-muted">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- INVOICE -->
+
+                                    <td>
+
+                                        @if (refund.Invoice != null)
+                                        {
+                                            <strong class="invoice-value">
+                                                @refund.Invoice.InvoiceNumber
+                                            </strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="refund-muted">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- AMOUNT -->
+
+                                    <td>
+
+                                        <strong class="refund-amount">
+                                            R @refund.Amount.ToString("N2")
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- DATE -->
+
+                                    <td>
+
+                                        <div class="refund-date">
+
+                                            <strong>
+                                                @refund.RequestDate.ToString("dd MMM yyyy")
+                                            </strong>
+
+                                            <small>
+                                                @refund.RequestDate.ToString("HH:mm")
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        @if (refund.Status ==
+                                            CommunityServiceProject.Models.RefundStatus.Approved)
+                                        {
+                                            <span class="refund-status refund-status-approved">
+
+                                                <span>●</span>
+                                                Approved
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="refund-status refund-status-refunded">
+
+                                                <span>✓</span>
+                                                Refunded
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- ACTION -->
+
+                                    <td>
+
+                                        @if (refund.Status ==
+                                            CommunityServiceProject.Models.RefundStatus.Approved)
+                                        {
+                                            using (Html.BeginForm(
+                                                "ProcessRefund",
+                                                "FinancePayment",
+                                                new
+                                                {
+                                                    id = refund.RefundID
+                                                },
+                                                FormMethod.Post,
+                                                new
+                                                {
+                                                    @class =
+                                                        "process-refund-form"
+                                                }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="process-refund-button"
+                                                        onclick="return confirm('Process this approved refund? This will update the financial record and invoice balance.');">
+
+                                                    Process Refund
+
+                                                </button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="refund-completed-label">
+                                                Completed
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="refund-empty-state">
+
+                    <div class="refund-empty-icon">
+                        ↩
+                    </div>
+
+                    <h3>
+                        No Refunds Available
+                    </h3>
+
+                    <p>
+                        There are currently no approved or processed refunds
+                        available in the Finance register.
+                    </p>
+
+                    <a href="@Url.Action("Index", "FinancePayment")"
+                       class="refund-empty-button">
+
+                        ← Back to Payment Verification
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =====================================================
+             INFORMATION NOTICE
+             ===================================================== -->
+
+        <div class="refund-notice">
+
+            <div class="refund-notice-icon">
+                i
+            </div>
+
+            <div>
+
+                <strong>
+                    Refund Processing
+                </strong>
+
+                <p>
+                    Only refunds with an Approved status can be processed.
+                    Processing a refund records the reversal, updates the
+                    associated invoice balance and marks the refund as Refunded.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             BOTTOM NAVIGATION
+             ===================================================== -->
+
+        <div class="refund-bottom-navigation">
+
+            <a href="@Url.Action("Index", "FinancePayment")"
+               class="refund-bottom-back">
+
+                <span>
+                    ←
+                </span>
+
+                Back to Payment Verification
+
+            </a>
+
+            <a href="@Url.Action("Index", "FinanceDashboard")"
+               class="refund-bottom-dashboard">
+
+                Finance Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .refund-management-page {
+        min-height: 100vh;
+        padding: 38px 27px 60px;
+        background: #f4f6f9;
+    }
+
+    .refund-management-shell {
+        width: min(1450px, 100%);
+        margin: 0 auto;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .refund-management-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 23px;
+    }
+
+    .refund-management-kicker,
+    .refund-register-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .refund-management-header h1 {
+        margin: 7px 0;
+        color: #172033;
+        font-size: 31px;
+        font-weight: 850;
+    }
+
+    .refund-management-header p {
+        max-width: 780px;
+        margin: 0;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .refund-management-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .refund-nav-back,
+    .refund-nav-dashboard,
+    .refund-empty-button,
+    .refund-bottom-back,
+    .refund-bottom-dashboard {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .refund-nav-back,
+    .refund-bottom-back {
+        background: #ffffff;
+        border: 1px solid #d7dde6;
+        color: #344054;
+    }
+
+    .refund-nav-back:hover,
+    .refund-bottom-back:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .refund-nav-dashboard,
+    .refund-bottom-dashboard {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+    .refund-nav-dashboard:hover,
+    .refund-bottom-dashboard:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .refund-arrow {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+
+    /* =========================================================
+       ALERTS
+       ========================================================= */
+
+    .refund-alert {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 17px;
+        padding: 13px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .refund-alert-success {
+        background: #ecfdf3;
+        border: 1px solid #c5e8d3;
+        color: #176b42;
+    }
+
+    .refund-alert-error {
+        background: #fff1f0;
+        border: 1px solid #efc4c0;
+        color: #b42318;
+    }
+
+    .refund-alert-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.75);
+        font-weight: 900;
+    }
+
+
+    /* =========================================================
+       STATISTICS
+       ========================================================= */
+
+    .refund-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .refund-stat-card {
+        min-height: 125px;
+        padding: 19px;
+        background: #ffffff;
+        border: 1px solid #e1e6ec;
+        border-radius: 13px;
+        box-shadow: 0 6px 20px rgba(20,29,44,.05);
+    }
+
+    .refund-stat-label {
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }
+
+    .refund-stat-number {
+        margin-top: 13px;
+        color: #172033;
+        font-size: 27px;
+        font-weight: 900;
+    }
+
+    .refund-stat-description {
+        margin-top: 7px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+
+    /* =========================================================
+       REGISTER
+       ========================================================= */
+
+    .refund-register {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e1e6ec;
+        border-radius: 15px;
+        box-shadow: 0 8px 28px rgba(20,29,44,.06);
+    }
+
+    .refund-register-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        padding: 23px 25px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .refund-register-header h2 {
+        margin: 6px 0;
+        color: #172033;
+        font-size: 20px;
+        font-weight: 850;
+    }
+
+    .refund-register-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .refund-register-badge {
+        min-width: 110px;
+        padding: 11px 14px;
+        border: 1px solid #f1d79d;
+        border-radius: 9px;
+        background: #fff7e6;
+        color: #956700;
+        text-align: center;
+    }
+
+    .refund-register-badge strong {
+        display: block;
+        font-size: 21px;
+        font-weight: 900;
+    }
+
+    .refund-register-badge span {
+        display: block;
+        margin-top: 2px;
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .refund-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .refund-table {
+        width: 100%;
+        min-width: 1200px;
+        border-collapse: collapse;
+    }
+
+    .refund-table th {
+        padding: 13px 16px;
+        background: #fafbfc;
+        border-bottom: 1px solid #e7ebf0;
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-align: left;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .refund-table td {
+        padding: 16px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 12px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .refund-table tbody tr:hover {
+        background: #fbfcfe;
+    }
+
+    .refund-reference-cell strong,
+    .payment-reference-cell strong {
+        display: block;
+        color: #0D5CC1;
+        font-weight: 850;
+    }
+
+    .refund-reference-cell small,
+    .payment-reference-cell small,
+    .refund-date small {
+        display: block;
+        margin-top: 3px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .citizen-value,
+    .invoice-value {
+        color: #253044;
+        font-weight: 800;
+    }
+
+    .refund-amount {
+        color: #172033;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .refund-date strong {
+        color: #344054;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .refund-muted {
+        color: #98a2b3;
+    }
+
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+
+    .refund-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 27px;
+        padding: 0 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 850;
+    }
+
+    .refund-status-approved {
+        background: #fff7e6;
+        border: 1px solid #f1d79d;
+        color: #956700;
+    }
+
+    .refund-status-refunded {
+        background: #ecfdf3;
+        border: 1px solid #bee5ce;
+        color: #176b42;
+    }
+
+
+    /* =========================================================
+       ACTION
+       ========================================================= */
+
+    .process-refund-form {
+        margin: 0;
+    }
+
+    .process-refund-button {
+        min-height: 35px;
+        padding: 0 13px;
+        border: 1px solid #0D5CC1;
+        border-radius: 8px;
+        background: #0D5CC1;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 850;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .process-refund-button:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+    }
+
+    .refund-completed-label {
+        color: #176b42;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .refund-empty-state {
+        padding: 70px 25px;
+        text-align: center;
+    }
+
+    .refund-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #eef4fc;
+        border: 1px solid #d5e3f6;
+        color: #0D5CC1;
+        font-size: 21px;
+        font-weight: 900;
+    }
+
+    .refund-empty-state h3 {
+        margin: 0 0 7px;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 850;
+    }
+
+    .refund-empty-state p {
+        max-width: 520px;
+        margin: 0 auto 20px;
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .refund-empty-button {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+    }
+
+    .refund-empty-button:hover {
+        background: #083f8a;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       NOTICE
+       ========================================================= */
+
+    .refund-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 18px;
+        padding: 16px 18px;
+        border: 1px solid #dbe5f0;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .refund-notice-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 25px;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #eaf2fb;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .refund-notice strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+    .refund-notice p {
+        margin: 0;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       BOTTOM NAVIGATION
+       ========================================================= */
+
+    .refund-bottom-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 18px;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 850px) {
+
+        .refund-management-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .refund-stat-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @@media (max-width: 600px) {
+
+        .refund-management-page {
+            padding: 22px 13px 40px;
+        }
+
+        .refund-management-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .refund-management-actions a {
+            width: 100%;
+        }
+
+        .refund-register-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .refund-bottom-navigation {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .refund-bottom-navigation a {
+            width: 100%;
+        }
+
+    }
+
+</style>

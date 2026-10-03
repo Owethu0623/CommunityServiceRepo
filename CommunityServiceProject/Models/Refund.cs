@@ -11,6 +11,7 @@ namespace CommunityServiceProject.Models
 
         [Required]
         [StringLength(40)]
+        [Index("IX_Refund_RefundReference", IsUnique = true)]
         public string RefundReference { get; set; }
 
         [Required]
@@ -29,12 +30,25 @@ namespace CommunityServiceProject.Models
         [Required]
         public DateTime RequestDate { get; set; }
 
+        public DateTime? ReviewDate { get; set; }
+
+        public int? ReviewedByFinanceOfficerID { get; set; }
+
+        [StringLength(500)]
+        public string ReviewComments { get; set; }
+
         public DateTime? ProcessedDate { get; set; }
 
         public int? ProcessedByFinanceOfficerID { get; set; }
 
         [StringLength(500)]
         public string Reason { get; set; }
+
+        [StringLength(500)]
+        public string SupportingDocumentPath { get; set; }
+
+        [StringLength(255)]
+        public string SupportingDocumentName { get; set; }
 
         public virtual Payment Payment { get; set; }
 
@@ -43,5 +57,3 @@ namespace CommunityServiceProject.Models
         public virtual FinanceOfficer ProcessedByFinanceOfficer { get; set; }
     }
 }
-
-

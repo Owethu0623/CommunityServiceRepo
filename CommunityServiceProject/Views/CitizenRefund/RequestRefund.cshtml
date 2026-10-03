@@ -1,0 +1,781 @@
+﻿@model CommunityServiceProject.ViewModels.RefundRequestViewModel
+
+@{
+    ViewBag.Title = "Request Refund";
+}
+
+<div class="refund-request-page">
+
+    <div class="refund-request-shell">
+
+        <div class="refund-request-header">
+
+            <div>
+
+                <div class="refund-request-kicker">
+                    REFUND REQUEST
+                </div>
+
+                <h1>
+                    Request a Payment Refund
+                </h1>
+
+                <p>
+                    Submit the details below for Finance review.
+                    Refund approval is required before any money is returned.
+                </p>
+
+            </div>
+
+            <a href="@Url.Action("Index", "CitizenRefund")"
+               class="refund-request-back">
+                ← Back to Refunds
+            </a>
+
+        </div>
+
+
+        @using (Html.BeginForm(
+            "RequestRefund",
+            "CitizenRefund",
+            FormMethod.Post,
+            new
+            {
+                enctype = "multipart/form-data"
+            }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(m => m.PaymentID)
+            @Html.HiddenFor(m => m.InvoiceID)
+
+            <div class="refund-request-layout">
+
+                <div class="refund-main-card">
+
+                    <div class="refund-card-title">
+
+                        <span>
+                            REFUND DETAILS
+                        </span>
+
+                        <h2>
+                            Refund Request
+                        </h2>
+
+                        <p>
+                            Provide a clear reason and attach evidence
+                            supporting your refund request.
+                        </p>
+
+                    </div>
+
+
+                    <div class="payment-reference-panel">
+
+                        <div>
+                            <span>Transaction</span>
+                            <strong>@Model.TransactionReference</strong>
+                        </div>
+
+                        <div>
+                            <span>Invoice</span>
+                            <strong>@Model.InvoiceNumber</strong>
+                        </div>
+
+                        <div>
+                            <span>Payment Date</span>
+                            <strong>@Model.PaymentDate.ToString("dd MMM yyyy")</strong>
+                        </div>
+
+                        <div>
+                            <span>Original Payment</span>
+                            <strong>R @Model.PaymentAmount.ToString("N2")</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="refund-form-body">
+
+                        <div class="form-group">
+
+                            <label>
+                                Refund Amount
+                            </label>
+
+                            <div class="amount-input-wrapper">
+
+                                <span>
+                                    R
+                                </span>
+
+                                @Html.TextBoxFor(
+                                    m => m.RefundAmount,
+                                    new
+                                    {
+                                        @class = "refund-amount-input",
+                                        type = "number",
+                                        min = "0.01",
+                                        max = Model.PaymentAmount.ToString("0.00"),
+                                        step = "0.01"
+                                    })
+
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.RefundAmount,
+                                "",
+                                new
+                                {
+                                    @class = "field-error"
+                                })
+
+                            <small class="field-help">
+                                Maximum refundable amount:
+                                R @Model.PaymentAmount.ToString("N2")
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Reason for Refund
+                            </label>
+
+                            @Html.TextAreaFor(
+                                m => m.Reason,
+                                new
+                                {
+                                    @class = "refund-textarea",
+                                    rows = "6",
+                                    placeholder =
+                                        "Explain why you are requesting a refund..."
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.Reason,
+                                "",
+                                new
+                                {
+                                    @class = "field-error"
+                                })
+
+                        </div>
+
+
+                        <div class="document-upload-box">
+
+                            <div class="document-upload-icon">
+                                ↑
+                            </div>
+
+                            <div>
+
+                                <label>
+                                    Supporting Document
+                                </label>
+
+                                <p>
+                                    Attach evidence supporting your refund request.
+                                    PDF, JPG, JPEG or PNG files up to 5 MB.
+                                </p>
+
+                                <input type="file"
+                                       name="SupportingDocument"
+                                       accept=".pdf,.jpg,.jpeg,.png"
+                                       class="refund-file-input" />
+
+                                @Html.ValidationMessageFor(
+                                    m => m.SupportingDocument,
+                                    "",
+                                    new
+                                    {
+                                        @class = "field-error"
+                                    })
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="refund-form-notice">
+
+                            <span>
+                                i
+                            </span>
+
+                            <p>
+                                Submitting this form creates a refund request.
+                                It does not automatically approve or process the refund.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="refund-form-actions">
+
+                        <a href="@Url.Action("Index", "CitizenRefund")"
+                           class="cancel-refund-button">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="submit-refund-button">
+                            Submit Refund Request
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <aside class="refund-side-card">
+
+                    <div class="side-status-icon">
+                        01
+                    </div>
+
+                    <div class="side-kicker">
+                        REFUND WORKFLOW
+                    </div>
+
+                    <h2>
+                        What happens next?
+                    </h2>
+
+                    <div class="workflow-step active">
+
+                        <span>
+                            01
+                        </span>
+
+                        <div>
+                            <strong>
+                                Refund Requested
+                            </strong>
+
+                            <p>
+                                Your request is submitted to Finance.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step">
+
+                        <span>
+                            02
+                        </span>
+
+                        <div>
+                            <strong>
+                                Finance Review
+                            </strong>
+
+                            <p>
+                                A Finance Officer reviews your request and evidence.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step">
+
+                        <span>
+                            03
+                        </span>
+
+                        <div>
+                            <strong>
+                                Decision
+                            </strong>
+
+                            <p>
+                                The refund can be approved or rejected.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="workflow-step">
+
+                        <span>
+                            04
+                        </span>
+
+                        <div>
+                            <strong>
+                                Refund Processing
+                            </strong>
+
+                            <p>
+                                Approved refunds are processed by Finance.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .refund-request-page {
+        min-height: 100vh;
+        padding: 38px 25px 60px;
+        background: #f4f6f9;
+    }
+
+    .refund-request-shell {
+        width: min(1100px, 100%);
+        margin: 0 auto;
+    }
+
+    .refund-request-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 25px;
+        margin-bottom: 22px;
+    }
+
+    .refund-request-kicker,
+    .side-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+    }
+
+    .refund-request-header h1 {
+        margin: 7px 0;
+        color: #172033;
+        font-size: 30px;
+        font-weight: 850;
+    }
+
+    .refund-request-header p {
+        margin: 0;
+        max-width: 700px;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .refund-request-back,
+    .cancel-refund-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .refund-request-back,
+    .cancel-refund-button {
+        background: #ffffff;
+        border: 1px solid #d7dde6;
+        color: #344054;
+    }
+
+    .refund-request-back:hover,
+    .cancel-refund-button:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .refund-request-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 285px;
+        gap: 20px;
+    }
+
+    .refund-main-card,
+    .refund-side-card {
+        background: #ffffff;
+        border: 1px solid #e1e6ec;
+        border-radius: 15px;
+        box-shadow: 0 8px 28px rgba(20,29,44,.06);
+    }
+
+    .refund-main-card {
+        overflow: hidden;
+    }
+
+    .refund-card-title {
+        padding: 23px 25px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .refund-card-title > span {
+        color: #0D5CC1;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }
+
+    .refund-card-title h2 {
+        margin: 6px 0;
+        color: #172033;
+        font-size: 20px;
+        font-weight: 850;
+    }
+
+    .refund-card-title p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+    }
+
+    .payment-reference-panel {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: #fafbfc;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .payment-reference-panel > div {
+        padding: 17px;
+        border-right: 1px solid #e7ebf0;
+    }
+
+    .payment-reference-panel > div:last-child {
+        border-right: none;
+    }
+
+    .payment-reference-panel span,
+    .payment-reference-panel strong {
+        display: block;
+    }
+
+    .payment-reference-panel span {
+        margin-bottom: 5px;
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .payment-reference-panel strong {
+        color: #253044;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .refund-form-body {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group > label {
+        display: block;
+        margin-bottom: 7px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+    .amount-input-wrapper {
+        display: flex;
+        align-items: center;
+        border: 1px solid #cfd6df;
+        border-radius: 9px;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .amount-input-wrapper > span {
+        padding-left: 14px;
+        color: #667085;
+        font-weight: 800;
+    }
+
+    .refund-amount-input {
+        width: 100%;
+        padding: 12px 13px;
+        border: none;
+        outline: none;
+        color: #172033;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .refund-textarea {
+        width: 100%;
+        box-sizing: border-box;
+        resize: vertical;
+        min-height: 145px;
+        padding: 13px;
+        border: 1px solid #cfd6df;
+        border-radius: 9px;
+        outline: none;
+        color: #253044;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .refund-textarea:focus,
+    .amount-input-wrapper:focus-within {
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13,92,193,.08);
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .field-error {
+        display: block;
+        margin-top: 5px;
+        color: #b42318;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .document-upload-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 17px;
+        border: 1px dashed #b8c6d5;
+        border-radius: 11px;
+        background: #f9fbfd;
+    }
+
+    .document-upload-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 33px;
+        width: 33px;
+        height: 33px;
+        border-radius: 8px;
+        background: #eef4fc;
+        color: #0D5CC1;
+        font-size: 16px;
+        font-weight: 900;
+    }
+
+    .document-upload-box label {
+        display: block;
+        margin-bottom: 4px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+    .document-upload-box p {
+        margin: 0 0 10px;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .refund-file-input {
+        max-width: 100%;
+        font-size: 11px;
+    }
+
+    .refund-form-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-top: 20px;
+        padding: 13px;
+        border-radius: 9px;
+        background: #f8fafc;
+        border: 1px solid #dce5ef;
+    }
+
+    .refund-form-notice > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 22px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #eaf2fb;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .refund-form-notice p {
+        margin: 0;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.55;
+    }
+
+    .refund-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        padding: 18px 25px;
+        border-top: 1px solid #e7ebf0;
+        background: #fafbfc;
+    }
+
+    .submit-refund-button {
+        min-height: 42px;
+        padding: 0 17px;
+        border: 1px solid #0D5CC1;
+        border-radius: 9px;
+        background: #0D5CC1;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 850;
+        cursor: pointer;
+    }
+
+    .submit-refund-button:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+    }
+
+    .refund-side-card {
+        padding: 22px;
+    }
+
+    .side-status-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        margin-bottom: 16px;
+        border-radius: 10px;
+        background: #eef4fc;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .refund-side-card h2 {
+        margin: 7px 0 20px;
+        color: #172033;
+        font-size: 18px;
+        font-weight: 850;
+    }
+
+    .workflow-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 0;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .workflow-step:last-child {
+        border-bottom: none;
+    }
+
+    .workflow-step > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 27px;
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        background: #f2f4f7;
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .workflow-step.active > span {
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .workflow-step strong {
+        display: block;
+        color: #344054;
+        font-size: 11px;
+    }
+
+    .workflow-step p {
+        margin: 3px 0 0;
+        color: #98a2b3;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    @@media (max-width: 850px) {
+
+        .refund-request-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-reference-panel {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+    }
+
+    @@media (max-width: 600px) {
+
+        .refund-request-page {
+            padding: 22px 13px 40px;
+        }
+
+        .refund-request-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .refund-request-back {
+            width: 100%;
+        }
+
+        .payment-reference-panel {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-reference-panel > div {
+            border-right: none;
+            border-bottom: 1px solid #e7ebf0;
+        }
+
+        .payment-reference-panel > div:last-child {
+            border-bottom: none;
+        }
+
+        .refund-form-actions {
+            flex-direction: column;
+        }
+
+        .refund-form-actions > * {
+            width: 100%;
+        }
+
+    }
+
+</style>

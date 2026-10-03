@@ -1,0 +1,693 @@
+﻿@model CommunityServiceProject.ViewModels.MakePaymentViewModel
+
+@{
+    ViewBag.Title = "Make Municipal Payment";
+}
+
+<style>
+    .make-payment-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+        color: #1f2937;
+    }
+
+    .payment-header {
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        border-radius: 14px;
+        padding: 28px 30px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(13, 92, 193, 0.18);
+    }
+
+        .payment-header h1 {
+            margin: 0 0 7px;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .payment-header p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+    .payment-reference {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .payment-reference span {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .payment-card {
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        padding: 26px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        margin-bottom: 20px;
+    }
+
+    .section-heading {
+        border-bottom: 1px solid #e8edf3;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: #16324f;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+    .payment-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+    }
+
+    .summary-item {
+        min-width: 0;
+    }
+
+    .summary-label {
+        display: block;
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .summary-value {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .balance-box {
+        background: #f0f6ff;
+        border: 1px solid #c9ddf8;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .balance-label {
+        display: block;
+        color: #526277;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+    }
+
+    .balance-value {
+        color: #0D5CC1;
+        font-size: 26px;
+        font-weight: 750;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+    .payment-select,
+    .payment-file {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #cfd7e3;
+        border-radius: 8px;
+        background: white;
+        color: #1f2937;
+        font-size: 13px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+        .payment-select:focus,
+        .payment-file:focus {
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.10);
+        }
+
+    .payment-file {
+        cursor: pointer;
+        padding: 9px 12px;
+    }
+
+    .field-validation-error {
+        display: block;
+        color: #a32820;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .proof-of-payment-section {
+        background: #f8fbff;
+        border: 1px solid #c9ddf8;
+        border-radius: 11px;
+        padding: 20px;
+        margin-top: 8px;
+    }
+
+    .proof-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .proof-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: #e4efff;
+        color: #0D5CC1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .proof-heading h3 {
+        margin: 0 0 4px;
+        color: #16324f;
+        font-size: 15px;
+    }
+
+    .proof-heading p {
+        margin: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .file-requirements {
+        margin-top: 8px;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .payment-information {
+        background: #f8fafc;
+        border: 1px solid #e3e8ef;
+        border-radius: 9px;
+        padding: 15px;
+        color: #526277;
+        font-size: 12px;
+        line-height: 1.6;
+        margin-top: 20px;
+    }
+
+        .payment-information strong {
+            color: #1f2937;
+        }
+
+    .verification-notice {
+        background: #fff8e8;
+        border: 1px solid #f0d28a;
+        border-radius: 9px;
+        padding: 15px;
+        color: #735c1f;
+        font-size: 12px;
+        line-height: 1.6;
+        margin-top: 12px;
+    }
+
+        .verification-notice strong {
+            color: #594612;
+        }
+
+    .payment-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .primary-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: white;
+    }
+
+        .primary-button:hover {
+            background: #094b9f;
+            border-color: #094b9f;
+            color: white;
+            text-decoration: none;
+        }
+
+    .secondary-button {
+        border: 1px solid #d2d9e3;
+        background: white;
+        color: #374151;
+    }
+
+        .secondary-button:hover {
+            background: #f8fafc;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    .validation-summary-errors {
+        background: #fff1f0;
+        border: 1px solid #f0b8b4;
+        border-radius: 9px;
+        padding: 14px 16px;
+        color: #a32820;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+        .validation-summary-errors ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    @@media (max-width: 650px) {
+        .make-payment-page {
+            padding: 20px 12px 35px;
+        }
+
+        .payment-header {
+            padding: 22px;
+        }
+
+            .payment-header h1 {
+                font-size: 23px;
+            }
+
+        .payment-card {
+            padding: 19px;
+        }
+
+        .payment-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-actions {
+            flex-direction: column;
+        }
+
+        .primary-button,
+        .secondary-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="make-payment-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="payment-header">
+
+        <h1>Make Municipal Payment</h1>
+
+        <p>
+            Submit your payment and proof of payment for municipal verification.
+        </p>
+
+        <div class="payment-reference">
+
+            <span>
+                @Model.InvoiceNumber
+            </span>
+
+            <span>
+                @Model.RequestReference
+            </span>
+
+            <span>
+                @Model.ServiceName
+            </span>
+
+        </div>
+
+    </div>
+
+
+    @using (Html.BeginForm(
+        "MakePayment",
+        "MunicipalServiceRequest",
+        FormMethod.Post,
+        new
+        {
+            enctype = "multipart/form-data"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.InvoiceID)
+
+        <!-- =====================================================
+             PAYMENT SUMMARY
+             ===================================================== -->
+
+        <div class="payment-card">
+
+            <div class="section-heading">
+
+                <h2>Payment Summary</h2>
+
+                <p>
+                    Review the invoice information before submitting your payment.
+                </p>
+
+            </div>
+
+
+            <div class="payment-summary">
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Invoice Number
+                    </span>
+
+                    <div class="summary-value">
+                        @Model.InvoiceNumber
+                    </div>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Request Reference
+                    </span>
+
+                    <div class="summary-value">
+                        @Model.RequestReference
+                    </div>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Service
+                    </span>
+
+                    <div class="summary-value">
+                        @Model.ServiceName
+                    </div>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Invoice Amount
+                    </span>
+
+                    <div class="summary-value">
+                        R @Model.Amount.ToString("N2")
+                    </div>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span class="summary-label">
+                        Amount Already Paid
+                    </span>
+
+                    <div class="summary-value">
+                        R @Model.AmountPaid.ToString("N2")
+                    </div>
+
+                </div>
+
+
+                @if (Model.DueDate.HasValue)
+                {
+                    <div class="summary-item">
+
+                        <span class="summary-label">
+                            Due Date
+                        </span>
+
+                        <div class="summary-value">
+                            @Model.DueDate.Value.ToString("dd MMM yyyy")
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <div class="balance-box">
+
+                <span class="balance-label">
+                    Amount Due
+                </span>
+
+                <div class="balance-value">
+                    R @Model.Balance.ToString("N2")
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PAYMENT DETAILS
+             ===================================================== -->
+
+        <div class="payment-card">
+
+            <div class="section-heading">
+
+                <h2>Payment Details</h2>
+
+                <p>
+                    Select your payment method and provide proof that the payment
+                    has been made.
+                </p>
+
+            </div>
+
+
+            @Html.ValidationSummary(
+                true,
+                "",
+                new
+                {
+                    @class = "validation-summary-errors"
+                })
+
+
+            <!-- =================================================
+                 PAYMENT METHOD
+                 ================================================= -->
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    model => model.PaymentMethod)
+
+                @Html.DropDownListFor(
+                    model => model.PaymentMethod,
+                    new SelectList(
+                        new[]
+                        {
+                            new
+                            {
+                                Value = "Card",
+                                Text = "Card Payment"
+                            },
+                            new
+                            {
+                                Value = "EFT",
+                                Text = "Electronic Funds Transfer (EFT)"
+                            }
+                        },
+                        "Value",
+                        "Text"
+                    ),
+                    "-- Select Payment Method --",
+                    new
+                    {
+                        @class = "payment-select"
+                    })
+
+                @Html.ValidationMessageFor(
+                    model => model.PaymentMethod)
+
+            </div>
+
+
+            <!-- =================================================
+                 PROOF OF PAYMENT
+                 ================================================= -->
+
+            <div class="proof-of-payment-section">
+
+                <div class="proof-heading">
+
+                    <div class="proof-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Proof of Payment
+                        </h3>
+
+                        <p>
+                            Upload the proof of payment for this transaction.
+                            This document will be reviewed by a Finance Officer.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    @Html.LabelFor(
+                        model => model.ProofOfPayment,
+                        "Upload Proof of Payment")
+
+                    <input type="file"
+                           id="ProofOfPayment"
+                           name="ProofOfPayment"
+                           accept=".pdf,.jpg,.jpeg,.png"
+                           class="payment-file" />
+
+                    @Html.ValidationMessageFor(
+                        model => model.ProofOfPayment)
+
+                    <div class="file-requirements">
+
+                        Accepted formats:
+                        <strong>PDF, JPG, JPEG and PNG</strong>.
+
+                        Maximum file size:
+                        <strong>5 MB</strong>.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROCESSING INFORMATION
+                 ================================================= -->
+
+            <div class="payment-information">
+
+                <strong>Payment processing:</strong>
+
+                Your payment will be recorded as
+                <strong>Processing</strong> after submission.
+
+                The municipality will review the payment and proof of payment
+                before the payment is marked as successful.
+
+            </div>
+
+
+            <div class="verification-notice">
+
+                <strong>Important:</strong>
+
+                Uploading proof of payment does not mean that the payment
+                has already been verified. The payment remains pending
+                Finance Officer verification until it is reviewed.
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="payment-actions">
+
+                <button type="submit"
+                        class="primary-button">
+                    Submit Payment
+                </button>
+
+
+                <a href="@Url.Action(
+                    "Invoice",
+                    "MunicipalServiceRequest",
+                    new
+                    {
+                        id = Model.MunicipalServiceRequestID
+                    })"
+                   class="secondary-button">
+                    Back to Invoice
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+</div>

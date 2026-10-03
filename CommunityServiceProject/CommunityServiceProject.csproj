@@ -354,6 +354,14 @@
     <Compile Include="Migrations\202609290453519_AddMunicipalServiceRequestNotifications.Designer.cs">
       <DependentUpon>202609290453519_AddMunicipalServiceRequestNotifications.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202610020238406_AddProofOfPaymentToPayment.cs" />
+    <Compile Include="Migrations\202610020238406_AddProofOfPaymentToPayment.Designer.cs">
+      <DependentUpon>202610020238406_AddProofOfPaymentToPayment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202610022008298_AddRefundReviewAndSupportingDocuments.cs" />
+    <Compile Include="Migrations\202610022008298_AddRefundReviewAndSupportingDocuments.Designer.cs">
+      <DependentUpon>202610022008298_AddRefundReviewAndSupportingDocuments.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
@@ -402,6 +410,7 @@
     <Compile Include="Models\CitizenNotificationController.cs" />
     <Compile Include="Models\CitizenNotificationViewModel.cs" />
     <Compile Include="Models\CitizenProfileViewModel.cs" />
+    <Compile Include="Models\CitizenRefundController.cs" />
     <Compile Include="Models\CompletionVerificationStatus.cs" />
     <Compile Include="Models\ComplianceRecord.cs" />
     <Compile Include="Models\ComplianceStatus.cs" />
@@ -418,6 +427,7 @@
     <Compile Include="Models\FinanceDashboardViewModel.cs" />
     <Compile Include="Models\FinanceMunicipalServiceRequestController.cs" />
     <Compile Include="Models\FinanceOfficer.cs" />
+    <Compile Include="Models\FinancePaymentController.cs" />
     <Compile Include="Models\FinancialAudit.cs" />
     <Compile Include="Models\FinancialAuditAction.cs" />
     <Compile Include="Models\GenerateInvoiceListViewModel.cs" />
@@ -473,7 +483,10 @@
     <Compile Include="Models\OvertimeClaim.cs" />
     <Compile Include="Models\OvertimeClaimStatus.cs" />
     <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\PaymentConfirmationViewModel.cs" />
+    <Compile Include="Models\PaymentReceiptViewModel.cs" />
     <Compile Include="Models\PaymentStatus.cs" />
+    <Compile Include="Models\PaymentStatusViewModel.cs" />
     <Compile Include="Models\Payroll.cs" />
     <Compile Include="Models\PayrollAllowance.cs" />
     <Compile Include="Models\PayrollDeduction.cs" />
@@ -497,6 +510,8 @@
     <Compile Include="Models\Receipt.cs" />
     <Compile Include="Models\RecordAssetConditionViewModel.cs" />
     <Compile Include="Models\Refund.cs" />
+    <Compile Include="Models\RefundRequestViewModel.cs" />
+    <Compile Include="Models\RefundReviewModel.cs" />
     <Compile Include="Models\RefundStatus.cs" />
     <Compile Include="Models\RequestClassificationViewModel.cs" />
     <Compile Include="Models\RequestSkill.cs" />
@@ -552,6 +567,7 @@
     <Compile Include="Models\TechnicianSkill.cs" />
     <Compile Include="Models\TechnicianSkillManagementViewModel.cs" />
     <Compile Include="Models\UpdateAssetConditionAfterMaintenanceViewModel.cs" />
+    <Compile Include="Models\VerifyPaymentViewModel.cs" />
     <Compile Include="Models\Violation.cs" />
     <Compile Include="Models\Ward.cs" />
     <Compile Include="Models\WardManagementController.cs" />
@@ -862,6 +878,20 @@
     <Content Include="Views\Invoice\Issued.cshtml" />
     <Content Include="Views\Invoice\Outstanding.cshtml" />
     <Content Include="Views\MunicipalServiceRequest\Invoice.cshtml" />
+    <Content Include="Views\MunicipalServiceRequest\MakePayment.cshtml" />
+    <Content Include="Views\MunicipalServiceRequest\PaymentConfirmation.cshtml" />
+    <Content Include="Views\MunicipalServiceRequest\PaymentStatus.cshtml" />
+    <Content Include="Views\FinancePayment\Index.cshtml" />
+    <Content Include="Views\FinancePayment\Review.cshtml" />
+    <Content Include="Views\FinancePayment\SuccessfulPayments.cshtml" />
+    <Content Include="Views\FinancePayment\Receipt.cshtml" />
+    <Content Include="Views\FinancePayment\Payments.cshtml" />
+    <Content Include="Views\FinancePayment\ProcessRefunds.cshtml" />
+    <Content Include="Views\CitizenRefund\Index.cshtml" />
+    <Content Include="Views\CitizenRefund\RequestRefund.cshtml" />
+    <Content Include="Views\FinancePayment\RefundRequests.cshtml" />
+    <Content Include="Views\FinancePayment\ReviewRefund.cshtml" />
+    <Content Include="Views\FinancePayment\RefundDecisionResult.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1078,6 +1108,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202609290453519_AddMunicipalServiceRequestNotifications.resx">
       <DependentUpon>202609290453519_AddMunicipalServiceRequestNotifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202610020238406_AddProofOfPaymentToPayment.resx">
+      <DependentUpon>202610020238406_AddProofOfPaymentToPayment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202610022008298_AddRefundReviewAndSupportingDocuments.resx">
+      <DependentUpon>202610022008298_AddRefundReviewAndSupportingDocuments.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>

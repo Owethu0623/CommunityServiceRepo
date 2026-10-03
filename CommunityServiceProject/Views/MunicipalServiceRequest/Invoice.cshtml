@@ -621,18 +621,10 @@
 
                 <div class="action-area">
 
-                    <a href="@Url.Action("Details", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
+                    <a href="@Url.Action("Details","MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
                        class="secondary-button">
                         Back to Service Request
                     </a>
-
-                    @if (Model.Balance > 0)
-                    {
-                        <a href="@Url.Action("Details", "MunicipalServiceRequest", new { id = Model.MunicipalServiceRequestID })"
-                           class="primary-button">
-                            Continue to Payment
-                        </a>
-                    }
 
                 </div>
 

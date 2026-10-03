@@ -1028,7 +1028,7 @@
                         </p>
                     </div>
 
-                    <a href="@Url.Action("Index","Payment")">
+                    <a href="@Url.Action("Payments","FinancePayment")">
                         View All
                     </a>
 
@@ -1200,19 +1200,6 @@
                        class="action-link">
 
                         <span>
-                            Outstanding Invoices
-                        </span>
-
-                        <span class="arrow">
-                            →
-                        </span>
-
-                    </a>
-
-                    <a href="@Url.Action("Outstanding", "Payments")"
-                       class="action-link">
-
-                        <span>
                             Outstanding Payments
                         </span>
 
@@ -1222,11 +1209,11 @@
 
                     </a>
 
-                    <a href="@Url.Action("Index", "Payment")"
+                    <a href="@Url.Action("Index", "FinancePayment")"
                        class="action-link">
 
                         <span>
-                            Payment Transactions
+                            Verify Payments
                         </span>
 
                         <span class="arrow">
@@ -1235,11 +1222,11 @@
 
                     </a>
 
-                    <a href="@Url.Action("Index", "Refund")"
+                    <a href="@Url.Action("SuccessfulPayments","FinancePayment")"
                        class="action-link">
 
                         <span>
-                            Refunds
+                            Generate receipts for successful paymnets
                         </span>
 
                         <span class="arrow">
@@ -1248,6 +1235,32 @@
 
                     </a>
 
+                    <a href="@Url.Action("RefundRequests","FinancePayment")"
+                       class="action-link">
+
+                        <span>
+                            Review Refund Requests
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>  
+
+                    <a href="@Url.Action("ProcessRefunds","FinancePayment")"
+                       class="action-link">
+
+                        <span>
+                             Process Refunds
+                        </span>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+          
                     <a href="@Url.Action("Index", "FinancialTransaction")"
                        class="action-link">
 

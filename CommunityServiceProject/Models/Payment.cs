@@ -32,6 +32,8 @@ namespace CommunityServiceProject.Models
         public DateTime PaymentDate { get; set; }
 
         public DateTime? ProcessedDate { get; set; }
+        [StringLength(500)]
+        public string ProofOfPaymentPath { get; set; }
 
         [StringLength(100)]
         public string PaymentMethod { get; set; }

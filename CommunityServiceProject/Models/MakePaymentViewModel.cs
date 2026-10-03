@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace CommunityServiceProject.ViewModels
 {
@@ -25,8 +26,10 @@ namespace CommunityServiceProject.ViewModels
         public DateTime? DueDate { get; set; }
 
         [Required(ErrorMessage = "Please select a payment method.")]
-        [Display(Name = "Payment Method")]
+        [StringLength(100)]
         public string PaymentMethod { get; set; }
+
+        [Required(ErrorMessage = "Please upload proof of payment.")]
+        public HttpPostedFileBase ProofOfPayment { get; set; }
     }
 }
-

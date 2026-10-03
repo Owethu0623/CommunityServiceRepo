@@ -1,0 +1,495 @@
+﻿@model IEnumerable<CommunityServiceProject.Models.Payment>
+
+@{
+    ViewBag.Title = "Refund Requests";
+
+    var payments = Model != null
+        ? Model.ToList()
+        : new List<CommunityServiceProject.Models.Payment>();
+}
+
+<div class="citizen-refund-page">
+
+    <div class="citizen-refund-shell">
+
+        <div class="citizen-refund-header">
+
+            <div>
+
+                <div class="refund-kicker">
+                    FINANCE • REFUNDS
+                </div>
+
+                <h1>
+                    Refund Requests
+                </h1>
+
+                <p>
+                    Select a successful payment to submit a refund request.
+                    Refund requests are reviewed before any refund is processed.
+                </p>
+
+            </div>
+
+            <a href="@Url.Action("Index", "CitizenDashboard")"
+               class="refund-back-button">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="refund-alert refund-success">
+                <span>✓</span>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="refund-alert refund-error">
+                <span>!</span>
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+
+        <div class="refund-information-card">
+
+            <div class="refund-info-icon">
+                i
+            </div>
+
+            <div>
+
+                <strong>
+                    Before requesting a refund
+                </strong>
+
+                <p>
+                    Select the successful payment you want reviewed.
+                    You will need to provide a reason and supporting
+                    documentation for the request.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="citizen-payment-card">
+
+            <div class="citizen-payment-card-header">
+
+                <div>
+
+                    <span>
+                        SUCCESSFUL PAYMENTS
+                    </span>
+
+                    <h2>
+                        Payments Available for Refund Requests
+                    </h2>
+
+                </div>
+
+                <div class="payment-count">
+                    @payments.Count
+                </div>
+
+            </div>
+
+
+            @if (payments.Any())
+            {
+                <div class="citizen-refund-table-wrapper">
+
+                    <table class="citizen-refund-table">
+
+                        <thead>
+                            <tr>
+                                <th>Transaction</th>
+                                <th>Invoice</th>
+                                <th>Service</th>
+                                <th>Payment Date</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var payment in payments)
+                            {
+                                var existingRefund =
+                                    payment.Invoice != null
+                                        ? payment.Invoice
+                                            .Refunds
+                                            .FirstOrDefault()
+                                        : null;
+
+                                <tr>
+
+                                    <td>
+                                        <strong class="transaction-ref">
+                                            @payment.TransactionReference
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @(payment.Invoice != null
+                                            ? payment.Invoice.InvoiceNumber
+                                            : "N/A")
+                                    </td>
+
+                                    <td>
+                                        @(payment.Invoice != null &&
+                                          payment.Invoice.FeeSchedule != null &&
+                                          payment.Invoice.FeeSchedule.ServiceType != null
+                                            ? payment.Invoice.FeeSchedule.ServiceType.ServiceName
+                                            : "Municipal Service")
+                                    </td>
+
+                                    <td>
+                                        @payment.PaymentDate.ToString("dd MMM yyyy")
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            R @payment.Amount.ToString("N2")
+                                        </strong>
+                                    </td>
+
+                                    <td>
+
+                                        <a href="@Url.Action(
+                                            "RequestRefund",
+                                            "CitizenRefund",
+                                            new { id = payment.PaymentID })"
+                                           class="request-refund-button">
+                                            Request Refund
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="refund-empty-state">
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        No Successful Payments
+                    </h3>
+
+                    <p>
+                        You currently have no successful payments available
+                        for a refund request.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .citizen-refund-page {
+        min-height: 100vh;
+        padding: 38px 25px 60px;
+        background: #f4f6f9;
+    }
+
+    .citizen-refund-shell {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+    }
+
+    .citizen-refund-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 25px;
+        margin-bottom: 22px;
+    }
+
+    .refund-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+    }
+
+    .citizen-refund-header h1 {
+        margin: 7px 0;
+        color: #172033;
+        font-size: 30px;
+        font-weight: 850;
+    }
+
+    .citizen-refund-header p {
+        max-width: 700px;
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .refund-back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 17px;
+        border: 1px solid #d7dde6;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .refund-back-button:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .refund-alert {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 13px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .refund-success {
+        background: #ecfdf3;
+        border: 1px solid #c5e8d3;
+        color: #176b42;
+    }
+
+    .refund-error {
+        background: #fff1f0;
+        border: 1px solid #efc4c0;
+        color: #b42318;
+    }
+
+    .refund-information-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 18px;
+        padding: 16px 18px;
+        border: 1px solid #dce6f0;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .refund-info-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 26px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #eaf2fb;
+        color: #0D5CC1;
+        font-weight: 900;
+    }
+
+    .refund-information-card strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #344054;
+        font-size: 12px;
+    }
+
+    .refund-information-card p {
+        margin: 0;
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .citizen-payment-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e1e6ec;
+        border-radius: 15px;
+        box-shadow: 0 8px 28px rgba(20,29,44,.06);
+    }
+
+    .citizen-payment-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 24px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .citizen-payment-card-header > div:first-child span {
+        color: #0D5CC1;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1.1px;
+    }
+
+    .citizen-payment-card-header h2 {
+        margin: 6px 0 0;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 850;
+    }
+
+    .payment-count {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        height: 42px;
+        border-radius: 9px;
+        background: #eef4fc;
+        border: 1px solid #d6e3f4;
+        color: #0D5CC1;
+        font-size: 17px;
+        font-weight: 900;
+    }
+
+    .citizen-refund-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .citizen-refund-table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+    }
+
+    .citizen-refund-table th {
+        padding: 13px 16px;
+        background: #fafbfc;
+        border-bottom: 1px solid #e7ebf0;
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+        text-align: left;
+    }
+
+    .citizen-refund-table td {
+        padding: 17px 16px;
+        border-bottom: 1px solid #edf0f3;
+        color: #344054;
+        font-size: 12px;
+    }
+
+    .citizen-refund-table tbody tr:hover {
+        background: #fbfcfe;
+    }
+
+    .transaction-ref {
+        color: #0D5CC1;
+        font-weight: 850;
+    }
+
+    .request-refund-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 35px;
+        padding: 0 13px;
+        border-radius: 8px;
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 850;
+        text-decoration: none;
+    }
+
+    .request-refund-button:hover {
+        background: #083f8a;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .refund-empty-state {
+        padding: 70px 25px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        background: #ecfdf3;
+        border: 1px solid #c5e8d3;
+        color: #176b42;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .refund-empty-state h3 {
+        margin: 0 0 7px;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 850;
+    }
+
+    .refund-empty-state p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+    }
+
+    @@media (max-width: 700px) {
+
+        .citizen-refund-page {
+            padding: 22px 13px 40px;
+        }
+
+        .citizen-refund-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .refund-back-button {
+            width: 100%;
+        }
+
+        .citizen-payment-card-header {
+            align-items: flex-start;
+        }
+
+    }
+
+</style>

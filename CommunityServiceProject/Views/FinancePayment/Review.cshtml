@@ -1,0 +1,1289 @@
+﻿@model CommunityServiceProject.ViewModels.VerifyPaymentViewModel
+
+@{
+    ViewBag.Title = "Review Payment";
+}
+
+<div class="review-payment-page">
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <div class="review-page-header">
+
+        <div>
+
+            <span class="review-eyebrow">
+                US141 • PAYMENT VERIFICATION
+            </span>
+
+            <h1>Review Payment</h1>
+
+            <p>
+                Review the citizen's payment details and proof of payment
+                before making a verification decision.
+            </p>
+
+        </div>
+
+        <div class="review-status-badge">
+            <span class="review-status-dot"></span>
+            Payment Processing
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         ALERTS
+    ========================================================== -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="review-alert review-alert-success">
+            <span class="review-alert-icon">✓</span>
+
+            <span>
+                @TempData["SuccessMessage"]
+            </span>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="review-alert review-alert-error">
+            <span class="review-alert-icon">!</span>
+
+            <span>
+                @TempData["ErrorMessage"]
+            </span>
+        </div>
+    }
+
+
+    <!-- =========================================================
+         MAIN INFORMATION
+    ========================================================== -->
+
+    <div class="review-information-grid">
+
+        <!-- PAYMENT DETAILS -->
+
+        <div class="review-card">
+
+            <div class="review-card-header">
+
+                <div>
+                    <span class="review-section-label">
+                        TRANSACTION
+                    </span>
+
+                    <h2>Payment Information</h2>
+                </div>
+
+                <div class="review-card-icon">
+                    ₿
+                </div>
+
+            </div>
+
+            <div class="review-detail-list">
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Transaction Reference
+                    </span>
+
+                    <strong>
+                        @Model.TransactionReference
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Invoice Number
+                    </span>
+
+                    <strong>
+                        @Model.InvoiceNumber
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Amount
+                    </span>
+
+                    <strong class="review-amount">
+                        R @Model.Amount.ToString("N2")
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Payment Method
+                    </span>
+
+                    <strong>
+                        @Model.PaymentMethod
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Payment Date
+                    </span>
+
+                    <strong>
+                        @Model.PaymentDate.ToString("dd MMM yyyy, HH:mm")
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Current Status
+                    </span>
+
+                    <strong>
+                        <span class="processing-pill">
+                            Processing
+                        </span>
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CITIZEN / SERVICE DETAILS -->
+
+        <div class="review-card">
+
+            <div class="review-card-header">
+
+                <div>
+                    <span class="review-section-label">
+                        MUNICIPAL SERVICE
+                    </span>
+
+                    <h2>Service Information</h2>
+                </div>
+
+                <div class="review-card-icon">
+                    MS
+                </div>
+
+            </div>
+
+            <div class="review-detail-list">
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Citizen
+                    </span>
+
+                    <strong>
+                        @Model.CitizenName
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Service
+                    </span>
+
+                    <strong>
+                        @Model.ServiceName
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Request Reference
+                    </span>
+
+                    <strong>
+                        @Model.RequestReference
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Request ID
+                    </span>
+
+                    <strong>
+                        #@Model.MunicipalServiceRequestID
+                    </strong>
+
+                </div>
+
+                <div class="review-detail-row">
+
+                    <span class="review-detail-label">
+                        Payment Evidence
+                    </span>
+
+                    <strong>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.ProofOfPaymentPath))
+                        {
+                            <span class="evidence-submitted">
+                                ✓ Submitted
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="evidence-missing">
+                                Missing
+                            </span>
+                        }
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         PROOF OF PAYMENT
+    ========================================================== -->
+
+    <div class="review-card proof-review-card">
+
+        <div class="review-card-header">
+
+            <div>
+
+                <span class="review-section-label">
+                    PAYMENT EVIDENCE
+                </span>
+
+                <h2>Proof of Payment</h2>
+
+                <p>
+                    Review the uploaded evidence before confirming
+                    the payment.
+                </p>
+
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ProofOfPaymentPath))
+            {
+                <span class="evidence-submitted large">
+                    ✓ Evidence Submitted
+                </span>
+            }
+
+        </div>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.ProofOfPaymentPath))
+        {
+            <div class="proof-review-content">
+
+                <div class="proof-document">
+
+                    <div class="proof-document-icon">
+                        POP
+                    </div>
+
+                    <div class="proof-document-text">
+
+                        <strong>
+                            Proof of Payment
+                        </strong>
+
+                        <span>
+                            Citizen-submitted payment evidence
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <a href="@Url.Action(
+                    "ViewProofOfPayment",
+                    "FinancePayment",
+                    new { id = Model.PaymentID })"
+                   target="_blank"
+                   class="view-proof-button">
+
+                    View Proof of Payment
+
+                    <span>↗</span>
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="proof-missing-box">
+
+                <div class="proof-missing-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <strong>
+                        Proof of payment is unavailable
+                    </strong>
+
+                    <span>
+                        This payment cannot be verified until
+                        supporting payment evidence is available.
+                    </span>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         DECISION AREA
+    ========================================================== -->
+
+    <div class="review-decision-card">
+
+        <div class="decision-header">
+
+            <div>
+
+                <span class="review-section-label">
+                    FINANCE DECISION
+                </span>
+
+                <h2>Payment Verification Decision</h2>
+
+                <p>
+                    Verify the payment if the submitted evidence
+                    supports the transaction. Otherwise reject it
+                    and provide a clear reason.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="decision-actions">
+
+            <!-- VERIFY -->
+
+            @using (Html.BeginForm(
+                "ConfirmPayment",
+                "FinancePayment",
+                FormMethod.Post,
+                new
+                {
+                    @class = "decision-form"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.PaymentID" />
+
+                <button type="submit"
+                        class="verify-button"
+                        @(string.IsNullOrWhiteSpace(Model.ProofOfPaymentPath) ? "disabled" : null)>
+
+                    <span class="button-icon">
+                        ✓
+                    </span>
+
+                    <span>
+                        Verify Payment
+                    </span>
+
+                </button>
+            }
+
+
+            <!-- REJECT -->
+
+            <button type="button"
+                    class="reject-button"
+                    onclick="openRejectModal()">
+
+                <span class="button-icon">
+                    ×
+                </span>
+
+                <span>
+                    Reject Payment
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         BACK NAVIGATION
+    ========================================================== -->
+
+    <div class="review-navigation">
+
+        <a href="@Url.Action(
+            "Index",
+            "FinancePayment")"
+           class="back-to-payments">
+
+            <span class="back-arrow">
+                ←
+            </span>
+
+            Back to Payments Awaiting Verification
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =============================================================
+     REJECTION MODAL
+============================================================== -->
+
+<div id="rejectPaymentModal"
+     class="reject-modal">
+
+    <div class="reject-modal-overlay"
+         onclick="closeRejectModal()">
+    </div>
+
+
+    <div class="reject-modal-card">
+
+        <div class="reject-modal-header">
+
+            <div>
+
+                <span>
+                    PAYMENT VERIFICATION
+                </span>
+
+                <h2>Reject Payment</h2>
+
+            </div>
+
+            <button type="button"
+                    class="modal-close"
+                    onclick="closeRejectModal()">
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="reject-modal-body">
+
+            <p>
+                Provide a clear reason for rejecting this payment.
+                The reason will be stored with the payment record.
+            </p>
+
+
+            @using (Html.BeginForm(
+                "RejectPayment",
+                "FinancePayment",
+                FormMethod.Post,
+                new
+                {
+                    @class = "reject-form"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.PaymentID" />
+
+
+                <label for="failureReason">
+                    Rejection Reason
+                </label>
+
+                <textarea id="failureReason"
+                          name="failureReason"
+                          rows="5"
+                          maxlength="500"
+                          required
+                          placeholder="Example: The proof of payment does not match the invoice amount."></textarea>
+
+
+                <div class="reject-form-footer">
+
+                    <button type="button"
+                            class="cancel-reject-button"
+                            onclick="closeRejectModal()">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="confirm-reject-button">
+                        Reject Payment
+                    </button>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* =========================================================
+       PAGE
+    ========================================================== */
+
+    .review-payment-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 35px 25px 65px;
+    }
+
+
+    /* =========================================================
+       HEADER
+    ========================================================== */
+
+    .review-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 28px;
+    }
+
+    .review-eyebrow {
+        display: block;
+        margin-bottom: 8px;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .review-page-header h1 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .review-page-header p {
+        margin: 0;
+        max-width: 700px;
+        color: #687386;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .review-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: #fff7df;
+        border: 1px solid #f0d486;
+        border-radius: 9px;
+        color: #8a5a00;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .review-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #d99400;
+    }
+
+
+    /* =========================================================
+       ALERTS
+    ========================================================== */
+
+    .review-alert {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 17px;
+        margin-bottom: 20px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .review-alert-success {
+        background: #eaf7ef;
+        border: 1px solid #b7e1c5;
+        color: #18794e;
+    }
+
+    .review-alert-error {
+        background: #fef0f0;
+        border: 1px solid #f1b8b8;
+        color: #b42318;
+    }
+
+    .review-alert-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-weight: 900;
+    }
+
+
+    /* =========================================================
+       INFORMATION GRID
+    ========================================================== */
+
+    .review-information-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .review-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #dfe5ed;
+        border-radius: 14px;
+    }
+
+    .review-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 22px 24px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .review-section-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.1px;
+    }
+
+    .review-card-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .review-card-header p {
+        margin: 7px 0 0;
+        color: #748094;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .review-card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 9px;
+        background: #eef4fc;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+
+    /* =========================================================
+       DETAILS
+    ========================================================== */
+
+    .review-detail-list {
+        padding: 7px 24px;
+    }
+
+    .review-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        padding: 15px 0;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .review-detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .review-detail-label {
+        color: #748094;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .review-detail-row strong {
+        color: #253044;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .review-amount {
+        color: #0D5CC1 !important;
+        font-size: 17px !important;
+    }
+
+    .processing-pill {
+        display: inline-flex;
+        padding: 6px 10px;
+        background: #fff7df;
+        border: 1px solid #f0d486;
+        border-radius: 7px;
+        color: #8a5a00 !important;
+        font-size: 12px !important;
+        font-weight: 800 !important;
+    }
+
+    .evidence-submitted {
+        display: inline-flex;
+        padding: 6px 10px;
+        background: #eaf7ef;
+        border: 1px solid #b7e1c5;
+        border-radius: 7px;
+        color: #18794e !important;
+        font-size: 12px !important;
+        font-weight: 800 !important;
+    }
+
+    .evidence-submitted.large {
+        padding: 8px 12px;
+        white-space: nowrap;
+    }
+
+    .evidence-missing {
+        display: inline-flex;
+        padding: 6px 10px;
+        background: #fef0f0;
+        border: 1px solid #f1b8b8;
+        border-radius: 7px;
+        color: #b42318 !important;
+        font-size: 12px !important;
+        font-weight: 800 !important;
+    }
+
+
+    /* =========================================================
+       PROOF OF PAYMENT
+    ========================================================== */
+
+    .proof-review-card {
+        margin-bottom: 20px;
+    }
+
+    .proof-review-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        padding: 23px 24px;
+    }
+
+    .proof-document {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .proof-document-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+        border-radius: 9px;
+        background: #eef4fc;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .proof-document-text strong,
+    .proof-document-text span {
+        display: block;
+    }
+
+    .proof-document-text strong {
+        margin-bottom: 4px;
+        color: #253044;
+        font-size: 14px;
+    }
+
+    .proof-document-text span {
+        color: #748094;
+        font-size: 13px;
+    }
+
+    .view-proof-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 17px;
+        border: 1px solid #cadcf4;
+        border-radius: 8px;
+        background: #eef4fc;
+        color: #0D5CC1 !important;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .view-proof-button:hover {
+        background: #e3edf9;
+        text-decoration: none;
+    }
+
+    .proof-missing-box {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 20px 24px;
+        background: #fff8f8;
+    }
+
+    .proof-missing-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #fef0f0;
+        color: #b42318;
+        font-weight: 900;
+    }
+
+    .proof-missing-box strong,
+    .proof-missing-box span {
+        display: block;
+    }
+
+    .proof-missing-box strong {
+        margin-bottom: 4px;
+        color: #8f1d16;
+        font-size: 14px;
+    }
+
+    .proof-missing-box span {
+        color: #a14a45;
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       DECISION CARD
+    ========================================================== */
+
+    .review-decision-card {
+        padding: 24px;
+        margin-bottom: 20px;
+        background: #ffffff;
+        border: 1px solid #dfe5ed;
+        border-radius: 14px;
+    }
+
+    .decision-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .decision-header p {
+        max-width: 750px;
+        margin: 8px 0 0;
+        color: #748094;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .decision-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 22px;
+        padding-top: 20px;
+        border-top: 1px solid #edf0f4;
+    }
+
+    .decision-form {
+        margin: 0;
+    }
+
+    .verify-button,
+    .reject-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .verify-button {
+        border: 1px solid #18794e;
+        background: #18794e;
+        color: #ffffff;
+    }
+
+    .verify-button:hover {
+        background: #12633f;
+    }
+
+    .verify-button:disabled {
+        border-color: #b8c0ca;
+        background: #b8c0ca;
+        cursor: not-allowed;
+    }
+
+    .reject-button {
+        border: 1px solid #d8a0a0;
+        background: #fff7f7;
+        color: #b42318;
+    }
+
+    .reject-button:hover {
+        background: #fef0f0;
+    }
+
+    .button-icon {
+        font-size: 16px;
+        font-weight: 900;
+    }
+
+
+    /* =========================================================
+       BACK NAVIGATION
+    ========================================================== */
+
+    .review-navigation {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .back-to-payments {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 15px;
+        border: 1px solid #d7dee8;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #536074 !important;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .back-to-payments:hover {
+        background: #f7f9fc;
+        text-decoration: none;
+    }
+
+    .back-arrow {
+        font-size: 17px;
+    }
+
+
+    /* =========================================================
+       REJECTION MODAL
+    ========================================================== */
+
+    .reject-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+    }
+
+    .reject-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reject-modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(20, 29, 44, .58);
+    }
+
+    .reject-modal-card {
+        position: relative;
+        z-index: 2;
+        width: min(520px, calc(100% - 30px));
+        overflow: hidden;
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(20, 29, 44, .25);
+    }
+
+    .reject-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 22px 24px;
+        border-bottom: 1px solid #e7ebf0;
+    }
+
+    .reject-modal-header span {
+        display: block;
+        margin-bottom: 5px;
+        color: #b42318;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }
+
+    .reject-modal-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .modal-close {
+        border: none;
+        background: transparent;
+        color: #667085;
+        font-size: 27px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .reject-modal-body {
+        padding: 24px;
+    }
+
+    .reject-modal-body p {
+        margin: 0 0 18px;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .reject-modal-body label {
+        display: block;
+        margin-bottom: 7px;
+        color: #253044;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .reject-modal-body textarea {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        resize: vertical;
+        border: 1px solid #ccd4df;
+        border-radius: 8px;
+        outline: none;
+        color: #253044;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .reject-modal-body textarea:focus {
+        border-color: #0D5CC1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, .08);
+    }
+
+    .reject-form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .cancel-reject-button,
+    .confirm-reject-button {
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .cancel-reject-button {
+        border: 1px solid #d7dee8;
+        background: #ffffff;
+        color: #536074;
+    }
+
+    .confirm-reject-button {
+        border: 1px solid #b42318;
+        background: #b42318;
+        color: #ffffff;
+    }
+
+    .confirm-reject-button:hover {
+        background: #941d14;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================== */
+
+    @@media (max-width: 850px) {
+
+        .review-information-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .review-page-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .proof-review-content {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+    }
+
+    @@media (max-width: 600px) {
+
+        .review-payment-page {
+            padding: 25px 15px 50px;
+        }
+
+        .review-page-header h1 {
+            font-size: 27px;
+        }
+
+        .review-detail-row {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .review-detail-row strong {
+            text-align: left;
+        }
+
+        .decision-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .decision-form,
+        .verify-button,
+        .reject-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+    function openRejectModal() {
+
+        document
+            .getElementById("rejectPaymentModal")
+            .classList.add("show");
+
+        var reason =
+            document.getElementById("failureReason");
+
+        if (reason) {
+            setTimeout(function () {
+                reason.focus();
+            }, 100);
+        }
+    }
+
+
+    function closeRejectModal() {
+
+        document
+            .getElementById("rejectPaymentModal")
+            .classList.remove("show");
+    }
+
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+            closeRejectModal();
+        }
+
+    });
+
+</script>

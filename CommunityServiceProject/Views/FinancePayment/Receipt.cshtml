@@ -1,0 +1,1074 @@
+﻿@model CommunityServiceProject.ViewModels.PaymentReceiptViewModel
+
+@{
+    ViewBag.Title = "View Payment Receipt";
+}
+
+<div class="view-receipt-page">
+
+    <div class="view-receipt-shell">
+
+        <!-- PAGE HEADER -->
+        <div class="view-receipt-page-header">
+
+            <div>
+                <div class="view-receipt-kicker">
+                    US142 • PAYMENT RECEIPT
+                </div>
+
+                <h1>View Payment Receipt</h1>
+
+                <p>
+                    Official confirmation of a successfully verified municipal payment.
+                </p>
+            </div>
+
+            <div class="view-receipt-header-actions">
+
+                <button type="button"
+                        class="receipt-print-btn"
+                        onclick="window.print();">
+                    <span class="print-icon">▣</span>
+                    Print Receipt
+                </button>
+
+                <a href="@Url.Action("SuccessfulPayments", "FinancePayment")"
+                   class="receipt-back-btn">
+                    <span class="back-arrow">←</span>
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUCCESS MESSAGE -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="receipt-alert receipt-alert-success">
+                <span class="alert-symbol">✓</span>
+                <span>@TempData["SuccessMessage"]</span>
+            </div>
+        }
+
+
+        <!-- OFFICIAL RECEIPT -->
+        <div class="official-receipt">
+
+            <!-- RECEIPT HEADER -->
+            <div class="official-receipt-header">
+
+                <div class="municipality-identity">
+
+                    <div class="municipality-logo">
+                        M
+                    </div>
+
+                    <div>
+                        <div class="municipality-name">
+                            MUNICIPALITY
+                        </div>
+
+                        <div class="municipality-department">
+                            Finance &amp; Revenue Services
+                        </div>
+
+                        <div class="municipality-document-type">
+                            Official Payment Document
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="receipt-heading">
+
+                    <div class="official-label">
+                        OFFICIAL
+                    </div>
+
+                    <h2>
+                        PAYMENT RECEIPT
+                    </h2>
+
+                    <div class="receipt-number">
+                        @Model.ReceiptNumber
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS STRIP -->
+            <div class="receipt-status-strip">
+
+                <div class="receipt-status-left">
+
+                    <span class="status-heading">
+                        PAYMENT STATUS
+                    </span>
+
+                    <span class="successful-payment">
+                        <span class="success-check">✓</span>
+                        Successful
+                    </span>
+
+                </div>
+
+                <div class="receipt-status-right">
+
+                    <span class="status-heading">
+                        RECEIPT ISSUE DATE
+                    </span>
+
+                    <strong>
+                        @Model.IssueDate.ToString("dd MMM yyyy")
+                    </strong>
+
+                    <span class="receipt-time">
+                        @Model.IssueDate.ToString("HH:mm")
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYER SECTION -->
+            <div class="receipt-content-section">
+
+                <div class="receipt-section-title">
+                    PAYER INFORMATION
+                </div>
+
+                <div class="receipt-grid receipt-grid-two">
+
+                    <div class="receipt-field">
+                        <span class="receipt-field-label">
+                            Citizen Name
+                        </span>
+
+                        <strong>
+                            @Model.CitizenName
+                        </strong>
+                    </div>
+
+                    <div class="receipt-field">
+                        <span class="receipt-field-label">
+                            Municipal Service
+                        </span>
+
+                        <strong>
+                            @Model.ServiceName
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TRANSACTION SECTION -->
+            <div class="receipt-content-section">
+
+                <div class="receipt-section-title">
+                    TRANSACTION INFORMATION
+                </div>
+
+                <div class="receipt-grid receipt-grid-three">
+
+                    <div class="receipt-field">
+
+                        <span class="receipt-field-label">
+                            Transaction Reference
+                        </span>
+
+                        <strong class="reference-value">
+                            @Model.TransactionReference
+                        </strong>
+
+                    </div>
+
+                    <div class="receipt-field">
+
+                        <span class="receipt-field-label">
+                            Invoice Number
+                        </span>
+
+                        <strong>
+                            @Model.InvoiceNumber
+                        </strong>
+
+                    </div>
+
+                    <div class="receipt-field">
+
+                        <span class="receipt-field-label">
+                            Request Reference
+                        </span>
+
+                        <strong>
+                            @Model.RequestReference
+                        </strong>
+
+                    </div>
+
+                    <div class="receipt-field">
+
+                        <span class="receipt-field-label">
+                            Payment Method
+                        </span>
+
+                        <strong>
+                            @Model.PaymentMethod
+                        </strong>
+
+                    </div>
+
+                    <div class="receipt-field">
+
+                        <span class="receipt-field-label">
+                            Payment Date
+                        </span>
+
+                        <strong>
+                            @Model.PaymentDate.ToString("dd MMM yyyy")
+                        </strong>
+
+                    </div>
+
+                    <div class="receipt-field">
+
+                        <span class="receipt-field-label">
+                            Invoice Status
+                        </span>
+
+                        <strong>
+                            @Model.InvoiceStatus
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FINANCIAL SUMMARY -->
+            <div class="financial-summary-section">
+
+                <div class="receipt-section-title">
+                    PAYMENT SUMMARY
+                </div>
+
+                <div class="financial-table">
+
+                    <div class="financial-line">
+
+                        <span>
+                            Invoice Amount
+                        </span>
+
+                        <strong>
+                            R @Model.InvoiceAmount.ToString("N2")
+                        </strong>
+
+                    </div>
+
+                    <div class="financial-line payment-line">
+
+                        <span>
+                            Amount Paid
+                        </span>
+
+                        <strong>
+                            R @Model.AmountPaid.ToString("N2")
+                        </strong>
+
+                    </div>
+
+                    <div class="financial-line balance-line">
+
+                        <span>
+                            Remaining Balance
+                        </span>
+
+                        <strong>
+                            R @Model.RemainingBalance.ToString("N2")
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT CONFIRMATION -->
+            <div class="receipt-confirmation-box">
+
+                <div class="confirmation-check">
+                    ✓
+                </div>
+
+                <div>
+
+                    <h3>
+                        Payment Successfully Recorded
+                    </h3>
+
+                    <p>
+                        This receipt confirms that the payment identified above
+                        was successfully verified and recorded by the Finance Office.
+                        This document may be retained as formal evidence of payment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- DOCUMENT FOOTER -->
+            <div class="official-receipt-footer">
+
+                <div class="footer-office">
+
+                    <strong>
+                        Finance &amp; Revenue Services
+                    </strong>
+
+                    <span>
+                        Official municipal payment record
+                    </span>
+
+                </div>
+
+                <div class="footer-receipt-reference">
+
+                    Receipt Number:
+                    <strong>
+                        @Model.ReceiptNumber
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTTOM NAVIGATION -->
+        <div class="receipt-bottom-navigation">
+
+            <a href="@Url.Action("SuccessfulPayments", "FinancePayment")"
+               class="bottom-back-btn">
+                <span>←</span>
+                Back to Successful Payments
+            </a>
+
+            <div class="bottom-right-actions">
+
+                <a href="@Url.Action("Index", "FinanceDashboard")"
+                   class="bottom-dashboard-btn">
+                    Finance Dashboard
+                </a>
+
+                <button type="button"
+                        class="bottom-print-btn"
+                        onclick="window.print();">
+                    Print Receipt
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .view-receipt-page {
+        min-height: 100vh;
+        padding: 38px 25px 60px;
+        background: #f4f6f9;
+    }
+
+    .view-receipt-shell {
+        width: min(1050px, 100%);
+        margin: 0 auto;
+    }
+
+    /* ---------------------------------------------------------
+       PAGE HEADER
+       --------------------------------------------------------- */
+
+    .view-receipt-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 22px;
+    }
+
+    .view-receipt-kicker {
+        color: #0D5CC1;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+    }
+
+    .view-receipt-page-header h1 {
+        margin: 7px 0 6px;
+        color: #172033;
+        font-size: 30px;
+        font-weight: 850;
+    }
+
+    .view-receipt-page-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .view-receipt-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .receipt-print-btn,
+    .receipt-back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .receipt-print-btn {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #ffffff;
+    }
+
+    .receipt-print-btn:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+    }
+
+    .receipt-back-btn {
+        border: 1px solid #d7dde6;
+        background: #ffffff;
+        color: #344054;
+    }
+
+    .receipt-back-btn:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .print-icon {
+        font-size: 15px;
+    }
+
+    .back-arrow {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+
+    /* ---------------------------------------------------------
+       ALERT
+       --------------------------------------------------------- */
+
+    .receipt-alert {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        padding: 13px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .receipt-alert-success {
+        color: #176b42;
+        background: #ecfdf3;
+        border: 1px solid #c5e8d3;
+    }
+
+    .alert-symbol {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #176b42;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+
+    /* ---------------------------------------------------------
+       OFFICIAL RECEIPT
+       --------------------------------------------------------- */
+
+    .official-receipt {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #dfe4ea;
+        border-radius: 15px;
+        box-shadow: 0 18px 48px rgba(20, 29, 44, .10);
+    }
+
+
+    /* ---------------------------------------------------------
+       RECEIPT HEADER
+       --------------------------------------------------------- */
+
+    .official-receipt-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        padding: 31px 36px;
+        border-bottom: 1px solid #e5e9ef;
+    }
+
+    .municipality-identity {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .municipality-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 55px;
+        height: 55px;
+        border-radius: 11px;
+        background: #0D5CC1;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 900;
+    }
+
+    .municipality-name {
+        color: #172033;
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: .5px;
+    }
+
+    .municipality-department {
+        margin-top: 3px;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .municipality-document-type {
+        margin-top: 3px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .receipt-heading {
+        text-align: right;
+    }
+
+    .official-label {
+        margin-bottom: 3px;
+        color: #0D5CC1;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1.7px;
+        text-transform: uppercase;
+    }
+
+    .receipt-heading h2 {
+        margin: 0 0 6px;
+        color: #172033;
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: .4px;
+    }
+
+    .receipt-number {
+        color: #667085;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+
+    /* ---------------------------------------------------------
+       STATUS
+       --------------------------------------------------------- */
+
+    .receipt-status-strip {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+        padding: 18px 36px;
+        background: #fafbfc;
+        border-bottom: 1px solid #e5e9ef;
+    }
+
+    .status-heading,
+    .receipt-field-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #667085;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .successful-payment {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 11px;
+        border: 1px solid #bde5cd;
+        border-radius: 20px;
+        background: #ecfdf3;
+        color: #176b42;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+    .success-check {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #176b42;
+        color: #ffffff;
+        font-size: 10px;
+    }
+
+    .receipt-status-right {
+        text-align: right;
+    }
+
+    .receipt-status-right strong {
+        color: #253044;
+        font-size: 13px;
+    }
+
+    .receipt-time {
+        margin-left: 6px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+
+    /* ---------------------------------------------------------
+       INFORMATION SECTIONS
+       --------------------------------------------------------- */
+
+    .receipt-content-section {
+        padding: 27px 36px;
+        border-bottom: 1px solid #e5e9ef;
+    }
+
+    .receipt-section-title {
+        margin-bottom: 19px;
+        color: #172033;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+    }
+
+    .receipt-grid {
+        display: grid;
+        gap: 22px 35px;
+    }
+
+    .receipt-grid-two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .receipt-grid-three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .receipt-field strong {
+        color: #253044;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.5;
+    }
+
+    .reference-value {
+        color: #0D5CC1 !important;
+    }
+
+
+    /* ---------------------------------------------------------
+       FINANCIAL SUMMARY
+       --------------------------------------------------------- */
+
+    .financial-summary-section {
+        padding: 27px 36px;
+        background: #fbfcfe;
+        border-bottom: 1px solid #e5e9ef;
+    }
+
+    .financial-table {
+        width: 100%;
+    }
+
+    .financial-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+        padding: 13px 0;
+        border-bottom: 1px dashed #dfe4ea;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .financial-line strong {
+        color: #253044;
+        font-size: 14px;
+        font-weight: 850;
+    }
+
+    .financial-line:last-child {
+        border-bottom: none;
+    }
+
+    .payment-line span,
+    .payment-line strong {
+        color: #0D5CC1;
+    }
+
+    .balance-line {
+        padding-top: 17px;
+    }
+
+    .balance-line span {
+        color: #172033;
+        font-weight: 850;
+    }
+
+    .balance-line strong {
+        color: #172033;
+        font-size: 17px;
+    }
+
+
+    /* ---------------------------------------------------------
+       CONFIRMATION
+       --------------------------------------------------------- */
+
+    .receipt-confirmation-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin: 25px 36px;
+        padding: 19px 20px;
+        border: 1px solid #c6e7d5;
+        border-radius: 11px;
+        background: #f2faf5;
+    }
+
+    .confirmation-check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #176b42;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+    .receipt-confirmation-box h3 {
+        margin: 0 0 5px;
+        color: #176b42;
+        font-size: 14px;
+        font-weight: 850;
+    }
+
+    .receipt-confirmation-box p {
+        margin: 0;
+        color: #52645a;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+
+    /* ---------------------------------------------------------
+       FOOTER
+       --------------------------------------------------------- */
+
+    .official-receipt-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 36px;
+        background: #fafbfc;
+    }
+
+    .footer-office strong,
+    .footer-office span {
+        display: block;
+    }
+
+    .footer-office strong {
+        color: #253044;
+        font-size: 12px;
+    }
+
+    .footer-office span {
+        margin-top: 3px;
+        color: #98a2b3;
+        font-size: 10px;
+    }
+
+    .footer-receipt-reference {
+        color: #98a2b3;
+        font-size: 10px;
+        text-align: right;
+    }
+
+    .footer-receipt-reference strong {
+        color: #667085;
+    }
+
+
+    /* ---------------------------------------------------------
+       BOTTOM NAVIGATION
+       --------------------------------------------------------- */
+
+    .receipt-bottom-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-top: 18px;
+    }
+
+    .bottom-right-actions {
+        display: flex;
+        gap: 9px;
+    }
+
+    .bottom-back-btn,
+    .bottom-dashboard-btn,
+    .bottom-print-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .bottom-back-btn {
+        background: #ffffff;
+        border: 1px solid #d7dde6;
+        color: #344054;
+    }
+
+    .bottom-back-btn:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    .bottom-dashboard-btn {
+        background: #eef4fc;
+        border: 1px solid #d7e4f5;
+        color: #0D5CC1;
+    }
+
+    .bottom-dashboard-btn:hover {
+        background: #e4eefb;
+        color: #083f8a;
+        text-decoration: none;
+    }
+
+    .bottom-print-btn {
+        background: #0D5CC1;
+        border: 1px solid #0D5CC1;
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+    .bottom-print-btn:hover {
+        background: #083f8a;
+        border-color: #083f8a;
+    }
+
+
+    /* ---------------------------------------------------------
+       RESPONSIVE
+       --------------------------------------------------------- */
+
+    @@media (max-width: 850px) {
+
+        .view-receipt-page-header,
+        .official-receipt-header,
+        .receipt-status-strip {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .receipt-heading {
+            text-align: left;
+        }
+
+        .receipt-status-right {
+            text-align: left;
+        }
+
+        .receipt-grid-three {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+    }
+
+    @@media (max-width: 620px) {
+
+        .view-receipt-page {
+            padding: 22px 13px 40px;
+        }
+
+        .view-receipt-page-header h1 {
+            font-size: 25px;
+        }
+
+        .view-receipt-header-actions {
+            width: 100%;
+        }
+
+        .view-receipt-header-actions a,
+        .view-receipt-header-actions button {
+            width: 100%;
+        }
+
+        .official-receipt-header,
+        .receipt-status-strip,
+        .receipt-content-section,
+        .financial-summary-section,
+        .official-receipt-footer {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .receipt-grid-two,
+        .receipt-grid-three {
+            grid-template-columns: 1fr;
+        }
+
+        .receipt-confirmation-box {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .official-receipt-footer {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .footer-receipt-reference {
+            text-align: left;
+        }
+
+        .receipt-bottom-navigation {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .bottom-right-actions {
+            flex-direction: column;
+        }
+
+        .bottom-back-btn,
+        .bottom-dashboard-btn,
+        .bottom-print-btn {
+            width: 100%;
+        }
+
+    }
+
+
+    /* ---------------------------------------------------------
+       PRINT VERSION
+       --------------------------------------------------------- */
+
+    @@media print {
+
+        body {
+            background: #ffffff !important;
+        }
+
+        .view-receipt-page {
+            min-height: auto;
+            padding: 0;
+            background: #ffffff;
+        }
+
+        .view-receipt-page-header,
+        .receipt-alert,
+        .receipt-bottom-navigation {
+            display: none !important;
+        }
+
+        .view-receipt-shell {
+            width: 100%;
+        }
+
+        .official-receipt {
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .official-receipt-header {
+            padding-top: 20px;
+        }
+
+    }
+
+</style>

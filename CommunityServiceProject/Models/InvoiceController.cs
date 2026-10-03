@@ -3,11 +3,13 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
 {
+    [RoleAuthorize("FinanceOfficer")]
     public class InvoiceController : Controller
     {
         private readonly Community db = new Community();

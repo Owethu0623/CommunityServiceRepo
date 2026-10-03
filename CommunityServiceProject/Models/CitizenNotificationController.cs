@@ -10,6 +10,7 @@ using static System.Collections.Specialized.BitVector32;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Web.Razor.Parser.SyntaxConstants;
 using System.Data.Entity;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -22,11 +23,12 @@ namespace CommunityServiceProject.Controllers
         // =========================================================
 
         [HttpGet]
+        [RoleAuthorize("Citizen")]
         public ActionResult Index(string category = "All")
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             int citizenID = (int)Session["CitizenID"];
@@ -249,7 +251,7 @@ public ActionResult Details(
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             if (!id.HasValue ||
@@ -482,7 +484,7 @@ public ActionResult Details(
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             if (!id.HasValue ||

@@ -77,15 +77,6 @@
                         @if (Session["CitizenID"] != null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Index", "Requests")">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Create", "Requests")">Submit Request</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Index", "Requests")">My Requests</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" href="@Url.Action("Logout", "Login")">Logout</a>
                             </li>
                         }

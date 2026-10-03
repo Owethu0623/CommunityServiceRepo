@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -14,11 +15,12 @@ namespace CommunityServiceProject.Controllers
         // US134 - VIEW MUNICIPAL SERVICE REQUESTS
         // Finance can view requests in ALL statuses.
         // =========================================================
+        [RoleAuthorize("FinanceOfficer")]
         public ActionResult Index()
         {
             if (Session["FinanceOfficerID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             var requests = db.MunicipalServiceRequests
@@ -34,11 +36,12 @@ namespace CommunityServiceProject.Controllers
         // VIEW MUNICIPAL SERVICE REQUEST
         // Finance can inspect requests in ALL statuses.
         // =========================================================
+        [RoleAuthorize("FinanceOfficer")]
         public ActionResult Details(int id)
         {
             if (Session["FinanceOfficerID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             var request = db.MunicipalServiceRequests

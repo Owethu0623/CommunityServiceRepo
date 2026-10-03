@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Filters;
 using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
@@ -40,6 +41,12 @@ namespace CommunityServiceProject.Controllers
             }
 
             return null;
+        }
+
+        private bool IsAdminOrHR()
+        {
+            return Session["AdministratorID"] != null ||
+                   Session["HROfficerID"] != null;
         }
 
         // ============================================================
@@ -1600,11 +1607,9 @@ public ActionResult Submit(int? id)
         [HttpGet]
         public ActionResult Review(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (Session["AdministratorID"] == null && Session["HROfficerID"] == null)
             {
-                return RedirectToAction(
-                    "Login",
-                    "Administrators");
+                return new HttpUnauthorizedResult();
             }
 
             if (!id.HasValue)
@@ -2055,12 +2060,8 @@ public ActionResult Submit(int? id)
     string statusFilter,
     int? opportunityFilter)
         {
-            if (Session["AdministratorID"] == null)
-            {
-                return RedirectToAction(
-                    "Login",
-                    "Administrators");
-            }
+            if (!IsAdminOrHR())
+                return new HttpUnauthorizedResult();
 
             var query =
                 db.TechnicianApplications
@@ -2266,8 +2267,8 @@ public ActionResult Submit(int? id)
         [HttpGet]
         public ActionResult Screen(int? id)
         {
-            if (Session["AdministratorID"] == null)
-                return RedirectToAction("Login", "Administrators");
+            if (!IsAdminOrHR())
+                return new HttpUnauthorizedResult();
 
             if (!id.HasValue)
                 return HttpNotFound();

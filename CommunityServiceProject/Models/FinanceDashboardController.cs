@@ -2,12 +2,13 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
 {
-    [CommunityServiceProject.Filters.RoleAuthorize("FinanceOfficer")]
+    [RoleAuthorize("FinanceOfficer")]
     public class FinanceDashboardController : Controller
     {
         private readonly Community db = new Community();
@@ -16,7 +17,7 @@ namespace CommunityServiceProject.Controllers
         {
             if (Session["FinanceOfficerID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             int financeOfficerId = (int)Session["FinanceOfficerID"];
@@ -27,7 +28,7 @@ namespace CommunityServiceProject.Controllers
             if (financeOfficer == null)
             {
                 Session.Clear();
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             var outstandingInvoiceStatuses = new[]

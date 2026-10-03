@@ -114,8 +114,92 @@ namespace CommunityServiceProject.Controllers
                     Session["HROfficerEmail"] = hrOfficer.EmailAddress;
                     Session["UserRole"] = "HROfficer";
 
+                    // Clear other role sessions to avoid role leakage
+                    Session.Remove("AdministratorID");
+                    Session.Remove("FinanceOfficerID");
+                    Session.Remove("CitizenID");
+                    Session.Remove("TechnicianID");
+
                     // Redirect HR officers to the TechnicianOpportunity management page
                     return RedirectToAction("Manage", "TechnicianOpportunity");
+                }
+
+                // =========================================================
+                // CHECK ADMINISTRATOR LOGIN
+                // =========================================================
+
+                var administrator = db.Administrators.FirstOrDefault(a =>
+                    a.EmailAddress == model.EmailAddress &&
+                    a.Password == model.Password
+                );
+
+                if (administrator != null)
+                {
+                    if (administrator.AccountStatus != AccountStatus.Active)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            administrator.AccountStatus == AccountStatus.Suspended
+                                ? "Your Administrator account has been suspended."
+                                : "Your Administrator account is inactive."
+                        );
+
+                        return View(model);
+                    }
+
+                    Session["AdministratorID"] = administrator.AdministratorID;
+                    Session["AdministratorName"] = administrator.FirstName;
+                    Session["UserRole"] = "Administrator";
+
+                    // Clear other role sessions to avoid role leakage
+                    Session.Remove("FinanceOfficerID");
+                    Session.Remove("HROfficerID");
+                    Session.Remove("CitizenID");
+                    Session.Remove("TechnicianID");
+
+                    return RedirectToAction("Index", "AdministratorDashboard");
+                }
+
+                // =========================================================
+                // CHECK TECHNICIAN LOGIN
+                // =========================================================
+
+                var technician = db.Technicians.FirstOrDefault(t =>
+                    t.EmailAddress == model.EmailAddress &&
+                    t.Password == model.Password
+                );
+
+                if (technician != null)
+                {
+                    if (technician.AccountStatus != AccountStatus.Active)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            technician.AccountStatus == AccountStatus.Suspended
+                                ? "Your Technician account has been suspended."
+                                : "Your Technician account is inactive."
+                        );
+
+                        return View(model);
+                    }
+
+                    Session["TechnicianID"] = technician.TechnicianID;
+                    Session["TechnicianName"] = technician.FirstName + " " + technician.LastName;
+                    Session["UserRole"] = "Technician";
+
+                    // Force first-time password change if required
+                    if (technician.MustChangePassword)
+                    {
+                        return RedirectToAction("ChangePassword", "Technicians");
+                    }
+
+                    // Ensure any other role sessions are cleared to avoid role leakage
+                    Session.Remove("AdministratorID");
+                    Session.Remove("FinanceOfficerID");
+                    Session.Remove("HROfficerID");
+                    Session.Remove("CitizenID");
+
+                    return RedirectToAction("Dashboard", "Technicians");
                 }
 
 
@@ -253,9 +337,9 @@ namespace CommunityServiceProject.Controllers
                             citizen.AccountStatus ==
                             AccountStatus.Suspended
 
-                                ? "Your account has been suspended. You can submit an account appeal to request a review."
+                                ? "Your account has been suspended due to non-compliance with system rules. You can submit an account appeal to request a review."
 
-                                : "Your account is inactive. You can submit an account appeal to request a review.";
+                                : "Your account is inactive non-compliance with system rules. You can submit an account appeal to request a review.";
 
                         return View(model);
                     }

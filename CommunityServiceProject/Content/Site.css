@@ -5,45 +5,65 @@
 
 /* ---------- Body ---------- */
 
+:root{
+    /* Preserve original color palette while enabling modern tweaks */
+    --primary-color: #0D5CC1;
+    --primary-dark: #08479A;
+    --muted: #667085;
+    --bg: #F5F8FC;
+    --card-bg: #FFFFFF;
+    --glass-opacity: 0.06;
+    --radius-lg: 14px;
+}
+
 body {
-    background-color: #F5F8FC;
-    font-family: "Segoe UI", Arial, sans-serif; 
+    background-color: var(--bg);
+    font-family: "Segoe UI", Arial, sans-serif;
     margin: 0;
     padding: 0;
+    color: #1f2937;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+/* Subtle global transitions for a smoother, modern feel */
+* { transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 120ms ease; }
 
 
 /* ---------- Card ---------- */
 
 .system-card {
-    background: white;
-    border-radius: 15px;
-    padding: 35px;
-    margin-top: 40px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+    background: linear-gradient(180deg, var(--card-bg), rgba(255,255,255,0.98));
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-top: 36px;
+    box-shadow: 0 8px 30px rgba(13,92,193,0.06), 0 2px 6px rgba(16,24,40,0.04);
+    border: 1px solid rgba(13,92,193,0.04);
 }
 
 
 /* ---------- Page Header ---------- */
 
 .page-header {
-    background: #0D5CC1;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
     color: white;
     text-align: center;
-    padding: 15px;
-    border-radius: 10px 10px 0px 0px;
+    padding: 18px 20px;
+    border-radius: 12px 12px 0 0;
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(13,92,193,0.12);
 }
 
 
 /* ---------- Main Title ---------- */
 
 .main-title {
-    color: #0D5CC1;
-    font-weight: bold;
+    color: var(--primary-color);
+    font-weight: 700;
     font-size: 34px;
     text-align: center;
+    letter-spacing: 0.2px;
 }
 
 
@@ -78,47 +98,63 @@ body {
 /* ---------- Primary Button ---------- */
 
 .btn-primary-custom {
-    background: #0D5CC1;
+    background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
-    width: 220px;
-    height: 50px;
-    font-size: 18px;
-    font-weight: bold;
+    border-radius: 10px;
+    min-width: 160px;
+    height: 48px;
+    padding: 0 18px;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(13,92,193,0.12);
 }
 
     .btn-primary-custom:hover {
-        background: #08479A;
-        color: white;
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(13,92,193,0.18);
     }
 
 
 /* ---------- Secondary Button ---------- */
 
 .btn-secondary-custom {
-    background: white;
-    color: #0D5CC1;
-    border: 2px solid #0D5CC1;
-    border-radius: 8px;
-    width: 220px;
-    height: 50px;
-    font-size: 18px;
-    font-weight: bold;
+    background: rgba(255,255,255,0.98);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    min-width: 160px;
+    height: 48px;
+    padding: 0 18px;
+    font-size: 16px;
+    font-weight: 700;
 }
 
     .btn-secondary-custom:hover {
-        background: #0D5CC1;
+        background: var(--primary-color);
         color: white;
+        transform: translateY(-2px);
     }
 
 
 /* ---------- Textboxes ---------- */
 
 .form-control {
-    border-radius: 8px;
-    height: 42px;
-    font-size: 16px;
+    border-radius: 10px;
+    height: 44px;
+    font-size: 15px;
+    border: 1px solid rgba(16,24,40,0.08);
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.9);
+    box-shadow: inset 0 -1px 0 rgba(16,24,40,0.02);
+}
+
+/* focus */
+.form-control:focus {
+    outline: none;
+    box-shadow: 0 6px 18px rgba(13,92,193,0.08);
+    border-color: var(--primary-color);
 }
 
 
@@ -133,15 +169,32 @@ label {
 /* ---------- Hyperlinks ---------- */
 
 a {
-    color: #0D5CC1;
-    font-weight: bold;
+    color: var(--primary-color);
+    font-weight: 600;
     text-decoration: none;
 }
 
     a:hover {
-        color: #08479A;
+        color: var(--primary-dark);
         text-decoration: underline;
     }
+
+/* Modern navbar tweaks */
+.navbar {
+    padding: 0.6rem 1rem;
+    background: linear-gradient(90deg, rgba(13,92,193,0.95), rgba(8,71,154,0.95));
+}
+
+.navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* Card hover effect used across lists */
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(13,92,193,0.08);
+}
 
 
 /* ---------- Logo ---------- */

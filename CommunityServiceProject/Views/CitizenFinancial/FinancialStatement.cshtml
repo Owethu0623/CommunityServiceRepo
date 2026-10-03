@@ -1,0 +1,660 @@
+﻿@model CommunityServiceProject.ViewModels.CitizenFinancialStatementViewModel
+
+@{
+    ViewBag.Title = "Financial Statement";
+}
+
+<style>
+
+    .statement-page {
+        max-width: 1250px;
+        margin: 35px auto 55px;
+        padding: 0 20px;
+    }
+
+    .statement-header {
+        margin-bottom: 22px;
+    }
+
+    .statement-header h1 {
+        margin: 0 0 7px;
+        color: #172033;
+        font-size: 29px;
+        font-weight: 800;
+    }
+
+    .statement-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .statement-meta {
+        margin-top: 8px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        padding: 19px;
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 11px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, .05);
+    }
+
+    .summary-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .summary-value {
+        color: #172033;
+        font-size: 22px;
+        font-weight: 850;
+    }
+
+    .statement-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e1e7ef;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, .05);
+    }
+
+    .statement-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px 22px;
+        border-bottom: 1px solid #e8edf3;
+    }
+
+    .statement-card-header h2 {
+        margin: 0 0 5px;
+        color: #16324f;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .statement-card-header p {
+        margin: 0;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    .balance-box {
+        text-align: right;
+    }
+
+    .balance-label {
+        display: block;
+        margin-bottom: 4px;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .balance-value {
+        color: #172033;
+        font-size: 22px;
+        font-weight: 850;
+    }
+
+    .statement-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .statement-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .statement-table th {
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e4e9ef;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 800;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        white-space: nowrap;
+    }
+
+    .statement-table td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f0f2f5;
+        color: #344054;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .statement-table tbody tr:hover {
+        background: #fbfdff;
+    }
+
+    .statement-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .statement-type {
+        display: inline-flex;
+        min-width: 75px;
+        justify-content: center;
+        padding: 6px 9px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .statement-invoice {
+        background: #f4edff;
+        border: 1px solid #ddd0f5;
+        color: #6346a3;
+    }
+
+    .statement-payment {
+        background: #eaf7ef;
+        border: 1px solid #bfe4cc;
+        color: #18794e;
+    }
+
+    .statement-refund {
+        background: #fff7e6;
+        border: 1px solid #f1d48a;
+        color: #9a6700;
+    }
+
+    .statement-reference {
+        color: #0d5cc1;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .statement-status {
+        color: #475467;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .statement-debit {
+        color: #b42318;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .statement-credit {
+        color: #18794e;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .statement-balance {
+        color: #172033;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .receipt-link {
+        display: inline-flex;
+        min-height: 31px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 11px;
+        border: 1px solid #0d5cc1;
+        border-radius: 7px;
+        color: #0d5cc1;
+        background: white;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .receipt-link:hover {
+        background: #0d5cc1;
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: #172033;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .page-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 17px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: white;
+        color: #344054;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .back-button:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    @@media (max-width: 1050px) {
+
+        .summary-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+    }
+
+    @@media (max-width: 700px) {
+
+        .statement-page {
+            padding: 0 12px 35px;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .statement-card-header {
+            flex-direction: column;
+        }
+
+        .balance-box {
+            text-align: left;
+        }
+
+        .page-actions {
+            justify-content: stretch;
+        }
+
+        .back-button {
+            width: 100%;
+        }
+
+    }
+
+    @@media (max-width: 450px) {
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
+
+<div class="statement-page">
+
+    <div class="statement-header">
+
+        <h1>
+            Financial Statement
+        </h1>
+
+        <p>
+            Financial activity recorded against your municipal service requests.
+        </p>
+
+        <div class="statement-meta">
+            Statement generated @Model.StatementGeneratedDate.ToString("dd MMM yyyy, HH:mm")
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Invoices
+            </span>
+
+            <span class="summary-value">
+                @Model.InvoiceCount
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Total Invoiced
+            </span>
+
+            <span class="summary-value">
+                R @Model.TotalInvoiced.ToString("N2")
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Payments
+            </span>
+
+            <span class="summary-value">
+                R @Model.TotalSuccessfulPayments.ToString("N2")
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Refunds
+            </span>
+
+            <span class="summary-value">
+                R @Model.TotalRefunded.ToString("N2")
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Current Balance
+            </span>
+
+            <span class="summary-value">
+                R @Model.CurrentBalance.ToString("N2")
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         STATEMENT
+         ========================================================= -->
+
+    <div class="statement-card">
+
+        <div class="statement-card-header">
+
+            <div>
+
+                <h2>
+                    Financial Activity
+                </h2>
+
+                <p>
+                    Charges, successful payments and completed refunds recorded in the system.
+                </p>
+
+            </div>
+
+            <div class="balance-box">
+
+                <span class="balance-label">
+                    Statement Balance
+                </span>
+
+                <span class="balance-value">
+                    R @Model.CurrentBalance.ToString("N2")
+                </span>
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Transactions.Any())
+        {
+            <div class="statement-table-wrapper">
+
+                <table class="statement-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Reference
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Debit
+                            </th>
+
+                            <th>
+                                Credit
+                            </th>
+
+                            <th>
+                                Balance
+                            </th>
+
+                            <th>
+                                Receipt
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var row in Model.Transactions)
+                        {
+                            var typeClass =
+                                row.Type == "Invoice"
+                                    ? "statement-invoice"
+                                    : row.Type == "Payment"
+                                        ? "statement-payment"
+                                        : "statement-refund";
+
+                            <tr>
+
+                                <td>
+                                    @row.Date.ToString("dd MMM yyyy")
+                                </td>
+
+
+                                <td>
+
+                                    <span class="statement-type @typeClass">
+                                        @row.Type
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="statement-reference">
+                                        @row.Reference
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    @row.Description
+                                </td>
+
+
+                                <td>
+
+                                    <span class="statement-status">
+                                        @row.Status
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (row.Debit > 0)
+                                    {
+                                        <span class="statement-debit">
+                                            R @row.Debit.ToString("N2")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>—</span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (row.Credit > 0)
+                                    {
+                                        <span class="statement-credit">
+                                            R @row.Credit.ToString("N2")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>—</span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="statement-balance">
+                                        R @row.RunningBalance.ToString("N2")
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (row.Type == "Payment" &&
+                                        row.PaymentID.HasValue &&
+                                        row.HasReceipt)
+                                    {
+                                        <a href="@Url.Action(
+                                            "Receipt",
+                                            "CitizenFinancial",
+                                            new
+                                            {
+                                                id = row.PaymentID.Value
+                                            })"
+                                           class="receipt-link">
+                                            View Receipt
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span>—</span>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <h3>
+                    No Financial Activity
+                </h3>
+
+                <p>
+                    Your financial statement will appear here when invoices, payments or refunds are recorded.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <div class="page-actions">
+
+        <a href="@Url.Action("Index", "MunicipalServices")"
+           class="back-button">
+            ← Back to Municipal Services
+        </a>
+
+    </div>
+
+</div>

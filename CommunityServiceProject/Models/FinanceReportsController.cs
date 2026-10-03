@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Filters;
 using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
@@ -28,9 +29,7 @@ namespace CommunityServiceProject.Controllers
         {
             if (Session["FinanceOfficerID"] == null)
             {
-                return RedirectToAction(
-                    "Login",
-                    "FinanceOfficer");
+                return new HttpUnauthorizedResult();
             }
 
             searchTerm =

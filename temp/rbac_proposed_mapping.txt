@@ -1,0 +1,34 @@
+Proposed controller => required roles (high priority)
+
+- AdministratorsController, Administrator* controllers => Administrator
+  - AdministratorsController, AdministratorDashboardController, AdministratorRequestsController,
+	AdministratorReportsController, AdministratorStatisticsController, AdministratorSystemHistoryController,
+	AdministratorAssignmentsController => Administrator
+
+- TechniciansController => Technician
+  - Login actions are public but Dashboard and assignment actions require Technician
+
+- TechnicianOpportunityController
+  - Index/Details: Public
+  - Manage, Create, Edit, Delete => Administrator or HROfficer
+
+- TechnicianApplicationController
+  - Review, RecordDocumentVerification, Screen, Shortlist, SelectApplicant, ScheduleAssessment, RecordAssessmentResult => Administrator or HROfficer
+  - Applicant-facing actions (Index, Apply, Status) => Citizen
+
+- MunicipalServiceRequestController / RequestsController => Citizen for citizen-facing actions; Administrator for review actions
+
+- FinancePaymentController, FinanceDashboardController, FinanceReportsController, InvoiceController, FinanceMunicipalServiceRequestController => FinanceOfficer
+
+- FeedbackManagementController => Administrator
+- CitizenNotificationController => Citizen
+- CitizenRefundController => Citizen (for request); FinanceOfficer for review/approval endpoints
+
+- TechniciansManagementController => Administrator
+
+Notes:
+- LoginController handles multi-role login; keep as is.
+- Use RoleAuthorizeAttribute at controller level where all actions share same role; otherwise apply on actions.
+- Implement ownership checks for RequestsController (citizen owner), Payments/Invoices (citizen owner), Technician assignments (technician owner), Refunds (citizen owner), and Administrator actions verify admin session.
+
+This is a high-priority mapping; I will apply these changes to controllers next. If any mapping should differ, reply now before I modify files.

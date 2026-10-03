@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Filters;
 using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
@@ -17,10 +18,11 @@ namespace CommunityServiceProject.Controllers
         // ============================================================
 
         [HttpGet]
+        [RoleAuthorize("Citizen")]
         public ActionResult Index()
         {
             if (Session["CitizenID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             int citizenID =
                 Convert.ToInt32(Session["CitizenID"]);
@@ -44,10 +46,11 @@ namespace CommunityServiceProject.Controllers
         // ============================================================
 
         [HttpGet]
+        [RoleAuthorize("Citizen")]
         public ActionResult RequestRefund(int id)
         {
             if (Session["CitizenID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             int citizenID =
                 Convert.ToInt32(Session["CitizenID"]);
@@ -138,11 +141,12 @@ namespace CommunityServiceProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RoleAuthorize("Citizen")]
         public ActionResult RequestRefund(
             RefundRequestViewModel model)
         {
             if (Session["CitizenID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             int citizenID =
                 Convert.ToInt32(Session["CitizenID"]);

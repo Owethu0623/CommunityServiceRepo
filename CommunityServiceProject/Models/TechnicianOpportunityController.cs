@@ -4,9 +4,11 @@ using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
+    // No class-level authorization attribute so Index and Details remain public.
     public class TechnicianOpportunityController : Controller
     {
         private readonly Community db = new Community();
@@ -482,17 +484,35 @@ namespace CommunityServiceProject.Controllers
             return null;
         }
 
+        // Use RoleHelper instead of duplicating session checks
+        private int? GetHROfficerID()
+        {
+            if (Session["HROfficerID"] == null)
+                return null;
+
+            int hrID;
+
+            if (int.TryParse(
+                Session["HROfficerID"].ToString(),
+                out hrID))
+            {
+                return hrID;
+            }
+
+            return null;
+        }
+
         // ============================================================
         // US108 - MANAGE TECHNICIAN OPPORTUNITIES
         // ============================================================
 
         [HttpGet]
+        [RoleAuthorize("Administrator,HROfficer")]
         public ActionResult Manage(
             string searchTerm,
             string statusFilter)
         {
-            if (!IsAdministrator())
-                return new HttpUnauthorizedResult();
+            // Allow Administrators or HR Officers to manage opportunities
 
             var query =
                 db.TechnicianOpportunities

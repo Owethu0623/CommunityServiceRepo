@@ -10,7 +10,7 @@ using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
-    [CommunityServiceProject.Filters.RoleAuthorize("FinanceOfficer")]
+    [RoleAuthorize("FinanceOfficer")]
     public class FinancePaymentController : Controller
     {
         private readonly Community db = new Community();
@@ -22,7 +22,7 @@ namespace CommunityServiceProject.Controllers
         public ActionResult Index()
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             var payments = db.Payments
                 .Include(p => p.Invoice)
@@ -46,7 +46,7 @@ namespace CommunityServiceProject.Controllers
         public ActionResult Verify(int id)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             var payment = db.Payments
                 .Include(p => p.Invoice)
@@ -147,7 +147,7 @@ namespace CommunityServiceProject.Controllers
         public ActionResult ConfirmPayment(int id)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             var payment = db.Payments
                 .Include(p => p.Invoice)
@@ -291,7 +291,7 @@ namespace CommunityServiceProject.Controllers
             string failureReason)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             if (string.IsNullOrWhiteSpace(failureReason))
             {
@@ -379,7 +379,7 @@ namespace CommunityServiceProject.Controllers
         public ActionResult ViewProofOfPayment(int id)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             var payment = db.Payments
                 .FirstOrDefault(p =>
@@ -437,6 +437,34 @@ namespace CommunityServiceProject.Controllers
                 physicalPath,
                 contentType);
         }
+
+            [HttpGet]
+            public ActionResult PaymentDetails(int? id)
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(400);
+                }
+
+                // Ensure only finance officers can view payment details.
+                if (Session["FinanceOfficerID"] == null)
+                {
+                    return RedirectToAction("Login", "Login");
+                }
+
+                var payment = db.Payments
+                    .Include(p => p.Invoice)
+                    .Include(p => p.Citizen)
+                    .FirstOrDefault(p => p.PaymentID == id.Value);
+
+                if (payment == null)
+                {
+                    TempData["ErrorMessage"] = "The payment could not be found.";
+                    return RedirectToAction("Index");
+                }
+
+                return View(payment);
+            }
         
 
       
@@ -554,7 +582,7 @@ namespace CommunityServiceProject.Controllers
         public ActionResult SuccessfulPayments()
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             var payments = db.Payments
                 .Include(p => p.Invoice)
@@ -579,7 +607,7 @@ namespace CommunityServiceProject.Controllers
         public ActionResult GenerateReceipt(int id)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
 
             var payment = db.Payments
                 .Include(p => p.Invoice)

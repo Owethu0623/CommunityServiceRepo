@@ -369,6 +369,8 @@
       <DependentUpon>202610030516280_AddFinancialAuditRecords.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202610060000000_AddHROfficer.cs" />
+    <Compile Include="Migrations\202610081200000_AddHROfficerAndRBAC.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
@@ -412,7 +414,9 @@
     <Compile Include="Models\AssignmentIssueViewModel.cs" />
     <Compile Include="Models\AssignmentStatus.cs" />
     <Compile Include="Models\CategoryManagementController.cs" />
+    <Compile Include="Models\CititzenFinancialStatementViewModel.cs" />
     <Compile Include="Models\CitizenComplianceController.cs" />
+    <Compile Include="Models\CitizenFinancialController.cs" />
     <Compile Include="Models\CitizenManagementController.cs" />
     <Compile Include="Models\CitizenNotificationController.cs" />
     <Compile Include="Models\CitizenNotificationViewModel.cs" />
@@ -909,6 +913,8 @@
     <Content Include="Views\FinanceReports\AuditHistory.cshtml" />
     <Content Include="Views\FinanceReports\FinancialReports.cshtml" />
     <Content Include="Views\HROfficerDashboard\Index.cshtml" />
+    <Content Include="Views\CitizenFinancial\Receipt.cshtml" />
+    <Content Include="Views\CitizenFinancial\FinancialStatement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

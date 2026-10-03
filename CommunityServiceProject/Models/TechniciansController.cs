@@ -1,5 +1,6 @@
 ﻿using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
+using CommunityServiceProject.Filters;
 using System;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace CommunityServiceProject.Controllers
         // ===========================================================
 
         // GET: Technicians/Login
+        [AllowAnonymous]
         public ActionResult Login()
         {
             return View();
@@ -342,11 +344,12 @@ public ActionResult ChangePassword()
         // TECHNICIAN DASHBOARD
         // ===========================================================
 
+        [RoleAuthorize("Technician")]
         public ActionResult Dashboard()
         {
             if (Session["TechnicianID"] == null)
             {
-                return RedirectToAction("Login");
+                return new HttpUnauthorizedResult();
             }
 
             int technicianID = (int)Session["TechnicianID"];

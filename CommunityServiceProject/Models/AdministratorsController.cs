@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Models
 {
+    [RoleAuthorize("Administrator")]
     public class AdministratorsController : Controller
     {
         private Community db = new Community();

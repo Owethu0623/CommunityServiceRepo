@@ -28,7 +28,7 @@ namespace CommunityServiceProject.Controllers
             {
                 Session.Clear();
 
-                return RedirectToAction(
+                return RedirectToAction(       
                     "Index",
                     "Login"
                 );

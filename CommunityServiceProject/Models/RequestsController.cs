@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -19,11 +20,12 @@ namespace CommunityServiceProject.Controllers
         // GET: Requests
         // =========================================================
 
+        [RoleAuthorize("Citizen")]
         public ActionResult Index()
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             int citizenId = (int)Session["CitizenID"];
@@ -40,11 +42,12 @@ namespace CommunityServiceProject.Controllers
         }
 
 
+        [RoleAuthorize("Citizen")]
         public ActionResult Details(int? id)
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             if (!id.HasValue)
@@ -52,6 +55,7 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Ensure the logged-in citizen owns this request to prevent ID tampering
             int citizenId = (int)Session["CitizenID"];
 
             var request = db.Requests
@@ -79,6 +83,7 @@ namespace CommunityServiceProject.Controllers
         // GET: Requests/Track/5
         // =========================================================
 
+        [RoleAuthorize("Citizen")]
         public ActionResult Track(int? id)
         {
             if (id == null)
@@ -90,7 +95,7 @@ namespace CommunityServiceProject.Controllers
 
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Index", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             int citizenId = (int)Session["CitizenID"];

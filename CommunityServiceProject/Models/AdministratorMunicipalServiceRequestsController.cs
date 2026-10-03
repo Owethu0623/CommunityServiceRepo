@@ -339,6 +339,97 @@ public ActionResult Reject(int id, string rejectionReason)
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult StartService(int id)
+        {
+            if (Session["AdministratorID"] == null)
+                return RedirectToAction("Login", "Login");
+
+            var administratorId = (int)Session["AdministratorID"];
+
+            var request = db.MunicipalServiceRequests
+                .FirstOrDefault(r =>
+                    r.MunicipalServiceRequestID == id);
+
+            if (request == null)
+            {
+                TempData["ErrorMessage"] =
+                    "The municipal service request could not be found.";
+
+                return RedirectToAction("Index");
+            }
+
+            if (request.Status != MunicipalServiceRequestStatus.Paid)
+            {
+                TempData["ErrorMessage"] =
+                    "Only paid municipal service requests can be started.";
+
+                return RedirectToAction(
+                    "Review",
+                    new { id = request.MunicipalServiceRequestID }
+                );
+            }
+
+            request.Status =
+                MunicipalServiceRequestStatus.ServiceInProgress;
+
+            db.SaveChanges();
+
+            TempData["SuccessMessage"] =
+                "The municipal service request has been marked as Service In Progress.";
+
+            return RedirectToAction(
+                "Review",
+                new { id = request.MunicipalServiceRequestID }
+            );
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CompleteService(int id)
+        {
+            if (Session["AdministratorID"] == null)
+                return RedirectToAction("Login", "Login");
+
+            var administratorId = (int)Session["AdministratorID"];
+
+            var request = db.MunicipalServiceRequests
+                .FirstOrDefault(r =>
+                    r.MunicipalServiceRequestID == id);
+
+            if (request == null)
+            {
+                TempData["ErrorMessage"] =
+                    "The municipal service request could not be found.";
+
+                return RedirectToAction("Index");
+            }
+
+            if (request.Status != MunicipalServiceRequestStatus.ServiceInProgress)
+            {
+                TempData["ErrorMessage"] =
+                    "Only municipal service requests currently in progress can be completed.";
+
+                return RedirectToAction(
+                    "Review",
+                    new { id = request.MunicipalServiceRequestID }
+                );
+            }
+
+            request.Status =
+                MunicipalServiceRequestStatus.Completed;
+
+            db.SaveChanges();
+
+            TempData["SuccessMessage"] =
+                "The municipal service request has been marked as Completed.";
+
+            return RedirectToAction(
+                "Review",
+                new { id = request.MunicipalServiceRequestID }
+            );
+        }
 
 
 

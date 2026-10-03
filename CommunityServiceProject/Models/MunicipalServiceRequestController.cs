@@ -54,10 +54,8 @@ namespace CommunityServiceProject.Controllers
 
             if (existingRequest != null)
             {
-                TempData["ErrorMessage"] =
-                    "You already have an active request for this municipal service. " +
-                    "Please wait for the existing request to be processed before submitting another request.";
-
+                // Previously set an ErrorMessage and redirected to the existing request details.
+                // Remove the message so it does not appear in views per user request.
                 return RedirectToAction(
                     "Details",
                     new
@@ -117,9 +115,7 @@ namespace CommunityServiceProject.Controllers
 
             if (existingRequest != null)
             {
-                TempData["ErrorMessage"] =
-                    "You already have an active request for this municipal service.";
-
+                // Previously set an ErrorMessage so it displayed in the view; remove the message.
                 return RedirectToAction(
                     "Details",
                     new
@@ -278,6 +274,25 @@ namespace CommunityServiceProject.Controllers
                 .FirstOrDefault(r =>
                     r.MunicipalServiceRequestID == id &&
                     r.CitizenID == citizenId);
+
+            bool showCompletionNotice = false;
+
+            if (request.Status ==
+                MunicipalServiceRequestStatus.Completed)
+            {
+                string completionNoticeKey =
+                    "CompletionNoticeShown_" +
+                    request.MunicipalServiceRequestID;
+
+                if (Session[completionNoticeKey] == null)
+                {
+                    showCompletionNotice = true;
+                    Session[completionNoticeKey] = true;
+                }
+            }
+
+            ViewBag.ShowCompletionNotice = showCompletionNotice;
+
 
             if (request == null)
             {

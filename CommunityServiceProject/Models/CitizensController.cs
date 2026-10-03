@@ -6,9 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Models
 {
+    [RoleAuthorize("Administrator,Citizen")]
     public class CitizensController : Controller
     {
         private Community db = new Community();
@@ -52,6 +54,7 @@ namespace CommunityServiceProject.Models
         // GET: Citizens/Create
         // =========================================================
 
+        [AllowAnonymous]
         public ActionResult Create()
         {
             return View();
@@ -61,6 +64,7 @@ namespace CommunityServiceProject.Models
         // POST: Citizens/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Create(
             [Bind(Include = "FirstName,LastName,EmailAddress,PhoneNumber,Password,ConfirmPassword,ResidentialAddress")]
     Citizen citizen)

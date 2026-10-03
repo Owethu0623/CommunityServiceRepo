@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -9,11 +10,12 @@ namespace CommunityServiceProject.Controllers
         private readonly Community db = new Community();
 
         // GET: Feedback/Create
+        [RoleAuthorize("Citizen")]
         public ActionResult Create(int? requestId)
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             if (!requestId.HasValue)
@@ -68,14 +70,14 @@ namespace CommunityServiceProject.Controllers
             return View(feedback);
         }
 
-        // POST: Feedback/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RoleAuthorize("Citizen")]
         public ActionResult Create(Feedback feedback)
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             int citizenId = (int)Session["CitizenID"];
@@ -135,11 +137,12 @@ namespace CommunityServiceProject.Controllers
         }
 
         // GET: Feedback/Submitted/5
+        [RoleAuthorize("Citizen")]
         public ActionResult Submitted(int? id)
         {
             if (Session["CitizenID"] == null)
             {
-                return RedirectToAction("Login", "Login");
+                return new HttpUnauthorizedResult();
             }
 
             if (!id.HasValue)

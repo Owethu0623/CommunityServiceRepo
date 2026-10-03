@@ -10,11 +10,10 @@
     {
         public Configuration()
         {
-            // Enable automatic migrations so pending model changes (like the new HROfficer entity)
-            // can be applied without creating an explicit code-based migration.
-            // This is a short-term convenience to unblock development; consider
-            // reverting to explicit migrations for production.
-            AutomaticMigrationsEnabled = true;
+            // Disable automatic migrations. We will record the current model state
+            // with an explicit code-based migration and keep AutomaticMigrationsEnabled = false
+            // for safer production deployments.
+            AutomaticMigrationsEnabled = false;
             ContextKey = "CommunityServiceProject.Models.Community";
         }
 

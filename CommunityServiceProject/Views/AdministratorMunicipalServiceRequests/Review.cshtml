@@ -238,6 +238,23 @@
         color: #a12620;
         border: 1px solid #efc0bc;
     }
+    .status-paid {
+        background: #eef8ff;
+        color: #0D5CC1;
+        border: 1px solid #bfdcf7;
+    }
+
+    .status-service-in-progress {
+        background: #fff8e8;
+        color: #8a6514;
+        border: 1px solid #eed79e;
+    }
+
+    .status-completed {
+        background: #e8f7ee;
+        color: #18794e;
+        border: 1px solid #bfe7cf;
+    }
 
     .timeline {
         position: relative;
@@ -818,11 +835,115 @@
                             Rejected
                         </span>
                     }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                    {
+                        <span class="status-badge status-paid">
+                            Paid
+                        </span>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                    {
+                        <span class="status-badge status-service-in-progress">
+                            Service In Progress
+                        </span>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                    {
+                        <span class="status-badge status-completed">
+                            Completed
+                        </span>
+                    }
                     else
                     {
                         <span class="status-badge status-under-review">
                             @Model.Status
                         </span>
+                    }
+
+                    @if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Paid)
+                    {
+                        <div class="workflow-action-card">
+
+                            <div class="workflow-action-header">
+                                <div>
+                                    <span class="workflow-label">Payment Verified</span>
+
+                                    <h3>Ready for Service Fulfilment</h3>
+
+                                    <p>
+                                        The citizen's payment has been verified by Finance.
+                                        The municipal service can now be started.
+                                    </p>
+                                </div>
+                            </div>
+
+                            @using (Html.BeginForm(
+                                "StartService",
+                                "AdministratorMunicipalServiceRequests",
+                                new { id = Model.MunicipalServiceRequestID },
+                                FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="workflow-primary-button">
+                                    Start Municipal Service
+                                </button>
+                            }
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.ServiceInProgress)
+                    {
+                        <div class="workflow-action-card">
+
+                            <div class="workflow-action-header">
+                                <div>
+                                    <span class="workflow-label">Service In Progress</span>
+
+                                    <h3>Complete Municipal Service</h3>
+
+                                    <p>
+                                        This municipal service is currently being fulfilled.
+                                        Mark it as completed once the service has been delivered.
+                                    </p>
+                                </div>
+                            </div>
+
+                            @using (Html.BeginForm(
+                                "CompleteService",
+                                "AdministratorMunicipalServiceRequests",
+                                new { id = Model.MunicipalServiceRequestID },
+                                FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="workflow-primary-button">
+                                    Mark Service as Completed
+                                </button>
+                            }
+
+                        </div>
+                    }
+                    else if (Model.Status == CommunityServiceProject.Models.MunicipalServiceRequestStatus.Completed)
+                    {
+                        <div class="workflow-completed-card">
+
+                            <div class="workflow-completed-icon">
+                                ✓
+                            </div>
+
+                            <div>
+                                <h3>Municipal Service Completed</h3>
+
+                                <p>
+                                    This municipal service request has been completed.
+                                    No further action is required.
+                                </p>
+                            </div>
+
+                        </div>
                     }
 
                 </div>

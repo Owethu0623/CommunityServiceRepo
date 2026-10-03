@@ -4,6 +4,7 @@ using CommunityServiceProject.Filters;
 namespace CommunityServiceProject.Controllers
 {
     [RoleAuthorize("Administrator")]
+    [RoleAuthorize("Administrator")]
     public class AdministratorDashboardController : Controller
     {
         // GET: AdministratorDashboard

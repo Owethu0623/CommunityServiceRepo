@@ -16,6 +16,7 @@ namespace CommunityServiceProject.Models
         public DbSet<Administrator> Administrators { get; set; }
         public DbSet<Technician> Technicians { get; set; }
         public DbSet<FinanceOfficer> FinanceOfficers { get; set; }
+        public DbSet<HROfficer> HROfficers { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Ward> Wards { get; set; }
@@ -133,6 +134,7 @@ namespace CommunityServiceProject.Models
         public DbSet<FinancialAudit> FinancialAudits { get; set; }
       
       public DbSet<MunicipalServiceRequestNotification> MunicipalServiceRequestNotifications { get; set; }
+        public DbSet<FinancialAuditRecord> FinancialAuditRecords { get; set; }
 
 
 
@@ -169,7 +171,6 @@ namespace CommunityServiceProject.Models
             modelBuilder.Entity<Request>()
                 .HasOptional(r => r.Administrator)
                 .WithMany(a => a.Requests)
-                .HasForeignKey(r => r.AdministratorID)
                 .WillCascadeOnDelete(false);
 
             // Request -> current Technician

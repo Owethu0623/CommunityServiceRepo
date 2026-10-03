@@ -9,6 +9,7 @@ using CommunityServiceProject.ViewModels;
 
 namespace CommunityServiceProject.Controllers
 {
+    [CommunityServiceProject.Filters.RoleAuthorize("FinanceOfficer")]
     public class ServiceTypeController : Controller
     {
         private readonly Community db = new Community();

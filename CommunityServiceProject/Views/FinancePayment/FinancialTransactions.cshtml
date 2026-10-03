@@ -1,0 +1,958 @@
+﻿@model CommunityServiceProject.ViewModels.FinancialTransactionsViewModel
+
+@{
+    ViewBag.Title = "Financial Transactions";
+}
+
+<style>
+
+    .financial-page {
+        max-width: 1250px;
+        margin: 35px auto;
+        padding: 0 20px 50px;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .financial-header {
+        margin-bottom: 25px;
+    }
+
+    .financial-header h1 {
+        margin: 0 0 7px;
+        color: #172033;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .financial-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       SUMMARY CARDS
+       ========================================================= */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, 0.05);
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+    }
+
+    .summary-value {
+        margin-top: 7px;
+        color: #172033;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    /* =========================================================
+       FILTER CARD
+       ========================================================= */
+
+    .filter-card {
+        margin-bottom: 22px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, 0.04);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .filter-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #344054;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-input,
+    .filter-select {
+        width: 100%;
+        height: 40px;
+        padding: 0 11px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #172033;
+        font-size: 13px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .filter-input:focus,
+    .filter-select:focus {
+        border-color: #0d5cc1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, 0.08);
+    }
+
+    .filter-button {
+        height: 40px;
+        padding: 0 17px;
+        border: 1px solid #0d5cc1;
+        border-radius: 8px;
+        background: #0d5cc1;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .filter-button:hover {
+        background: #084a9d;
+        border-color: #084a9d;
+    }
+
+    /* =========================================================
+       TABLE CARD
+       ========================================================= */
+
+    .table-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, 0.05);
+    }
+
+    .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 19px 22px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .table-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .transaction-count {
+        color: #667085;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .transaction-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .transaction-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .transaction-table th {
+        padding: 13px 18px;
+        background: #f8fafc;
+        border-bottom: 1px solid #eaecf0;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 800;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        white-space: nowrap;
+    }
+
+    .transaction-table td {
+        padding: 16px 18px;
+        border-bottom: 1px solid #f0f2f5;
+        color: #344054;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .transaction-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .transaction-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* =========================================================
+       TABLE CONTENT
+       ========================================================= */
+
+    .reference {
+        color: #0d5cc1;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .citizen-name {
+        color: #172033;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .invoice-number {
+        color: #475467;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .date-value {
+        color: #475467;
+        white-space: nowrap;
+    }
+
+    .amount {
+        color: #172033;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .description {
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       TYPE BADGES
+       ========================================================= */
+
+    .type-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .type-payment {
+        background: #eaf3ff;
+        border: 1px solid #c9ddf8;
+        color: #0d5cc1;
+    }
+
+    .type-refund {
+        background: #f4edff;
+        border: 1px solid #ddd0f5;
+        color: #6346a3;
+    }
+
+    /* =========================================================
+       STATUS BADGES
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-successful {
+        background: #eaf7ef;
+        border: 1px solid #bfe4cc;
+        color: #18794e;
+    }
+
+    .status-refunded {
+        background: #eaf7ef;
+        border: 1px solid #bfe4cc;
+        color: #18794e;
+    }
+
+    .status-failed {
+        background: #fff0f0;
+        border: 1px solid #f1c4c4;
+        color: #b42318;
+    }
+
+    .status-rejected {
+        background: #fff0f0;
+        border: 1px solid #f1c4c4;
+        color: #b42318;
+    }
+
+    .status-pending {
+        background: #fff7e6;
+        border: 1px solid #f1d48a;
+        color: #9a6700;
+    }
+
+    .status-processing {
+        background: #fff7e6;
+        border: 1px solid #f1d48a;
+        color: #9a6700;
+    }
+
+    .status-refundrequested {
+        background: #fff7e6;
+        border: 1px solid #f1d48a;
+        color: #9a6700;
+    }
+
+    .status-underreview {
+        background: #fff7e6;
+        border: 1px solid #f1d48a;
+        color: #9a6700;
+    }
+
+    .status-approved {
+        background: #eaf3ff;
+        border: 1px solid #c9ddf8;
+        color: #0d5cc1;
+    }
+
+    .status-refundprocessing {
+        background: #f4edff;
+        border: 1px solid #ddd0f5;
+        color: #6346a3;
+    }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .empty-state {
+        padding: 55px 25px;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        margin-bottom: 12px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: #172033;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+       PAGE ACTIONS
+       ========================================================= */
+
+    .page-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 16px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #344054;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1100px) {
+
+        .filter-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .filter-group:first-child {
+            grid-column: span 3;
+        }
+
+    }
+
+    @@media (max-width: 800px) {
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-group:first-child {
+            grid-column: span 2;
+        }
+
+    }
+
+    @@media (max-width: 600px) {
+
+        .financial-page {
+            padding: 0 12px 35px;
+        }
+
+        .financial-header h1 {
+            font-size: 24px;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-group:first-child {
+            grid-column: span 1;
+        }
+
+        .filter-button {
+            width: 100%;
+        }
+
+        .table-header {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .page-actions {
+            justify-content: stretch;
+        }
+
+        .back-button {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="financial-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <div class="financial-header">
+
+        <h1>
+            Financial Transactions
+        </h1>
+
+        <p>
+            Monitor recorded municipal payments and refund activities.
+        </p>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUMMARY
+         ========================================================= -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Transactions
+            </div>
+
+            <div class="summary-value">
+                @Model.TotalTransactions
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Payments
+            </div>
+
+            <div class="summary-value">
+                R @Model.TotalPayments.ToString("N2")
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-label">
+                Total Refunds
+            </div>
+
+            <div class="summary-value">
+                R @Model.TotalRefunds.ToString("N2")
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTERS
+         ========================================================= -->
+
+    <div class="filter-card">
+
+        @using (Html.BeginForm(
+            "FinancialTransactions",
+            "FinancePayment",
+            FormMethod.Get))
+        {
+            <div class="filter-grid">
+
+                <div class="filter-group">
+
+                    <label>
+                        Search
+                    </label>
+
+                    <input type="text"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="filter-input"
+                           placeholder="Reference, invoice or citizen..." />
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label>
+                        Type
+                    </label>
+
+                    <select name="transactionType"
+                            class="filter-select">
+
+                        <option value="">
+                            All
+                        </option>
+
+                        <option value="Payment"
+                                @(Model.TransactionType == "Payment" ? "selected" : "")>
+                            Payment
+                        </option>
+
+                        <option value="Refund"
+                                @(Model.TransactionType == "Refund" ? "selected" : "")>
+                            Refund
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select name="statusFilter"
+                            class="filter-select">
+
+                        <option value="">
+                            All
+                        </option>
+
+                        <option value="Pending"
+                                @(Model.StatusFilter == "Pending" ? "selected" : "")>
+                            Pending
+                        </option>
+
+                        <option value="Processing"
+                                @(Model.StatusFilter == "Processing" ? "selected" : "")>
+                            Processing
+                        </option>
+
+                        <option value="Successful"
+                                @(Model.StatusFilter == "Successful" ? "selected" : "")>
+                            Successful
+                        </option>
+
+                        <option value="Failed"
+                                @(Model.StatusFilter == "Failed" ? "selected" : "")>
+                            Failed
+                        </option>
+
+                        <option value="RefundRequested"
+                                @(Model.StatusFilter == "RefundRequested" ? "selected" : "")>
+                            Refund Requested
+                        </option>
+
+                        <option value="UnderReview"
+                                @(Model.StatusFilter == "UnderReview" ? "selected" : "")>
+                            Under Review
+                        </option>
+
+                        <option value="Approved"
+                                @(Model.StatusFilter == "Approved" ? "selected" : "")>
+                            Approved
+                        </option>
+
+                        <option value="Rejected"
+                                @(Model.StatusFilter == "Rejected" ? "selected" : "")>
+                            Rejected
+                        </option>
+
+                        <option value="RefundProcessing"
+                                @(Model.StatusFilter == "RefundProcessing" ? "selected" : "")>
+                            Refund Processing
+                        </option>
+
+                        <option value="Refunded"
+                                @(Model.StatusFilter == "Refunded" ? "selected" : "")>
+                            Refunded
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label>
+                        From
+                    </label>
+
+                    <input type="date"
+                           name="fromDate"
+                           value="@(Model.FromDate.HasValue ? Model.FromDate.Value.ToString("yyyy-MM-dd") : "")"
+                           class="filter-input" />
+
+                </div>
+
+
+                <div class="filter-group">
+
+                    <label>
+                        To
+                    </label>
+
+                    <input type="date"
+                           name="toDate"
+                           value="@(Model.ToDate.HasValue ? Model.ToDate.Value.ToString("yyyy-MM-dd") : "")"
+                           class="filter-input" />
+
+                </div>
+
+
+                <div>
+
+                    <button type="submit"
+                            class="filter-button">
+                        Apply Filters
+                    </button>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         TRANSACTION TABLE
+         ========================================================= -->
+
+    <div class="table-card">
+
+        <div class="table-header">
+
+            <h2>
+                Transaction Records
+            </h2>
+
+            <span class="transaction-count">
+                @Model.TotalTransactions record(s)
+            </span>
+
+        </div>
+
+
+        @if (Model.Transactions.Any())
+        {
+            <div class="transaction-table-wrapper">
+
+                <table class="transaction-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Reference
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Citizen
+                            </th>
+
+                            <th>
+                                Invoice
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var transaction in Model.Transactions)
+                        {
+                            var statusClass = "status-pending";
+
+                            if (transaction.Status == "Successful")
+                            {
+                                statusClass = "status-successful";
+                            }
+                            else if (transaction.Status == "Refunded")
+                            {
+                                statusClass = "status-refunded";
+                            }
+                            else if (transaction.Status == "Failed")
+                            {
+                                statusClass = "status-failed";
+                            }
+                            else if (transaction.Status == "Rejected")
+                            {
+                                statusClass = "status-rejected";
+                            }
+                            else if (transaction.Status == "Processing")
+                            {
+                                statusClass = "status-processing";
+                            }
+                            else if (transaction.Status == "RefundRequested")
+                            {
+                                statusClass = "status-refundrequested";
+                            }
+                            else if (transaction.Status == "UnderReview")
+                            {
+                                statusClass = "status-underreview";
+                            }
+                            else if (transaction.Status == "Approved")
+                            {
+                                statusClass = "status-approved";
+                            }
+                            else if (transaction.Status == "RefundProcessing")
+                            {
+                                statusClass = "status-refundprocessing";
+                            }
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="reference">
+                                        @transaction.Reference
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (transaction.Type == "Payment")
+                                    {
+                                        <span class="type-badge type-payment">
+                                            Payment
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="type-badge type-refund">
+                                            Refund
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="date-value">
+                                        @transaction.TransactionDate.ToString("dd MMM yyyy, HH:mm")
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="citizen-name">
+                                        @transaction.CitizenName
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="invoice-number">
+                                        @transaction.InvoiceNumber
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge @statusClass">
+                                        @transaction.Status
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="amount">
+                                        R @transaction.Amount.ToString("N2")
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="description">
+                                        @transaction.Description
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    💳
+                </div>
+
+                <h3>
+                    No Financial Transactions Found
+                </h3>
+
+                <p>
+                    No payment or refund records match the selected filters.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         NAVIGATION
+         ========================================================= -->
+
+    <div class="page-actions">
+
+        <a href="@Url.Action("Index", "FinanceDashboard")"
+           class="back-button">
+
+            ← Back to Finance Dashboard
+
+        </a>
+
+    </div>
+
+</div>

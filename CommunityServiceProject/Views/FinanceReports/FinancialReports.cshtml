@@ -1,0 +1,1440 @@
+﻿@model CommunityServiceProject.ViewModels.FinancialReportsViewModel
+
+@{
+    ViewBag.Title = "Financial Reports";
+}
+
+<style>
+
+    .financial-report-page {
+        max-width: 1320px;
+        margin: 35px auto;
+        padding: 0 20px 55px;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .report-header {
+        margin-bottom: 24px;
+    }
+
+    .report-header h1 {
+        margin: 0 0 7px;
+        color: #172033;
+        font-size: 29px;
+        font-weight: 800;
+    }
+
+    .report-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .report-generated {
+        margin-top: 8px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       FILTERS
+       ========================================================= */
+
+    .report-filter-card {
+        margin-bottom: 22px;
+        padding: 22px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 13px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, .05);
+    }
+
+    .filter-title {
+        margin-bottom: 16px;
+        color: #172033;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .report-filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .report-filter-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #344054;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .report-input,
+    .report-select {
+        width: 100%;
+        height: 40px;
+        padding: 0 11px;
+        box-sizing: border-box;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #172033;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .report-input:focus,
+    .report-select:focus {
+        border-color: #0d5cc1;
+        box-shadow: 0 0 0 3px rgba(13, 92, 193, .08);
+    }
+
+    .report-filter-button {
+        height: 40px;
+        padding: 0 18px;
+        border: 1px solid #0d5cc1;
+        border-radius: 8px;
+        background: #0d5cc1;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .report-filter-button:hover {
+        background: #084a9d;
+        border-color: #084a9d;
+    }
+
+    /* =========================================================
+       KPI CARDS
+       ========================================================= */
+
+    .report-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .report-kpi {
+        padding: 19px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, .05);
+    }
+
+    .report-kpi-label {
+        color: #667085;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+    }
+
+    .report-kpi-value {
+        margin-top: 7px;
+        color: #172033;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .report-kpi-note {
+        margin-top: 6px;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       FINANCIAL POSITION
+       ========================================================= */
+
+    .financial-position {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .position-card {
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, .05);
+        overflow: hidden;
+    }
+
+    .position-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .position-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .position-header p {
+        margin: 5px 0 0;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    .position-body {
+        padding: 20px;
+    }
+
+    .movement-total {
+        margin-bottom: 16px;
+        color: #172033;
+        font-size: 31px;
+        font-weight: 800;
+    }
+
+    .movement-label {
+        margin-bottom: 4px;
+        color: #667085;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+    }
+
+    .movement-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 13px 0;
+        border-top: 1px solid #f0f2f5;
+    }
+
+    .movement-row span {
+        color: #667085;
+        font-size: 12px;
+    }
+
+    .movement-row strong {
+        color: #172033;
+        font-size: 13px;
+    }
+
+    .risk-row strong {
+        color: #9a6700;
+    }
+
+    /* =========================================================
+       SECTION CARD
+       ========================================================= */
+
+    .report-section {
+        margin-bottom: 22px;
+        background: #ffffff;
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(16, 24, 40, .05);
+        overflow: hidden;
+    }
+
+    .report-section-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .report-section-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .report-section-header p {
+        margin: 5px 0 0;
+        color: #98a2b3;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       STATUS TABLE
+       ========================================================= */
+
+    .report-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    .report-table th {
+        padding: 12px 18px;
+        background: #f8fafc;
+        border-bottom: 1px solid #eaecf0;
+        color: #667085;
+        font-size: 10px;
+        font-weight: 800;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        white-space: nowrap;
+    }
+
+    .report-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #f0f2f5;
+        color: #344054;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .report-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .report-table tbody tr:hover {
+        background: #fafcff;
+    }
+
+    .type-pill,
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 27px;
+        padding: 0 9px;
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .type-payment {
+        background: #eaf3ff;
+        color: #0d5cc1;
+        border: 1px solid #c9ddf8;
+    }
+
+    .type-refund {
+        background: #f4edff;
+        color: #6346a3;
+        border: 1px solid #ddd0f5;
+    }
+
+    .status-successful,
+    .status-refunded {
+        background: #eaf7ef;
+        color: #18794e;
+        border: 1px solid #bfe4cc;
+    }
+
+    .status-failed,
+    .status-rejected {
+        background: #fff0f0;
+        color: #b42318;
+        border: 1px solid #f1c4c4;
+    }
+
+    .status-pending,
+    .status-processing,
+    .status-refundrequested,
+    .status-underreview {
+        background: #fff7e6;
+        color: #9a6700;
+        border: 1px solid #f1d48a;
+    }
+
+    .status-approved {
+        background: #eaf3ff;
+        color: #0d5cc1;
+        border: 1px solid #c9ddf8;
+    }
+
+    .status-refundprocessing {
+        background: #f4edff;
+        color: #6346a3;
+        border: 1px solid #ddd0f5;
+    }
+
+    .table-amount {
+        color: #172033;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       DETAIL TABLE
+       ========================================================= */
+
+    .transaction-detail-table {
+        min-width: 1120px;
+    }
+
+    .reference-value {
+        color: #0d5cc1;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .date-value {
+        white-space: nowrap;
+        color: #475467;
+    }
+
+    .citizen-value {
+        color: #172033;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .description-value {
+        color: #667085;
+        font-size: 11px;
+    }
+
+    /* =========================================================
+       EMPTY
+       ========================================================= */
+
+    .report-empty {
+        padding: 50px 25px;
+        text-align: center;
+    }
+
+    .report-empty h3 {
+        margin: 0 0 6px;
+        color: #172033;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .report-empty p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+    }
+
+    /* =========================================================
+       ACTIONS
+       ========================================================= */
+
+    .report-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .report-action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 17px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .print-button {
+        background: #0d5cc1;
+        border: 1px solid #0d5cc1;
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+    .print-button:hover {
+        background: #084a9d;
+        border-color: #084a9d;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .back-button {
+        background: #ffffff;
+        border: 1px solid #d0d5dd;
+        color: #344054;
+    }
+
+    .back-button:hover {
+        background: #f8fafc;
+        color: #172033;
+        text-decoration: none;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1100px) {
+
+        .report-filter-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .report-filter-group:first-child {
+            grid-column: span 3;
+        }
+
+        .report-kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .financial-position {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 650px) {
+
+        .financial-report-page {
+            padding: 0 12px 35px;
+        }
+
+        .report-filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .report-filter-group:first-child {
+            grid-column: span 1;
+        }
+
+        .report-kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .report-actions {
+            flex-direction: column;
+        }
+
+        .report-action-button {
+            width: 100%;
+        }
+
+    }
+
+    @@media print {
+
+        .report-filter-card,
+        .report-actions {
+            display: none;
+        }
+
+        .financial-report-page {
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .report-section,
+        .position-card,
+        .report-kpi {
+            box-shadow: none;
+        }
+
+    }
+
+</style>
+
+
+<div class="financial-report-page">
+
+    <div class="report-header">
+
+        <h1>
+            Financial Reports
+        </h1>
+
+        <p>
+            Financial analysis of recorded municipal payments and refund activities.
+        </p>
+
+        <div class="report-generated">
+            Report generated @Model.ReportGeneratedAt.ToString("dd MMM yyyy, HH:mm")
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FILTERS
+         ========================================================= -->
+
+    <div class="report-filter-card">
+
+        <div class="filter-title">
+            Report Filters
+        </div>
+
+        @using (Html.BeginForm(
+            "FinancialReports",
+            "FinanceReports",
+            FormMethod.Get))
+        {
+            <div class="report-filter-grid">
+
+                <div class="report-filter-group">
+
+                    <label>
+                        Search
+                    </label>
+
+                    <input type="text"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="report-input"
+                           placeholder="Reference, invoice or citizen..." />
+
+                </div>
+
+
+                <div class="report-filter-group">
+
+                    <label>
+                        Transaction Type
+                    </label>
+
+                    <select name="transactionType"
+                            class="report-select">
+
+                        <option value="">
+                            All
+                        </option>
+
+                        <option value="Payment"
+                                @(Model.TransactionType == "Payment" ? "selected" : "")>
+                            Payments
+                        </option>
+
+                        <option value="Refund"
+                                @(Model.TransactionType == "Refund" ? "selected" : "")>
+                            Refunds
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="report-filter-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select name="statusFilter"
+                            class="report-select">
+
+                        <option value="">
+                            All
+                        </option>
+
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Successful">Successful</option>
+                        <option value="Failed">Failed</option>
+                        <option value="RefundRequested">Refund Requested</option>
+                        <option value="UnderReview">Under Review</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="RefundProcessing">Refund Processing</option>
+                        <option value="Refunded">Refunded</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="report-filter-group">
+
+                    <label>
+                        From
+                    </label>
+
+                    <input type="date"
+                           name="fromDate"
+                           value="@(Model.FromDate.HasValue ? Model.FromDate.Value.ToString("yyyy-MM-dd") : "")"
+                           class="report-input" />
+
+                </div>
+
+
+                <div class="report-filter-group">
+
+                    <label>
+                        To
+                    </label>
+
+                    <input type="date"
+                           name="toDate"
+                           value="@(Model.ToDate.HasValue ? Model.ToDate.Value.ToString("yyyy-MM-dd") : "")"
+                           class="report-input" />
+
+                </div>
+
+
+                <div>
+
+                    <button type="submit"
+                            class="report-filter-button">
+                        Generate Report
+                    </button>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         KPI SUMMARY
+         ========================================================= -->
+
+    <div class="report-kpi-grid">
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Successful Payments
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.SuccessfulPaymentCount
+            </div>
+
+            <div class="report-kpi-note">
+                Completed payment records
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Gross Payments
+            </div>
+
+            <div class="report-kpi-value">
+                R @Model.GrossSuccessfulPayments.ToString("N2")
+            </div>
+
+            <div class="report-kpi-note">
+                Successfully recorded payments
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Refunded
+            </div>
+
+            <div class="report-kpi-value">
+                R @Model.TotalRefunded.ToString("N2")
+            </div>
+
+            <div class="report-kpi-note">
+                Completed refund records
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Net Movement
+            </div>
+
+            <div class="report-kpi-value">
+                R @Model.NetFinancialMovement.ToString("N2")
+            </div>
+
+            <div class="report-kpi-note">
+                Successful payments less completed refunds
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Failed Payments
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.FailedPaymentCount
+            </div>
+
+            <div class="report-kpi-note">
+                R @Model.FailedPaymentAmount.ToString("N2") recorded
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Pending Payments
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.PendingPaymentCount
+            </div>
+
+            <div class="report-kpi-note">
+                R @Model.PendingPaymentAmount.ToString("N2") awaiting processing
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Refund Exposure
+            </div>
+
+            <div class="report-kpi-value">
+                R @Model.ApprovedRefundExposure.ToString("N2")
+            </div>
+
+            <div class="report-kpi-note">
+                Approved or processing refunds
+            </div>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <div class="report-kpi-label">
+                Refund Rate
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.RefundRatePercentage.ToString("N2")%
+            </div>
+
+            <div class="report-kpi-note">
+                Refunded value compared with successful payments
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FINANCIAL POSITION
+         ========================================================= -->
+
+    <div class="financial-position">
+
+        <div class="position-card">
+
+            <div class="position-header">
+
+                <h2>
+                    Financial Movement
+                </h2>
+
+                <p>
+                    Net recorded movement within the selected report period.
+                </p>
+
+            </div>
+
+            <div class="position-body">
+
+                <div class="movement-label">
+                    Net Financial Movement
+                </div>
+
+                <div class="movement-total">
+                    R @Model.NetFinancialMovement.ToString("N2")
+                </div>
+
+
+                <div class="movement-row">
+
+                    <span>
+                        Successful Payments
+                    </span>
+
+                    <strong>
+                        R @Model.GrossSuccessfulPayments.ToString("N2")
+                    </strong>
+
+                </div>
+
+
+                <div class="movement-row">
+
+                    <span>
+                        Completed Refunds
+                    </span>
+
+                    <strong>
+                        R @Model.TotalRefunded.ToString("N2")
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="position-card">
+
+            <div class="position-header">
+
+                <h2>
+                    Outstanding Financial Activity
+                </h2>
+
+                <p>
+                    Amounts that have not reached a completed financial state.
+                </p>
+
+            </div>
+
+            <div class="position-body">
+
+                <div class="movement-row">
+
+                    <span>
+                        Payment Processing
+                    </span>
+
+                    <strong>
+                        R @Model.PendingPaymentAmount.ToString("N2")
+                    </strong>
+
+                </div>
+
+
+                <div class="movement-row">
+
+                    <span>
+                        Refund Exposure
+                    </span>
+
+                    <strong>
+                        R @Model.ApprovedRefundExposure.ToString("N2")
+                    </strong>
+
+                </div>
+
+
+                <div class="movement-row risk-row">
+
+                    <span>
+                        Failed Payment Value
+                    </span>
+
+                    <strong>
+                        R @Model.FailedPaymentAmount.ToString("N2")
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         STATUS BREAKDOWN
+         ========================================================= -->
+
+    <div class="report-section">
+
+        <div class="report-section-header">
+
+            <h2>
+                Status Breakdown
+            </h2>
+
+            <p>
+                Financial activity grouped by transaction type and current status.
+            </p>
+
+        </div>
+
+
+        @if (Model.StatusSummary.Any())
+        {
+            <div class="report-table-wrapper">
+
+                <table class="report-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Records
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.StatusSummary)
+                        {
+                            var statusClass = "status-pending";
+
+                            if (item.Status == "Successful")
+                            {
+                                statusClass = "status-successful";
+                            }
+                            else if (item.Status == "Refunded")
+                            {
+                                statusClass = "status-refunded";
+                            }
+                            else if (item.Status == "Failed")
+                            {
+                                statusClass = "status-failed";
+                            }
+                            else if (item.Status == "Rejected")
+                            {
+                                statusClass = "status-rejected";
+                            }
+                            else if (item.Status == "Approved")
+                            {
+                                statusClass = "status-approved";
+                            }
+                            else if (item.Status == "RefundProcessing")
+                            {
+                                statusClass = "status-refundprocessing";
+                            }
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="type-pill @(item.Type == "Payment" ? "type-payment" : "type-refund")">
+                                        @item.Type
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="status-pill @statusClass">
+                                        @item.Status
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @item.Count
+                                </td>
+
+                                <td>
+
+                                    <span class="table-amount">
+                                        R @item.Amount.ToString("N2")
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <h3>
+                    No Status Data
+                </h3>
+
+                <p>
+                    No financial records match the selected filters.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         DAILY SUMMARY
+         ========================================================= -->
+
+    <div class="report-section">
+
+        <div class="report-section-header">
+
+            <h2>
+                Daily Financial Activity
+            </h2>
+
+            <p>
+                Daily comparison of successful payments and completed refunds.
+            </p>
+
+        </div>
+
+
+        @if (Model.DailySummary.Any())
+        {
+            <div class="report-table-wrapper">
+
+                <table class="report-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Payment Records
+                            </th>
+
+                            <th>
+                                Successful Payments
+                            </th>
+
+                            <th>
+                                Payment Value
+                            </th>
+
+                            <th>
+                                Refund Records
+                            </th>
+
+                            <th>
+                                Completed Refunds
+                            </th>
+
+                            <th>
+                                Refunded
+                            </th>
+
+                            <th>
+                                Net Movement
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var day in Model.DailySummary)
+                        {
+                            <tr>
+
+                                <td>
+                                    @day.Date.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+                                    @day.PaymentRecords
+                                </td>
+
+                                <td>
+                                    @day.SuccessfulPayments
+                                </td>
+
+                                <td>
+                                    R @day.SuccessfulPaymentAmount.ToString("N2")
+                                </td>
+
+                                <td>
+                                    @day.RefundRecords
+                                </td>
+
+                                <td>
+                                    @day.CompletedRefunds
+                                </td>
+
+                                <td>
+                                    R @day.RefundedAmount.ToString("N2")
+                                </td>
+
+                                <td>
+
+                                    <span class="table-amount">
+                                        R @day.NetMovement.ToString("N2")
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <h3>
+                    No Daily Activity
+                </h3>
+
+                <p>
+                    There are no financial records for the selected period.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =========================================================
+         DETAIL RECORDS
+         ========================================================= -->
+
+    <div class="report-section">
+
+        <div class="report-section-header">
+
+            <h2>
+                Financial Record Detail
+            </h2>
+
+            <p>
+                @Model.TotalRecords record(s) included in this report.
+            </p>
+
+        </div>
+
+
+        @if (Model.Transactions.Any())
+        {
+            <div class="report-table-wrapper">
+
+                <table class="report-table transaction-detail-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Reference
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Citizen
+                            </th>
+
+                            <th>
+                                Invoice
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.Transactions)
+                        {
+                            var statusClass = "status-pending";
+
+                            if (item.Status == "Successful")
+                            {
+                                statusClass = "status-successful";
+                            }
+                            else if (item.Status == "Refunded")
+                            {
+                                statusClass = "status-refunded";
+                            }
+                            else if (item.Status == "Failed")
+                            {
+                                statusClass = "status-failed";
+                            }
+                            else if (item.Status == "Rejected")
+                            {
+                                statusClass = "status-rejected";
+                            }
+                            else if (item.Status == "Approved")
+                            {
+                                statusClass = "status-approved";
+                            }
+                            else if (item.Status == "RefundProcessing")
+                            {
+                                statusClass = "status-refundprocessing";
+                            }
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="reference-value">
+                                        @item.Reference
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="type-pill @(item.Type == "Payment" ? "type-payment" : "type-refund")">
+                                        @item.Type
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="date-value">
+                                        @item.TransactionDate.ToString("dd MMM yyyy, HH:mm")
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="citizen-value">
+                                        @item.CitizenName
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    @item.InvoiceNumber
+                                </td>
+
+                                <td>
+
+                                    <span class="status-pill @statusClass">
+                                        @item.Status
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="table-amount">
+                                        R @item.Amount.ToString("N2")
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="description-value">
+                                        @item.Description
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+
+                <h3>
+                    No Financial Records Found
+                </h3>
+
+                <p>
+                    Adjust the filters to view available financial activity.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <div class="report-actions">
+
+        <button type="button"
+                class="report-action-button print-button"
+                onclick="window.print();">
+            Print Report
+        </button>
+
+        <a href="@Url.Action("Index", "FinanceDashboard")"
+           class="report-action-button back-button">
+            ← Back to Finance Dashboard
+        </a>
+
+    </div>
+
+</div>

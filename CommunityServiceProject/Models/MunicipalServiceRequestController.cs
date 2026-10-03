@@ -3,8 +3,11 @@ using CommunityServiceProject.ViewModels;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
+
 namespace CommunityServiceProject.Controllers
 {
+    [RoleAuthorize("Citizen")]
     public class MunicipalServiceRequestController : Controller
     {
         private readonly Community db = new Community();

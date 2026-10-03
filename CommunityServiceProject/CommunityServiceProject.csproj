@@ -127,9 +127,11 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Filters\RoleAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Migrations\202608102230389_UpdateRequestGPS12.cs" />
     <Compile Include="Migrations\202608102230389_UpdateRequestGPS12.Designer.cs">
       <DependentUpon>202608102230389_UpdateRequestGPS12.cs</DependentUpon>
@@ -362,6 +364,11 @@
     <Compile Include="Migrations\202610022008298_AddRefundReviewAndSupportingDocuments.Designer.cs">
       <DependentUpon>202610022008298_AddRefundReviewAndSupportingDocuments.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202610030516280_AddFinancialAuditRecords.cs" />
+    <Compile Include="Migrations\202610030516280_AddFinancialAuditRecords.Designer.cs">
+      <DependentUpon>202610030516280_AddFinancialAuditRecords.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202610060000000_AddHROfficer.cs" />
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
     <Compile Include="Models\AdministratorDashboardController.cs" />
@@ -428,9 +435,15 @@
     <Compile Include="Models\FinanceMunicipalServiceRequestController.cs" />
     <Compile Include="Models\FinanceOfficer.cs" />
     <Compile Include="Models\FinancePaymentController.cs" />
+    <Compile Include="Models\FinanceReportsController.cs" />
     <Compile Include="Models\FinancialAudit.cs" />
     <Compile Include="Models\FinancialAuditAction.cs" />
+    <Compile Include="Models\FinancialAuditRecord.cs" />
+    <Compile Include="Models\FinancialReportViewModel.cs" />
+    <Compile Include="Models\FinancialTransactionViewModel.cs" />
     <Compile Include="Models\GenerateInvoiceListViewModel.cs" />
+    <Compile Include="Models\HROfficer.cs" />
+    <Compile Include="Models\HROfficerDashboardController.cs" />
     <Compile Include="Models\IdentifyAssetMaintenanceNeedViewModel.cs" />
     <Compile Include="Models\InspectMunicipalAssetViewModel.cs" />
     <Compile Include="Models\Invoice.cs" />
@@ -892,6 +905,10 @@
     <Content Include="Views\FinancePayment\RefundRequests.cshtml" />
     <Content Include="Views\FinancePayment\ReviewRefund.cshtml" />
     <Content Include="Views\FinancePayment\RefundDecisionResult.cshtml" />
+    <Content Include="Views\FinancePayment\FinancialTransactions.cshtml" />
+    <Content Include="Views\FinanceReports\AuditHistory.cshtml" />
+    <Content Include="Views\FinanceReports\FinancialReports.cshtml" />
+    <Content Include="Views\HROfficerDashboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1114,6 +1131,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202610022008298_AddRefundReviewAndSupportingDocuments.resx">
       <DependentUpon>202610022008298_AddRefundReviewAndSupportingDocuments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202610030516280_AddFinancialAuditRecords.resx">
+      <DependentUpon>202610030516280_AddFinancialAuditRecords.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>

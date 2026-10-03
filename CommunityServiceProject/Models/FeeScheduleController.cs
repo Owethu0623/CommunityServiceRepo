@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace CommunityServiceProject.Controllers
 {
+    [CommunityServiceProject.Filters.RoleAuthorize("FinanceOfficer")]
     public class FeeScheduleController : Controller
     {
         private readonly Community db = new Community();

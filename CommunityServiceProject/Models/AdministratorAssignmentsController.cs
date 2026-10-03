@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
+    [RoleAuthorize("Administrator")]
     public class AdministratorAssignmentsController : Controller
     {
         private Community db = new Community();

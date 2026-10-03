@@ -19,6 +19,9 @@ namespace CommunityServiceProject.Controllers
             return View();
         }
 
+
+
+
         // =========================================================
         // POST: Login
         // =========================================================
@@ -81,6 +84,38 @@ namespace CommunityServiceProject.Controllers
                         "Index",
                         "FinanceDashboard"
                     );
+                }
+
+                // =========================================================
+                // CHECK HR OFFICER LOGIN
+                // =========================================================
+
+                var hrOfficer = db.HROfficers.FirstOrDefault(h =>
+                    h.EmailAddress == model.EmailAddress &&
+                    h.Password == model.Password
+                );
+
+                if (hrOfficer != null)
+                {
+                    if (hrOfficer.AccountStatus != AccountStatus.Active)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            hrOfficer.AccountStatus == AccountStatus.Suspended
+                                ? "Your HR Officer account has been suspended."
+                                : "Your HR Officer account is inactive."
+                        );
+
+                        return View(model);
+                    }
+
+                    Session["HROfficerID"] = hrOfficer.HROfficerID;
+                    Session["HROfficerName"] = hrOfficer.FirstName;
+                    Session["HROfficerEmail"] = hrOfficer.EmailAddress;
+                    Session["UserRole"] = "HROfficer";
+
+                    // Redirect HR officers to the TechnicianOpportunity management page
+                    return RedirectToAction("Manage", "TechnicianOpportunity");
                 }
 
 
@@ -409,11 +444,25 @@ namespace CommunityServiceProject.Controllers
 
         public ActionResult Logout()
         {
+            // Clear all role sessions to avoid leaking roles between logins
             Session.Remove("CitizenID");
             Session.Remove("CitizenName");
             Session.Remove("CitizenEmail");
 
             Session.Remove("RestrictedCitizenID");
+
+            Session.Remove("AdministratorID");
+            Session.Remove("AdministratorName");
+
+            Session.Remove("TechnicianID");
+            Session.Remove("TechnicianName");
+
+            Session.Remove("FinanceOfficerID");
+            Session.Remove("FinanceOfficerName");
+
+            Session.Remove("HROfficerID");
+            Session.Remove("HROfficerName");
+            Session.Remove("UserRole");
 
             return RedirectToAction(
                 "Index",

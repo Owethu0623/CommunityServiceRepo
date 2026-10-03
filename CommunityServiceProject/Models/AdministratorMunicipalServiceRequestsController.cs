@@ -5,9 +5,11 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
+    [RoleAuthorize("Administrator")]
     public class AdministratorMunicipalServiceRequestsController : Controller
     {
         private readonly Community db = new Community();

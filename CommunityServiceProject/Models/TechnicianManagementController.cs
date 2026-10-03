@@ -4,9 +4,11 @@ using System.Data.Entity;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
+using CommunityServiceProject.Filters;
 
 namespace CommunityServiceProject.Controllers
 {
+    [RoleAuthorize("Administrator")]
     public class TechnicianManagementController : Controller
     {
         private Community db = new Community();

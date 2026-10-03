@@ -6,8 +6,11 @@ using System.Web.Mvc;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
 
+using CommunityServiceProject.Filters;
+
 namespace CommunityServiceProject.Controllers
 {
+    [CommunityServiceProject.Filters.RoleAuthorize("FinanceOfficer")]
     public class FinancePaymentController : Controller
     {
         private readonly Community db = new Community();
@@ -205,6 +208,10 @@ namespace CommunityServiceProject.Controllers
             // MARK PAYMENT AS SUCCESSFUL
             // --------------------------------------------------------
 
+            // Capture previous status for audit before updating.
+            string previousStatus =
+                payment.Status.ToString();
+
             payment.Status =
                Models.PaymentStatus.Successful;
 
@@ -212,6 +219,16 @@ namespace CommunityServiceProject.Controllers
                 DateTime.Now;
 
             payment.FailureReason = null;
+
+            RecordFinanceAudit(
+    "Payment Verified",
+    "Payment",
+    payment.PaymentID,
+    payment.TransactionReference,
+    previousStatus,
+    payment.Status.ToString(),
+    payment.Amount,
+    "Finance Officer verified the submitted payment and recorded it as successful.");
 
             // --------------------------------------------------------
             // UPDATE INVOICE
@@ -308,9 +325,22 @@ namespace CommunityServiceProject.Controllers
 
                 return RedirectToAction("Index");
             }
+            string previousStatus =
+    payment.Status.ToString();
 
             payment.Status =
                 Models.PaymentStatus.Failed;
+            
+            RecordFinanceAudit(
+            "Payment Rejected",
+            "Payment",
+            payment.PaymentID,
+            payment.TransactionReference,
+            previousStatus,
+            payment.Status.ToString(),
+            payment.Amount,
+            "Finance Officer rejected the submitted payment. Reason: " +
+            failureReason);
 
             payment.ProcessedDate =
                 DateTime.Now;
@@ -878,6 +908,9 @@ namespace CommunityServiceProject.Controllers
             if (refund == null)
                 return HttpNotFound();
 
+            string previousStatus =
+                refund.Status.ToString();
+
             // Refund must be under review before a decision can be made.
             if (refund.Status != RefundStatus.UnderReview)
             {
@@ -909,6 +942,24 @@ namespace CommunityServiceProject.Controllers
             refund.ReviewComments = string.IsNullOrWhiteSpace(reviewComments)
                 ? null
                 : reviewComments.Trim();
+
+            string action =
+    decision == RefundStatus.Approved
+        ? "Refund Approved"
+        : "Refund Rejected";
+
+            RecordFinanceAudit(
+                action,
+                "Refund",
+                refund.RefundID,
+                refund.RefundReference,
+                previousStatus,
+                refund.Status.ToString(),
+                refund.Amount,
+                decision == RefundStatus.Approved
+                    ? "Finance Officer approved the refund request."
+                    : "Finance Officer rejected the refund request. Reason: " +
+                      refund.ReviewComments);
 
             db.SaveChanges();
 
@@ -1015,6 +1066,16 @@ namespace CommunityServiceProject.Controllers
                     .Include(r => r.Invoice)
                     .FirstOrDefault(r =>
                         r.RefundID == id);
+
+            RecordFinanceAudit(
+    "Refund Processing Started",
+    "Refund",
+    refund.RefundID,
+    refund.RefundReference,
+    "Approved",
+    "RefundProcessing",
+    refund.Amount,
+    "Finance Officer started processing the approved refund.");
 
             if (refund == null)
                 return HttpNotFound();
@@ -1132,6 +1193,16 @@ namespace CommunityServiceProject.Controllers
                     refund.Status =
                         RefundStatus.Refunded;
 
+                    RecordFinanceAudit(
+    "Refund Processed",
+    "Refund",
+    refund.RefundID,
+    refund.RefundReference,
+    "RefundProcessing",
+    "Refunded",
+    refund.Amount,
+    "Finance Officer completed the refund process and recorded the refund as refunded.");
+
                     refund.ProcessedDate =
                         DateTime.Now;
 
@@ -1162,6 +1233,349 @@ namespace CommunityServiceProject.Controllers
                 }
             }
         }
+
+
+        // ============================================================
+        // US145 - VIEW FINANCIAL TRANSACTIONS
+        // ============================================================
+
+        [HttpGet]
+        public ActionResult FinancialTransactions(
+            string searchTerm,
+            string transactionType,
+            string statusFilter,
+            DateTime? fromDate,
+            DateTime? toDate)
+        {
+            if (Session["FinanceOfficerID"] == null)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "FinanceOfficer");
+            }
+
+            searchTerm =
+                string.IsNullOrWhiteSpace(searchTerm)
+                    ? null
+                    : searchTerm.Trim();
+
+            var model =
+                new FinancialTransactionsViewModel
+                {
+                    SearchTerm = searchTerm,
+                    TransactionType = transactionType,
+                    StatusFilter = statusFilter,
+                    FromDate = fromDate,
+                    ToDate = toDate
+                };
+
+
+            // ========================================================
+            // PAYMENTS
+            // ========================================================
+
+            if (transactionType == null ||
+                transactionType == "Payment")
+            {
+                var payments =
+                    db.Payments
+                        .Include(p => p.Invoice)
+                        .Include(p => p.Citizen)
+                        .AsNoTracking()
+                        .ToList();
+
+                foreach (var payment in payments)
+                {
+                    var citizenName =
+                        payment.Citizen != null
+                            ? payment.Citizen.FirstName + " " +
+                              payment.Citizen.LastName
+                            : "Unknown Citizen";
+
+                    var invoiceNumber =
+                        payment.Invoice != null
+                            ? payment.Invoice.InvoiceNumber
+                            : "N/A";
+
+                    if (!string.IsNullOrWhiteSpace(searchTerm))
+                    {
+                        var matchesSearch =
+                            payment.TransactionReference
+                                .Contains(searchTerm) ||
+
+                            invoiceNumber
+                                .Contains(searchTerm) ||
+
+                            citizenName
+                                .Contains(searchTerm);
+
+                        if (!matchesSearch)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(statusFilter) &&
+                        payment.Status.ToString() != statusFilter)
+                    {
+                        continue;
+                    }
+
+                    if (fromDate.HasValue &&
+                        payment.PaymentDate.Date <
+                        fromDate.Value.Date)
+                    {
+                        continue;
+                    }
+
+                    if (toDate.HasValue &&
+                        payment.PaymentDate.Date >
+                        toDate.Value.Date)
+                    {
+                        continue;
+                    }
+
+                    model.Transactions.Add(
+                        new FinancialTransactionRowViewModel
+                        {
+                            Reference =
+                                payment.TransactionReference,
+
+                            Type =
+                                "Payment",
+
+                            TransactionDate =
+                                payment.PaymentDate,
+
+                            CitizenName =
+                                citizenName,
+
+                            InvoiceNumber =
+                                invoiceNumber,
+
+                            Status =
+                                payment.Status.ToString(),
+
+                            Amount =
+                                payment.Amount,
+
+                            PaymentMethod =
+                                payment.PaymentMethod,
+
+                            Description =
+                                "Municipal payment"
+                        });
+                }
+            }
+
+
+            // ========================================================
+            // REFUNDS
+            // ========================================================
+
+            if (transactionType == null ||
+                transactionType == "Refund")
+            {
+                var refunds =
+                    db.Refunds
+                        .Include(r => r.Payment)
+                        .Include(r => r.Invoice)
+                        .AsNoTracking()
+                        .ToList();
+
+                foreach (var refund in refunds)
+                {
+                    var citizenName =
+                        refund.Payment != null &&
+                        refund.Payment.Citizen != null
+                            ? refund.Payment.Citizen.FirstName + " " +
+                              refund.Payment.Citizen.LastName
+                            : "Unknown Citizen";
+
+                    var invoiceNumber =
+                        refund.Invoice != null
+                            ? refund.Invoice.InvoiceNumber
+                            : "N/A";
+
+                    var transactionDate =
+                        refund.ProcessedDate ??
+                        refund.RequestDate;
+
+                    if (!string.IsNullOrWhiteSpace(searchTerm))
+                    {
+                        var matchesSearch =
+                            refund.RefundReference
+                                .Contains(searchTerm) ||
+
+                            invoiceNumber
+                                .Contains(searchTerm) ||
+
+                            citizenName
+                                .Contains(searchTerm);
+
+                        if (!matchesSearch)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(statusFilter) &&
+                        refund.Status.ToString() != statusFilter)
+                    {
+                        continue;
+                    }
+
+                    if (fromDate.HasValue &&
+                        transactionDate.Date <
+                        fromDate.Value.Date)
+                    {
+                        continue;
+                    }
+
+                    if (toDate.HasValue &&
+                        transactionDate.Date >
+                        toDate.Value.Date)
+                    {
+                        continue;
+                    }
+
+                    model.Transactions.Add(
+                        new FinancialTransactionRowViewModel
+                        {
+                            Reference =
+                                refund.RefundReference,
+
+                            Type =
+                                "Refund",
+
+                            TransactionDate =
+                                transactionDate,
+
+                            CitizenName =
+                                citizenName,
+
+                            InvoiceNumber =
+                                invoiceNumber,
+
+                            Status =
+                                refund.Status.ToString(),
+
+                            Amount =
+                                refund.Amount,
+
+                            PaymentMethod =
+                                null,
+
+                            Description =
+                                "Municipal refund"
+                        });
+                }
+            }
+
+
+            // ========================================================
+            // SORT
+            // ========================================================
+
+            model.Transactions =
+                model.Transactions
+                    .OrderByDescending(t => t.TransactionDate)
+                    .ToList();
+
+
+            // ========================================================
+            // SUMMARY
+            // ========================================================
+
+            model.TotalTransactions =
+                model.Transactions.Count;
+
+            model.TotalPayments =
+                model.Transactions
+                    .Where(t => t.Type == "Payment")
+                    .Sum(t => t.Amount);
+
+            model.TotalRefunds =
+                model.Transactions
+                    .Where(t => t.Type == "Refund")
+                    .Sum(t => t.Amount);
+
+
+            return View(model);
+        }
+
+        // ============================================================
+        // FINANCIAL AUDIT HELPER
+        // ============================================================
+
+        private void RecordFinanceAudit(
+            string action,
+            string entityType,
+            int entityId,
+            string reference,
+            string previousStatus,
+            string newStatus,
+            decimal? amount,
+            string details)
+        {
+            if (Session["FinanceOfficerID"] == null)
+            {
+                return;
+            }
+
+            int financeOfficerID =
+                Convert.ToInt32(
+                    Session["FinanceOfficerID"]);
+
+
+            var audit =
+                new FinancialAuditRecord
+                {
+                    AuditDate =
+                        DateTime.Now,
+
+                    FinanceOfficerID =
+                        financeOfficerID,
+
+                    PerformedBy =
+                        "Finance Officer #" +
+                        financeOfficerID,
+
+                    Action =
+                        action,
+
+                    EntityType =
+                        entityType,
+
+                    EntityID =
+                        entityId,
+
+                    Reference =
+                        reference,
+
+                    PreviousStatus =
+                        previousStatus,
+
+                    NewStatus =
+                        newStatus,
+
+                    Amount =
+                        amount,
+
+                    Details =
+                        details,
+
+                    IPAddress =
+                        Request != null
+                            ? Request.UserHostAddress
+                            : null
+                };
+
+
+            db.FinancialAuditRecords.Add(audit);
+        }
+
+
 
 
         protected override void Dispose(bool disposing)

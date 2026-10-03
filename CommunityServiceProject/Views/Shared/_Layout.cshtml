@@ -74,50 +74,63 @@
                      id="citizenNavigation">
 
                     <ul class="navbar-nav ms-auto">
-
-
-                        <!-- Dashboard -->
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                               href="@Url.Action("Index", "Requests")">
-
-                                Dashboard
-
-                            </a>
-
-                        </li>
-
-
-                        <!-- Submit Request -->
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                               href="@Url.Action("Create", "Requests")">
-
-                                Submit Request
-
-                            </a>
-
-                        </li>
-
-
-                        <!-- My Requests -->
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                               href="@Url.Action("Index", "Requests")">
-
-                                My Requests
-
-                            </a>
-
-                        </li>
-
-
+                        @if (Session["CitizenID"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "Requests")">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Create", "Requests")">Submit Request</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "Requests")">My Requests</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Logout", "Login")">Logout</a>
+                            </li>
+                        }
+                        else if (Session["AdministratorID"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "AdministratorDashboard")">Admin</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Logout", "Administrators")">Logout</a>
+                            </li>
+                        }
+                        else if (Session["TechnicianID"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Dashboard", "Technicians")">Technician</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Logout", "Technicians")">Logout</a>
+                            </li>
+                        }
+                        else if (Session["FinanceOfficerID"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "FinanceDashboard")">Finance</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Logout", "FinanceOfficer")">Logout</a>
+                            </li>
+                        }
+                        else if (Session["HROfficerID"] != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "HROfficerDashboard")">HR</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Logout", "HROfficer")">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "Login")">Login</a>
+                            </li>
+                        }
                     </ul>
 
                 </div>

@@ -7,8 +7,11 @@ using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
 using System.Data.Entity;
 
+using CommunityServiceProject.Filters;
+
 namespace CommunityServiceProject.Controllers
 {
+    [RoleAuthorize("Administrator")]
     public class AdministratorRequestsController : Controller
     {
         private Community db = new Community();

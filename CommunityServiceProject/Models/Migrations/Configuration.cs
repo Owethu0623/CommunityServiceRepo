@@ -10,7 +10,11 @@
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            // Enable automatic migrations so pending model changes (like the new HROfficer entity)
+            // can be applied without creating an explicit code-based migration.
+            // This is a short-term convenience to unblock development; consider
+            // reverting to explicit migrations for production.
+            AutomaticMigrationsEnabled = true;
             ContextKey = "CommunityServiceProject.Models.Community";
         }
 
@@ -47,6 +51,20 @@ AccountStatus = AccountStatus.Active,
 DateCreated = DateTime.Now
 }
 );
+
+            // Seed a default HR Officer for development/testing so RBAC can be exercised
+            context.HROfficers.AddOrUpdate(
+                h => h.EmailAddress,
+                new HROfficer
+                {
+                    FirstName = "Municipal",
+                    LastName = "HR Officer",
+                    EmailAddress = "hr@municipality.co.za",
+                    Password = "HR123",
+                    AccountStatus = AccountStatus.Active,
+                    DateCreated = DateTime.Now
+                }
+            );
 
 
             // ===========================================================

@@ -1,0 +1,58 @@
+/* Design system stylesheet for municipal application
+   Presentation-only. Do not modify backend code.
+   Variables and base components for consistent UI.
+*/
+:root{
+    --primary-blue:#0D5CC1;
+    --dark-navy:#14213D;
+    --main-text:#25334A;
+    --secondary-text:#7A8495;
+    --border:#E1E6ED;
+    --light-bg:#F8FAFD;
+    --light-blue:#EAF2FF;
+    --card-radius:10px;
+}
+
+html,body{font-family:"Segoe UI", Arial, sans-serif;color:var(--main-text);} 
+
+/* Buttons */
+.btn-primary, .btn-primary:visited{background:var(--primary-blue);color:#fff;border:0;padding:10px 14px;border-radius:8px;font-weight:600}
+.btn-secondary{background:#fff;color:var(--primary-blue);border:1px solid var(--primary-blue);padding:8px 12px;border-radius:8px;font-weight:600}
+.btn-primary:hover{background:#0b4f9a}
+
+/* Forms */
+.input-std, input[type=text], select, textarea{border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--main-text);background:#fff}
+.input-std:focus, select:focus{outline:none;box-shadow:0 6px 18px rgba(13,92,193,0.06);border-color:var(--primary-blue)}
+
+/* Cards */
+.card-std{background:#fff;border:1px solid var(--border);border-radius:var(--card-radius);box-shadow:0 6px 18px rgba(16,36,66,0.04);padding:16px}
+
+/* Tables */
+.table-std{width:100%;border-collapse:collapse}
+.table-std th{background:#F5F8FC;color:var(--dark-navy);font-weight:700;padding:8px 12px;border-bottom:1px solid #E9EEF4;text-transform:uppercase;font-size:12px}
+.table-std td{padding:10px 12px;border-bottom:1px solid #F1F5F9;font-size:13px}
+.table-std tr:hover{background:var(--light-bg)}
+
+/* Badges */
+.badge-std{display:inline-block;padding:6px 8px;border-radius:8px;font-weight:700;font-size:12px}
+.badge-neutral{background:#F3F4F6;color:var(--main-text)}
+.badge-blue{background:var(--light-blue);color:var(--primary-blue)}
+.badge-green{background:#ECFDF5;color:#0F5132}
+.badge-amber{background:#FFF8E6;color:#B45F00}
+.badge-red{background:#FFF1F0;color:#B42318}
+
+/* Page container */
+.page-container{padding:36px 24px;background:var(--light-bg);min-height:calc(100vh - 140px)}
+.content-card{max-width:1400px;margin:0 auto}
+
+/* Header */
+.page-header{padding:12px 8px;background:linear-gradient(90deg, rgba(13,92,193,0.06), rgba(234,242,255,0));border-bottom:1px solid #F1F5F9}
+.page-header h1{font-size:24px;margin:0;color:var(--dark-navy);font-weight:750}
+.page-header p{margin:6px 0 0 0;color:var(--secondary-text);font-size:13px}
+
+/* Utilities */
+.text-muted{color:var(--secondary-text)}
+.small{font-size:12px}
+
+/* Responsive helpers */
+@media (max-width:900px){.grid-cols-5{grid-template-columns:1fr!important}.page-header h1{font-size:20px}}

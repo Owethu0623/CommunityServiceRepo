@@ -41,11 +41,17 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Screening Comments")]
         public string ScreeningComments { get; set; }
 
-        [Required]
-        public int ScreenedByAdministratorID { get; set; }
+        // Allow either an Administrator or an HR officer to perform screening.
+        public int? ScreenedByAdministratorID { get; set; }
 
         [ForeignKey("ScreenedByAdministratorID")]
         public virtual Administrator ScreenedByAdministrator { get; set; }
+
+        // Optional HR officer who performed the screening
+        public int? ScreenedByHROfficerID { get; set; }
+
+        [ForeignKey("ScreenedByHROfficerID")]
+        public virtual HROfficer ScreenedByHROfficer { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
@@ -16,11 +15,11 @@ namespace CommunityServiceProject.Controllers
         private Community db = new Community();
 
 
-        // =========================================================
-        // GET: Requests
-        // =========================================================
+    // =========================================================
+    // GET: Requests
+    // =========================================================
 
-        [RoleAuthorize("Citizen")]
+    [RoleAuthorize("Citizen")]
         public ActionResult Index()
         {
             if (Session["CitizenID"] == null)
@@ -42,6 +41,10 @@ namespace CommunityServiceProject.Controllers
         }
 
 
+        // =========================================================
+        // GET: Requests/Details/5
+        // =========================================================
+
         [RoleAuthorize("Citizen")]
         public ActionResult Details(int? id)
         {
@@ -55,7 +58,6 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Ensure the logged-in citizen owns this request to prevent ID tampering
             int citizenId = (int)Session["CitizenID"];
 
             var request = db.Requests
@@ -129,14 +131,12 @@ namespace CommunityServiceProject.Controllers
             }
 
             bool hasFeedback = db.Feedbacks
-           .Any(f => f.RequestID == request.RequestID);
+                .Any(f => f.RequestID == request.RequestID);
 
             ViewBag.HasFeedback = hasFeedback;
 
             return View(request);
         }
-
-
 
 
         // =========================================================
@@ -189,16 +189,13 @@ namespace CommunityServiceProject.Controllers
         }
 
 
-        // =========================================================
-        // POST: Requests/Create
-        // =========================================================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(
             [Bind(Include =
-                "Title,Description,CategoryID,WardID,ProblemLocation")]
-            Request request,
+        "Title,Description,CategoryID,WardID,ProblemLocation,ComplianceConfirmed")]
+    Request request,
             string Latitude,
             string Longitude,
             HttpPostedFileBase ImageFile)
@@ -208,7 +205,8 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            int citizenId = (int)Session["CitizenID"];
+
+int citizenId = (int)Session["CitizenID"];
 
             var activeRestriction = db.AccountRestrictions
                 .FirstOrDefault(r =>
@@ -223,12 +221,10 @@ namespace CommunityServiceProject.Controllers
                 return View("Restricted", activeRestriction);
             }
 
+
             // =====================================================
-            // REMOVE AUTOMATIC MVC VALIDATION FOR GPS FIELDS
+            // REMOVE AUTOMATIC MVC VALIDATION FOR GPS
             // =====================================================
-            // Latitude and Longitude are received as strings above.
-            // They are validated manually below and then converted
-            // to double values before being saved.
 
             ModelState.Remove("Latitude");
             ModelState.Remove("Longitude");
@@ -236,8 +232,10 @@ namespace CommunityServiceProject.Controllers
 
 
             // =====================================================
-            // VALIDATE LATITUDE
+            // CONVERT LATITUDE FROM STRING TO DOUBLE
             // =====================================================
+
+            double latitudeValue;
 
             if (string.IsNullOrWhiteSpace(Latitude))
             {
@@ -246,42 +244,35 @@ namespace CommunityServiceProject.Controllers
                     "Please select the problem location on the map."
                 );
             }
+            else if (!double.TryParse(
+                Latitude,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out latitudeValue))
+            {
+                ModelState.AddModelError(
+                    "Latitude",
+                    "The latitude value is not valid."
+                );
+            }
+            else if (latitudeValue < -90 || latitudeValue > 90)
+            {
+                ModelState.AddModelError(
+                    "Latitude",
+                    "The selected latitude is not valid."
+                );
+            }
             else
             {
-                double latitudeValue;
-
-                if (double.TryParse(
-                    Latitude,
-                    NumberStyles.Float,
-                    CultureInfo.InvariantCulture,
-                    out latitudeValue))
-                {
-                    if (latitudeValue < -90 ||
-                        latitudeValue > 90)
-                    {
-                        ModelState.AddModelError(
-                            "Latitude",
-                            "The selected latitude is not valid."
-                        );
-                    }
-                    else
-                    {
-                        request.Latitude = latitudeValue;
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError(
-                        "Latitude",
-                        "The latitude value is not valid."
-                    );
-                }
+                request.Latitude = latitudeValue;
             }
 
 
             // =====================================================
-            // VALIDATE LONGITUDE
+            // CONVERT LONGITUDE FROM STRING TO DOUBLE
             // =====================================================
+
+            double longitudeValue;
 
             if (string.IsNullOrWhiteSpace(Longitude))
             {
@@ -290,36 +281,40 @@ namespace CommunityServiceProject.Controllers
                     "Please select the problem location on the map."
                 );
             }
+            else if (!double.TryParse(
+                Longitude,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out longitudeValue))
+            {
+                ModelState.AddModelError(
+                    "Longitude",
+                    "The longitude value is not valid."
+                );
+            }
+            else if (longitudeValue < -180 || longitudeValue > 180)
+            {
+                ModelState.AddModelError(
+                    "Longitude",
+                    "The selected longitude is not valid."
+                );
+            }
             else
             {
-                double longitudeValue;
+                request.Longitude = longitudeValue;
+            }
 
-                if (double.TryParse(
-                    Longitude,
-                    NumberStyles.Float,
-                    CultureInfo.InvariantCulture,
-                    out longitudeValue))
-                {
-                    if (longitudeValue < -180 ||
-                        longitudeValue > 180)
-                    {
-                        ModelState.AddModelError(
-                            "Longitude",
-                            "The selected longitude is not valid."
-                        );
-                    }
-                    else
-                    {
-                        request.Longitude = longitudeValue;
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError(
-                        "Longitude",
-                        "The longitude value is not valid."
-                    );
-                }
+
+            // =====================================================
+            // COMPLIANCE CONFIRMATION
+            // =====================================================
+
+            if (!request.ComplianceConfirmed)
+            {
+                ModelState.AddModelError(
+                    "ComplianceConfirmed",
+                    "You must confirm compliance with the municipal service request rules before submitting."
+                );
             }
 
 
@@ -329,21 +324,28 @@ namespace CommunityServiceProject.Controllers
 
             if (ModelState.IsValid)
             {
-                // System-managed information
                 request.DateSubmitted = DateTime.Now;
 
-                request.Status =
-                    RequestStatus.Pending;
+                request.Status = RequestStatus.Pending;
+
+                request.CitizenID = citizenId;
 
 
-                // Logged-in citizen
-                request.CitizenID =
-                    (int)Session["CitizenID"];
+                // =================================================
+                // COMPLIANCE CONFIRMATION DATE
+                // =================================================
+
+                if (request.ComplianceConfirmed)
+                {
+                    request.ComplianceConfirmedDate = DateTime.Now;
+                }
 
 
-                // No administrator or technician yet
+                // =================================================
+                // NO ADMINISTRATOR OR TECHNICIAN YET
+                // =================================================
+
                 request.AdministratorID = null;
-
                 request.TechnicianID = null;
 
 
@@ -351,8 +353,7 @@ namespace CommunityServiceProject.Controllers
                 // DEFAULT PRIORITY
                 // =================================================
 
-                request.Priority =
-                    Priority.Medium;
+                request.Priority = Priority.Medium;
 
 
                 // =================================================
@@ -365,20 +366,17 @@ namespace CommunityServiceProject.Controllers
                     string uploadFolder =
                         Server.MapPath("~/Uploads/");
 
-                    if (!System.IO.Directory.Exists(
-                        uploadFolder))
+                    if (!System.IO.Directory.Exists(uploadFolder))
                     {
                         System.IO.Directory.CreateDirectory(
                             uploadFolder
                         );
                     }
 
-
                     string fileName =
                         System.IO.Path.GetFileName(
                             ImageFile.FileName
                         );
-
 
                     string path =
                         System.IO.Path.Combine(
@@ -386,15 +384,17 @@ namespace CommunityServiceProject.Controllers
                             fileName
                         );
 
-
                     ImageFile.SaveAs(path);
-
 
                     request.ImagePath =
                         "~/Uploads/" + fileName;
                 }
 
-                // Generate the next sequential reference number
+
+                // =================================================
+                // GENERATE REQUEST REFERENCE NUMBER
+                // =================================================
+
                 var lastRequest = db.Requests
                     .OrderByDescending(r => r.RequestID)
                     .FirstOrDefault();
@@ -409,12 +409,18 @@ namespace CommunityServiceProject.Controllers
                     "-" +
                     nextNumber.ToString("D6");
 
+
+                // =================================================
+                // SAVE TO DATABASE
+                // =================================================
+
                 db.Requests.Add(request);
+
                 db.SaveChanges();
 
 
                 // =================================================
-                // SHOW REQUEST DETAILS AFTER SUBMISSION
+                // SHOW REQUEST DETAILS
                 // =================================================
 
                 return RedirectToAction(
@@ -435,7 +441,6 @@ namespace CommunityServiceProject.Controllers
                 request.CategoryID
             );
 
-
             ViewBag.WardID = new SelectList(
                 db.Wards.OrderBy(w => w.WardNumber),
                 "WardID",
@@ -443,9 +448,12 @@ namespace CommunityServiceProject.Controllers
                 request.WardID
             );
 
-
             return View(request);
-        }
+
+
+}
+
+
 
 
         // =========================================================
@@ -469,7 +477,6 @@ namespace CommunityServiceProject.Controllers
             int citizenId =
                 (int)Session["CitizenID"];
 
-
             Request request = db.Requests
                 .FirstOrDefault(
                     r =>
@@ -477,12 +484,10 @@ namespace CommunityServiceProject.Controllers
                         r.CitizenID == citizenId
                 );
 
-
             if (request == null)
             {
                 return HttpNotFound();
             }
-
 
             // Only Pending requests can be edited
             if (!request.CanEdit())
@@ -493,7 +498,6 @@ namespace CommunityServiceProject.Controllers
                 );
             }
 
-
             ViewBag.CategoryID = new SelectList(
                 db.Categories,
                 "CategoryID",
@@ -501,14 +505,12 @@ namespace CommunityServiceProject.Controllers
                 request.CategoryID
             );
 
-
             ViewBag.WardID = new SelectList(
                 db.Wards.OrderBy(w => w.WardNumber),
                 "WardID",
                 "WardName",
                 request.WardID
             );
-
 
             return View(request);
         }
@@ -522,8 +524,8 @@ namespace CommunityServiceProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include =
-                "RequestID,Title,Description,CategoryID,WardID,ProblemLocation")]
-            Request updatedRequest,
+            "RequestID,Title,Description,CategoryID,WardID,ProblemLocation")]
+        Request updatedRequest,
             HttpPostedFileBase ImageFile)
         {
             if (Session["CitizenID"] == null)
@@ -551,14 +553,12 @@ namespace CommunityServiceProject.Controllers
                     updatedRequest.CategoryID
                 );
 
-
                 ViewBag.WardID = new SelectList(
                     db.Wards.OrderBy(w => w.WardNumber),
                     "WardID",
                     "WardName",
                     updatedRequest.WardID
                 );
-
 
                 return View(updatedRequest);
             }
@@ -577,7 +577,6 @@ namespace CommunityServiceProject.Controllers
                         r.CitizenID ==
                         citizenId
                 );
-
 
             if (request == null)
             {
@@ -628,7 +627,6 @@ namespace CommunityServiceProject.Controllers
                 string uploadFolder =
                     Server.MapPath("~/Uploads/");
 
-
                 if (!System.IO.Directory.Exists(
                     uploadFolder))
                 {
@@ -637,12 +635,10 @@ namespace CommunityServiceProject.Controllers
                     );
                 }
 
-
                 string fileName =
                     System.IO.Path.GetFileName(
                         ImageFile.FileName
                     );
-
 
                 string path =
                     System.IO.Path.Combine(
@@ -650,9 +646,7 @@ namespace CommunityServiceProject.Controllers
                         fileName
                     );
 
-
                 ImageFile.SaveAs(path);
-
 
                 request.ImagePath =
                     "~/Uploads/" + fileName;
@@ -664,7 +658,6 @@ namespace CommunityServiceProject.Controllers
             // =====================================================
 
             db.SaveChanges();
-
 
             return RedirectToAction("Index");
         }
@@ -691,14 +684,12 @@ namespace CommunityServiceProject.Controllers
             int citizenId =
                 (int)Session["CitizenID"];
 
-
             Request request = db.Requests
                 .FirstOrDefault(
                     r =>
                         r.RequestID == id &&
                         r.CitizenID == citizenId
                 );
-
 
             if (request == null)
             {
@@ -714,7 +705,6 @@ namespace CommunityServiceProject.Controllers
                     "This request can no longer be cancelled."
                 );
             }
-
 
             return View(request);
         }
@@ -734,10 +724,8 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-
             int citizenId =
                 (int)Session["CitizenID"];
-
 
             Request request = db.Requests
                 .FirstOrDefault(
@@ -745,7 +733,6 @@ namespace CommunityServiceProject.Controllers
                         r.RequestID == id &&
                         r.CitizenID == citizenId
                 );
-
 
             if (request == null)
             {
@@ -768,7 +755,6 @@ namespace CommunityServiceProject.Controllers
 
             db.SaveChanges();
 
-
             return RedirectToAction("Index");
         }
 
@@ -787,4 +773,6 @@ namespace CommunityServiceProject.Controllers
             base.Dispose(disposing);
         }
     }
+
+
 }

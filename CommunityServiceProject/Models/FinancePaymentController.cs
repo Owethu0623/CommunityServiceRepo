@@ -659,11 +659,15 @@ namespace CommunityServiceProject.Controllers
             {
                 receipt = new Receipt
                 {
-                    PaymentID = payment.PaymentID,
-                    IssueDate = DateTime.Now,
-                    Amount = payment.Amount,
+                    PaymentID =
+                        payment.PaymentID,
 
-                    // Temporary value so the required field can be saved.
+                    IssueDate =
+                        DateTime.Now,
+
+                    Amount =
+                        payment.Amount,
+
                     ReceiptNumber =
                         "TEMP-" +
                         Guid.NewGuid()
@@ -677,11 +681,59 @@ namespace CommunityServiceProject.Controllers
                 db.SaveChanges();
 
                 // --------------------------------------------------------
-                // GENERATE FORMAL RECEIPT NUMBER USING RECEIPT ID
+                // GENERATE FORMAL RECEIPT NUMBER
                 // --------------------------------------------------------
 
                 receipt.ReceiptNumber =
                     $"REC-{receipt.IssueDate.Year}-{receipt.ReceiptID:D6}";
+
+                // --------------------------------------------------------
+                // FINANCE NOTIFICATION - RECEIPT GENERATED
+                // --------------------------------------------------------
+
+                var receiptNotification =
+                    new FinanceNotification
+                    {
+                        CitizenID =
+                            payment.CitizenID,
+
+                        InvoiceID =
+                            payment.InvoiceID,
+
+                        PaymentID =
+                            payment.PaymentID,
+
+                        RefundID =
+                            null,
+
+                        ReceiptID =
+                            receipt.ReceiptID,
+
+                        NotificationType =
+                            FinanceNotificationType.ReceiptGenerated,
+
+                        Title =
+                            "Payment Receipt Generated",
+
+                        Message =
+                            "Your payment receipt " +
+                            receipt.ReceiptNumber +
+                            " has been generated for your successful payment of R" +
+                            receipt.Amount.ToString("N2") +
+                            ".",
+
+                        DateCreated =
+                            DateTime.Now,
+
+                        IsRead =
+                            false,
+
+                        ReadDate =
+                            null
+                    };
+
+                db.FinanceNotifications.Add(
+                    receiptNotification);
 
                 db.SaveChanges();
 
@@ -917,7 +969,10 @@ namespace CommunityServiceProject.Controllers
             return View(model);
         }
 
-        // US144 - Decide Refund Request
+        // ============================================================
+        // US144 - DECIDE REFUND REQUEST
+        // ============================================================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DecideRefund(
@@ -926,12 +981,15 @@ namespace CommunityServiceProject.Controllers
             string reviewComments)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "FinanceOfficer");
+                return RedirectToAction(
+                    "Login",
+                    "FinanceOfficer");
 
             var refund = db.Refunds
                 .Include(r => r.Payment)
                 .Include(r => r.Invoice)
-                .FirstOrDefault(r => r.RefundID == id);
+                .FirstOrDefault(r =>
+                    r.RefundID == id);
 
             if (refund == null)
                 return HttpNotFound();
@@ -939,42 +997,76 @@ namespace CommunityServiceProject.Controllers
             string previousStatus =
                 refund.Status.ToString();
 
-            // Refund must be under review before a decision can be made.
-            if (refund.Status != RefundStatus.UnderReview)
+            // --------------------------------------------------------
+            // REFUND MUST BE UNDER REVIEW
+            // --------------------------------------------------------
+
+            if (refund.Status !=
+                RefundStatus.UnderReview)
             {
-                TempData["Error"] = "This refund is no longer available for review.";
-                return RedirectToAction("RefundRequests");
+                TempData["Error"] =
+                    "This refund is no longer available for review.";
+
+                return RedirectToAction(
+                    "RefundRequests");
             }
 
-            // Only Approved or Rejected are valid decisions.
+            // --------------------------------------------------------
+            // ONLY APPROVED OR REJECTED ARE VALID
+            // --------------------------------------------------------
+
             if (decision != RefundStatus.Approved &&
                 decision != RefundStatus.Rejected)
             {
-                TempData["Error"] = "Invalid refund decision.";
-                return RedirectToAction("ReviewRefund", new { id = refund.RefundID });
+                TempData["Error"] =
+                    "Invalid refund decision.";
+
+                return RedirectToAction(
+                    "ReviewRefund",
+                    new
+                    {
+                        id =
+                            refund.RefundID
+                    });
             }
 
-            // Require comments when rejecting.
+            // --------------------------------------------------------
+            // REQUIRE COMMENTS WHEN REJECTING
+            // --------------------------------------------------------
+
             if (decision == RefundStatus.Rejected &&
                 string.IsNullOrWhiteSpace(reviewComments))
             {
-                TempData["Error"] = "Please provide a reason for rejecting the refund.";
-                return RedirectToAction("ReviewRefund", new { id = refund.RefundID });
+                TempData["Error"] =
+                    "Please provide a reason for rejecting the refund.";
+
+                return RedirectToAction(
+                    "ReviewRefund",
+                    new
+                    {
+                        id =
+                            refund.RefundID
+                    });
             }
 
-            refund.Status = decision;
-            refund.ReviewDate = DateTime.Now;
+            refund.Status =
+                decision;
+
+            refund.ReviewDate =
+                DateTime.Now;
+
             refund.ReviewedByFinanceOfficerID =
                 (int)Session["FinanceOfficerID"];
 
-            refund.ReviewComments = string.IsNullOrWhiteSpace(reviewComments)
-                ? null
-                : reviewComments.Trim();
+            refund.ReviewComments =
+                string.IsNullOrWhiteSpace(reviewComments)
+                    ? null
+                    : reviewComments.Trim();
 
             string action =
-    decision == RefundStatus.Approved
-        ? "Refund Approved"
-        : "Refund Rejected";
+                decision == RefundStatus.Approved
+                    ? "Refund Approved"
+                    : "Refund Rejected";
 
             RecordFinanceAudit(
                 action,
@@ -989,20 +1081,74 @@ namespace CommunityServiceProject.Controllers
                     : "Finance Officer rejected the refund request. Reason: " +
                       refund.ReviewComments);
 
+            // --------------------------------------------------------
+            // CREATE CORRESPONDING CITIZEN NOTIFICATION
+            // --------------------------------------------------------
+
+            var refundNotification =
+                new FinanceNotification
+                {
+                    CitizenID =
+                        refund.Payment.CitizenID,
+
+                    InvoiceID =
+                        refund.InvoiceID,
+
+                    PaymentID =
+                        refund.PaymentID,
+
+                    RefundID =
+                        refund.RefundID,
+
+                    ReceiptID =
+                        null,
+
+                    NotificationType =
+                        decision == RefundStatus.Approved
+                            ? FinanceNotificationType.RefundApproved
+                            : FinanceNotificationType.RefundRejected,
+
+                    Title =
+                        decision == RefundStatus.Approved
+                            ? "Refund Approved"
+                            : "Refund Rejected",
+
+                    Message =
+                        decision == RefundStatus.Approved
+                            ? "Your refund request " +
+                              refund.RefundReference +
+                              " for R" +
+                              refund.Amount.ToString("N2") +
+                              " has been approved and can now be processed."
+                            : "Your refund request " +
+                              refund.RefundReference +
+                              " for R" +
+                              refund.Amount.ToString("N2") +
+                              " has been rejected. Reason: " +
+                              refund.ReviewComments,
+
+                    DateCreated =
+                        DateTime.Now,
+
+                    IsRead =
+                        false,
+
+                    ReadDate =
+                        null
+                };
+
+            db.FinanceNotifications.Add(
+                refundNotification);
+
             db.SaveChanges();
 
-            // APPROVED
-            if (decision == RefundStatus.Approved)
-            {
-                return RedirectToAction(
-                    "RefundDecisionResult",
-                    new { id = refund.RefundID });
-            }
-
-            // REJECTED
             return RedirectToAction(
                 "RefundDecisionResult",
-                new { id = refund.RefundID });
+                new
+                {
+                    id =
+                        refund.RefundID
+                });
         }
 
 
@@ -1082,7 +1228,9 @@ namespace CommunityServiceProject.Controllers
         public ActionResult ProcessRefund(int id)
         {
             if (Session["FinanceOfficerID"] == null)
-                return RedirectToAction("Login", "Login");
+                return RedirectToAction(
+                    "Login",
+                    "Login");
 
             int financeOfficerID =
                 Convert.ToInt32(
@@ -1095,18 +1243,16 @@ namespace CommunityServiceProject.Controllers
                     .FirstOrDefault(r =>
                         r.RefundID == id);
 
-            RecordFinanceAudit(
-    "Refund Processing Started",
-    "Refund",
-    refund.RefundID,
-    refund.RefundReference,
-    "Approved",
-    "RefundProcessing",
-    refund.Amount,
-    "Finance Officer started processing the approved refund.");
+            // --------------------------------------------------------
+            // CHECK REFUND EXISTS BEFORE USING IT
+            // --------------------------------------------------------
 
             if (refund == null)
                 return HttpNotFound();
+
+            // --------------------------------------------------------
+            // VALIDATE REFUND STATUS
+            // --------------------------------------------------------
 
             if (refund.Status !=
                 RefundStatus.Approved)
@@ -1117,6 +1263,10 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction(
                     "ProcessRefunds");
             }
+
+            // --------------------------------------------------------
+            // VALIDATE PAYMENT
+            // --------------------------------------------------------
 
             if (refund.Payment == null ||
                 refund.Payment.Status !=
@@ -1129,6 +1279,10 @@ namespace CommunityServiceProject.Controllers
                     "ProcessRefunds");
             }
 
+            // --------------------------------------------------------
+            // VALIDATE INVOICE
+            // --------------------------------------------------------
+
             if (refund.Invoice == null)
             {
                 TempData["ErrorMessage"] =
@@ -1137,6 +1291,10 @@ namespace CommunityServiceProject.Controllers
                 return RedirectToAction(
                     "ProcessRefunds");
             }
+
+            // --------------------------------------------------------
+            // VALIDATE REFUND AMOUNT
+            // --------------------------------------------------------
 
             if (refund.Amount <= 0)
             {
@@ -1169,6 +1327,16 @@ namespace CommunityServiceProject.Controllers
                     refund.Status =
                         RefundStatus.RefundProcessing;
 
+                    RecordFinanceAudit(
+                        "Refund Processing Started",
+                        "Refund",
+                        refund.RefundID,
+                        refund.RefundReference,
+                        "Approved",
+                        "RefundProcessing",
+                        refund.Amount,
+                        "Finance Officer started processing the approved refund.");
+
                     db.SaveChanges();
 
                     // ----------------------------------------------------
@@ -1196,12 +1364,14 @@ namespace CommunityServiceProject.Controllers
 
                     if (invoice.AmountPaid <= 0m)
                     {
-                        invoice.AmountPaid = 0m;
+                        invoice.AmountPaid =
+                            0m;
 
                         invoice.Balance =
                             invoice.Amount;
 
-                        invoice.PaidDate = null;
+                        invoice.PaidDate =
+                            null;
 
                         invoice.Status =
                             InvoiceStatus.Refunded;
@@ -1211,7 +1381,8 @@ namespace CommunityServiceProject.Controllers
                         invoice.Status =
                             InvoiceStatus.PartiallyPaid;
 
-                        invoice.PaidDate = null;
+                        invoice.PaidDate =
+                            null;
                     }
 
                     // ----------------------------------------------------
@@ -1221,21 +1392,69 @@ namespace CommunityServiceProject.Controllers
                     refund.Status =
                         RefundStatus.Refunded;
 
-                    RecordFinanceAudit(
-    "Refund Processed",
-    "Refund",
-    refund.RefundID,
-    refund.RefundReference,
-    "RefundProcessing",
-    "Refunded",
-    refund.Amount,
-    "Finance Officer completed the refund process and recorded the refund as refunded.");
-
                     refund.ProcessedDate =
                         DateTime.Now;
 
                     refund.ProcessedByFinanceOfficerID =
                         financeOfficerID;
+
+                    RecordFinanceAudit(
+                        "Refund Processed",
+                        "Refund",
+                        refund.RefundID,
+                        refund.RefundReference,
+                        "RefundProcessing",
+                        "Refunded",
+                        refund.Amount,
+                        "Finance Officer completed the refund process and recorded the refund as refunded.");
+
+                    // ----------------------------------------------------
+                    // FINANCE NOTIFICATION - REFUND PROCESSED
+                    // ----------------------------------------------------
+
+                    var refundNotification =
+                        new FinanceNotification
+                        {
+                            CitizenID =
+                                refund.Payment.CitizenID,
+
+                            InvoiceID =
+                                refund.InvoiceID,
+
+                            PaymentID =
+                                refund.PaymentID,
+
+                            RefundID =
+                                refund.RefundID,
+
+                            ReceiptID =
+                                null,
+
+                            NotificationType =
+                                FinanceNotificationType.RefundProcessed,
+
+                            Title =
+                                "Refund Processed",
+
+                            Message =
+                                "Your refund " +
+                                refund.RefundReference +
+                                " for R" +
+                                refund.Amount.ToString("N2") +
+                                " has been successfully processed.",
+
+                            DateCreated =
+                                DateTime.Now,
+
+                            IsRead =
+                                false,
+
+                            ReadDate =
+                                null
+                        };
+
+                    db.FinanceNotifications.Add(
+                        refundNotification);
 
                     db.SaveChanges();
 
@@ -1261,7 +1480,6 @@ namespace CommunityServiceProject.Controllers
                 }
             }
         }
-
 
         // ============================================================
         // US145 - VIEW FINANCIAL TRANSACTIONS

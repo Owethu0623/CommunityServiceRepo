@@ -288,9 +288,10 @@ namespace CommunityServiceProject.Controllers
         // ============================================================
 
         [HttpGet]
+        [RoleAuthorize("HROfficer")]
         public ActionResult Create()
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
             var model = new TechnicianOpportunityCreateViewModel
@@ -304,10 +305,10 @@ namespace CommunityServiceProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(
-    TechnicianOpportunityCreateViewModel model)
+        [RoleAuthorize("HROfficer")]
+        public ActionResult Create(TechnicianOpportunityCreateViewModel model)
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
             if (model == null)
@@ -342,13 +343,12 @@ namespace CommunityServiceProject.Controllers
                 model.EmploymentType?.Trim();
 
             // --------------------------------------------------------
-            // ADMINISTRATOR
+            // HROfficer
             // --------------------------------------------------------
 
-            var administratorID =
-                GetAdministratorID();
+            var hrOfficerID = GetHROfficerID();
 
-            if (!administratorID.HasValue)
+            if (!hrOfficerID.HasValue)
                 return new HttpUnauthorizedResult();
 
             // --------------------------------------------------------
@@ -437,7 +437,9 @@ namespace CommunityServiceProject.Controllers
                         DateTime.Now,
 
                     CreatedByAdministratorID =
-                        administratorID.Value
+                        null,
+                    CreatedByHROfficerID =
+                        hrOfficerID.Value
                 };
 
             db.TechnicianOpportunities.Add(opportunity);
@@ -507,12 +509,13 @@ namespace CommunityServiceProject.Controllers
         // ============================================================
 
         [HttpGet]
-        [RoleAuthorize("Administrator,HROfficer")]
+        [RoleAuthorize("HROfficer")]
         public ActionResult Manage(
             string searchTerm,
             string statusFilter)
         {
-            // Allow Administrators or HR Officers to manage opportunities
+            // HR Officers manage opportunities; Administrators will retain only
+            // the account creation handover responsibilities.
 
             var query =
                 db.TechnicianOpportunities
@@ -644,9 +647,10 @@ namespace CommunityServiceProject.Controllers
 
 
         [HttpGet]
+        [RoleAuthorize("HROfficer")]
         public ActionResult Edit(int? id)
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
             if (!id.HasValue)
@@ -711,20 +715,18 @@ namespace CommunityServiceProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(
-    int id,
-    TechnicianOpportunityCreateViewModel model)
+        [RoleAuthorize("HROfficer")]
+        public ActionResult Edit(int id, TechnicianOpportunityCreateViewModel model)
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
             if (model == null)
                 return HttpNotFound();
 
-            var administratorID =
-                GetAdministratorID();
+            var hrOfficerID = GetHROfficerID();
 
-            if (!administratorID.HasValue)
+            if (!hrOfficerID.HasValue)
                 return new HttpUnauthorizedResult();
 
             var opportunity =
@@ -839,11 +841,9 @@ namespace CommunityServiceProject.Controllers
             opportunity.ApplicationDeadline =
                 model.ApplicationDeadline.Date;
 
-            opportunity.LastUpdatedDate =
-                DateTime.Now;
-
-            opportunity.LastUpdatedByAdministratorID =
-                administratorID.Value;
+            opportunity.LastUpdatedDate = DateTime.Now;
+            opportunity.LastUpdatedByAdministratorID = null;
+            opportunity.LastUpdatedByHROfficerID = hrOfficerID.Value;
 
             db.SaveChanges();
 
@@ -855,15 +855,15 @@ namespace CommunityServiceProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RoleAuthorize("HROfficer")]
         public ActionResult Publish(int id)
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
-            var administratorID =
-                GetAdministratorID();
+            var hrOfficerID = GetHROfficerID();
 
-            if (!administratorID.HasValue)
+            if (!hrOfficerID.HasValue)
                 return new HttpUnauthorizedResult();
 
             var opportunity =
@@ -909,11 +909,9 @@ namespace CommunityServiceProject.Controllers
             opportunity.PublishedDate =
                 DateTime.Now;
 
-            opportunity.LastUpdatedDate =
-                DateTime.Now;
-
-            opportunity.LastUpdatedByAdministratorID =
-                administratorID.Value;
+            opportunity.LastUpdatedDate = DateTime.Now;
+            opportunity.LastUpdatedByAdministratorID = null;
+            opportunity.LastUpdatedByHROfficerID = hrOfficerID.Value;
 
             db.SaveChanges();
 
@@ -927,13 +925,12 @@ namespace CommunityServiceProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Close(int id)
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
-            var administratorID =
-                GetAdministratorID();
+            var hrOfficerID = GetHROfficerID();
 
-            if (!administratorID.HasValue)
+            if (!hrOfficerID.HasValue)
                 return new HttpUnauthorizedResult();
 
             var opportunity =
@@ -960,11 +957,9 @@ namespace CommunityServiceProject.Controllers
             opportunity.ClosedDate =
                 DateTime.Now;
 
-            opportunity.LastUpdatedDate =
-                DateTime.Now;
-
-            opportunity.LastUpdatedByAdministratorID =
-                administratorID.Value;
+            opportunity.LastUpdatedDate = DateTime.Now;
+            opportunity.LastUpdatedByAdministratorID = null;
+            opportunity.LastUpdatedByHROfficerID = hrOfficerID.Value;
 
             db.SaveChanges();
 
@@ -978,13 +973,12 @@ namespace CommunityServiceProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CancelOpportunity(int id)
         {
-            if (!IsAdministrator())
+            if (Session["HROfficerID"] == null)
                 return new HttpUnauthorizedResult();
 
-            var administratorID =
-                GetAdministratorID();
+            var hrOfficerID = GetHROfficerID();
 
-            if (!administratorID.HasValue)
+            if (!hrOfficerID.HasValue)
                 return new HttpUnauthorizedResult();
 
             var opportunity =
@@ -1013,11 +1007,9 @@ namespace CommunityServiceProject.Controllers
             opportunity.ClosedDate =
                 DateTime.Now;
 
-            opportunity.LastUpdatedDate =
-                DateTime.Now;
-
-            opportunity.LastUpdatedByAdministratorID =
-                administratorID.Value;
+            opportunity.LastUpdatedDate = DateTime.Now;
+            opportunity.LastUpdatedByAdministratorID = null;
+            opportunity.LastUpdatedByHROfficerID = hrOfficerID.Value;
 
             db.SaveChanges();
 

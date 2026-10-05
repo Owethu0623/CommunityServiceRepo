@@ -45,7 +45,7 @@ public ActionResult Login(string emailAddress, string password)
             var technician = db.Technicians
                 .FirstOrDefault(t =>
                     t.EmailAddress == emailAddress &&
-                    t.Password == password);
+                    CommunityServiceProject.Helpers.PasswordHelper.VerifyHashedPassword(t.Password, password));
 
             // Invalid credentials
             if (technician == null)
@@ -306,8 +306,8 @@ public ActionResult ChangePassword()
             }
 
 
-            // Update password
-            technician.Password = password;
+            // Update password (store hashed)
+            technician.Password = CommunityServiceProject.Helpers.PasswordHelper.HashPassword(password);
 
             try
             {

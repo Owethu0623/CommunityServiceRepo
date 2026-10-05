@@ -14,7 +14,8 @@
                         SelectionID = c.Int(nullable: false, identity: true),
                         ApplicationID = c.Int(nullable: false),
                         Comments = c.String(maxLength: 3000),
-                        SelectedByAdministratorID = c.Int(nullable: false),
+                        SelectedByAdministratorID = c.Int(),
+                        SelectedByHROfficerID = c.Int(),
                         SelectionDate = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.SelectionID)

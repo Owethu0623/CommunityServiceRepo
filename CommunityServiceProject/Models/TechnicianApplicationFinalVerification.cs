@@ -31,11 +31,18 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Verification Comments")]
         public string Comments { get; set; }
 
-        [Required]
-        public int VerifiedByAdministratorID { get; set; }
+        // Administrator verification is optional because HR now owns recruitment.
+        public int? VerifiedByAdministratorID { get; set; }
 
         [ForeignKey("VerifiedByAdministratorID")]
         public virtual Administrator VerifiedByAdministrator { get; set; }
+
+        // HR verification is optional because older/existing records
+        // may have been verified by an Administrator.
+        public int? VerifiedByHROfficerID { get; set; }
+
+        [ForeignKey("VerifiedByHROfficerID")]
+        public virtual HROfficer VerifiedByHROfficer { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

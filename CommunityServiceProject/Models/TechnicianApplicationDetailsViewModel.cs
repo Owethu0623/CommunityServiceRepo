@@ -60,7 +60,7 @@ namespace CommunityServiceProject.ViewModels
     {
         public int OnboardingID { get; set; }
 
-        public int TechnicianID { get; set; }
+        public int? TechnicianID { get; set; }
 
         public string TechnicianName { get; set; }
 

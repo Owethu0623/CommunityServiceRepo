@@ -1,19 +1,462 @@
-﻿@model IEnumerable<CommunityServiceProject.Models.Request>
+﻿
+@model IEnumerable<CommunityServiceProject.Models.Request>
 
 @{
     ViewBag.Title = "Manage Requests";
 }
 
+<style>
+    /* =========================================================
+       ADMINISTRATOR REQUEST MANAGEMENT
+       Compact municipal dashboard-style presentation
+       ========================================================= */
+
+    .admin-request-page {
+        padding: 28px 24px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #F8FAFD;
+        color: #25334A;
+    }
+
+    .admin-request-card {
+        width: 100%;
+        max-width: 1380px;
+        margin: 0 auto;
+        background: #FFFFFF;
+        border: 1px solid #E1E6ED;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(20, 33, 61, 0.05);
+        overflow: hidden;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .admin-request-header {
+        padding: 20px 24px;
+        background: #FFFFFF;
+        border-bottom: 1px solid #E7ECF2;
+    }
+
+        .admin-request-header h2 {
+            margin: 0;
+            color: #14213D;
+            font-size: 21px;
+            line-height: 1.3;
+            font-weight: 650;
+            letter-spacing: -0.2px;
+        }
+
+        .admin-request-header p {
+            margin: 4px 0 0;
+            color: #7A8495;
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+
+    /* =========================================================
+       FILTER AREA
+       ========================================================= */
+
+    .admin-request-filters {
+        padding: 17px 24px;
+        background: #FBFCFE;
+        border-bottom: 1px solid #E7ECF2;
+    }
+
+    .admin-filter-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+        gap: 11px;
+        align-items: end;
+    }
+
+    .admin-filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #667085;
+        font-size: 10.5px;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: 0.35px;
+    }
+
+    .admin-input,
+    .admin-select {
+        width: 100%;
+        height: 37px;
+        padding: 0 10px;
+        box-sizing: border-box;
+        border: 1px solid #D9E1EA;
+        border-radius: 6px;
+        background: #FFFFFF;
+        color: #25334A;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 12px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+        .admin-input::placeholder {
+            color: #A0A8B5;
+        }
+
+        .admin-input:focus,
+        .admin-select:focus {
+            outline: none;
+            border-color: #0D5CC1;
+            box-shadow: 0 0 0 2px rgba(13, 92, 193, 0.08);
+        }
+
+    .admin-filter-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 11px;
+    }
+
+    .admin-filter-button,
+    .admin-clear-filter-button {
+        height: 34px;
+        padding: 0 13px;
+        border-radius: 6px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 11.5px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .admin-filter-button {
+        border: 1px solid #0D5CC1;
+        background: #0D5CC1;
+        color: #FFFFFF;
+    }
+
+        .admin-filter-button:hover {
+            background: #0B4F9A;
+            border-color: #0B4F9A;
+        }
+
+    .admin-clear-filter-button {
+        border: 1px solid #D1DCEB;
+        background: #FFFFFF;
+        color: #0D5CC1;
+    }
+
+        .admin-clear-filter-button:hover {
+            background: #F4F8FD;
+        }
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .admin-request-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .admin-request-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+        table-layout: auto;
+    }
+
+        .admin-request-table thead th {
+            padding: 9px 11px;
+            background: #F5F8FC;
+            border-bottom: 1px solid #DEE5ED;
+            color: #667085;
+            font-size: 10.5px;
+            font-weight: 650;
+            line-height: 1.3;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .admin-request-table tbody td {
+            padding: 9px 11px;
+            border-bottom: 1px solid #EEF2F6;
+            color: #344054;
+            font-size: 12px;
+            line-height: 1.35;
+            vertical-align: middle;
+        }
+
+        .admin-request-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-request-table tbody tr:hover {
+            background: #FAFCFF;
+        }
+
+    /* =========================================================
+       TABLE CONTENT
+       ========================================================= */
+
+    .ref-number {
+        color: #14213D;
+        font-size: 11.5px;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .request-title {
+        display: block;
+        max-width: 220px;
+        color: #25334A;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.35;
+    }
+
+    .citizen-info {
+        color: #667085;
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       BADGES
+       ========================================================= */
+
+    .badge,
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 24px;
+        padding: 0 7px;
+        border-radius: 5px;
+        font-size: 10.5px;
+        font-weight: 650;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .priority-low {
+        background: #F2F4F7;
+        color: #475467;
+    }
+
+    .priority-medium {
+        background: #EAF2FF;
+        color: #0D5CC1;
+    }
+
+    .priority-high {
+        background: #FFF4E6;
+        color: #A15C00;
+    }
+
+    .priority-critical {
+        background: #FFF1F0;
+        color: #B42318;
+    }
+
+    .status-inprogress {
+        background: #FFF8E6;
+        color: #A15C00;
+    }
+
+    .status-completed {
+        background: #ECFDF5;
+        color: #087443;
+    }
+
+    .status-pending {
+        background: #EAF2FF;
+        color: #0D5CC1;
+    }
+
+    .status-default {
+        background: #F2F4F7;
+        color: #475467;
+    }
+
+    /* =========================================================
+       ACTION BUTTON
+       ========================================================= */
+
+    .admin-view-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 0 10px;
+        border: 1px solid #0D5CC1;
+        border-radius: 6px;
+        background: #0D5CC1;
+        color: #FFFFFF;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        .admin-view-button:hover {
+            background: #0B4F9A;
+            border-color: #0B4F9A;
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+
+    .admin-review-reassignment {
+        background: #B45F00;
+        border-color: #B45F00;
+    }
+
+        .admin-review-reassignment:hover {
+            background: #944D00;
+            border-color: #944D00;
+        }
+
+    .admin-verify-completion {
+        background: #0F766E;
+        border-color: #0F766E;
+    }
+
+        .admin-verify-completion:hover {
+            background: #0B5E58;
+            border-color: #0B5E58;
+        }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .admin-no-requests {
+        padding: 42px 24px;
+        text-align: center;
+        color: #7A8495;
+    }
+
+        .admin-no-requests p {
+            margin: 0;
+            font-size: 12.5px;
+        }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .admin-request-footer {
+        padding: 14px 24px;
+        background: #FBFCFE;
+        border-top: 1px solid #E7ECF2;
+    }
+
+    .admin-back-button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 11px;
+        border: 1px solid #D5DFEB;
+        border-radius: 6px;
+        background: #FFFFFF;
+        color: #0D5CC1;
+        font-size: 11.5px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .admin-back-button:hover {
+            background: #F4F8FD;
+            color: #0D5CC1;
+            text-decoration: none;
+        }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1100px) {
+
+        .admin-request-page {
+            padding: 24px 18px;
+        }
+
+        .admin-filter-row {
+            grid-template-columns: 2fr 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 760px) {
+
+        .admin-request-page {
+            padding: 18px 12px;
+        }
+
+        .admin-request-header {
+            padding: 17px 18px;
+        }
+
+            .admin-request-header h2 {
+                font-size: 19px;
+            }
+
+        .admin-request-filters {
+            padding: 15px 18px;
+        }
+
+        .admin-filter-row {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .admin-filter-actions {
+            margin-top: 10px;
+        }
+
+        .admin-request-footer {
+            padding: 12px 18px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+
+        .admin-request-page {
+            padding: 12px 8px;
+        }
+
+        .admin-request-card {
+            border-radius: 8px;
+        }
+
+        .admin-request-header h2 {
+            font-size: 18px;
+        }
+
+        .admin-request-header p {
+            font-size: 11.5px;
+        }
+
+        .admin-filter-actions {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
 <div class="admin-request-page">
 
     <div class="admin-request-card">
 
+        <!-- Page Header -->
         <div class="admin-request-header">
             <h2>Manage Maintenance Requests</h2>
             <p>Review and manage submitted citizen requests.</p>
         </div>
 
-        <!-- Request Filters -->
+        <!-- Filters -->
         <div class="admin-request-filters">
 
             @using (Html.BeginForm("Index", "AdministratorRequests", FormMethod.Get))
@@ -27,13 +470,17 @@
                                id="search"
                                name="search"
                                value="@ViewBag.Search"
-                               placeholder="Search request title..." />
+                               placeholder="Search request title..."
+                               class="admin-input" />
                     </div>
 
                     <div class="admin-filter-group">
                         <label for="status">Status</label>
 
-                        <select id="status" name="status">
+                        <select id="status"
+                                name="status"
+                                class="admin-select">
+
                             <option value="">All Statuses</option>
 
                             @foreach (var item in Enum.GetValues(
@@ -52,26 +499,30 @@
                         <label for="categoryId">Category</label>
 
                         @Html.DropDownList(
-                            "categoryId",
-                            (SelectList)ViewBag.Categories,
-                            "All Categories"
-                        )
+                                 "categoryId",
+                                 (SelectList)ViewBag.Categories,
+                                 "All Categories",
+                                 new { @class = "admin-select" }
+                             )
                     </div>
 
                     <div class="admin-filter-group">
                         <label for="wardId">Ward</label>
 
                         @Html.DropDownList(
-                            "wardId",
-                            (SelectList)ViewBag.Wards,
-                            "All Wards"
-                        )
+                                 "wardId",
+                                 (SelectList)ViewBag.Wards,
+                                 "All Wards",
+                                 new { @class = "admin-select" }
+                             )
                     </div>
 
                     <div class="admin-filter-group">
                         <label for="sortOrder">Sort By</label>
 
-                        <select id="sortOrder" name="sortOrder">
+                        <select id="sortOrder"
+                                name="sortOrder"
+                                class="admin-select">
 
                             <option value=""
                                     @(ViewBag.SortOrder == null ? "selected" : "")>
@@ -95,7 +546,10 @@
                         Apply Filters
                     </button>
 
-                    <a href="@Url.Action("Index", "AdministratorRequests")"
+                    <a href="@Url.Action(
+                        "Index",
+                        "AdministratorRequests"
+                    )"
                        class="admin-clear-filter-button">
                         Clear Filters
                     </a>
@@ -105,6 +559,7 @@
 
         </div>
 
+        <!-- Requests -->
         @if (!Model.Any())
         {
             <div class="admin-no-requests">
@@ -121,7 +576,7 @@
                         <tr>
                             <th>Reference</th>
                             <th>Title</th>
-                            <th>Citizen Information</th>
+                            <th>Citizen</th>
                             <th>Category</th>
                             <th>Ward</th>
                             <th>Priority</th>
@@ -139,11 +594,15 @@
                             <tr>
 
                                 <td>
-                                    @request.ReferenceNumber
+                                    <span class="ref-number">
+                                        @request.ReferenceNumber
+                                    </span>
                                 </td>
 
                                 <td>
-                                    @request.Title
+                                    <span class="request-title">
+                                        @request.Title
+                                    </span>
                                 </td>
 
                                 <td>
@@ -158,27 +617,66 @@
                                 <td>
                                     @if (request.Ward != null)
                                     {
-                                        <span>W@(request.Ward.WardNumber)</span>
+                                        <span class="badge">
+                                            W@(request.Ward.WardNumber)
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span>Not Assigned</span>
+                                        <span class="badge">
+                                            Not Assigned
+                                        </span>
                                     }
                                 </td>
 
-                                
                                 <td>
-                                    @request.Priority
-                                </td>
+                                    @{
+                                        var priorityClass = "priority-low";
 
-                             
+                                        if (request.Priority.ToString() == "Medium")
+                                        {
+                                            priorityClass = "priority-medium";
+                                        }
+                                        else if (request.Priority.ToString() == "High")
+                                        {
+                                            priorityClass = "priority-high";
+                                        }
+                                        else if (request.Priority.ToString() == "Critical")
+                                        {
+                                            priorityClass = "priority-critical";
+                                        }
+                                    }
+
+                                    <span class="badge @priorityClass">
+                                        @request.Priority
+                                    </span>
+                                </td>
 
                                 <td>
                                     @request.DateSubmitted.ToString("dd/MM/yyyy HH:mm")
                                 </td>
 
                                 <td>
-                                    @request.Status
+                                    @{
+                                        var statusClass = "status-default";
+
+                                        if (request.Status.ToString() == "InProgress")
+                                        {
+                                            statusClass = "status-inprogress";
+                                        }
+                                        else if (request.Status.ToString() == "Completed")
+                                        {
+                                            statusClass = "status-completed";
+                                        }
+                                        else if (request.Status.ToString() == "Pending")
+                                        {
+                                            statusClass = "status-pending";
+                                        }
+                                    }
+
+                                    <span class="status-badge @statusClass">
+                                        @request.Status
+                                    </span>
                                 </td>
 
                                 <td>
@@ -203,31 +701,37 @@
                                     @if (pendingReassignment != null)
                                     {
                                         <a href="@Url.Action(
-    "ReassignmentRequests",
-    "AdministratorAssignments"
-)"
-                                           class="admin-view-button">
+                                            "ReassignmentRequests",
+                                            "AdministratorAssignments"
+                                        )"
+                                           class="admin-view-button admin-review-reassignment">
                                             Review Reassignment
                                         </a>
                                     }
                                     else if (submittedMaintenance != null)
                                     {
                                         <a href="@Url.Action(
-            "VerifyCompletion",
-            "AdministratorRequests",
-            new { id = submittedMaintenance.MaintenanceWorkID }
-        )"
-                                           class="admin-view-button">
+                                            "VerifyCompletion",
+                                            "AdministratorRequests",
+                                            new
+                                            {
+                                                id = submittedMaintenance.MaintenanceWorkID
+                                            }
+                                        )"
+                                           class="admin-view-button admin-verify-completion">
                                             Verify Completion
                                         </a>
                                     }
                                     else
                                     {
                                         <a href="@Url.Action(
-            "Details",
-            "AdministratorRequests",
-            new { id = request.RequestID }
-        )"
+                                            "Details",
+                                            "AdministratorRequests",
+                                            new
+                                            {
+                                                id = request.RequestID
+                                            }
+                                        )"
                                            class="admin-view-button">
                                             Review
                                         </a>
@@ -244,6 +748,7 @@
             </div>
         }
 
+        <!-- Footer -->
         <div class="admin-request-footer">
 
             <a href="@Url.Action(
@@ -255,7 +760,7 @@
             </a>
 
         </div>
-        
+
     </div>
 
 </div>

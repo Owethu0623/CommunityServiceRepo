@@ -99,6 +99,8 @@ namespace CommunityServiceProject.Models
         public DbSet<TechnicianApplicationFinalVerification> TechnicianApplicationFinalVerifications { get; set; }
         public DbSet<TechnicianOnboarding> TechnicianOnboardings { get; set; }
         public DbSet<TechnicianApplicationNotification> TechnicianApplicationNotifications { get; set; }
+        public DbSet<AdministratorNotification> AdministratorNotifications { get; set; }
+        public DbSet<HROfficerNotification> HROfficerNotifications { get; set; }
 
 
         public DbSet<ServiceType> ServiceTypes { get; set; }
@@ -135,7 +137,7 @@ namespace CommunityServiceProject.Models
       
       public DbSet<MunicipalServiceRequestNotification> MunicipalServiceRequestNotifications { get; set; }
         public DbSet<FinancialAuditRecord> FinancialAuditRecords { get; set; }
-
+        public DbSet<FinanceNotification> FinanceNotifications { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -467,6 +469,27 @@ namespace CommunityServiceProject.Models
                 .HasForeignKey(a => a.LastUpdatedByAdministratorID)
                 .WillCascadeOnDelete(false);
 
+            // TechnicianOpportunity -> CreatedByAdministrator (optional)
+            modelBuilder.Entity<TechnicianOpportunity>()
+                .HasOptional(o => o.CreatedByAdministrator)
+                .WithMany()
+                .HasForeignKey(o => o.CreatedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // TechnicianOpportunity -> CreatedByHROfficer (optional)
+            modelBuilder.Entity<TechnicianOpportunity>()
+                .HasOptional(o => o.CreatedByHROfficer)
+                .WithMany()
+                .HasForeignKey(o => o.CreatedByHROfficerID)
+                .WillCascadeOnDelete(false);
+
+            // TechnicianOpportunity -> LastUpdatedByHROfficer (optional)
+            modelBuilder.Entity<TechnicianOpportunity>()
+                .HasOptional(o => o.LastUpdatedByHROfficer)
+                .WithMany()
+                .HasForeignKey(o => o.LastUpdatedByHROfficerID)
+                .WillCascadeOnDelete(false);
+
             // AssetInspection -> MunicipalAsset
             modelBuilder.Entity<AssetInspection>()
                 .HasRequired(i => i.Asset)
@@ -726,6 +749,13 @@ namespace CommunityServiceProject.Models
                 .HasForeignKey(s => s.SelectedByAdministratorID)
                 .WillCascadeOnDelete(false);
 
+            // Optional HR officer selector. Keep nullable to preserve existing data.
+            modelBuilder.Entity<TechnicianApplicationSelection>()
+                .HasOptional(s => s.SelectedByHROfficer)
+                .WithMany()
+                .HasForeignKey(s => s.SelectedByHROfficerID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TechnicianApplicationFinalVerification>()
     .HasRequired(v => v.Application)
     .WithMany()
@@ -754,6 +784,13 @@ namespace CommunityServiceProject.Models
                 .HasRequired(t => t.OnboardedByAdministrator)
                 .WithMany()
                 .HasForeignKey(t => t.OnboardedByAdministratorID)
+                .WillCascadeOnDelete(false);
+
+            // Optional HR officer onboarding record for handover tracking
+            modelBuilder.Entity<TechnicianOnboarding>()
+                .HasOptional(t => t.OnboardedByHROfficer)
+                .WithMany()
+                .HasForeignKey(t => t.OnboardedByHROfficerID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Technician>()
@@ -1064,6 +1101,45 @@ modelBuilder.Entity<TechnicianApplicationNotification>()
                 .HasRequired(p => p.Technician)
                 .WithMany()
                 .HasForeignKey(p => p.TechnicianID)
+                .WillCascadeOnDelete(false);
+
+            // ============================================================
+            // FINANCE NOTIFICATIONS
+            // ============================================================
+
+            // Finance Notification -> Citizen
+            modelBuilder.Entity<FinanceNotification>()
+                .HasRequired(n => n.Citizen)
+                .WithMany()
+                .HasForeignKey(n => n.CitizenID)
+                .WillCascadeOnDelete(false);
+
+            // Finance Notification -> Invoice
+            modelBuilder.Entity<FinanceNotification>()
+                .HasOptional(n => n.Invoice)
+                .WithMany()
+                .HasForeignKey(n => n.InvoiceID)
+                .WillCascadeOnDelete(false);
+
+            // Finance Notification -> Payment
+            modelBuilder.Entity<FinanceNotification>()
+                .HasOptional(n => n.Payment)
+                .WithMany()
+                .HasForeignKey(n => n.PaymentID)
+                .WillCascadeOnDelete(false);
+
+            // Finance Notification -> Refund
+            modelBuilder.Entity<FinanceNotification>()
+                .HasOptional(n => n.Refund)
+                .WithMany()
+                .HasForeignKey(n => n.RefundID)
+                .WillCascadeOnDelete(false);
+
+            // Finance Notification -> Receipt
+            modelBuilder.Entity<FinanceNotification>()
+                .HasOptional(n => n.Receipt)
+                .WithMany()
+                .HasForeignKey(n => n.ReceiptID)
                 .WillCascadeOnDelete(false);
 
 

@@ -2,21 +2,18 @@
 @model CommunityServiceProject.Models.ComplianceRecord
 
 @{
-ViewBag.Title = "Citizen Compliance";
+    ViewBag.Title = "Citizen Compliance";
 
+    var citizen =
+        ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
 
-var citizen =
-    ViewBag.Citizen as CommunityServiceProject.Models.Citizen;
-
-var latestRestriction =
-    ViewBag.LatestRestriction as CommunityServiceProject.Models.AccountRestriction;
-
+    var latestRestriction =
+        ViewBag.LatestRestriction as CommunityServiceProject.Models.AccountRestriction;
 
 }
 
 <div class="admin-citizen-details-page">
 
-```
 <div class="admin-citizen-details-card">
 
     <!-- HEADER -->

@@ -1,0 +1,37 @@
+@model IEnumerable<CommunityServiceProject.Models.TechnicianOnboarding>
+
+@{
+    ViewBag.Title = "Pending Onboardings";
+}
+
+<h2>Pending Onboardings</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Onboarding ID</th>
+            <th>Applicant</th>
+            <th>Municipal Email</th>
+            <th>Onboarding Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OnboardingID</td>
+                <td>@(item.Application?.Citizen?.FirstName + " " + item.Application?.Citizen?.LastName)</td>
+                <td>@item.MunicipalEmail</td>
+                <td>@item.OnboardingDate.ToString("dd MMM yyyy")</td>
+                <td>
+                    @using (Html.BeginForm("CreateTechnicianFromOnboarding", "TechnicianManagement", new { id = item.OnboardingID }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary">Create Technician Account</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

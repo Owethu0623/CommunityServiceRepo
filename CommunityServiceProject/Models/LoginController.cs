@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Models;
+using CommunityServiceProject.Helpers;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -37,13 +38,22 @@ namespace CommunityServiceProject.Controllers
                 // CHECK FINANCE OFFICER LOGIN
                 // =========================================================
 
+                // =========================================================
+                // Finance officer: find by email and verify password (supports hashed or legacy plaintext)
+                // =========================================================
                 var financeOfficer = db.FinanceOfficers.FirstOrDefault(f =>
-                    f.EmailAddress == model.EmailAddress &&
-                    f.Password == model.Password
+                    f.EmailAddress == model.EmailAddress
                 );
 
-                if (financeOfficer != null)
+                if (financeOfficer != null &&
+                    (PasswordHelper.VerifyHashedPassword(financeOfficer.Password, model.Password) || financeOfficer.Password == model.Password))
                 {
+                    // If the stored password is legacy plaintext, migrate it to a hashed value
+                    if (!PasswordHelper.VerifyHashedPassword(financeOfficer.Password, model.Password) && financeOfficer.Password == model.Password)
+                    {
+                        financeOfficer.Password = PasswordHelper.HashPassword(model.Password);
+                        db.SaveChanges();
+                    }
                     // ---------------------------------------------
                     // Finance Officer account status
                     // ---------------------------------------------
@@ -91,11 +101,11 @@ namespace CommunityServiceProject.Controllers
                 // =========================================================
 
                 var hrOfficer = db.HROfficers.FirstOrDefault(h =>
-                    h.EmailAddress == model.EmailAddress &&
-                    h.Password == model.Password
+                    h.EmailAddress == model.EmailAddress
                 );
 
-                if (hrOfficer != null)
+                if (hrOfficer != null &&
+                    (PasswordHelper.VerifyHashedPassword(hrOfficer.Password, model.Password) || hrOfficer.Password == model.Password))
                 {
                     if (hrOfficer.AccountStatus != AccountStatus.Active)
                     {
@@ -129,11 +139,11 @@ namespace CommunityServiceProject.Controllers
                 // =========================================================
 
                 var administrator = db.Administrators.FirstOrDefault(a =>
-                    a.EmailAddress == model.EmailAddress &&
-                    a.Password == model.Password
+                    a.EmailAddress == model.EmailAddress
                 );
 
-                if (administrator != null)
+                if (administrator != null &&
+                    (PasswordHelper.VerifyHashedPassword(administrator.Password, model.Password) || administrator.Password == model.Password))
                 {
                     if (administrator.AccountStatus != AccountStatus.Active)
                     {
@@ -165,11 +175,11 @@ namespace CommunityServiceProject.Controllers
                 // =========================================================
 
                 var technician = db.Technicians.FirstOrDefault(t =>
-                    t.EmailAddress == model.EmailAddress &&
-                    t.Password == model.Password
+                    t.EmailAddress == model.EmailAddress
                 );
 
-                if (technician != null)
+                if (technician != null &&
+                    (PasswordHelper.VerifyHashedPassword(technician.Password, model.Password) || technician.Password == model.Password))
                 {
                     if (technician.AccountStatus != AccountStatus.Active)
                     {
@@ -219,6 +229,8 @@ namespace CommunityServiceProject.Controllers
                 // Citizen does not exist / incorrect credentials
                 // =================================================
 
+
+                 
                 if (citizen == null)
                 {
                     ModelState.AddModelError(
@@ -228,6 +240,50 @@ namespace CommunityServiceProject.Controllers
 
                     return View(model);
                 }
+
+                // =================================================
+                // CHECK ACTIVE 30-DAY ACCOUNT RESTRICTION
+                // =================================================
+
+                var loginRestriction = db.AccountRestrictions
+                    .FirstOrDefault(r =>
+                        r.CitizenID == citizen.CitizenID &&
+                        r.IsActive &&
+                        r.DateStarted <= DateTime.Now &&
+                        r.DateEnded.HasValue &&
+                        r.DateEnded.Value > DateTime.Now
+                    );
+
+                if (loginRestriction != null)
+                {
+                    // Remember the restricted citizen so that
+                    // restriction/appeal functionality can be accessed.
+                    Session["RestrictedCitizenID"] = citizen.CitizenID;
+
+                    ViewBag.IsRestricted = true;
+
+                    ViewBag.RestrictionStartDate =
+                        loginRestriction.DateStarted;
+
+                    ViewBag.RestrictionEndDate =
+                        loginRestriction.DateEnded.Value;
+
+                    ViewBag.RestrictionReason =
+                        loginRestriction.Reason;
+
+                    ViewBag.AccountStatusMessage =
+                        "Your account is currently under a 30-day restriction. You cannot access the Municipal Service Platform while this restriction is active.";
+
+                    ModelState.AddModelError(
+                        "",
+                        "Your account is restricted until "
+                        + loginRestriction.DateEnded.Value.ToString("dd MMMM yyyy")
+                        + "."
+                    );
+
+                    return View(model);
+                }
+
 
 
                 // =================================================

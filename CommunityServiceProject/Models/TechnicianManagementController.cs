@@ -9,6 +9,7 @@ using CommunityServiceProject.Filters;
 namespace CommunityServiceProject.Controllers
 {
     [RoleAuthorize("Administrator")]
+    // Placeholder: Administrator-only controller for account creation tasks (no behavioral changes).
     public class TechnicianManagementController : Controller
     {
         private Community db = new Community();
@@ -33,6 +34,103 @@ namespace CommunityServiceProject.Controllers
                 .ToList();
 
             return View(technicians);
+        }
+
+        // ===========================================================
+        // PENDING ONBOARDINGS
+        // ===========================================================
+
+        public ActionResult PendingOnboardings()
+        {
+            if (Session["AdministratorID"] == null)
+                return RedirectToAction("Login", "Administrators");
+
+            var pending = db.TechnicianOnboardings
+                .Include(o => o.Application)
+                .Include(o => o.Application.Citizen)
+                .Where(o => o.TechnicianID == null && o.OnboardedByHROfficerID != null)
+                .OrderByDescending(o => o.OnboardingDate)
+                .ToList();
+
+            return View(pending);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateTechnicianFromOnboarding(int id)
+        {
+            if (Session["AdministratorID"] == null)
+                return RedirectToAction("Login", "Administrators");
+
+            var administratorID = Session["AdministratorID"] != null
+                ? (int?)Convert.ToInt32(Session["AdministratorID"]) : null;
+
+            if (!administratorID.HasValue)
+                return new HttpUnauthorizedResult();
+
+            var onboarding = db.TechnicianOnboardings
+                .Include(o => o.Application)
+                .Include(o => o.Application.Citizen)
+                .FirstOrDefault(o => o.OnboardingID == id);
+
+            if (onboarding == null)
+                return HttpNotFound();
+
+            if (onboarding.TechnicianID.HasValue)
+            {
+                TempData["ErrorMessage"] = "This onboarding has already been processed.";
+                return RedirectToAction("PendingOnboardings");
+            }
+
+            var citizen = onboarding.Application?.Citizen;
+
+            if (citizen == null)
+            {
+                TempData["ErrorMessage"] = "Applicant information is missing.";
+                return RedirectToAction("PendingOnboardings");
+            }
+
+            // Check for existing technician with same municipal email
+            if (db.Technicians.Any(t => t.EmailAddress == onboarding.MunicipalEmail))
+            {
+                TempData["ErrorMessage"] = "A technician with this municipal email already exists.";
+                return RedirectToAction("PendingOnboardings");
+            }
+
+            // Create temporary password
+            var tempPassword = GenerateTemporaryPassword();
+
+            var technician = new Technician
+            {
+                CitizenID = citizen.CitizenID,
+                FirstName = citizen.FirstName,
+                LastName = citizen.LastName,
+                EmailAddress = onboarding.MunicipalEmail,
+                PhoneNumber = citizen.PhoneNumber,
+                Password = CommunityServiceProject.Helpers.PasswordHelper.HashPassword(tempPassword),
+                AccountStatus = AccountStatus.Active,
+                MustChangePassword = true
+            };
+
+            db.Technicians.Add(technician);
+            db.SaveChanges();
+
+            // Link onboarding to technician and record admin actor
+            onboarding.TechnicianID = technician.TechnicianID;
+            onboarding.OnboardedByAdministratorID = administratorID.Value;
+            db.SaveChanges();
+
+            TempData["SuccessMessage"] = "Technician account created successfully.";
+
+            // Redirect to onboarding success view
+            return RedirectToAction("OnboardingSuccess", "TechnicianApplication", new { id = onboarding.ApplicationID });
+        }
+
+        private string GenerateTemporaryPassword()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 12).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
 

@@ -50,11 +50,17 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Comments")]
         public string Comments { get; set; }
 
-        [Required]
-        public int RecordedByAdministratorID { get; set; }
+        // Administrator who recorded the assessment (nullable to allow HR recording)
+        public int? RecordedByAdministratorID { get; set; }
 
         [ForeignKey("RecordedByAdministratorID")]
         public virtual Administrator RecordedByAdministrator { get; set; }
+
+        // Optional HR officer who may record assessments
+        public int? RecordedByHROfficerID { get; set; }
+
+        [ForeignKey("RecordedByHROfficerID")]
+        public virtual HROfficer RecordedByHROfficer { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

@@ -304,7 +304,8 @@ namespace CommunityServiceProject.Controllers
                     return View(model);
                 }
 
-                citizen.Password = model.NewPassword;
+                // Store hashed password when resetting
+                citizen.Password = CommunityServiceProject.Helpers.PasswordHelper.HashPassword(model.NewPassword);
                 citizen.ConfirmPassword = model.ConfirmPassword;
 
                 db.SaveChanges();

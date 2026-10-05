@@ -1,90 +1,1482 @@
-﻿﻿@{
+﻿@{
     ViewBag.Title = "Administrator Dashboard";
 }
 
-<div class="dashboard-container administrator-dashboard">
+<style>
 
-    <div class="dashboard-header">
-        <h2>Administrator Dashboard</h2>
-        <p>Welcome, Administrator</p>
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .admin-dashboard-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 36px 24px 40px;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+       TOP HEADER
+       ========================================================= */
+
+    .admin-top-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .admin-header-content {
+        min-width: 0;
+    }
+
+    .admin-eyebrow {
+        display: inline-block;
+        margin-bottom: 7px;
+        color: #0D5CC1;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+    }
+
+    .admin-top-header h1 {
+        margin: 0 0 7px;
+        color: #16324f;
+        font-size: 26px;
+        line-height: 1.2;
+        font-weight: 750;
+        letter-spacing: -0.015em;
+    }
+
+    .admin-top-header p {
+        margin: 0;
+        max-width: 760px;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .admin-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1px solid #dce4ee;
+        border-radius: 10px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .admin-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #18794e;
+        box-shadow: 0 0 0 4px rgba(24, 121, 78, 0.09);
+    }
+
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    .admin-sidebar {
+        position: sticky;
+        top: 20px;
+        padding: 12px;
+        background: #ffffff;
+        border: 1px solid #dfe6ef;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.035);
+    }
+
+    .admin-sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 8px 9px 15px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #edf1f5;
+    }
+
+    .admin-brand-icon {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #0D5CC1, #094b9f);
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 800;
+        box-shadow: 0 5px 13px rgba(13, 92, 193, 0.18);
+    }
+
+    .admin-brand-text {
+        min-width: 0;
+    }
+
+    .admin-brand-title {
+        display: block;
+        color: #16324f;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .admin-brand-subtitle {
+        display: block;
+        margin-top: 2px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 650;
+    }
+
+    .admin-nav-section {
+        margin-top: 13px;
+    }
+
+    .admin-nav-section-title {
+        display: block;
+        padding: 0 10px 7px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .admin-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .admin-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 42px;
+        padding: 0 11px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition:
+            background 0.16s ease,
+            border-color 0.16s ease,
+            color 0.16s ease,
+            transform 0.16s ease;
+    }
+
+    .admin-nav-link:hover {
+        background: #f4f8fd;
+        border-color: #d9e6f5;
+        color: #0D5CC1;
+        text-decoration: none;
+        transform: translateX(1px);
+    }
+
+    .admin-nav-link.active {
+        background: #eef5ff;
+        border-color: #d5e4f7;
+        color: #0D5CC1;
+    }
+
+    .admin-nav-icon {
+        width: 25px;
+        flex: 0 0 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .admin-nav-divider {
+        height: 1px;
+        margin: 10px 5px;
+        background: #edf1f5;
+    }
+
+    .admin-nav-link.logout {
+        color: #b42318;
+    }
+
+    .admin-nav-link.logout:hover {
+        background: #fff4f3;
+        border-color: #f2d2cf;
+        color: #b42318;
+    }
+
+
+    /* =========================================================
+       MAIN CONTENT
+       ========================================================= */
+
+    .admin-main {
+        min-width: 0;
+    }
+
+
+    /* =========================================================
+       WELCOME BANNER
+       ========================================================= */
+
+    .admin-welcome {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 18px;
+        padding: 20px 22px;
+        background: linear-gradient(135deg, rgba(13,92,193,0.96) 0%, rgba(10,83,173,0.9) 60%);
+        border-radius: 10px;
+        color: #ffffff;
+        box-shadow: 0 8px 20px rgba(13, 92, 193, 0.12);
+    }
+
+    .admin-welcome::after {
+        content: "";
+        position: absolute;
+        top: -90px;
+        right: -70px;
+        width: 240px;
+        height: 240px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 50%;
+        box-shadow:
+            0 0 0 28px rgba(255, 255, 255, 0.03),
+            0 0 0 56px rgba(255, 255, 255, 0.025);
+    }
+
+    .admin-welcome-content {
+        position: relative;
+        z-index: 1;
+        max-width: 760px;
+    }
+
+    .admin-welcome-label {
+        display: block;
+        margin-bottom: 6px;
+        color: rgba(255, 255, 255, 0.76);
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+    }
+
+    .admin-welcome h2 {
+        margin: 0 0 7px;
+        font-size: 23px;
+        font-weight: 760;
+        letter-spacing: -0.015em;
+    }
+
+    .admin-welcome p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.91);
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+
+    /* =========================================================
+       SECTION
+       ========================================================= */
+
+    .admin-section {
+        margin-bottom: 18px;
+        padding: 16px;
+        background: #ffffff;
+        border: 1px solid #dfe6ef;
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.035);
+    }
+
+    .admin-section-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 17px;
+    }
+
+    .admin-section-header-left {
+        min-width: 0;
+    }
+
+    .admin-section-header h3 {
+        margin: 0 0 5px;
+        color: #16324f;
+        font-size: 17px;
+        font-weight: 760;
+    }
+
+    .admin-section-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .admin-section-tag {
+        flex-shrink: 0;
+        padding: 6px 9px;
+        background: #f5f8fc;
+        border: 1px solid #e0e7ef;
+        border-radius: 7px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+
+    /* =========================================================
+       FEATURE GRID
+       ========================================================= */
+
+    .admin-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .admin-feature-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        min-height: 72px;
+        padding: 12px;
+        background: #fbfcfe;
+        border: 1px solid #e3e9f1;
+        border-radius: 10px;
+        color: inherit;
+        text-decoration: none;
+        transition:
+            transform 0.14s ease,
+            border-color 0.14s ease,
+            background 0.14s ease,
+            box-shadow 0.14s ease;
+    }
+
+    .admin-feature-card:hover {
+        background: #ffffff;
+        border-color: #c9dbf2;
+        box-shadow: 0 9px 23px rgba(15, 23, 42, 0.07);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .admin-feature-icon {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #eef5ff;
+        border: 1px solid #d7e5f7;
+        color: #0D5CC1;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .admin-feature-text {
+        min-width: 0;
+    }
+
+    .admin-feature-title {
+        display: block;
+        margin-bottom: 4px;
+        color: #25384d;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .admin-feature-description {
+        display: block;
+        color: #7b8796;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .admin-feature-arrow {
+        margin-left: auto;
+        padding-left: 7px;
+        color: #9aa8b8;
+        font-size: 16px;
+        transition: transform 0.16s ease, color 0.16s ease;
+    }
+
+    .admin-feature-card:hover .admin-feature-arrow {
+        color: #0D5CC1;
+        transform: translateX(2px);
+    }
+
+
+    /* =========================================================
+       QUICK ACTIONS
+       ========================================================= */
+
+    .admin-quick-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .admin-quick-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 12px;
+        border: 1px solid #d7e0eb;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #0D5CC1;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition:
+            background 0.14s ease,
+            border-color 0.14s ease,
+            color 0.14s ease,
+            transform 0.14s ease;
+    }
+
+    .admin-quick-action:hover {
+        background: #eef5ff;
+        border-color: #c5d9f2;
+        color: #094b9f;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+
+    /* =========================================================
+       NOTIFICATION AREA
+       ========================================================= */
+
+    .notifications {
+        margin-bottom: 18px;
+        padding: 16px;
+        background: #ffffff;
+        border: 1px solid #dfe6ef;
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.035);
+    }
+
+    .notifications h3 {
+        margin: 0 0 15px;
+        padding-bottom: 11px;
+        border-bottom: 1px solid #e8edf3;
+        color: #16324f;
+        font-size: 17px;
+        font-weight: 760;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        padding: 10px 12px;
+        background: #f8fafc;
+        border: 1px solid #e6ebf1;
+        border-left: 4px solid #0D5CC1;
+        border-radius: 8px;
+        transition:
+            background 0.14s ease,
+            border-color 0.14s ease;
+    }
+
+    .notification-item:hover {
+        background: #f2f7fd;
+        border-color: #d3deec;
+    }
+
+    .notification-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .notification-icon {
+        flex-shrink: 0;
+        width: 24px;
+        color: #0D5CC1;
+        font-size: 16px;
+        line-height: 1.4;
+        text-align: center;
+    }
+
+    .notification-message {
+        min-width: 0;
+        color: #465466;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .notifications > p {
+        margin: 0;
+        color: #7b8796;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       FOOTER / LOGOUT
+       ========================================================= */
+
+    .admin-dashboard-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 3px;
+    }
+
+    .logout-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid #efc9c5;
+        border-radius: 8px;
+        background: #fff7f6;
+        color: #b42318;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition:
+            background 0.14s ease,
+            border-color 0.14s ease,
+            color 0.14s ease;
+    }
+
+    .logout-button:hover {
+        background: #fff0ee;
+        border-color: #eab7b1;
+        color: #9f1f16;
+        text-decoration: none;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media (max-width: 1150px) {
+
+        .admin-layout {
+            grid-template-columns: 220px minmax(0, 1fr);
+        }
+
+        .admin-quick-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+
+     @@media (max-width: 900px) {
+
+        .admin-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-sidebar {
+            position: static;
+        }
+
+        .admin-nav {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .admin-nav-divider {
+            display: none;
+        }
+
+        .admin-nav-section {
+            margin-top: 8px;
+        }
+
+        .admin-top-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .admin-status-pill {
+            align-self: flex-start;
+        }
+    }
+
+
+    @@media (max-width: 680px) {
+
+        .admin-dashboard-page {
+            padding: 20px 12px 35px;
+        }
+
+        .admin-top-header h1 {
+            font-size: 25px;
+        }
+
+        .admin-welcome {
+            padding: 22px;
+        }
+
+        .admin-welcome h2 {
+            font-size: 20px;
+        }
+
+        .admin-section,
+        .notifications {
+            padding: 18px;
+        }
+
+        .admin-feature-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-quick-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+
+    @@media (max-width: 500px) {
+
+        .admin-nav {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-quick-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-top-header h1 {
+            font-size: 22px;
+        }
+
+        .admin-status-pill {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .admin-feature-card {
+            min-height: 74px;
+        }
+    }
+
+</style>
+
+
+<div class="admin-dashboard-page">
+
+    <!-- =====================================================
+         TOP HEADER
+         ===================================================== -->
+
+    <div class="admin-top-header">
+
+        <div class="admin-header-content">
+
+            <span class="admin-eyebrow">
+                Municipal Administration
+            </span>
+
+            <h1>
+                Administrator Dashboard
+            </h1>
+
+            <p>
+                Manage municipal operations, citizen services, infrastructure,
+                service performance and administrative activities from one central workspace.
+            </p>
+
+        </div>
+
+        <div class="admin-status-pill">
+
+            <span class="admin-status-dot"></span>
+
+            Administrator Access
+
+        </div>
+
     </div>
 
-    <div class="dashboard-menu">
 
-        <a href="@Url.Action("Index", "AdministratorRequests")"
-           class="dashboard-button">
-            Manage Requests
-        </a>
+    <!-- =====================================================
+         DASHBOARD LAYOUT
+         ===================================================== -->
 
-        <a href="@Url.Action("Index", "AdministratorMunicipalServiceRequests")"
-           class="dashboard-button">
-            Municipal Services
-        </a>
+    <div class="admin-layout">
 
 
-        <a href="@Url.Action("Index", "CitizenManagement")"
-           class="dashboard-button">
-            Manage Citizens
-        </a>
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
 
-        <a href="@Url.Action("AdminIndex", "Appeals")"
-           class="dashboard-button appeals-button">
-            Account Appeals
-        </a>
+        <aside class="admin-sidebar">
 
-        <a href="@Url.Action("Index", "WardManagement")"
-           class="dashboard-button">
+            <div class="admin-sidebar-brand">
 
-            Ward Management
+                <div class="admin-brand-icon">
+                    A
+                </div>
 
-        </a>
+                <div class="admin-brand-text">
+
+                    <span class="admin-brand-title">
+                        Municipal Admin
+                    </span>
+
+                    <span class="admin-brand-subtitle">
+                        Administration Portal
+                    </span>
+
+                </div>
+
+            </div>
 
 
-        <a href="@Url.Action("Index", "TechnicianManagement")"
-           class="dashboard-button">
-            Manage Technicians
-        </a>
+            <div class="admin-nav-section">
 
-        <a href="@Url.Action("Dashboard", "MunicipalAsset")"
-           class="dashboard-button">
-            Municipal Operations
-        </a>
+                <span class="admin-nav-section-title">
+                    Core Operations
+                </span>
 
-        <a href="@Url.Action("Index", "MunicipalProject")"
-           class="dashboard-button">
-            Municipal Projects
-        </a>
+                <nav class="admin-nav">
 
-        <a href="@Url.Action("Index", "CategoryManagement")"
-           class="dashboard-button">
-            Manage Categories
-        </a>
+                    <a href="@Url.Action("Index", "AdministratorRequests")"
+                       class="admin-nav-link">
 
-        <a href="@Url.Action("Index", "AdministratorReports")"
-           class="dashboard-button">
-            Reports
-        </a>
+                        <span class="admin-nav-icon">▣</span>
 
-        <a href="@Url.Action("Index", "AdministratorSystemHistory")"
-           class="dashboard-button">
-            System History
-        </a>
+                        Manage Requests
 
-        <a href="@Url.Action("Index", "AdministratorStatistics")"
-           class="dashboard-button">
-            Service Performance
-        </a>
+                    </a>
 
-        <a href="@Url.Action("Index", "FeedbackManagement")"
-           class="dashboard-button">
-            <span>Citizen Feedback</span>
-        </a>
+                    <a href="@Url.Action("Index", "AdministratorMunicipalServiceRequests")"
+                       class="admin-nav-link">
 
-        <a href="@Url.Action("Index", "Home")"
-           class="dashboard-button logout">
-            Logout
-        </a>
+                        <span class="admin-nav-icon">□</span>
+
+                        Municipal Services
+
+                    </a>
+
+                    <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">⌂</span>
+
+                        Municipal Operations
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "MunicipalProject")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">◆</span>
+
+                        Municipal Projects
+
+                    </a>
+
+                </nav>
+
+            </div>
+
+
+            <div class="admin-nav-section">
+
+                <span class="admin-nav-section-title">
+                    Administration
+                </span>
+
+                <nav class="admin-nav">
+
+                    <a href="@Url.Action("Index", "CitizenManagement")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">♙</span>
+
+                        Manage Citizens
+
+                    </a>
+
+                    <a href="@Url.Action("AdminIndex", "Appeals")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">!</span>
+
+                        Account Appeals
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "WardManagement")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">⌖</span>
+
+                        Ward Management
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "TechnicianManagement")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">⚒</span>
+
+                        Technician Accounts
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "CategoryManagement")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">≡</span>
+
+                        Manage Categories
+
+                    </a>
+
+                </nav>
+
+            </div>
+
+
+            <div class="admin-nav-section">
+
+                <span class="admin-nav-section-title">
+                    Monitoring
+                </span>
+
+                <nav class="admin-nav">
+
+                    <a href="@Url.Action("Index", "AdministratorStatistics")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">↗</span>
+
+                        Service Performance
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdministratorReports")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">▤</span>
+
+                        Reports
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdministratorSystemHistory")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">◷</span>
+
+                        System History
+
+                    </a>
+
+                    <a href="@Url.Action("Index", "FeedbackManagement")"
+                       class="admin-nav-link">
+
+                        <span class="admin-nav-icon">✦</span>
+
+                        Citizen Feedback
+
+                    </a>
+
+                </nav>
+
+            </div>
+
+
+            <div class="admin-nav-divider"></div>
+
+
+            <a href="@Url.Action("Index", "Home")"
+               class="admin-nav-link logout">
+
+                <span class="admin-nav-icon">
+                    ⇥
+                </span>
+
+                Logout
+
+            </a>
+
+        </aside>
+
+
+        <!-- =================================================
+             MAIN CONTENT
+             ================================================= -->
+
+        <main class="admin-main">
+
+
+            <!-- =================================================
+                 WELCOME
+                 ================================================= -->
+
+            <section class="admin-welcome">
+
+                <div class="admin-welcome-content">
+
+                    <span class="admin-welcome-label">
+                        Administrative Workspace
+                    </span>
+
+                    <h2>
+                        Welcome, Administrator
+                    </h2>
+
+                    <p>
+                        Monitor municipal service delivery, manage administrative
+                        operations, oversee infrastructure and review system performance
+                        from a single workspace.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SERVICE OPERATIONS
+                 ================================================= -->
+
+            <section class="admin-section">
+
+                <div class="admin-section-header">
+
+                    <div class="admin-section-header-left">
+
+                        <h3>
+                            Service Operations
+                        </h3>
+
+                        <p>
+                            Manage citizen requests and monitor municipal service delivery.
+                        </p>
+
+                    </div>
+
+                    <span class="admin-section-tag">
+                        Operations
+                    </span>
+
+                </div>
+
+
+                <div class="admin-feature-grid">
+
+                    <a href="@Url.Action("Index", "AdministratorRequests")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ▣
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Manage Requests
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Review and manage maintenance requests.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "AdministratorMunicipalServiceRequests")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            □
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Municipal Services
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Review municipal service request workflows.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Dashboard", "MunicipalAsset")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ⌂
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Municipal Operations
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Monitor municipal infrastructure and assets.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "MunicipalProject")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ◆
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Municipal Projects
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Manage municipal projects and operational initiatives.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ADMINISTRATION
+                 ================================================= -->
+
+            <section class="admin-section">
+
+                <div class="admin-section-header">
+
+                    <div class="admin-section-header-left">
+
+                        <h3>
+                            Administration
+                        </h3>
+
+                        <p>
+                            Maintain citizen, technician, ward and service administration.
+                        </p>
+
+                    </div>
+
+                    <span class="admin-section-tag">
+                        Management
+                    </span>
+
+                </div>
+
+
+                <div class="admin-feature-grid">
+
+                    <a href="@Url.Action("Index", "CitizenManagement")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ♙
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Manage Citizens
+                            </span>
+
+                            <span class="admin-feature-description">
+                                View and manage registered citizen accounts.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("AdminIndex", "Appeals")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            !
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Account Appeals
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Review and process citizen account appeals.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "WardManagement")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ⌖
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Ward Management
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Manage municipal wards and administrative areas.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "TechnicianManagement")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ⚒
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Technician Accounts
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Manage technician accounts and operational access.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "CategoryManagement")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ≡
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Manage Categories
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Maintain service and maintenance categories.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PERFORMANCE AND OVERSIGHT
+                 ================================================= -->
+
+            <section class="admin-section">
+
+                <div class="admin-section-header">
+
+                    <div class="admin-section-header-left">
+
+                        <h3>
+                            Performance & Oversight
+                        </h3>
+
+                        <p>
+                            Analyse municipal performance, system activity and citizen feedback.
+                        </p>
+
+                    </div>
+
+                    <span class="admin-section-tag">
+                        Monitoring
+                    </span>
+
+                </div>
+
+
+                <div class="admin-feature-grid">
+
+                    <a href="@Url.Action("Index", "AdministratorStatistics")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ↗
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Service Performance
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Monitor completion, assignment and resolution performance.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "AdministratorReports")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ▤
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Reports
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Generate operational and administrative reports.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "AdministratorSystemHistory")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ◷
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                System History
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Review relevant historical administrative activity.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a href="@Url.Action("Index", "FeedbackManagement")"
+                       class="admin-feature-card">
+
+                        <span class="admin-feature-icon">
+                            ✦
+                        </span>
+
+                        <span class="admin-feature-text">
+
+                            <span class="admin-feature-title">
+                                Citizen Feedback
+                            </span>
+
+                            <span class="admin-feature-description">
+                                Monitor service quality and citizen satisfaction.
+                            </span>
+
+                        </span>
+
+                        <span class="admin-feature-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 QUICK ACCESS
+                 ================================================= -->
+
+            <section class="admin-section">
+
+                <div class="admin-section-header">
+
+                    <div class="admin-section-header-left">
+
+                        <h3>
+                            Quick Access
+                        </h3>
+
+                        <p>
+                            Frequently used administrative functions.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-quick-grid">
+
+                    <a href="@Url.Action("Index", "AdministratorRequests")"
+                       class="admin-quick-action">
+                        Requests
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdministratorMunicipalServiceRequests")"
+                       class="admin-quick-action">
+                        Municipal Services
+                    </a>
+
+                    <a href="@Url.Action("Index", "TechnicianManagement")"
+                       class="admin-quick-action">
+                        Technicians
+                    </a>
+
+                    <a href="@Url.Action("Index", "AdministratorStatistics")"
+                       class="admin-quick-action">
+                        Performance
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LOGOUT
+                 ================================================= -->
+
+            <div class="admin-dashboard-footer">
+
+                <a href="@Url.Action("Index", "Home")"
+                   class="logout-button">
+
+                    Logout
+
+                </a>
+
+            </div>
+
+        </main>
 
     </div>
 
 </div>
+

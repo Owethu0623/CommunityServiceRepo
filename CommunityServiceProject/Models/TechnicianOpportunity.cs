@@ -75,12 +75,17 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Date Created")]
         public DateTime DateCreated { get; set; }
 
-        [Required]
         [Display(Name = "Created By")]
-        public int CreatedByAdministratorID { get; set; }
+        public int? CreatedByAdministratorID { get; set; }
 
         [ForeignKey("CreatedByAdministratorID")]
         public virtual Administrator CreatedByAdministrator { get; set; }
+
+        // HR officer who created/managed the opportunity (optional)
+        public int? CreatedByHROfficerID { get; set; }
+
+        [ForeignKey("CreatedByHROfficerID")]
+        public virtual HROfficer CreatedByHROfficer { get; set; }
 
         [DataType(DataType.DateTime)]
         [Display(Name = "Published Date")]
@@ -94,10 +99,17 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Last Updated Date")]
         public DateTime? LastUpdatedDate { get; set; }
 
+        // Keep nullable to support records updated without an administrator context
         public int? LastUpdatedByAdministratorID { get; set; }
 
         [ForeignKey("LastUpdatedByAdministratorID")]
         public virtual Administrator LastUpdatedByAdministrator { get; set; }
+
+        // HR officer who last updated the opportunity (optional)
+        public int? LastUpdatedByHROfficerID { get; set; }
+
+        [ForeignKey("LastUpdatedByHROfficerID")]
+        public virtual HROfficer LastUpdatedByHROfficer { get; set; }
     }
 
     public enum TechnicianOpportunityStatus

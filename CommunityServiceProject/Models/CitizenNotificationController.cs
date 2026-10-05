@@ -1,16 +1,12 @@
-﻿using CommunityServiceProject.Models;
+﻿using CommunityServiceProject.Filters;
+using CommunityServiceProject.Models;
 using CommunityServiceProject.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.UI.WebControls;
-using static System.Collections.Specialized.BitVector32;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Web.Razor.Parser.SyntaxConstants;
-using System.Data.Entity;
-using CommunityServiceProject.Filters;
+
 
 namespace CommunityServiceProject.Controllers
 {
@@ -154,65 +150,129 @@ namespace CommunityServiceProject.Controllers
                             })
                         .ToList();
 
-                // =====================================================
-                // MUNICIPAL SERVICE REQUEST NOTIFICATIONS
-                // =====================================================
-
-                if (category.Equals(
-                        "All",
-                        StringComparison.OrdinalIgnoreCase) ||
-                    category.Equals(
-                        "MunicipalServices",
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    var municipalServiceNotifications =
-                        db.MunicipalServiceRequestNotifications
-                            .Where(n =>
-                                n.CitizenID == citizenID)
-                            .Select(n =>
-                                new CitizenNotificationViewModel
-                                {
-                                    NotificationID =
-                                        n.MunicipalServiceRequestNotificationID,
-
-                                    NotificationSource =
-                                        "MunicipalServices",
-
-                                    Title =
-                                        n.Title,
-
-                                    Message =
-                                        n.Message,
-
-                                    Category =
-                                        "Municipal Services",
-
-                                    DateCreated =
-                                        n.DateCreated,
-
-                                    IsRead =
-                                        n.IsRead,
-
-                                    ReadDate =
-                                        n.ReadDate,
-
-                                    MunicipalServiceRequestID =
-                                        n.MunicipalServiceRequestID,
-
-                                    MunicipalServiceRequestReference =
-                                        n.MunicipalServiceRequest != null
-                                            ? n.MunicipalServiceRequest.ReferenceNumber
-                                            : null
-                                })
-                            .ToList();
-
-                    notifications.AddRange(
-                        municipalServiceNotifications);
-                }
-
                 notifications.AddRange(
                     applicationNotifications);
             }
+
+            // =====================================================
+            // MUNICIPAL SERVICE REQUEST NOTIFICATIONS
+            // =====================================================
+
+            if (category.Equals(
+                    "All",
+                    StringComparison.OrdinalIgnoreCase) ||
+                category.Equals(
+                    "MunicipalServices",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                var municipalServiceNotifications =
+                    db.MunicipalServiceRequestNotifications
+                        .Where(n =>
+                            n.CitizenID == citizenID)
+                        .Select(n =>
+                            new CitizenNotificationViewModel
+                            {
+                                NotificationID =
+                                    n.MunicipalServiceRequestNotificationID,
+
+                                NotificationSource =
+                                    "MunicipalServices",
+
+                                Title =
+                                    n.Title,
+
+                                Message =
+                                    n.Message,
+
+                                Category =
+                                    "Municipal Services",
+
+                                DateCreated =
+                                    n.DateCreated,
+
+                                IsRead =
+                                    n.IsRead,
+
+                                ReadDate =
+                                    n.ReadDate,
+
+                                MunicipalServiceRequestID =
+                                    n.MunicipalServiceRequestID,
+
+                                MunicipalServiceRequestReference =
+                                    n.MunicipalServiceRequest != null
+                                        ? n.MunicipalServiceRequest.ReferenceNumber
+                                        : null
+                            })
+                        .ToList();
+
+                notifications.AddRange(
+                    municipalServiceNotifications);
+            }
+
+            // =====================================================
+            // FINANCE NOTIFICATIONS
+            // =====================================================
+
+            if (category.Equals(
+                    "All",
+                    StringComparison.OrdinalIgnoreCase) ||
+                category.Equals(
+                    "Finance",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                var financeNotifications =
+                    db.FinanceNotifications
+                        .Where(n =>
+                            n.CitizenID == citizenID)
+                        .Select(n =>
+                            new CitizenNotificationViewModel
+                            {
+                                NotificationID =
+                                    n.FinanceNotificationID,
+
+                                NotificationSource =
+                                    "Finance",
+
+                                Title =
+                                    n.Title,
+
+                                Message =
+                                    n.Message,
+
+                                Category =
+                                    "Finance",
+
+                                DateCreated =
+                                    n.DateCreated,
+
+                                IsRead =
+                                    n.IsRead,
+
+                                ReadDate =
+                                    n.ReadDate,
+
+                                InvoiceID =
+                                    n.InvoiceID,
+
+                                PaymentID =
+                                    n.PaymentID,
+
+                                RefundID =
+                                    n.RefundID,
+
+                                ReceiptID =
+                                    n.ReceiptID
+                            })
+                        .ToList();
+
+                notifications.AddRange(
+                    financeNotifications);
+            }
+
+            // =====================================================
+            // ORDER
+            // =====================================================
 
             notifications =
                 notifications
@@ -227,6 +287,10 @@ namespace CommunityServiceProject.Controllers
             ViewBag.UnreadCount =
                 notifications.Count(n => !n.IsRead);
 
+            // =====================================================
+            // UNREAD COUNTS
+            // =====================================================
+
             ViewBag.MaintenanceUnreadCount =
                 db.Notifications.Count(n =>
                     n.CitizenID == citizenID &&
@@ -236,18 +300,30 @@ namespace CommunityServiceProject.Controllers
                 db.TechnicianApplicationNotifications.Count(n =>
                     n.CitizenID == citizenID &&
                     !n.IsRead);
+
             ViewBag.MunicipalServiceUnreadCount =
-    db.MunicipalServiceRequestNotifications.Count(n =>
-        n.CitizenID == citizenID &&
-        !n.IsRead);
+                db.MunicipalServiceRequestNotifications.Count(n =>
+                    n.CitizenID == citizenID &&
+                    !n.IsRead);
+
+            ViewBag.FinanceUnreadCount =
+                db.FinanceNotifications.Count(n =>
+                    n.CitizenID == citizenID &&
+                    !n.IsRead);
 
             return View(notifications);
         }
 
-      
-public ActionResult Details(
-    string source,
-    int? id)
+
+        // =========================================================
+        // DETAILS
+        // =========================================================
+
+        [HttpGet]
+        [RoleAuthorize("Citizen")]
+        public ActionResult Details(
+            string source,
+            int? id)
         {
             if (Session["CitizenID"] == null)
             {
@@ -267,7 +343,7 @@ public ActionResult Details(
                 source.Trim();
 
             // =====================================================
-            // MAINTENANCE NOTIFICATION
+            // MAINTENANCE
             // =====================================================
 
             if (source.Equals(
@@ -316,6 +392,9 @@ public ActionResult Details(
                         IsRead =
                             notification.IsRead,
 
+                        ReadDate =
+                            null,
+
                         RequestID =
                             notification.RequestID,
 
@@ -329,7 +408,7 @@ public ActionResult Details(
             }
 
             // =====================================================
-            // TECHNICIAN APPLICATION NOTIFICATION
+            // TECHNICIAN APPLICATION
             // =====================================================
 
             if (source.Equals(
@@ -403,7 +482,7 @@ public ActionResult Details(
             }
 
             // =====================================================
-            // MUNICIPAL SERVICE REQUEST NOTIFICATION
+            // MUNICIPAL SERVICE
             // =====================================================
 
             if (source.Equals(
@@ -472,12 +551,93 @@ public ActionResult Details(
                 return View(model);
             }
 
+            // =====================================================
+            // FINANCE
+            // =====================================================
+
+            if (source.Equals(
+                    "Finance",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                var notification =
+                    db.FinanceNotifications
+                        .Include(n => n.Invoice)
+                        .Include(n => n.Payment)
+                        .Include(n => n.Refund)
+                        .Include(n => n.Receipt)
+                        .FirstOrDefault(n =>
+                            n.FinanceNotificationID ==
+                                id.Value &&
+                            n.CitizenID ==
+                                citizenID);
+
+                if (notification == null)
+                {
+                    return HttpNotFound();
+                }
+
+                if (!notification.IsRead)
+                {
+                    notification.IsRead = true;
+                    notification.ReadDate = DateTime.Now;
+
+                    db.SaveChanges();
+                }
+
+                var model =
+                    new CitizenNotificationViewModel
+                    {
+                        NotificationID =
+                            notification.FinanceNotificationID,
+
+                        NotificationSource =
+                            "Finance",
+
+                        Title =
+                            notification.Title,
+
+                        Message =
+                            notification.Message,
+
+                        Category =
+                            "Finance",
+
+                        DateCreated =
+                            notification.DateCreated,
+
+                        IsRead =
+                            notification.IsRead,
+
+                        ReadDate =
+                            notification.ReadDate,
+
+                        InvoiceID =
+                            notification.InvoiceID,
+
+                        PaymentID =
+                            notification.PaymentID,
+
+                        RefundID =
+                            notification.RefundID,
+
+                        ReceiptID =
+                            notification.ReceiptID
+                    };
+
+                return View(model);
+            }
+
             return HttpNotFound();
         }
 
 
+        // =========================================================
+        // MARK AS READ
+        // =========================================================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RoleAuthorize("Citizen")]
         public ActionResult MarkAsRead(
             string source,
             int? id)
@@ -499,6 +659,10 @@ public ActionResult Details(
             source =
                 source.Trim();
 
+            // -----------------------------------------------------
+            // Maintenance
+            // -----------------------------------------------------
+
             if (source.Equals(
                     "Maintenance",
                     StringComparison.OrdinalIgnoreCase))
@@ -516,6 +680,11 @@ public ActionResult Details(
                     db.SaveChanges();
                 }
             }
+
+            // -----------------------------------------------------
+            // Applications
+            // -----------------------------------------------------
+
             else if (source.Equals(
                         "Applications",
                         StringComparison.OrdinalIgnoreCase))
@@ -538,9 +707,14 @@ public ActionResult Details(
                     db.SaveChanges();
                 }
             }
+
+            // -----------------------------------------------------
+            // Municipal Services
+            // -----------------------------------------------------
+
             else if (source.Equals(
-            "MunicipalServices",
-            StringComparison.OrdinalIgnoreCase))
+                        "MunicipalServices",
+                        StringComparison.OrdinalIgnoreCase))
             {
                 var notification =
                     db.MunicipalServiceRequestNotifications
@@ -554,11 +728,40 @@ public ActionResult Details(
                     !notification.IsRead)
                 {
                     notification.IsRead = true;
-                    notification.ReadDate = DateTime.Now;
+                    notification.ReadDate =
+                        DateTime.Now;
 
                     db.SaveChanges();
                 }
             }
+
+            // -----------------------------------------------------
+            // Finance
+            // -----------------------------------------------------
+
+            else if (source.Equals(
+                        "Finance",
+                        StringComparison.OrdinalIgnoreCase))
+            {
+                var notification =
+                    db.FinanceNotifications
+                        .FirstOrDefault(n =>
+                            n.FinanceNotificationID ==
+                                id.Value &&
+                            n.CitizenID ==
+                                citizenID);
+
+                if (notification != null &&
+                    !notification.IsRead)
+                {
+                    notification.IsRead = true;
+                    notification.ReadDate =
+                        DateTime.Now;
+
+                    db.SaveChanges();
+                }
+            }
+
             return RedirectToAction(
                 "Index",
                 new
@@ -567,12 +770,14 @@ public ActionResult Details(
                 });
         }
 
+
         // =========================================================
         // MARK ALL AS READ
         // =========================================================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RoleAuthorize("Citizen")]
         public ActionResult MarkAllAsRead()
         {
             if (Session["CitizenID"] == null)
@@ -584,7 +789,7 @@ public ActionResult Details(
                 (int)Session["CitizenID"];
 
             // -----------------------------------------------------
-            // Maintenance notifications
+            // Maintenance
             // -----------------------------------------------------
 
             var maintenanceNotifications =
@@ -601,7 +806,7 @@ public ActionResult Details(
             }
 
             // -----------------------------------------------------
-            // Technician application notifications
+            // Technician Applications
             // -----------------------------------------------------
 
             var applicationNotifications =
@@ -618,9 +823,10 @@ public ActionResult Details(
                 notification.ReadDate =
                     DateTime.Now;
             }
-            // =====================================================
-            // MUNICIPAL SERVICE REQUEST NOTIFICATIONS
-            // =====================================================
+
+            // -----------------------------------------------------
+            // Municipal Services
+            // -----------------------------------------------------
 
             var municipalServiceNotifications =
                 db.MunicipalServiceRequestNotifications
@@ -633,8 +839,29 @@ public ActionResult Details(
                 in municipalServiceNotifications)
             {
                 notification.IsRead = true;
-                notification.ReadDate = DateTime.Now;
+                notification.ReadDate =
+                    DateTime.Now;
             }
+
+            // -----------------------------------------------------
+            // Finance
+            // -----------------------------------------------------
+
+            var financeNotifications =
+                db.FinanceNotifications
+                    .Where(n =>
+                        n.CitizenID == citizenID &&
+                        !n.IsRead)
+                    .ToList();
+
+            foreach (var notification
+                in financeNotifications)
+            {
+                notification.IsRead = true;
+                notification.ReadDate =
+                    DateTime.Now;
+            }
+
             db.SaveChanges();
 
             return RedirectToAction(
@@ -644,6 +871,7 @@ public ActionResult Details(
                     category = "All"
                 });
         }
+
 
         // =========================================================
         // DISPOSE

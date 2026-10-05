@@ -374,6 +374,16 @@ public ActionResult Reject(int id, string rejectionReason)
             request.Status =
                 MunicipalServiceRequestStatus.ServiceInProgress;
 
+            // Notify citizen that service has started
+            var notificationServiceStart =
+                new CommunityServiceProject.Services.MunicipalServiceRequestNotificationService(db);
+
+            notificationServiceStart.Create(
+                request,
+                MunicipalServiceRequestNotificationType.ServiceInProgress,
+                "Service In Progress",
+                "Work on your municipal service request " + request.ReferenceNumber + " has started.");
+
             db.SaveChanges();
 
             TempData["SuccessMessage"] =
@@ -419,6 +429,16 @@ public ActionResult Reject(int id, string rejectionReason)
 
             request.Status =
                 MunicipalServiceRequestStatus.Completed;
+
+            // Notify citizen that service has been completed
+            var notificationServiceComplete =
+                new CommunityServiceProject.Services.MunicipalServiceRequestNotificationService(db);
+
+            notificationServiceComplete.Create(
+                request,
+                MunicipalServiceRequestNotificationType.ServiceCompleted,
+                "Service Completed",
+                "Your municipal service request " + request.ReferenceNumber + " has been completed.");
 
             db.SaveChanges();
 

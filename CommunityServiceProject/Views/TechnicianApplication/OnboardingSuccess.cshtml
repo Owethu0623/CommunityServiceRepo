@@ -650,7 +650,7 @@
                         </span>
 
                         <div class="info-value">
-                            @Model.AdministratorName
+                            @(!string.IsNullOrWhiteSpace(Model.AdministratorName) ? Model.AdministratorName : "HROfficer")
                         </div>
 
                     </div>

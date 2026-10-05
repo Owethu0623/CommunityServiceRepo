@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
+  <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -47,10 +47,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -131,6 +131,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Migrations\202608102230389_UpdateRequestGPS12.cs" />
     <Compile Include="Migrations\202608102230389_UpdateRequestGPS12.Designer.cs">
@@ -364,12 +365,30 @@
     <Compile Include="Migrations\202610022008298_AddRefundReviewAndSupportingDocuments.Designer.cs">
       <DependentUpon>202610022008298_AddRefundReviewAndSupportingDocuments.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202610030000000_AddHROfficerAuditFields.cs" />
+    <Compile Include="Migrations\202610030010000_AddAdministratorNotifications.cs" />
     <Compile Include="Migrations\202610030516280_AddFinancialAuditRecords.cs" />
     <Compile Include="Migrations\202610030516280_AddFinancialAuditRecords.Designer.cs">
       <DependentUpon>202610030516280_AddFinancialAuditRecords.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202610040034058_AddPendingModelChanges.cs" />
+    <Compile Include="Migrations\202610040034058_AddPendingModelChanges.Designer.cs">
+      <DependentUpon>202610040034058_AddPendingModelChanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202610041005168_UpdateFinalVerificationForHROwnership.cs" />
+    <Compile Include="Migrations\202610041005168_UpdateFinalVerificationForHROwnership.Designer.cs">
+      <DependentUpon>202610041005168_UpdateFinalVerificationForHROwnership.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202610041837231_ConfigureFinanceNotifications.cs" />
+    <Compile Include="Migrations\202610041837231_ConfigureFinanceNotifications.Designer.cs">
+      <DependentUpon>202610041837231_ConfigureFinanceNotifications.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202610060000000_AddHROfficer.cs" />
     <Compile Include="Migrations\202610081200000_AddHROfficerAndRBAC.cs" />
+    <Compile Include="Migrations\202610101200000_AddRequestComplianceFields.cs" />
+    <Compile Include="Migrations\202610101205000_AddHROfficerNotifications.cs" />
+    <Compile Include="Migrations\202610101230000_AddTechnicianApplicationScreeningHROfficerFK.cs" />
+    <Compile Include="Migrations\202610101245000_AddTechnicianApplicationSelectionHROfficerFK.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountRestriction.cs" />
     <Compile Include="Models\AdministratorAssignmentsController.cs" />
@@ -378,6 +397,7 @@
     <Compile Include="Models\AdministratorMunicipalServiceRequestReviewViewModel.cs" />
     <Compile Include="Models\AdministratorMunicipalServiceRequestsController.cs" />
     <Compile Include="Models\AdministratorMunicipalServiceRequestsViewModel.cs" />
+    <Compile Include="Models\AdministratorNotification.cs" />
     <Compile Include="Models\AdministratorReportsController.cs" />
     <Compile Include="Models\AdministratorReportsViewModel.cs" />
     <Compile Include="Models\AdministratorRequestsController.cs" />
@@ -437,6 +457,8 @@
     <Compile Include="Models\FinanceDashboardController.cs" />
     <Compile Include="Models\FinanceDashboardViewModel.cs" />
     <Compile Include="Models\FinanceMunicipalServiceRequestController.cs" />
+    <Compile Include="Models\FinanceNotification.cs" />
+    <Compile Include="Models\FinanceNotificationType.cs" />
     <Compile Include="Models\FinanceOfficer.cs" />
     <Compile Include="Models\FinancePaymentController.cs" />
     <Compile Include="Models\FinanceReportsController.cs" />
@@ -448,6 +470,7 @@
     <Compile Include="Models\GenerateInvoiceListViewModel.cs" />
     <Compile Include="Models\HROfficer.cs" />
     <Compile Include="Models\HROfficerDashboardController.cs" />
+    <Compile Include="Models\HROfficerNotification.cs" />
     <Compile Include="Models\IdentifyAssetMaintenanceNeedViewModel.cs" />
     <Compile Include="Models\InspectMunicipalAssetViewModel.cs" />
     <Compile Include="Models\Invoice.cs" />
@@ -690,8 +713,10 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\design-system.css" />
     <Content Include="Content\ForgotPassword.css" />
     <Content Include="Content\Images\logo.png" />
+    <Content Include="Content\layout.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\TechnicianDashboard.css" />
     <Content Include="Global.asax" />
@@ -703,6 +728,8 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\CommunityServiceProject20261005032245 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\communityservicewebapp - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -747,7 +774,6 @@
     <Content Include="Views\Administrators\Details.cshtml" />
     <Content Include="Views\Administrators\Edit.cshtml" />
     <Content Include="Views\Administrators\Index.cshtml" />
-    <Content Include="Views\Administrators\Login.cshtml" />
     <Content Include="Views\AdministratorDashboard\Index.cshtml" />
     <Content Include="Views\AdministratorRequests\Index.cshtml" />
     <Content Include="Views\AdministratorRequests\Details.cshtml" />
@@ -915,6 +941,7 @@
     <Content Include="Views\HROfficerDashboard\Index.cshtml" />
     <Content Include="Views\CitizenFinancial\Receipt.cshtml" />
     <Content Include="Views\CitizenFinancial\FinancialStatement.cshtml" />
+    <Content Include="Views\TechnicianManagement\PendingOnboardings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1141,6 +1168,15 @@
     <EmbeddedResource Include="Migrations\202610030516280_AddFinancialAuditRecords.resx">
       <DependentUpon>202610030516280_AddFinancialAuditRecords.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202610040034058_AddPendingModelChanges.resx">
+      <DependentUpon>202610040034058_AddPendingModelChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202610041005168_UpdateFinalVerificationForHROwnership.resx">
+      <DependentUpon>202610041005168_UpdateFinalVerificationForHROwnership.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202610041837231_ConfigureFinanceNotifications.resx">
+      <DependentUpon>202610041837231_ConfigureFinanceNotifications.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Models\Migrations\202608080122583_InitialCreate.resx">
       <DependentUpon>202608080122583_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
@@ -1214,8 +1250,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.2\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.2\build\EntityFramework.targets'))" />
   </Target>
-  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+  <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" />
 </Project>

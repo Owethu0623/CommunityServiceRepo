@@ -1,0 +1,46 @@
+/* Layout helpers: skip link, spacing, footer tweaks */
+
+.skip-link {
+    position: absolute;
+    left: -999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.sr-only-focusable:active,
+.sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #0d6efd;
+    color: white;
+    z-index: 1050;
+    border-radius: 4px;
+}
+
+main.container.body-content {
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+}
+
+footer.site-footer {
+    padding: 1.5rem 0;
+    color: #6c757d;
+}
+
+/* Small visual tweak for truncated brand */
+.navbar-brand.text-truncate {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Ensure large forms and containers breathe */
+.container .card, .container .panel {
+    margin-bottom: 1rem;
+}

@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using CommunityServiceProject.Models;
 using CommunityServiceProject.Filters;
 using CommunityServiceProject.ViewModels;
+using System.Runtime.Remoting.Messaging;
+using System.Net;
 
 namespace CommunityServiceProject.Controllers
 {
@@ -43,10 +45,9 @@ namespace CommunityServiceProject.Controllers
             return null;
         }
 
-        private bool IsAdminOrHR()
+        private bool IsHROfficer()
         {
-            return Session["AdministratorID"] != null ||
-                   Session["HROfficerID"] != null;
+            return Session["HROfficerID"] != null;
         }
 
         // ============================================================
@@ -610,9 +611,9 @@ namespace CommunityServiceProject.Controllers
                        TechnicianApplicationStatus.Onboarded;
         }
 
-       
-          [HttpGet]
-  public ActionResult Status(int? id)
+
+        [HttpGet]
+        public ActionResult Status(int? id)
         {
             if (!IsCitizen())
                 return new HttpUnauthorizedResult();
@@ -783,7 +784,7 @@ namespace CommunityServiceProject.Controllers
 
 
 
-       
+
 
         [HttpGet]
         public ActionResult Edit(int? id)
@@ -1000,7 +1001,7 @@ namespace CommunityServiceProject.Controllers
                 });
         }
 
-       
+
 
         [HttpGet]
         public ActionResult Documents(int? id)
@@ -1433,10 +1434,10 @@ namespace CommunityServiceProject.Controllers
 
 
 
-        
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult Submit(int? id)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Submit(int? id)
         {
             if (!IsCitizen())
                 return new HttpUnauthorizedResult();
@@ -1607,11 +1608,10 @@ public ActionResult Submit(int? id)
         [HttpGet]
         public ActionResult Review(int? id)
         {
-            if (Session["AdministratorID"] == null && Session["HROfficerID"] == null)
+            if (!IsHROfficer())
             {
                 return new HttpUnauthorizedResult();
             }
-
             if (!id.HasValue)
             {
                 return HttpNotFound();
@@ -2040,7 +2040,7 @@ public ActionResult Submit(int? id)
 
             TempData["SuccessMessage"] =
                 "Your replacement document has been submitted successfully. " +
-                "The document is now awaiting administrator review.";
+                "The document is now awaiting HR review.";
 
             // ---------------------------------------------------
             // RETURN TO APPLICATION STATUS
@@ -2054,15 +2054,20 @@ public ActionResult Submit(int? id)
                 });
         }
 
+
+
+
+
+
+
         [HttpGet]
         public ActionResult ReviewApplications(
     string searchTerm,
     string statusFilter,
     int? opportunityFilter)
         {
-            if (!IsAdminOrHR())
+            if (!IsHROfficer())
                 return new HttpUnauthorizedResult();
-
             var query =
                 db.TechnicianApplications
                     .AsNoTracking()
@@ -2260,15 +2265,18 @@ public ActionResult Submit(int? id)
                         })
                     .ToList();
 
-
             return View(model);
         }
 
         [HttpGet]
         public ActionResult Screen(int? id)
         {
-            if (!IsAdminOrHR())
-                return new HttpUnauthorizedResult();
+            if (!IsHROfficer())
+            {
+                return RedirectToAction(
+                    "Login",
+                    "HROfficers");
+            }
 
             if (!id.HasValue)
                 return HttpNotFound();
@@ -2291,7 +2299,7 @@ public ActionResult Submit(int? id)
              * have been accepted by an administrator.
              *
              * Screening is also allowed again when the application is
-             * already in Screening status because the administrator may
+             * already in Screening status because the HR Officer may
              * need to complete further review.
              */
             if (application.Status != TechnicianApplicationStatus.DocumentsVerified &&
@@ -2412,8 +2420,14 @@ public ActionResult Submit(int? id)
         public ActionResult Screen(
     TechnicianApplicationScreeningViewModel model)
         {
-            if (Session["AdministratorID"] == null)
-                return RedirectToAction("Login", "Administrators");
+            if (!IsHROfficer())
+            {
+                return RedirectToAction(
+                    "Login",
+                    "HROfficers");
+            }
+
+
 
             if (model == null)
                 return HttpNotFound();
@@ -2542,7 +2556,7 @@ public ActionResult Submit(int? id)
 
             /*
              * If the individual assessments all meet requirements,
-             * the administrator should not mark the overall result
+             * the HR Officer should not mark the overall result
              * as DoesNotMeetRequirements.
              */
             var allMeetRequirements =
@@ -2568,9 +2582,13 @@ public ActionResult Submit(int? id)
                 LoadScreeningInformation(model);
                 return View(model);
             }
+            int hrOfficerID =
+                Convert.ToInt32(Session["HROfficerID"]);
 
-            var administratorID =
-                Convert.ToInt32(Session["AdministratorID"]);
+            if (!db.HROfficers.Any(h => h.HROfficerID == hrOfficerID))
+            {
+                return new HttpUnauthorizedResult();
+            }
 
             var screening =
                 db.TechnicianApplicationScreenings
@@ -2604,8 +2622,8 @@ public ActionResult Submit(int? id)
                     ? null
                     : model.ScreeningComments.Trim();
 
-            screening.ScreenedByAdministratorID =
-                administratorID;
+            screening.ScreenedByAdministratorID = null;
+            screening.ScreenedByHROfficerID = hrOfficerID;
 
             screening.ScreeningDate =
                 DateTime.Now;
@@ -2734,11 +2752,11 @@ public ActionResult Submit(int? id)
         [HttpGet]
         public ActionResult VerifyDocuments(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -2898,11 +2916,11 @@ public ActionResult Submit(int? id)
         [HttpGet]
         public ActionResult ViewApplicationDocument(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -2943,11 +2961,11 @@ public ActionResult Submit(int? id)
         [HttpGet]
         public ActionResult RecordDocumentVerification(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -3054,17 +3072,17 @@ public ActionResult Submit(int? id)
             return View(model);
         }
 
-        
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult RecordDocumentVerification(
-    TechnicianApplicationDocumentVerificationResultViewModel model)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RecordDocumentVerification(
+            TechnicianApplicationDocumentVerificationResultViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -3153,10 +3171,6 @@ public ActionResult RecordDocumentVerification(
                     new { id = application.ApplicationID });
             }
 
-            var administratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
-
             document.VerificationStatus =
                 model.VerificationStatus;
 
@@ -3166,8 +3180,15 @@ public ActionResult RecordDocumentVerification(
                     ? null
                     : model.VerificationComments.Trim();
 
-            document.VerifiedByAdministratorID =
-                administratorID;
+            // Only set Administrator verifier when an Administrator performed the action.
+            // HR performs document verification. The existing document model
+            // does not contain an HR verifier FK, so do not record a false Administrator actor.
+            document.VerifiedByAdministratorID = null;
+
+            // If an HR officer performed verification, record that by setting the
+            // VerifiedByAdministratorID to null (already handled) and rely on the
+            // application audit (LastUpdatedByHROfficerID) or add a HR-specific
+            // field later if persistent HR audit on documents is required.
 
             document.VerificationDate =
                 DateTime.Now;
@@ -3321,7 +3342,7 @@ public ActionResult RecordDocumentVerification(
                 document.FileName;
 
             model.ContentType =
-                document.ContentType; 
+                document.ContentType;
 
             model.FileSize =
                 document.FileSize;
@@ -3329,20 +3350,21 @@ public ActionResult RecordDocumentVerification(
             model.DateSubmitted =
                 document.DateSubmitted;
         }
-             
-       
-// ===============================================================
-// GET: ShortlistApplicant
-// ===============================================================
 
-[HttpGet]
-public ActionResult ShortlistApplicant(int? id)
+
+        // ===============================================================
+        // GET: ShortlistApplicant
+        // ===============================================================
+
+        [HttpGet]
+        public ActionResult ShortlistApplicant(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            // Allow either Administrator or HROfficer to record assessment results
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -3493,11 +3515,11 @@ public ActionResult ShortlistApplicant(int? id)
         public ActionResult ConfirmShortlisting(
             TechnicianApplicationShortlistViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -3709,15 +3731,17 @@ public ActionResult ShortlistApplicant(int? id)
                 });
         }
 
-                              
-[HttpGet]
-public ActionResult ShortlistedApplicants(
-    string searchTerm,
-    int? opportunityFilter)
+
+        [HttpGet]
+        public ActionResult ShortlistedApplicants(
+            string searchTerm,
+            int? opportunityFilter)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
-                return RedirectToAction("Login", "Administrators");
+                return RedirectToAction(
+                    "Login",
+                    "HROfficers");
             }
 
             var query =
@@ -3770,13 +3794,12 @@ public ActionResult ShortlistedApplicants(
         [HttpGet]
         public ActionResult ScheduleAssessment(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
-
             if (!id.HasValue)
             {
                 return HttpNotFound();
@@ -3851,17 +3874,17 @@ public ActionResult ShortlistedApplicants(
             return View(model);
         }
 
-             
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult ScheduleAssessment(
-    TechnicianApplicationScheduleAssessmentViewModel model)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ScheduleAssessment(
+            TechnicianApplicationScheduleAssessmentViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -3948,10 +3971,7 @@ public ActionResult ScheduleAssessment(
                         id = application.ApplicationID
                     });
             }
-
-            var administratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
+            int hrOfficerID = Convert.ToInt32(Session["HROfficerID"]);
 
             var assessment =
                 new ApplicationAssessment
@@ -3969,8 +3989,7 @@ public ActionResult ScheduleAssessment(
                         model.Location.Trim(),
 
                     Instructions =
-                        string.IsNullOrWhiteSpace(
-                            model.Instructions)
+                        string.IsNullOrWhiteSpace(model.Instructions)
                             ? null
                             : model.Instructions.Trim(),
 
@@ -3984,7 +4003,10 @@ public ActionResult ScheduleAssessment(
                     Comments = null,
 
                     RecordedByAdministratorID =
-                        administratorID,
+                        null,
+
+                    RecordedByHROfficerID =
+                        hrOfficerID,
 
                     DateRecorded =
                         DateTime.Now
@@ -4054,11 +4076,12 @@ public ActionResult ScheduleAssessment(
         [HttpGet]
         public ActionResult RecordAssessmentResult(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            // Allow HROfficers to record results; administrators may also access for handover
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -4143,23 +4166,23 @@ public ActionResult ScheduleAssessment(
                         assessment.Status,
 
                     CanRecordResult =
-                        true
+                        (Session["HROfficerID"] != null)
                 };
 
             return View(model);
         }
 
-               
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult RecordAssessmentResult(
-    TechnicianApplicationAssessmentResultViewModel model)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RecordAssessmentResult(
+            TechnicianApplicationAssessmentResultViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -4244,10 +4267,12 @@ public ActionResult RecordAssessmentResult(
                         id = assessment.ApplicationID
                     });
             }
+            int hrOfficerID = Convert.ToInt32(Session["HROfficerID"]);
 
-            var administratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
+            if (!db.HROfficers.Any(h => h.HROfficerID == hrOfficerID))
+            {
+                return new HttpUnauthorizedResult();
+            }
 
             // =========================================================
             // UPDATE ASSESSMENT
@@ -4269,9 +4294,8 @@ public ActionResult RecordAssessmentResult(
 
             assessment.DateRecorded =
                 DateTime.Now;
-
-            assessment.RecordedByAdministratorID =
-                administratorID;
+            assessment.RecordedByHROfficerID = hrOfficerID;
+            assessment.RecordedByAdministratorID = null;
 
             // =========================================================
             // UPDATE APPLICATION STATUS
@@ -4395,11 +4419,11 @@ public ActionResult RecordAssessmentResult(
         [HttpGet]
         public ActionResult ScheduleInterview(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -4498,17 +4522,17 @@ public ActionResult RecordAssessmentResult(
             return View(model);
         }
 
-            
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult ScheduleInterview(
-    TechnicianApplicationScheduleInterviewViewModel model)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ScheduleInterview(
+            TechnicianApplicationScheduleInterviewViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -4596,10 +4620,12 @@ public ActionResult ScheduleInterview(
                         id = application.ApplicationID
                     });
             }
+            int hrOfficerID = Convert.ToInt32(Session["HROfficerID"]);
 
-            var administratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
+            if (!db.HROfficers.Any(h => h.HROfficerID == hrOfficerID))
+            {
+                return new HttpUnauthorizedResult();
+            }
 
             var interview =
                 new ApplicationInterview
@@ -4628,8 +4654,9 @@ public ActionResult ScheduleInterview(
 
                     Comments = null,
 
-                    RecordedByAdministratorID =
-                        administratorID,
+
+                    RecordedByHROfficerID =
+                        hrOfficerID,
 
                     DateRecorded =
                         DateTime.Now
@@ -4756,11 +4783,11 @@ public ActionResult ScheduleInterview(
         [HttpGet]
         public ActionResult RecordInterviewOutcome(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -4865,17 +4892,17 @@ public ActionResult ScheduleInterview(
             return View(model);
         }
 
-           
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult RecordInterviewOutcome(
-    TechnicianApplicationInterviewOutcomeViewModel model)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RecordInterviewOutcome(
+     TechnicianApplicationInterviewOutcomeViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -4943,6 +4970,22 @@ public ActionResult RecordInterviewOutcome(
                     });
             }
 
+            int hrOfficerID;
+
+            if (Session["HROfficerID"] == null ||
+                !int.TryParse(
+                    Session["HROfficerID"].ToString(),
+                    out hrOfficerID))
+            {
+                return new HttpUnauthorizedResult();
+            }
+
+            if (!db.HROfficers.Any(h =>
+                h.HROfficerID == hrOfficerID))
+            {
+                return new HttpUnauthorizedResult();
+            }
+
             // =========================================================
             // RECORD INTERVIEW OUTCOME
             // =========================================================
@@ -4961,12 +5004,11 @@ public ActionResult RecordInterviewOutcome(
             interview.DateRecorded =
                 DateTime.Now;
 
-            interview.RecordedByAdministratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
+            interview.RecordedByHROfficerID =
+                hrOfficerID;
 
             // =========================================================
-            // UPDATE APPLICATION STATUS
+            // MOVE APPLICATION FROM INTERVIEW SCHEDULED → INTERVIEWED
             // =========================================================
 
             interview.Application.Status =
@@ -4976,15 +5018,7 @@ public ActionResult RecordInterviewOutcome(
                 DateTime.Now;
 
             // =========================================================
-            // CITIZEN RECRUITMENT NOTIFICATION
-            // =========================================================
-            //
-            // Do NOT expose:
-            // - Interview outcome
-            // - Administrator comments
-            //
-            // The citizen is only informed that the interview
-            // stage has been completed.
+            // CITIZEN NOTIFICATION
             // =========================================================
 
             var notificationService =
@@ -5001,24 +5035,72 @@ public ActionResult RecordInterviewOutcome(
                 "Your application will now proceed to the next stage of the technician recruitment process.");
 
             // =========================================================
-            // SAVE EVERYTHING TOGETHER
+            // SAVE
             // =========================================================
 
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
 
-            TempData["Success"] =
-                "Interview outcome for " +
-                interview.Application.Citizen.FirstName +
-                " " +
-                interview.Application.Citizen.LastName +
-                " was recorded successfully.";
+                TempData["Success"] =
+                    "Interview outcome for " +
+                    interview.Application.Citizen.FirstName +
+                    " " +
+                    interview.Application.Citizen.LastName +
+                    " was recorded successfully.";
 
-            return RedirectToAction(
-                "Review",
-                new
+                return RedirectToAction(
+                    "Review",
+                    new
+                    {
+                        id = interview.ApplicationID
+                    });
+            }
+            catch (Exception ex)
+            {
+                // Log full exception details to App_Data for diagnostics (do not expose to end users)
+                try
                 {
-                    id = interview.ApplicationID
-                });
+                    var inner = ex.InnerException?.InnerException?.Message ?? ex.InnerException?.Message ?? ex.Message;
+                    var logPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "db_errors.log");
+                    var log = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception in RecordInterviewOutcome: {inner}\n{ex}\n\n";
+                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(logPath));
+                    System.IO.File.AppendAllText(logPath, log);
+                }
+                catch
+                {
+                    // ignore logging failures
+                }
+
+                // Attempt to detach the interview entity to avoid leaving inconsistent tracked state
+                try
+                {
+                    var entry = db.Entry(interview);
+                    if (entry != null)
+                    {
+                        entry.State = System.Data.Entity.EntityState.Detached;
+                    }
+                }
+                catch { }
+
+                // Revert in-memory application status so UI remains consistent
+                try
+                {
+                    interview.Application.Status = TechnicianApplicationStatus.InterviewScheduled;
+                    interview.Application.LastUpdatedDate = DateTime.Now;
+                }
+                catch { }
+
+                TempData["Error"] =
+                    "The interview outcome could not be saved. Please contact the system administrator.";
+
+                return RedirectToAction(
+                    "Review",
+                    new
+                    {
+                        id = interview.ApplicationID
+                    });
+            }
         }
 
 
@@ -5091,16 +5173,18 @@ public ActionResult RecordInterviewOutcome(
                 "RecordInterviewOutcome",
                 model);
         }
+    
+    
 
 
         [HttpGet]
         public ActionResult SelectApplicant(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -5127,8 +5211,20 @@ public ActionResult RecordInterviewOutcome(
                 return HttpNotFound();
             }
 
+            var completedInterview =
+                db.ApplicationInterviews
+                    .AsNoTracking()
+                    .FirstOrDefault(i =>
+                        i.ApplicationID ==
+                        application.ApplicationID &&
+                        i.Status ==
+                        ApplicationInterviewStatus.Completed);
+
             if (application.Status !=
-                TechnicianApplicationStatus.Interviewed)
+         TechnicianApplicationStatus.Interviewed &&
+     application.Status !=
+         TechnicianApplicationStatus.Selected &&
+     completedInterview == null)
             {
                 TempData["Error"] =
                     "Only applicants who have completed the interview can be selected.";
@@ -5160,15 +5256,6 @@ public ActionResult RecordInterviewOutcome(
                         id = application.ApplicationID
                     });
             }
-
-            var completedInterview =
-                db.ApplicationInterviews
-                    .AsNoTracking()
-                    .FirstOrDefault(i =>
-                        i.ApplicationID ==
-                        application.ApplicationID &&
-                        i.Status ==
-                        ApplicationInterviewStatus.Completed);
 
             if (completedInterview == null)
             {
@@ -5233,17 +5320,20 @@ public ActionResult RecordInterviewOutcome(
             return View(model);
         }
 
-               
+
 [HttpPost]
 [ValidateAntiForgeryToken]
 public ActionResult SelectApplicant(
     TechnicianApplicationSelectViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            // ---------------------------------------------------------
+            // HR-FACING AUTHENTICATION
+            // ---------------------------------------------------------
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -5251,6 +5341,9 @@ public ActionResult SelectApplicant(
                 return HttpNotFound();
             }
 
+            // ---------------------------------------------------------
+            // CONFIRM SELECTION
+            // ---------------------------------------------------------
             if (!model.ConfirmSelection)
             {
                 ModelState.AddModelError(
@@ -5263,13 +5356,37 @@ public ActionResult SelectApplicant(
                 return ReloadSelectApplicantView(model);
             }
 
+            // ---------------------------------------------------------
+            // GET CURRENT HR OFFICER
+            // ---------------------------------------------------------
+            int hrOfficerID;
+
+            if (Session["HROfficerID"] == null ||
+                !int.TryParse(
+                    Session["HROfficerID"].ToString(),
+                    out hrOfficerID))
+            {
+                return new HttpUnauthorizedResult();
+            }
+
+            var hrOfficerExists =
+                db.HROfficers.Any(h =>
+                    h.HROfficerID == hrOfficerID);
+
+            if (!hrOfficerExists)
+            {
+                return new HttpUnauthorizedResult();
+            }
+
+            // ---------------------------------------------------------
+            // LOAD APPLICATION
+            // ---------------------------------------------------------
             var application =
                 db.TechnicianApplications
                     .Include(a => a.Opportunity)
                     .Include(a => a.Citizen)
                     .FirstOrDefault(a =>
-                        a.ApplicationID ==
-                        model.ApplicationID);
+                        a.ApplicationID == model.ApplicationID);
 
             if (application == null)
             {
@@ -5282,11 +5399,14 @@ public ActionResult SelectApplicant(
                 return HttpNotFound();
             }
 
+            // ---------------------------------------------------------
+            // APPLICATION MUST BE AT INTERVIEWED STAGE
+            // ---------------------------------------------------------
             if (application.Status !=
                 TechnicianApplicationStatus.Interviewed)
             {
-                TempData["Error"] =
-                    "This applicant is no longer eligible for selection.";
+                TempData["ErrorMessage"] =
+                    "This applicant cannot be selected because the application is not currently at the Interviewed stage.";
 
                 return RedirectToAction(
                     "Review",
@@ -5296,25 +5416,9 @@ public ActionResult SelectApplicant(
                     });
             }
 
-            var existingSelection =
-                db.TechnicianApplicationSelections
-                    .FirstOrDefault(s =>
-                        s.ApplicationID ==
-                        application.ApplicationID);
-
-            if (existingSelection != null)
-            {
-                TempData["Error"] =
-                    "This applicant has already been selected.";
-
-                return RedirectToAction(
-                    "Review",
-                    new
-                    {
-                        id = application.ApplicationID
-                    });
-            }
-
+            // ---------------------------------------------------------
+            // VERIFY COMPLETED INTERVIEW
+            // ---------------------------------------------------------
             var completedInterview =
                 db.ApplicationInterviews
                     .FirstOrDefault(i =>
@@ -5325,8 +5429,8 @@ public ActionResult SelectApplicant(
 
             if (completedInterview == null)
             {
-                TempData["Error"] =
-                    "A completed interview record is required before this applicant can be selected.";
+                TempData["ErrorMessage"] =
+                    "This applicant cannot be selected because the interview has not been completed.";
 
                 return RedirectToAction(
                     "Review",
@@ -5336,10 +5440,13 @@ public ActionResult SelectApplicant(
                     });
             }
 
+            // ---------------------------------------------------------
+            // INTERVIEW MUST HAVE AN OUTCOME
+            // ---------------------------------------------------------
             if (string.IsNullOrWhiteSpace(
                 completedInterview.Outcome))
             {
-                TempData["Error"] =
+                TempData["ErrorMessage"] =
                     "The completed interview must have an outcome before the applicant can be selected.";
 
                 return RedirectToAction(
@@ -5350,14 +5457,31 @@ public ActionResult SelectApplicant(
                     });
             }
 
-            var administratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
+            // ---------------------------------------------------------
+            // PREVENT DUPLICATE SELECTION
+            // ---------------------------------------------------------
+            var existingSelection =
+                db.TechnicianApplicationSelections
+                    .FirstOrDefault(s =>
+                        s.ApplicationID ==
+                        application.ApplicationID);
 
-            // =========================================================
+            if (existingSelection != null)
+            {
+                TempData["ErrorMessage"] =
+                    "This applicant has already been selected.";
+
+                return RedirectToAction(
+                    "Review",
+                    new
+                    {
+                        id = application.ApplicationID
+                    });
+            }
+
+            // ---------------------------------------------------------
             // CREATE SELECTION RECORD
-            // =========================================================
-
+            // ---------------------------------------------------------
             var selection =
                 new TechnicianApplicationSelection
                 {
@@ -5369,8 +5493,13 @@ public ActionResult SelectApplicant(
                             ? null
                             : model.Comments.Trim(),
 
+                    // HR is the current selection actor.
+                    // Do NOT fabricate an Administrator ID.
                     SelectedByAdministratorID =
-                        administratorID,
+                        null,
+
+                    SelectedByHROfficerID =
+                        hrOfficerID,
 
                     SelectionDate =
                         DateTime.Now
@@ -5379,62 +5508,88 @@ public ActionResult SelectApplicant(
             db.TechnicianApplicationSelections.Add(
                 selection);
 
-            // =========================================================
-            // UPDATE APPLICATION STATUS
-            // =========================================================
-
+            // ---------------------------------------------------------
+            // INTERVIEWED (10) → SELECTED (11)
+            // ---------------------------------------------------------
             application.Status =
                 TechnicianApplicationStatus.Selected;
 
             application.LastUpdatedDate =
                 DateTime.Now;
 
-            // =========================================================
-            // CITIZEN RECRUITMENT NOTIFICATION
-            // =========================================================
-            //
-            // Do NOT expose:
-            // - Administrator selection comments
-            // - Interview outcome
-            // - Interview comments
-            //
-            // The citizen is simply informed that they
-            // have been selected.
-            // =========================================================
+            // ---------------------------------------------------------
+            // SAVE SELECTION + STATUS TOGETHER
+            // ---------------------------------------------------------
+            try
+            {
+                db.SaveChanges();
 
-            var notificationService =
-                new CommunityServiceProject.Services
-                    .TechnicianApplicationNotificationService(db);
+                TempData["SuccessMessage"] =
+                    "Applicant " +
+                    application.Citizen.FirstName +
+                    " " +
+                    application.Citizen.LastName +
+                    " has been selected successfully.";
 
-            notificationService.Create(
-                application,
-                TechnicianApplicationNotificationType.ApplicationSelected,
-                "Application Selected",
-                "Your application for " +
-                application.Opportunity.Title +
-                " has been selected. " +
-                "Your application will now proceed to the final verification stage of the technician recruitment process.");
+                return RedirectToAction(
+                    "Review",
+                    new
+                    {
+                        id = application.ApplicationID
+                    });
+            }
+            catch (Exception ex)
+            {
+                var inner =
+                    ex.InnerException?.InnerException?.Message ??
+                    ex.InnerException?.Message ??
+                    ex.Message;
 
-            // =========================================================
-            // SAVE SELECTION + STATUS + NOTIFICATION
-            // =========================================================
-
-            db.SaveChanges();
-
-            TempData["Success"] =
-                "Applicant " +
-                application.Citizen.FirstName +
-                " " +
-                application.Citizen.LastName +
-                " has been selected successfully.";
-
-            return RedirectToAction(
-                "Review",
-                new
+                // -----------------------------------------------------
+                // LOG FULL DATABASE ERROR
+                // -----------------------------------------------------
+                try
                 {
-                    id = application.ApplicationID
-                });
+                    var logPath =
+                        System.IO.Path.Combine(
+                            AppDomain.CurrentDomain.BaseDirectory,
+                            "App_Data",
+                            "db_errors.log");
+
+                    var log =
+                        $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] " +
+                        $"Failed to select applicant. " +
+                        $"ApplicationID={application.ApplicationID}, " +
+                        $"HROfficerID={hrOfficerID}, " +
+                        $"CurrentStatus={application.Status}, " +
+                        $"DatabaseError={inner}\n" +
+                        $"{ex}\n\n";
+
+                    System.IO.Directory.CreateDirectory(
+                        System.IO.Path.GetDirectoryName(logPath));
+
+                    System.IO.File.AppendAllText(
+                        logPath,
+                        log);
+                }
+                catch
+                {
+                    // Do not replace the original database exception.
+                }
+
+                TempData["ErrorMessage"] =
+                    "The applicant could not be selected because the database rejected the selection. " +
+                    "The detailed database error has been recorded in App_Data/db_errors.log.";
+
+                return RedirectToAction(
+                    "Review",
+                    new
+                    {
+                        id = application.ApplicationID
+                    });
+            }
         }
+
 
 
 
@@ -5521,11 +5676,11 @@ public ActionResult SelectApplicant(
         [HttpGet]
         public ActionResult FinalApplicantVerification(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -5748,17 +5903,17 @@ public ActionResult SelectApplicant(
             return View(model);
         }
 
-             
-[HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult FinalApplicantVerification(
-    TechnicianApplicationFinalVerificationViewModel model)
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult FinalApplicantVerification(
+            TechnicianApplicationFinalVerificationViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
                 return RedirectToAction(
                     "Login",
-                    "Administrators");
+                    "HROfficers");
             }
 
             if (model == null)
@@ -6018,10 +6173,10 @@ public ActionResult FinalApplicantVerification(
             // =========================================================
             // CREATE FINAL VERIFICATION RECORD
             // =========================================================
+            // HR performs final verification. The current model only
+            // exposes an Administrator verifier FK, so leave it null rather than
+            // falsely recording an Administrator as the actor.
 
-            var administratorID =
-                Convert.ToInt32(
-                    Session["AdministratorID"]);
 
             var verification =
                 new TechnicianApplicationFinalVerification
@@ -6038,7 +6193,7 @@ public ActionResult FinalApplicantVerification(
                             : model.Comments.Trim(),
 
                     VerifiedByAdministratorID =
-                        administratorID,
+                        null,
 
                     VerificationDate =
                         DateTime.Now
@@ -6074,6 +6229,9 @@ public ActionResult FinalApplicantVerification(
                 new CommunityServiceProject.Services
                     .TechnicianApplicationNotificationService(db);
 
+                db.SaveChanges();
+  
+
             if (model.Result.Value ==
                 ApplicationFinalVerificationResult.Verified)
             {
@@ -6105,7 +6263,7 @@ public ActionResult FinalApplicantVerification(
             // SAVE VERIFICATION + STATUS + NOTIFICATION
             // =========================================================
 
-            db.SaveChanges();
+    
 
             // =========================================================
             // ADMIN CONFIRMATION
@@ -6323,9 +6481,14 @@ public ActionResult FinalApplicantVerification(
         [HttpGet]
         public ActionResult OnboardTechnician(int? id)
         {
-            if (Session["AdministratorID"] == null)
+            // Only HR officers may perform the onboarding steps in the
+            // recruitment workflow; the Administrator retains responsibility
+            // for creating accounts after HR hands over onboarded candidates.
+            if (!IsHROfficer())
             {
-                return RedirectToAction("Login", "Administrators");
+                return RedirectToAction(
+                    "Login",
+                    "HROfficers");
             }
 
             if (!id.HasValue)
@@ -6523,402 +6686,300 @@ public ActionResult FinalApplicantVerification(
             return View(model);
         }
 
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult OnboardTechnician(
-    TechnicianOnboardingViewModel model)
+              
+              [HttpPost]
+                [ValidateAntiForgeryToken]
+        public ActionResult OnboardTechnician(TechnicianOnboardingViewModel model)
         {
-            if (Session["AdministratorID"] == null)
+            if (!IsHROfficer())
             {
-                return RedirectToAction(
-                    "Login",
-                    "Administrators");
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
             }
 
-            if (model == null)
+            var application = db.TechnicianApplications
+                .Include(a => a.Citizen)
+                .Include(a => a.Opportunity)
+                .FirstOrDefault(a => a.ApplicationID == model.ApplicationID);
+
+            // ===========================================================
+            // LOAD AVAILABLE SKILLS
+            // ===========================================================
+
+            var skills = db.Skills
+                .OrderBy(s => s.SkillName)
+                .ToList();
+
+            model.AvailableSkills = skills.Select(s => new SelectListItem
             {
-                TempData["ErrorMessage"] =
-                    "Invalid onboarding request.";
-
-                return RedirectToAction(
-                    "ReviewApplications");
-            }
-
-            var application =
-                db.TechnicianApplications
-                    .Include(a => a.Citizen)
-                    .Include(a => a.Opportunity)
-                    .FirstOrDefault(a =>
-                        a.ApplicationID ==
-                        model.ApplicationID);
+                Value = s.SkillID.ToString(),
+                Text = s.SkillName
+            }).ToList();
 
             if (application == null)
             {
                 return HttpNotFound();
             }
 
-            // ------------------------------------------------------------
-            // Verify application state
-            // ------------------------------------------------------------
-            //
-            // The application may be onboarded for the first time while
-            // ApprovedForOnboarding, or onboarded again after it has already
-            // been changed to Onboarded.
-            //
-            // ------------------------------------------------------------
+            // ===========================================================
+            // VALIDATE APPLICATION STATUS
+            // ===========================================================
 
-            if (application.Status !=
-                    TechnicianApplicationStatus.ApprovedForOnboarding &&
-                application.Status !=
-                    TechnicianApplicationStatus.Onboarded)
+            if (application.Status != TechnicianApplicationStatus.ApprovedForOnboarding &&
+                application.Status != TechnicianApplicationStatus.Onboarded)
             {
                 TempData["ErrorMessage"] =
-                    "This applicant is no longer eligible for onboarding.";
+                    "This application is not ready for onboarding.";
 
                 return RedirectToAction(
                     "Review",
-                    new
-                    {
-                        id = application.ApplicationID
-                    });
+                    new { id = application.ApplicationID });
             }
 
-            // ------------------------------------------------------------
-            // No duplicate onboarding restriction
-            // ------------------------------------------------------------
-            //
-            // The same application may create multiple Technician records.
-            //
-            // ------------------------------------------------------------
+            // ===========================================================
+            // MODEL VALIDATION
+            // ===========================================================
 
-            // ------------------------------------------------------------
-            // No duplicate Citizen → Technician restriction
-            // ------------------------------------------------------------
-            //
-            // The same Citizen may be linked to multiple Technician records.
-            //
-            // ------------------------------------------------------------
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            // ------------------------------------------------------------
-            // Validate municipal email
-            // ------------------------------------------------------------
+            // ===========================================================
+            // VALIDATE MUNICIPAL EMAIL
+            // ===========================================================
 
-            model.MunicipalEmail =
-                (model.MunicipalEmail ?? string.Empty)
-                    .Trim()
-                    .ToLower();
-
-            var existingEmail =
-                db.Technicians
-                    .FirstOrDefault(t =>
-                        t.EmailAddress.ToLower() ==
-                        model.MunicipalEmail);
-
-            if (existingEmail != null)
+            if (string.IsNullOrWhiteSpace(model.MunicipalEmail))
             {
                 ModelState.AddModelError(
                     "MunicipalEmail",
-                    "This municipal email address is already assigned to another technician.");
+                    "Municipal email address is required.");
+
+                return View(model);
             }
 
-            // ------------------------------------------------------------
-            // Validate names / phone
-            // ------------------------------------------------------------
+            model.MunicipalEmail = model.MunicipalEmail.Trim();
 
-            model.FirstName =
-                (model.FirstName ?? string.Empty).Trim();
+            if (!model.MunicipalEmail.EndsWith(
+                "@municipality.co.za",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(
+                    "MunicipalEmail",
+                    "Municipal email must use the @municipality.co.za domain.");
 
-            model.LastName =
-                (model.LastName ?? string.Empty).Trim();
+                return View(model);
+            }
 
-            model.PhoneNumber =
-                (model.PhoneNumber ?? string.Empty).Trim();
+            // Check if the municipal email is already being used
+            var emailExists = db.Technicians.Any(t =>
+                t.EmailAddress == model.MunicipalEmail &&
+                t.CitizenID != application.CitizenID);
 
-            // ------------------------------------------------------------
-            // Validate selected skill
-            // ------------------------------------------------------------
+            if (emailExists)
+            {
+                ModelState.AddModelError(
+                    "MunicipalEmail",
+                    "This municipal email address is already in use.");
 
-            var selectedSkill =
-                db.Skills
-                    .FirstOrDefault(s =>
-                        s.SkillID ==
-                        model.SelectedSkillID);
+                return View(model);
+            }
+
+            // ===========================================================
+            // VALIDATE APPLICANT INFORMATION
+            // ===========================================================
+
+            if (application.Citizen == null)
+            {
+                TempData["ErrorMessage"] =
+                    "The applicant's citizen information could not be found.";
+
+                return RedirectToAction(
+                    "Review",
+                    new { id = application.ApplicationID });
+            }
+
+            if (string.IsNullOrWhiteSpace(application.Citizen.FirstName) ||
+                string.IsNullOrWhiteSpace(application.Citizen.LastName))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Applicant first name and last name are required.");
+
+                return View(model);
+            }
+
+            if (string.IsNullOrWhiteSpace(application.Citizen.PhoneNumber))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Applicant phone number is required.");
+
+                return View(model);
+            }
+
+            // ===========================================================
+            // VALIDATE SELECTED SKILL
+            // ===========================================================
+
+            if (model.SelectedSkillID <= 0)
+            {
+                ModelState.AddModelError(
+                    "SelectedSkillID",
+                    "Please select a technician skill.");
+
+                return View(model);
+            }
+
+            // Make sure selected skill actually exists
+            var selectedSkill = db.Skills
+                .FirstOrDefault(s => s.SkillID == model.SelectedSkillID);
 
             if (selectedSkill == null)
             {
                 ModelState.AddModelError(
                     "SelectedSkillID",
-                    "Please select a valid primary technician skill.");
+                    "The selected technician skill could not be found.");
+
+                return View(model);
             }
 
-            // ------------------------------------------------------------
-            // Validate onboarding confirmation
-            // ------------------------------------------------------------
+            // ===========================================================
+            // CONFIRMATION
+            // ===========================================================
 
             if (!model.ConfirmOnboarding)
             {
                 ModelState.AddModelError(
                     "ConfirmOnboarding",
-                    "Please confirm that the onboarding information has been reviewed.");
-            }
-
-            // ------------------------------------------------------------
-            // Return to page if validation fails
-            // ------------------------------------------------------------
-
-            if (!ModelState.IsValid)
-            {
-                // --------------------------------------------------------
-                // Rebuild read-only recruitment information
-                // --------------------------------------------------------
-
-                var finalVerification =
-                    db.TechnicianApplicationFinalVerifications
-                        .FirstOrDefault(v =>
-                            v.ApplicationID ==
-                            application.ApplicationID);
-
-                var screening =
-                    db.TechnicianApplicationScreenings
-                        .FirstOrDefault(s =>
-                            s.ApplicationID ==
-                            application.ApplicationID);
-
-                var assessment =
-                    db.ApplicationAssessments
-                        .Where(a =>
-                            a.ApplicationID ==
-                            application.ApplicationID)
-                        .OrderByDescending(a =>
-                            a.AssessmentDate)
-                        .FirstOrDefault();
-
-                var interview =
-                    db.ApplicationInterviews
-                        .Where(i =>
-                            i.ApplicationID ==
-                            application.ApplicationID)
-                        .OrderByDescending(i =>
-                            i.InterviewDate)
-                        .FirstOrDefault();
-
-                var selection =
-                    db.TechnicianApplicationSelections
-                        .FirstOrDefault(s =>
-                            s.ApplicationID ==
-                            application.ApplicationID);
-
-                model.ApplicationReference =
-                    application.ApplicationReference;
-
-                model.ApplicantName =
-                    application.Citizen.FirstName + " " +
-                    application.Citizen.LastName;
-
-                model.PersonalEmail =
-                    application.Citizen.EmailAddress;
-
-                model.ApplicantPhoneNumber =
-                    application.Citizen.PhoneNumber;
-
-                model.ApplicationDate =
-                    application.ApplicationDate;
-
-                model.OpportunityTitle =
-                    application.Opportunity.Title;
-
-                model.OpportunityCode =
-                    application.Opportunity.OpportunityCode;
-
-                model.EmploymentType =
-                    application.Opportunity.EmploymentType;
-
-                model.ScreeningResult =
-                    screening != null
-                        ? screening.OverallResult.ToString()
-                        : "Not available";
-
-                model.AssessmentResult =
-                    assessment != null
-                        ? assessment.Result
-                        : "Not available";
-
-                model.AssessmentScore =
-                    assessment != null
-                        ? assessment.Score
-                        : null;
-
-                model.InterviewOutcome =
-                    interview != null
-                        ? interview.Outcome
-                        : "Not available";
-
-                model.SelectionComments =
-                    selection != null
-                        ? selection.Comments
-                        : null;
-
-                model.FinalVerificationResult =
-                    finalVerification != null
-                        ? finalVerification.Result.ToString()
-                        : "Not available";
-
-                model.FinalVerificationComments =
-                    finalVerification != null
-                        ? finalVerification.Comments
-                        : null;
-
-                model.ApplicationStatus =
-                    application.Status;
-
-                model.VerifiedDocumentCount =
-                    db.ApplicationDocuments.Count(d =>
-                        d.ApplicationID ==
-                            application.ApplicationID &&
-                        d.VerificationStatus ==
-                            ApplicationDocumentVerificationStatus.Accepted);
-
-                model.UnverifiedDocumentCount =
-                    db.ApplicationDocuments.Count(d =>
-                        d.ApplicationID ==
-                            application.ApplicationID &&
-                        d.VerificationStatus !=
-                            ApplicationDocumentVerificationStatus.Accepted);
-
-                // --------------------------------------------------------
-                // Rebuild skill dropdown
-                // --------------------------------------------------------
-
-                model.AvailableSkills =
-                    db.Skills
-                        .OrderBy(s => s.SkillName)
-                        .Select(s => new SelectListItem
-                        {
-                            Value =
-                                s.SkillID.ToString(),
-
-                            Text =
-                                s.SkillName,
-
-                            Selected =
-                                s.SkillID ==
-                                model.SelectedSkillID
-                        })
-                        .ToList();
+                    "You must confirm that the onboarding information is correct.");
 
                 return View(model);
             }
 
-            // ------------------------------------------------------------
-            // Administrator
-            // ------------------------------------------------------------
+            // ===========================================================
+            // VALIDATE PASSWORD
+            // ===========================================================
 
-            int administratorID =
-                (int)Session["AdministratorID"];
+            if (string.IsNullOrWhiteSpace(model.Password))
+            {
+                ModelState.AddModelError(
+                    "Password",
+                    "Password is required.");
 
-            // ------------------------------------------------------------
-            // Database transaction
-            // ------------------------------------------------------------
+                return View(model);
+            }
 
-            using (var transaction =
-                db.Database.BeginTransaction())
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError(
+                    "ConfirmPassword",
+                    "Passwords do not match.");
+
+                return View(model);
+            }
+
+            // ===========================================================
+            // GET HR OFFICER
+            // ===========================================================
+
+            var hrOfficerID = Convert.ToInt32(Session["HROfficerID"]);
+
+            var hrOfficer = db.HROfficers
+                .FirstOrDefault(h => h.HROfficerID == hrOfficerID);
+
+            if (hrOfficer == null)
+            {
+                TempData["ErrorMessage"] =
+                    "The HR Officer account could not be found.";
+
+                return RedirectToAction(
+                    "Review",
+                    new { id = application.ApplicationID });
+            }
+
+            // ===========================================================
+            // START TRANSACTION
+            // ===========================================================
+
+            using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
-                    // ====================================================
-                    // CREATE TECHNICIAN
-                    // ====================================================
+                    // ===================================================
+                    // CREATE TECHNICIAN ACCOUNT
+                    // ===================================================
 
-                    var technician =
-                        new Technician
-                        {
-                            FirstName =
-                                model.FirstName,
+                    var technician = new Technician
+                    {
+                        CitizenID = application.CitizenID,
 
-                            LastName =
-                                model.LastName,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
 
-                            EmailAddress =
-                                model.MunicipalEmail,
+                        EmailAddress = model.MunicipalEmail,
 
-                            PhoneNumber =
-                                model.PhoneNumber,
+                        PhoneNumber = model.PhoneNumber,
 
-                            Password =
-                                model.Password,
+                        Password = model.Password,
 
-                            // The administrator-created password is temporary.
-                            // The technician must change it after first login.
-                            MustChangePassword =
-                                true,
+                        MustChangePassword = true,
 
-                            AccountStatus =
-                                AccountStatus.Active,
+                        AccountStatus = AccountStatus.Active
+                    };
 
-                            CitizenID =
-                                application.CitizenID
-                        };
+                    db.Technicians.Add(technician);
 
-                    db.Technicians.Add(
-                        technician);
+                    // Save so SQL Server generates TechnicianID
+                    db.SaveChanges();
 
-                    // ====================================================
-                    // ASSIGN PRIMARY TECHNICIAN SKILL
-                    // ====================================================
+                    // ===================================================
+                    // ASSIGN TECHNICIAN SKILL
+                    // ===================================================
 
-                    var technicianSkill =
-                        new TechnicianSkill
-                        {
-                            TechnicianID =
-                                technician.TechnicianID,
+                    var technicianSkill = new TechnicianSkill
+                    {
+                        TechnicianID = technician.TechnicianID,
+                        SkillID = model.SelectedSkillID
+                    };
 
-                            SkillID =
-                                selectedSkill.SkillID
-                        };
+                    db.TechnicianSkills.Add(technicianSkill);
 
-                    db.TechnicianSkills.Add(
-                        technicianSkill);
+                    // ===================================================
+                    // CREATE ONBOARDING RECORD
+                    // ===================================================
 
-                    // ====================================================
-                    // CREATE ONBOARDING AUDIT RECORD
-                    // ====================================================
+                    var onboarding = new TechnicianOnboarding
+                    {
+                        ApplicationID = application.ApplicationID,
 
-                    var onboarding =
-                        new TechnicianOnboarding
-                        {
-                            ApplicationID =
-                                application.ApplicationID,
+                        // Link onboarding to the newly created Technician
+                        TechnicianID = technician.TechnicianID,
 
-                            TechnicianID =
-                                technician.TechnicianID,
+                        // HR performs the onboarding
+                        // No Administrator performed this action
+                        OnboardedByAdministratorID = null,
 
-                            OnboardedByAdministratorID =
-                                administratorID,
+                        OnboardedByHROfficerID = hrOfficerID,
 
-                            OnboardingDate =
-                                DateTime.Now,
+                        OnboardingDate = DateTime.Now,
 
-                            MunicipalEmail =
-                                technician.EmailAddress
-                        };
+                        MunicipalEmail = model.MunicipalEmail
+                    };
 
-                    db.TechnicianOnboardings.Add(
-                        onboarding);
+                    db.TechnicianOnboardings.Add(onboarding);
 
-                    // ====================================================
-                    // UPDATE APPLICATION
-                    // ====================================================
+                    // ===================================================
+                    // UPDATE APPLICATION STATUS
+                    // ===================================================
 
                     application.Status =
                         TechnicianApplicationStatus.Onboarded;
 
-                    application.LastUpdatedDate =
-                        DateTime.Now;
+                    application.LastUpdatedDate = DateTime.Now;
 
-                    // ====================================================
-                    // CREATE CITIZEN NOTIFICATION
-                    // ====================================================
+                    // ===================================================
+                    // CREATE NOTIFICATION
+                    // ===================================================
 
                     var notificationService =
                         new CommunityServiceProject.Services
@@ -6926,84 +6987,53 @@ public ActionResult FinalApplicantVerification(
 
                     notificationService.Create(
                         application,
-                        TechnicianApplicationNotificationType
-                            .OnboardingCompleted,
-                        "Technician Onboarding Completed",
+                        TechnicianApplicationNotificationType.ApprovedForOnboarding,
+                        "Approved for Onboarding",
                         "Your application for " +
                         application.Opportunity.Title +
-                        " has successfully completed the technician onboarding process. " +
-                        "Your municipal technician account has been created and activated. " +
-                        "You can now use your municipal technician login to access the system.");
+                        " has successfully completed the final verification stage. " +
+                        "The technician onboarding process has now been completed.");
 
-                    // ====================================================
-                    // SAVE EVERYTHING
-                    // ====================================================
+                    // ===================================================
+                    // SAVE ALL CHANGES
+                    // ===================================================
 
                     db.SaveChanges();
 
+                    // ===================================================
+                    // COMMIT TRANSACTION
+                    // ===================================================
+
                     transaction.Commit();
 
-                    // ====================================================
-                    // SUCCESS INFORMATION
-                    // ====================================================
-
-                    TempData["OnboardingSuccess"] =
-                        true;
-
-                    TempData["TechnicianName"] =
-                        technician.FirstName + " " +
-                        technician.LastName;
-
-                    TempData["TechnicianEmail"] =
-                        technician.EmailAddress;
-
-                    TempData["ApplicationReference"] =
-                        application.ApplicationReference;
-
-                    TempData["TechnicianID"] =
-                        technician.TechnicianID;
+                    TempData["SuccessMessage"] =
+                        "The applicant has been successfully onboarded " +
+                        "and the technician account has been created. " +
+                        "The technician must change their password when logging " +
+                        "in for the first time.";
 
                     return RedirectToAction(
-                        "OnboardingSuccess",
-                        new
-                        {
-                            id =
-                                application.ApplicationID
-                        });
+                        "Review",
+                        new { id = application.ApplicationID });
                 }
-                catch
+                catch (Exception)
                 {
                     transaction.Rollback();
 
-                    ModelState.AddModelError(
-                        "",
-                        "The technician could not be onboarded. No changes were saved.");
+                    TempData["ErrorMessage"] =
+                        "The onboarding could not be completed. " +
+                        "No changes were saved.";
 
-                    // ----------------------------------------------------
-                    // Rebuild dropdown in case transaction fails
-                    // ----------------------------------------------------
-
-                    model.AvailableSkills =
-                        db.Skills
-                            .OrderBy(s => s.SkillName)
-                            .Select(s => new SelectListItem
-                            {
-                                Value =
-                                    s.SkillID.ToString(),
-
-                                Text =
-                                    s.SkillName,
-
-                                Selected =
-                                    s.SkillID ==
-                                    model.SelectedSkillID
-                            })
-                            .ToList();
-
-                    return View(model);
+                    return RedirectToAction(
+                        "Review",
+                        new { id = application.ApplicationID });
                 }
             }
         }
+
+
+            
+
 
         public ActionResult OnboardingSuccess(int? id)
         {
@@ -7141,10 +7171,10 @@ public ActionResult FinalApplicantVerification(
             return View(model);
         }
 
-        
-           
-               [HttpGet]
-public ActionResult TechnicianAccountDetails(int onboardingId)
+
+
+        [HttpGet]
+        public ActionResult TechnicianAccountDetails(int onboardingId)
         {
             if (Session["CitizenID"] == null)
             {

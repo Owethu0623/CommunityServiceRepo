@@ -304,7 +304,7 @@ namespace CommunityServiceProject.Controllers
 
 
 
-        
+
         private void PopulateAssetClassificationOptionsForEdit(
             MunicipalAssetEditViewModel model)
         {
@@ -435,15 +435,15 @@ namespace CommunityServiceProject.Controllers
             return View(model);
         }
 
-  
-// INDEX / US72
-[HttpGet]
-public ActionResult Index(
-    string searchTerm,
-    string selectedType,
-    string selectedWard,
-    string selectedCondition,
-    string selectedStatus)
+
+        // INDEX / US72
+        [HttpGet]
+        public ActionResult Index(
+            string searchTerm,
+            string selectedType,
+            string selectedWard,
+            string selectedCondition,
+            string selectedStatus)
         {
             if (!IsAdministrator())
                 return new HttpUnauthorizedResult();
@@ -624,33 +624,50 @@ public ActionResult Index(
              * READ COORDINATES DIRECTLY FROM THE FORM
              * ============================================================
              *
-             * Latitude and Longitude in the Create ViewModel are strings.
+             * Latitude and Longitude in the Create ViewModel are nullable
+             * doubles. The form posts the values using the normal MVC field names.
              *
              * The form posts:
              *
              * name="Latitude"
              * name="Longitude"
              *
-             * Read those exact values and keep them as strings in the
-             * ViewModel. They are converted to doubles only after
-             * validation when the MunicipalAsset entity is created.
+             * Read those exact values and convert them to nullable doubles
+             * using invariant culture before the entity is created.
              */
 
             var postedLatitude =
-                Request.Form["Latitude"];
+     Request.Form["Latitude"];
 
             var postedLongitude =
                 Request.Form["Longitude"];
 
+            double parsedLatitude;
+            double parsedLongitude;
+
+            bool latitudePosted =
+                double.TryParse(
+                    postedLatitude,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out parsedLatitude);
+
+            bool longitudePosted =
+                double.TryParse(
+                    postedLongitude,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out parsedLongitude);
+
             model.Latitude =
-                string.IsNullOrWhiteSpace(postedLatitude)
-                    ? null
-                    : postedLatitude.Trim();
+                latitudePosted
+                    ? parsedLatitude.ToString(CultureInfo.InvariantCulture)
+                    : null;
 
             model.Longitude =
-                string.IsNullOrWhiteSpace(postedLongitude)
-                    ? null
-                    : postedLongitude.Trim();
+                longitudePosted
+                    ? parsedLongitude.ToString(CultureInfo.InvariantCulture)
+                    : null;
 
             /*
              * Normalize user-entered values.
@@ -1858,7 +1875,7 @@ public ActionResult Index(
                 Description =
                     "Municipal asset information was updated by an administrator. " +
                     string.Join(" ", changes),
-            
+
                 ActivityDate =
                     DateTime.Now,
 
@@ -3390,23 +3407,23 @@ public ActionResult Index(
             }
         }
 
-      
-// =========================================================
-// ASSET PROJECT LINKING
-// =========================================================
 
-// =========================================================
-// LINK PROJECT TO ASSET — GET
-// =========================================================
+        // =========================================================
+        // ASSET PROJECT LINKING
+        // =========================================================
 
-[HttpGet]
-public ActionResult LinkProject(
-    int? id,
-    string searchTerm,
-    string projectType,
-    string projectStatus,
-    string projectPriority,
-    int? ward)
+        // =========================================================
+        // LINK PROJECT TO ASSET — GET
+        // =========================================================
+
+        [HttpGet]
+        public ActionResult LinkProject(
+            int? id,
+            string searchTerm,
+            string projectType,
+            string projectStatus,
+            string projectPriority,
+            int? ward)
         {
             if (!IsAdministrator())
                 return new HttpUnauthorizedResult();
@@ -3437,14 +3454,14 @@ public ActionResult LinkProject(
                     .ToList();
 
 
-             var linkedProjects =
-    db.AssetProjects
-        .AsNoTracking()
-        .Include(ap => ap.Project)
-        .Include(ap => ap.Project.Ward)
-        .Include(ap => ap.LinkedByAdministrator)
-        .Where(ap => ap.AssetID == asset.AssetID)
-        .ToList();
+            var linkedProjects =
+   db.AssetProjects
+       .AsNoTracking()
+       .Include(ap => ap.Project)
+       .Include(ap => ap.Project.Ward)
+       .Include(ap => ap.LinkedByAdministrator)
+       .Where(ap => ap.AssetID == asset.AssetID)
+       .ToList();
 
 
             var linkedProjectItems =

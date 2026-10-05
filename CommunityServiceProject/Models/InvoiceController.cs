@@ -281,10 +281,10 @@ namespace CommunityServiceProject.Controllers
         }
 
         /*
-         * ============================================================
-         * CREATE INVOICE
-         * ============================================================
-         */
+  * ============================================================
+  * CREATE INVOICE
+  * ============================================================
+  */
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -440,6 +440,9 @@ namespace CommunityServiceProject.Controllers
 
             db.SaveChanges();
 
+            /*
+             * Generate formal invoice number using InvoiceID.
+             */
             invoice.InvoiceNumber =
                 "INV-" +
                 DateTime.Now.Year +
@@ -451,8 +454,62 @@ namespace CommunityServiceProject.Controllers
 
             db.SaveChanges();
 
+            /*
+             * Update request to payment required.
+             */
             request.Status =
                 MunicipalServiceRequestStatus.PaymentRequired;
+
+            /*
+             * ============================================================
+             * FINANCE NOTIFICATION - INVOICE GENERATED
+             * ============================================================
+             */
+
+            var invoiceNotification =
+                new FinanceNotification
+                {
+                    CitizenID =
+                        request.CitizenID,
+
+                    InvoiceID =
+                        invoice.InvoiceID,
+
+                    PaymentID =
+                        null,
+
+                    RefundID =
+                        null,
+
+                    ReceiptID =
+                        null,
+
+                    NotificationType =
+                        FinanceNotificationType.InvoiceGenerated,
+
+                    Title =
+                        "Municipal Service Invoice Generated",
+
+                    Message =
+                        "An invoice " +
+                        invoice.InvoiceNumber +
+                        " has been generated for your municipal service request. " +
+                        "The invoice amount is R" +
+                        invoice.Amount.ToString("N2") +
+                        " and payment is now required.",
+
+                    DateCreated =
+                        DateTime.Now,
+
+                    IsRead =
+                        false,
+
+                    ReadDate =
+                        null
+                };
+
+            db.FinanceNotifications.Add(
+                invoiceNotification);
 
             db.SaveChanges();
 

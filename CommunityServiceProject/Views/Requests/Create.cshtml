@@ -288,6 +288,7 @@
 
         </div>
 
+
         <!-- SELECTED LOCATION -->
 
         <div class="selected-location">
@@ -383,6 +384,17 @@
             <!-- ================================================= -->
             <!-- SUBMIT -->
             <!-- ================================================= -->
+
+            <!-- Compliance confirmation required -->
+            <div class="request-form-group compliance-confirmation">
+                <label class="compliance-checkbox">
+                    @Html.CheckBox("ComplianceConfirmed", false, new { @id = "ComplianceConfirmed" })
+                    <span>
+                        I confirm that the information I have provided is accurate and truthful, and that I am complying with the municipal service request rules. I understand that submitting false, misleading, fraudulent, abusive, deliberately incomplete or otherwise non-compliant information may result in compliance action, suspension or deactivation of my account.
+                    </span>
+                </label>
+                @Html.ValidationMessage("ComplianceConfirmed", "", new { @class = "text-danger" })
+            </div>
 
             <button type="submit"
                     class="request-submit-button"

@@ -18,7 +18,8 @@
                     RequirementsAssessment = c.Int(nullable: false),
                     OverallResult = c.Int(nullable: false),
                     ScreeningComments = c.String(nullable: false, maxLength: 3000),
-                    ScreenedByAdministratorID = c.Int(nullable: false),
+                    ScreenedByAdministratorID = c.Int(),
+                    ScreenedByHROfficerID = c.Int(),
                     ScreeningDate = c.DateTime(nullable: false),
                 })
                 .PrimaryKey(t => t.ScreeningID)
@@ -28,8 +29,7 @@
                     cascadeDelete: false)
                 .ForeignKey(
                     "dbo.Administrators",
-                    t => t.ScreenedByAdministratorID,
-                    cascadeDelete: false)
+                    t => t.ScreenedByAdministratorID)
                 .Index(t => t.ApplicationID)
                 .Index(t => t.ScreenedByAdministratorID);
         }

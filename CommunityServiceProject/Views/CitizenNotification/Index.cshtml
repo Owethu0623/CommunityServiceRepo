@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<CommunityServiceProject.ViewModels.CitizenNotificationViewModel>
-    
+
 @{
     ViewBag.Title = "Notifications";
 
@@ -19,7 +19,10 @@
         ViewBag.ApplicationUnreadCount ?? 0;
 
     var municipalServiceUnreadCount =
-    ViewBag.MunicipalServiceUnreadCount ?? 0;
+        ViewBag.MunicipalServiceUnreadCount ?? 0;
+
+    var financeUnreadCount =
+        ViewBag.FinanceUnreadCount ?? 0;
 }
 
 <style>
@@ -400,17 +403,23 @@
         <div class="notification-header-content">
 
             <div>
+
                 <h1>Notifications</h1>
 
                 <p>
                     Stay updated with activity related to your
-                    service requests and technician applications.
+                    service requests, municipal services,
+                    applications, and payments.
                 </p>
+
             </div>
 
             <div class="header-count">
+
                 <strong>@unreadCount</strong>
+
                 <span>Unread</span>
+
             </div>
 
         </div>
@@ -425,6 +434,8 @@
 
         <div class="notification-tabs">
 
+            <!-- ALL -->
+
             <a href="@Url.Action(
                     "Index",
                     "CitizenNotification",
@@ -438,6 +449,8 @@
                 </span>
 
             </a>
+
+            <!-- MAINTENANCE -->
 
             <a href="@Url.Action(
                     "Index",
@@ -456,6 +469,8 @@
 
             </a>
 
+            <!-- APPLICATIONS -->
+
             <a href="@Url.Action(
                     "Index",
                     "CitizenNotification",
@@ -473,19 +488,20 @@
 
             </a>
 
+            <!-- MUNICIPAL SERVICES -->
 
             <a href="@Url.Action(
-        "Index",
-        "CitizenNotification",
-        new
-        {
-            category = "MunicipalServices"
-        })"
+                    "Index",
+                    "CitizenNotification",
+                    new
+                    {
+                        category = "MunicipalServices"
+                    })"
                class="notification-tab @(selectedCategory.Equals(
-       "MunicipalServices",
-       StringComparison.OrdinalIgnoreCase)
-       ? "active"
-       : "")">
+                    "MunicipalServices",
+                    StringComparison.OrdinalIgnoreCase)
+                    ? "active"
+                    : "")">
 
                 Municipal Services
 
@@ -497,6 +513,33 @@
                 }
 
             </a>
+
+            <!-- FINANCE -->
+
+            <a href="@Url.Action(
+                    "Index",
+                    "CitizenNotification",
+                    new
+                    {
+                        category = "Finance"
+                    })"
+               class="notification-tab @(selectedCategory.Equals(
+                    "Finance",
+                    StringComparison.OrdinalIgnoreCase)
+                    ? "active"
+                    : "")">
+
+                Finance
+
+                @if (financeUnreadCount > 0)
+                {
+                    <span class="tab-count">
+                        @financeUnreadCount
+                    </span>
+                }
+
+            </a>
+
         </div>
 
         @if (Convert.ToInt32(unreadCount) > 0)
@@ -511,7 +554,9 @@
 
                 <button type="submit"
                         class="mark-all-button">
+
                     Mark all as read
+
                 </button>
             }
         }
@@ -564,40 +609,134 @@
                                 @notification.Message
                             </div>
 
+
+                            <!-- =====================================================
+                                 APPLICATION REFERENCE
+                                 ===================================================== -->
+
                             @if (notification.NotificationSource == "Applications")
                             {
-                                if (!string.IsNullOrWhiteSpace(notification.ApplicationReference))
+                                if (!string.IsNullOrWhiteSpace(
+                                    notification.ApplicationReference))
                                 {
                                     <div class="notification-related">
+
                                         Application:
                                         @notification.ApplicationReference
 
-                                        @if (!string.IsNullOrWhiteSpace(notification.OpportunityTitle))
+                                        @if (!string.IsNullOrWhiteSpace(
+                                            notification.OpportunityTitle))
                                         {
                                             @: · @notification.OpportunityTitle
                                         }
-                                    </div>
-                                }
-                            }
-                            else if (notification.NotificationSource == "Maintenance")
-                            {
-                                if (!string.IsNullOrWhiteSpace(notification.RequestReference))
-                                {
-                                    <div class="notification-related">
-                                        Request:
-                                        @notification.RequestReference
+
                                     </div>
                                 }
                             }
 
-                            else if (notification.NotificationSource == "MunicipalServices")
+
+                            <!-- =====================================================
+                                 MAINTENANCE REFERENCE
+                                 ===================================================== -->
+
+                            @if (notification.NotificationSource == "Maintenance")
+                            {
+                                if (!string.IsNullOrWhiteSpace(
+                                    notification.RequestReference))
+                                {
+                                    <div class="notification-related">
+
+                                        Request:
+                                        @notification.RequestReference
+
+                                    </div>
+                                }
+                            }
+
+
+                            <!-- =====================================================
+                                 MUNICIPAL SERVICE REFERENCE
+                                 ===================================================== -->
+
+                            @if (notification.NotificationSource == "MunicipalServices")
                             {
                                 if (!string.IsNullOrWhiteSpace(
                                     notification.MunicipalServiceRequestReference))
                                 {
                                     <div class="notification-related">
+
                                         Municipal Service Request:
                                         @notification.MunicipalServiceRequestReference
+
+                                    </div>
+                                }
+                            }
+
+
+                            <!-- =====================================================
+                                 FINANCE REFERENCE
+                                 ===================================================== -->
+
+                            @if (notification.NotificationSource == "Finance")
+                            {
+                                if (notification.InvoiceID.HasValue)
+                                {
+                                    <div class="notification-related">
+
+                                        Invoice:
+                                        #@notification.InvoiceID
+
+                                        @if (notification.PaymentID.HasValue)
+                                        {
+                                            @: · Payment #@notification.PaymentID
+                                        }
+
+                                        @if (notification.ReceiptID.HasValue)
+                                        {
+                                            @: · Receipt #@notification.ReceiptID
+                                        }
+
+                                        @if (notification.RefundID.HasValue)
+                                        {
+                                            @: · Refund #@notification.RefundID
+                                        }
+
+                                    </div>
+                                }
+
+                                if (!notification.InvoiceID.HasValue &&
+                                    notification.PaymentID.HasValue)
+                                {
+                                    <div class="notification-related">
+
+                                        Payment:
+                                        #@notification.PaymentID
+
+                                    </div>
+                                }
+
+                                if (!notification.InvoiceID.HasValue &&
+                                    !notification.PaymentID.HasValue &&
+                                    notification.RefundID.HasValue)
+                                {
+                                    <div class="notification-related">
+
+                                        Refund:
+                                        #@notification.RefundID
+
+                                    </div>
+                                }
+
+                                if (!notification.InvoiceID.HasValue &&
+                                    !notification.PaymentID.HasValue &&
+                                    !notification.RefundID.HasValue &&
+                                    notification.ReceiptID.HasValue)
+                                {
+                                    <div class="notification-related">
+
+                                        Receipt:
+                                        #@notification.ReceiptID
+
                                     </div>
                                 }
                             }
@@ -632,13 +771,19 @@
 
     </div>
 
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
     <div class="notification-footer">
 
         <a href="@Url.Action(
                 "Index",
                 "CitizenDashboard")"
            class="back-dashboard">
+
             ← Back to Dashboard
+
         </a>
 
     </div>

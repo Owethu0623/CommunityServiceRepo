@@ -121,5 +121,10 @@ namespace CommunityServiceProject.Models
             MaintenanceWorks = new List<MaintenanceWork>();
             Feedbacks = new List<Feedback>();
         }
+
+        // Compliance confirmation captured when citizen submits a request
+        public bool ComplianceConfirmed { get; set; }
+
+        public DateTime? ComplianceConfirmedDate { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace CommunityServiceProject.Models
         private Community db = new Community();
 
         // GET: Administrators/Login
+        [AllowAnonymous]
         public ActionResult Login()
         {
             return View();
@@ -26,6 +27,7 @@ namespace CommunityServiceProject.Models
         // POST: Administrators/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Login(string emailAddress, string password)
         {
             var administrator = db.Administrators.FirstOrDefault(a =>

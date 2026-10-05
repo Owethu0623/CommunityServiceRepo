@@ -26,14 +26,14 @@
                         EmploymentType = c.String(maxLength: 100),
                         NumberOfPositions = c.Int(),
                         DateCreated = c.DateTime(nullable: false),
-                        CreatedByAdministratorID = c.Int(nullable: false),
+                        CreatedByAdministratorID = c.Int(),
                         PublishedDate = c.DateTime(),
                         ClosedDate = c.DateTime(),
                         LastUpdatedDate = c.DateTime(),
                         LastUpdatedByAdministratorID = c.Int(),
                     })
                 .PrimaryKey(t => t.OpportunityID)
-                .ForeignKey("dbo.Administrators", t => t.CreatedByAdministratorID, cascadeDelete: true)
+                .ForeignKey("dbo.Administrators", t => t.CreatedByAdministratorID)
                 .ForeignKey("dbo.Administrators", t => t.LastUpdatedByAdministratorID)
                 .Index(t => t.CreatedByAdministratorID)
                 .Index(t => t.LastUpdatedByAdministratorID);

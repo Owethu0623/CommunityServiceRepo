@@ -13,8 +13,8 @@
                     {
                         OnboardingID = c.Int(nullable: false, identity: true),
                         ApplicationID = c.Int(nullable: false),
-                        TechnicianID = c.Int(nullable: false),
-                        OnboardedByAdministratorID = c.Int(nullable: false),
+                        TechnicianID = c.Int(),
+                        OnboardedByAdministratorID = c.Int(),
                         OnboardingDate = c.DateTime(nullable: false),
                         MunicipalEmail = c.String(nullable: false, maxLength: 100),
                     })

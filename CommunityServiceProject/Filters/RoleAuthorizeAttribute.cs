@@ -18,6 +18,14 @@ namespace CommunityServiceProject.Filters
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            // Respect AllowAnonymous attribute on actions or controllers
+            if (filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true) ||
+                filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true))
+            {
+                base.OnActionExecuting(filterContext);
+                return;
+            }
+
             var session = filterContext.HttpContext.Session;
 
             bool authorized = false;

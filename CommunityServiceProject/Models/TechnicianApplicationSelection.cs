@@ -20,11 +20,19 @@ namespace CommunityServiceProject.Models
         [Display(Name = "Selection Comments")]
         public string Comments { get; set; }
 
-        [Required]
-        public int SelectedByAdministratorID { get; set; }
+        // Historical administrator (nullable to support HR selection ownership)
+        public int? SelectedByAdministratorID { get; set; }
 
         [ForeignKey("SelectedByAdministratorID")]
         public virtual Administrator SelectedByAdministrator { get; set; }
+
+        // New: preserve existing Administrator historical owner but allow HR officer
+        // to be recorded as the selector going forward. Nullable to avoid
+        // breaking existing data.
+        public int? SelectedByHROfficerID { get; set; }
+
+        [ForeignKey("SelectedByHROfficerID")]
+        public virtual HROfficer SelectedByHROfficer { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

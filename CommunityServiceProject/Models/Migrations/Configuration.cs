@@ -10,10 +10,12 @@
     {
         public Configuration()
         {
-            // Disable automatic migrations. We will record the current model state
-            // with an explicit code-based migration and keep AutomaticMigrationsEnabled = false
-            // for safer production deployments.
-            AutomaticMigrationsEnabled = false;
+            // Enable automatic migrations so pending model changes can be applied
+            // automatically when Update-Database is run. Be cautious in production
+            // environments — consider code-based migrations instead.
+            AutomaticMigrationsEnabled = true;
+            // Do not allow automatic data-loss causing changes by default.
+            AutomaticMigrationDataLossAllowed = false;
             ContextKey = "CommunityServiceProject.Models.Community";
         }
 
@@ -30,7 +32,7 @@
                     LastName = "Administrator",
                     EmailAddress = "admin@municipality.co.za",
                     PhoneNumber = "0123456789",
-                    Password = "Admin123",
+                    Password = CommunityServiceProject.Helpers.PasswordHelper.HashPassword("Admin123"),
                     AccountStatus = CommunityServiceProject.Models.AccountStatus.Active
                 };
 
@@ -45,7 +47,7 @@ new FinanceOfficer
 FirstName = "Municipal",
 LastName = "Finance Officer",
 EmailAddress = "finance@municipality.co.za",
-Password = "Finance123",
+Password = CommunityServiceProject.Helpers.PasswordHelper.HashPassword("Finance123"),
 AccountStatus = AccountStatus.Active,
 DateCreated = DateTime.Now
 }
@@ -59,7 +61,7 @@ DateCreated = DateTime.Now
                     FirstName = "Municipal",
                     LastName = "HR Officer",
                     EmailAddress = "hr@municipality.co.za",
-                    Password = "HR123",
+                    Password = CommunityServiceProject.Helpers.PasswordHelper.HashPassword("HR123"),
                     AccountStatus = AccountStatus.Active,
                     DateCreated = DateTime.Now
                 }

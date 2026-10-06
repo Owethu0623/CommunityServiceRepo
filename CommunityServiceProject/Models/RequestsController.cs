@@ -524,9 +524,9 @@ int citizenId = (int)Session["CitizenID"];
         [ValidateAntiForgeryToken]
         public ActionResult Edit(
             [Bind(Include =
-            "RequestID,Title,Description,CategoryID,WardID,ProblemLocation")]
-        Request updatedRequest,
-            HttpPostedFileBase ImageFile)
+    "RequestID,Title,Description,CategoryID,WardID,ProblemLocation")]
+Request updatedRequest,
+        HttpPostedFileBase ImageFile)
         {
             if (Session["CitizenID"] == null)
             {
@@ -536,36 +536,9 @@ int citizenId = (int)Session["CitizenID"];
             int citizenId =
                 (int)Session["CitizenID"];
 
-            ModelState.Remove("Latitude");
-            ModelState.Remove("Longitude");
-
 
             // =====================================================
-            // VALIDATION
-            // =====================================================
-
-            if (!ModelState.IsValid)
-            {
-                ViewBag.CategoryID = new SelectList(
-                    db.Categories,
-                    "CategoryID",
-                    "CategoryName",
-                    updatedRequest.CategoryID
-                );
-
-                ViewBag.WardID = new SelectList(
-                    db.Wards.OrderBy(w => w.WardNumber),
-                    "WardID",
-                    "WardName",
-                    updatedRequest.WardID
-                );
-
-                return View(updatedRequest);
-            }
-
-
-            // =====================================================
-            // FIND ORIGINAL REQUEST
+            // FIND ORIGINAL REQUEST FIRST
             // =====================================================
 
             Request request = db.Requests
@@ -594,6 +567,51 @@ int citizenId = (int)Session["CitizenID"];
                     HttpStatusCode.BadRequest,
                     "This request can no longer be edited."
                 );
+            }
+
+
+            // =====================================================
+            // COMPLIANCE WAS ALREADY CONFIRMED ON CREATION
+            // =====================================================
+
+            // Preserve the original compliance confirmation.
+            // The citizen does not need to confirm compliance again.
+            request.ComplianceConfirmed =
+                request.ComplianceConfirmed;
+
+            request.ComplianceConfirmedDate =
+                request.ComplianceConfirmedDate;
+
+
+            // =====================================================
+            // REMOVE GPS VALIDATION
+            // =====================================================
+
+            ModelState.Remove("Latitude");
+            ModelState.Remove("Longitude");
+
+
+            // =====================================================
+            // VALIDATION
+            // =====================================================
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.CategoryID = new SelectList(
+                    db.Categories,
+                    "CategoryID",
+                    "CategoryName",
+                    updatedRequest.CategoryID
+                );
+
+                ViewBag.WardID = new SelectList(
+                    db.Wards.OrderBy(w => w.WardNumber),
+                    "WardID",
+                    "WardName",
+                    updatedRequest.WardID
+                );
+
+                return View(updatedRequest);
             }
 
 
@@ -661,7 +679,6 @@ int citizenId = (int)Session["CitizenID"];
 
             return RedirectToAction("Index");
         }
-
 
         // =========================================================
         // GET: Requests/Delete/5

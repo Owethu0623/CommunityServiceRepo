@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web.Mvc;
 using CommunityServiceProject.Filters;
 
-namespace CommunityServiceProject.Controllers
+namespace CommunityServiceProject.Models
 {
     [RoleAuthorize("Citizen")]
     public class MunicipalServiceRequestController : Controller
@@ -264,57 +264,244 @@ namespace CommunityServiceProject.Controllers
         [HttpGet]
         public ActionResult Details(int id)
         {
-            if (Session["CitizenID"] == null)
-                return RedirectToAction("Login", "Login");
-
-            var citizenId = (int)Session["CitizenID"];
-
-            var request = db.MunicipalServiceRequests
-                .Include("ServiceType")
-                .FirstOrDefault(r =>
-                    r.MunicipalServiceRequestID == id &&
-                    r.CitizenID == citizenId);
-
-            bool showCompletionNotice = false;
-
-            if (request.Status ==
-                MunicipalServiceRequestStatus.Completed)
+            try
             {
-                string completionNoticeKey =
-                    "CompletionNoticeShown_" +
-                    request.MunicipalServiceRequestID;
+                // ---------------------------------------------------------
+                // AUTHENTICATION
+                // ---------------------------------------------------------
 
-                if (Session[completionNoticeKey] == null)
+                if (Session["CitizenID"] == null)
+                    return RedirectToAction("Login", "Login");
+
+                var citizenId = (int)Session["CitizenID"];
+
+                // ---------------------------------------------------------
+                // LOAD MUNICIPAL SERVICE REQUEST
+                // ---------------------------------------------------------
+
+                var request = db.MunicipalServiceRequests
+                    .Include("ServiceType")
+                    .FirstOrDefault(r =>
+                        r.MunicipalServiceRequestID == id &&
+                        r.CitizenID == citizenId);
+
+                // ---------------------------------------------------------
+                // CHECK THAT REQUEST EXISTS
+                // ---------------------------------------------------------
+
+                if (request == null)
                 {
-                    showCompletionNotice = true;
-                    Session[completionNoticeKey] = true;
+                    return Content(
+                        "<html>" +
+                        "<head>" +
+                        "<title>Municipal Service Request - Not Found</title>" +
+                        "<style>" +
+                        "body{font-family:Arial,sans-serif;background:#f4f6f9;padding:40px;color:#222;}" +
+                        ".error-box{max-width:900px;margin:auto;background:white;border:1px solid #ddd;border-radius:10px;padding:30px;}" +
+                        "h1{color:#b42318;margin-top:0;}" +
+                        ".info{background:#f8f9fa;border:1px solid #ddd;border-radius:8px;padding:20px;margin-top:20px;}" +
+                        "strong{color:#16324f;}" +
+                        "</style>" +
+                        "</head>" +
+                        "<body>" +
+                        "<div class='error-box'>" +
+                        "<h1>Municipal Service Request Not Found</h1>" +
+                        "<div class='info'>" +
+                        "<p><strong>ID received:</strong> " +
+                        id +
+                        "</p>" +
+                        "<p><strong>Citizen ID:</strong> " +
+                        citizenId +
+                        "</p>" +
+                        "<p>The controller could not find a municipal service request matching both the ID and the logged-in citizen.</p>" +
+                        "</div>" +
+                        "</div>" +
+                        "</body>" +
+                        "</html>",
+                        "text/html"
+                    );
                 }
+
+                // ---------------------------------------------------------
+                // CHECK SERVICE TYPE
+                // ---------------------------------------------------------
+
+                if (request.ServiceType == null)
+                {
+                    return Content(
+                        "<html>" +
+                        "<head>" +
+                        "<title>Municipal Service Request Error</title>" +
+                        "<style>" +
+                        "body{font-family:Arial,sans-serif;background:#f4f6f9;padding:40px;color:#222;}" +
+                        ".error-box{max-width:900px;margin:auto;background:white;border:1px solid #ddd;border-radius:10px;padding:30px;}" +
+                        "h1{color:#b42318;margin-top:0;}" +
+                        "pre{background:#f8f9fa;border:1px solid #ddd;border-radius:8px;padding:20px;white-space:pre-wrap;}" +
+                        "</style>" +
+                        "</head>" +
+                        "<body>" +
+                        "<div class='error-box'>" +
+                        "<h1>Service Type Is Missing</h1>" +
+                        "<pre>" +
+                        "MunicipalServiceRequestID: " +
+                        request.MunicipalServiceRequestID +
+                        "\nServiceTypeID: " +
+                        request.ServiceTypeID +
+                        "\nReferenceNumber: " +
+                        System.Web.HttpUtility.HtmlEncode(request.ReferenceNumber) +
+                        "</pre>" +
+                        "</div>" +
+                        "</body>" +
+                        "</html>",
+                        "text/html"
+                    );
+                }
+
+                // ---------------------------------------------------------
+                // COMPLETION NOTICE
+                // ---------------------------------------------------------
+
+                bool showCompletionNotice = false;
+
+                if (request.Status ==
+                    MunicipalServiceRequestStatus.Completed)
+                {
+                    string completionNoticeKey =
+                        "CompletionNoticeShown_" +
+                        request.MunicipalServiceRequestID;
+
+                    if (Session[completionNoticeKey] == null)
+                    {
+                        showCompletionNotice = true;
+                        Session[completionNoticeKey] = true;
+                    }
+                }
+
+                ViewBag.ShowCompletionNotice =
+                    showCompletionNotice;
+
+                // ---------------------------------------------------------
+                // RETURN VIEW
+                // ---------------------------------------------------------
+
+                return View(request);
             }
-
-            ViewBag.ShowCompletionNotice = showCompletionNotice;
-
-
-            if (request == null)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] =
-                    "The municipal service request could not be found.";
+                // =========================================================
+                // DISPLAY FULL ERROR IN BROWSER
+                // TEMPORARY DEBUGGING ONLY
+                // =========================================================
 
-                return RedirectToAction(
-                    "Index",
-                    "MunicipalServices"
+                var errorDetails =
+                    "MESSAGE:\n" +
+                    ex.Message +
+                    "\n\n" +
+
+                    "EXCEPTION TYPE:\n" +
+                    ex.GetType().FullName +
+                    "\n\n" +
+
+                    "STACK TRACE:\n" +
+                    ex.StackTrace;
+
+                if (ex.InnerException != null)
+                {
+                    errorDetails +=
+                        "\n\nINNER EXCEPTION:\n" +
+                        ex.InnerException.Message +
+                        "\n\nINNER EXCEPTION TYPE:\n" +
+                        ex.InnerException.GetType().FullName +
+                        "\n\nINNER STACK TRACE:\n" +
+                        ex.InnerException.StackTrace;
+                }
+
+                return Content(
+                    "<html>" +
+                    "<head>" +
+                    "<title>Municipal Service Request Error</title>" +
+                    "<style>" +
+                    "body{" +
+                        "font-family:Arial,sans-serif;" +
+                        "background:#f4f6f9;" +
+                        "padding:40px;" +
+                        "color:#222;" +
+                    "}" +
+
+                    ".error-box{" +
+                        "max-width:1100px;" +
+                        "margin:auto;" +
+                        "background:white;" +
+                        "border:1px solid #ddd;" +
+                        "border-radius:10px;" +
+                        "padding:30px;" +
+                        "box-shadow:0 4px 15px rgba(0,0,0,.08);" +
+                    "}" +
+
+                    "h1{" +
+                        "color:#b42318;" +
+                        "margin-top:0;" +
+                    "}" +
+
+                    ".warning{" +
+                        "background:#fff3cd;" +
+                        "border:1px solid #ffe69c;" +
+                        "border-radius:8px;" +
+                        "padding:15px;" +
+                        "margin-bottom:20px;" +
+                        "color:#664d03;" +
+                    "}" +
+
+                    "pre{" +
+                        "background:#f8f9fa;" +
+                        "border:1px solid #ddd;" +
+                        "border-radius:8px;" +
+                        "padding:20px;" +
+                        "white-space:pre-wrap;" +
+                        "word-break:break-word;" +
+                        "overflow-x:auto;" +
+                        "line-height:1.5;" +
+                        "font-size:13px;" +
+                    "}" +
+
+                    ".label{" +
+                        "font-weight:bold;" +
+                        "color:#16324f;" +
+                    "}" +
+
+                    "</style>" +
+                    "</head>" +
+
+                    "<body>" +
+
+                    "<div class='error-box'>" +
+
+                    "<h1>Municipal Service Request Error</h1>" +
+
+                    "<div class='warning'>" +
+                    "<strong>Temporary debugging page.</strong><br />" +
+                    "This error is being displayed so we can identify exactly what is failing when opening the municipal service request details page." +
+                    "</div>" +
+
+                    "<p>" +
+                    "<span class='label'>Request ID received:</span> " +
+                    id +
+                    "</p>" +
+
+                    "<pre>" +
+                    System.Web.HttpUtility.HtmlEncode(errorDetails) +
+                    "</pre>" +
+
+                    "</div>" +
+
+                    "</body>" +
+                    "</html>",
+                    "text/html"
                 );
             }
-
-            return View(request);
         }
-            
-            
-// =========================================================
-// VIEW INVOICE
-// US150 - Citizen View Invoice
-// =========================================================
 
-[HttpGet]
+        [HttpGet]
 public ActionResult Invoice(int id)
         {
             if (Session["CitizenID"] == null)

@@ -654,6 +654,13 @@
         </div>
     }
 
+    <!-- Quick action: submit another request for the same service type -->
+    <div style="margin-bottom:18px;">
+        <a class="primary-button new-request-button" href="@Url.Action("Create", "MunicipalServiceRequest", new { serviceTypeId = Model.ServiceTypeID })">
+            Request another "@Model.ServiceType?.ServiceName"
+        </a>
+    </div>
+
     <div class="page-layout">
 
         <div class="main-column">

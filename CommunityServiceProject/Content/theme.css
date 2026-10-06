@@ -1,0 +1,73 @@
+/* Theme overrides and broad page helpers to unify UI across views */
+
+:root{
+    --text-dark:#0f1724;
+    --muted-2:#6b7280;
+    --surface:#ffffff;
+}
+
+/* Apply to any container that matches common page suffixes */
+[class$='-page'], [class*='page-'], .page, .system-card {
+    max-width: 1100px;
+    margin: 24px auto;
+    padding: 18px;
+}
+
+/* Generic card style for consistency */
+.card, .panel, .system-card, .ward-management-card, .welcome-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 8px 26px rgba(15,23,42,0.06);
+    border: 1px solid rgba(15,23,42,0.04);
+}
+
+/* Forms - make consistent across pages */
+form .form-group, .form-row {
+    margin-bottom: 14px;
+}
+
+input[type='text'], input[type='email'], input[type='password'], textarea, select {
+    border-radius: 8px;
+    border: 1px solid rgba(15,23,42,0.08);
+    padding: 10px 12px;
+    height: 44px;
+    background: rgba(255,255,255,0.98);
+}
+
+textarea { height: auto; min-height: 120px; }
+
+/* Tables */
+.table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.table thead th{ background: linear-gradient(90deg, rgba(13,92,193,0.06), rgba(8,71,154,0.06));}
+.table tbody tr:hover{ background: rgba(13,92,193,0.03); }
+
+/* Buttons */
+.btn, .btn-primary-custom, .ward-button { border-radius: 10px; }
+.btn-primary { background: var(--primary-color); border-color: var(--primary-color); }
+
+/* Utilities */
+.muted { color: var(--muted-2); }
+.text-muted { color: var(--muted-2); }
+
+/* Footer */
+footer.container, footer.site-footer, .footer { padding-top: 18px; padding-bottom: 28px; color: #6b7280; }
+
+/* Responsive tweaks */
+@media (max-width: 768px){
+    [class$='-page'], .system-card { padding: 12px; margin: 12px; }
+    .navbar-brand.text-truncate { max-width: 140px; }
+}
+
+/* Accessibility: ensure focus outlines visible */
+a:focus, button:focus, input:focus, select:focus, textarea:focus { outline: 3px solid rgba(13,92,193,0.12); outline-offset: 2px; }
+
+/* Small helpers for callouts */
+.callout { padding: 12px 16px; border-radius: 8px; background: linear-gradient(180deg, rgba(13,92,193,0.03), rgba(13,92,193,0.01)); border: 1px solid rgba(13,92,193,0.04); }
+
+/* Invoice and receipt visuals */
+.invoice-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
